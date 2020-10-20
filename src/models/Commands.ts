@@ -4,7 +4,7 @@ export enum CommandType {
     SystemBuild = "SystemBuild",
     SystemIndustry = "SystemIndustry",
     SystemEconomy = "SystemEconomy",
-    SystemWelfere = "SystemWelfare",
+    SystemWelfare = "SystemWelfare",
     SystemDefense = "SystemDefense",
     FleetMove = "FleetMove",
     FleetInvade = "FleetInvade",
@@ -17,5 +17,9 @@ export interface Command extends GameObject {
     gameId: string;
     factionId: string;
     type: CommandType;
-
 }
+
+export interface SystemPlusCommand extends Command {
+    targetSystem: string;
+}
+

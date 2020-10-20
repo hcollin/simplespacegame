@@ -1,3 +1,6 @@
+import { joki } from "jokits-react";
+import DATAUSERS from "../../data/dataUser.";
+import { Command } from "../../models/Commands";
 import { FactionModel } from "../../models/Models";
 import { arnds, rnd, shuffle } from "../../utils/randUtils";
 
@@ -14,17 +17,21 @@ const np3s = arnds(factNamePart3, 12, true);
 
 let factionNoId = -1;
 
+const players = [...DATAUSERS];
+
 export function getFactionName() {
     factionNoId++;
     return `${np1s[factionNoId]} ${np2s[factionNoId]} ${np3s[factionNoId]}`;
 }
 
 export function createNewFaction(): FactionModel {
+    const pl = players.pop();
     const fm: FactionModel = {
         id: `faction-${rnd(1, 9999)}`,
         money: 0,
         done: false,
         name: getFactionName(),
+        playerId: pl ? pl.id : "",
         color: factionColors.pop() || "#FFF",
     }
 
@@ -34,4 +41,15 @@ export function createNewFaction(): FactionModel {
 
 export function getFactionById(factions: FactionModel[], id: string): FactionModel|undefined {
     return factions.find((fm: FactionModel) =>  fm.id === id);
+}
+
+export function getFactionByUsedId(factions: FactionModel[], userId:string ): FactionModel|undefined {
+    return factions.find((fm: FactionModel) =>  fm.playerId === userId);
+}
+
+
+export function factionCanDoMoreCommands(faction: FactionModel): boolean {
+    const commands = joki.service.getState("CommandService") as Command[];
+    const myCommands = commands.filter((cm: Command) => cm.factionId === faction.id);
+    return myCommands.length < 3;
 }

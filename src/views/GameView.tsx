@@ -1,21 +1,56 @@
+import { Button, createStyles, makeStyles, Theme } from "@material-ui/core"
 import { useService } from "jokits-react"
 import React, { FC } from "react"
+import CommandList from "../components/CommandList"
 import FactionInfo from "../components/FactionInfo"
 import SimpleMap from "../components/SimpleMap"
 import { FactionModel, GameModel } from "../models/Models"
+import { processTurn } from "../services/commands/GameCommands"
+
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    factions: {
+        position: "absolute",
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: "14rem",
+        backgroundColor: "#0002",
+        padding: "0.5rem",
+    },
+    nextTurn: {
+        position: "absolute",
+        bottom: "1rem",
+        right: "1rem",
+        zIndex: 100,
+    }
+}))
 
 const GameView: FC = () => {
 
+    const classes = useStyles();
+
     const [game] = useService<GameModel>("GameService");
+    
 
     if(!game) return null;
+
+
 
     return (
         <div>
             
-            <SimpleMap systems={game.systems} factions={game.factions} />
+            <h1>Game {game.turn}</h1>
 
+            <SimpleMap systems={game.systems} factions={game.factions} units={game.units} />
+
+            <div className={classes.factions}>
             {game.factions.map((fm: FactionModel) => <FactionInfo faction={fm} key={fm.id} />)}
+            </div>
+
+            <CommandList />
+
+            <Button variant="contained" color="primary" onClick={processTurn} className={classes.nextTurn}>END TURN</Button>
+
 
         </div>
     )

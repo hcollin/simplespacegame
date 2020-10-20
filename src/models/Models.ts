@@ -1,8 +1,6 @@
-
 export interface GameObject {
     id: string;
 }
-
 
 export interface GameModel extends GameObject {
     turn: number;
@@ -11,19 +9,21 @@ export interface GameModel extends GameObject {
     systems: SystemModel[];
 }
 
-
-export interface UnitModel extends GameObject {
-    location: Coordinates;
+export interface Ship extends GameObject{
+    name: string;
     weapons: number;
     hull: number;
-    damage: number;
     speed: number;
-    
+
     cost: number;
     minIndustry: number;
-    
 }
 
+export interface UnitModel extends Ship {
+    location: Coordinates;
+    damage: number;
+    factionId: string;
+}
 
 export interface Coordinates {
     x: number;
@@ -48,4 +48,5 @@ export interface FactionModel extends GameObject {
     money: number;
     done: boolean;
     color: string;
+    playerId: string;
 }
