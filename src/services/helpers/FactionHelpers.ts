@@ -1,0 +1,37 @@
+import { FactionModel } from "../../models/Models";
+import { arnds, rnd, shuffle } from "../../utils/randUtils";
+
+
+const factionColors = shuffle(["#F00", "#F80", "#0C0", "#00F", "#F0F", "#08F", "#AC9"]);
+
+const factNamePart1 = ["Federation of", "Kingdom of", "Empire of", "Republic of", "Commonwealth of", "Tribe of", "Hive of", "Imperium of", "Clan of", "Culture of", "Theocracy of", "Barony of", "Democracy of", "Army of", "Consortium of", "Cohorts of", "Remnants of", "Oligarchy of", "Aristocracy of", "Tyranny of", "United States of", "Church of", "League of", "Protectorate of", "Colony of", "Alliance of", "Hegemony of", "Confederation of"];
+const factNamePart2 = ["Black", "Red", "Purple", "Space", "Pirate", "Warrior", "Engineer", "Merchant", "Priest", "Soldier", "Peace", "Holy", "Unholy", "Ancient", "Future", "Bio", "Cyber", "Renegade", "Telepathic", "Magical", "Robotic", "Artificial", "Psychic", "Fanatic", "Conservative", "Liberal", "Nihilistic", "Chaos", "Multi Dimensional", "Flux", "Power", "Giant", "Ravenous", "World Eating", "Cannibalistic", "Occultist", "Death"];
+const factNamePart3 = ["Cats", "Dogs", "Turtles", "Wolves", "Lions", "Elephants", "Wasps", "Spiders", "Scorpions", "Parrots", "Eagles", "Rocks", "Trees", "Reptiles", "Worms", "Serpents", "Ants", "Whales", "Octopuses", "Rhinos", "Sharks", "Gorillas", "Tigers", "Jaguars", "Hyenas", "Hamsters", "Rodents", "Baboons", "Bears", "Moose", "Deer", "Flies", "Owls", "Vultures", "Rabbits", "Kangaroos", "Penguins", "Dragons", "Horses", "Cows", "Pigs", "Sheep", "Chickens", "Giraffes"];
+
+const np1s = arnds(factNamePart1, 12, true);
+const np2s = arnds(factNamePart2, 12, true);
+const np3s = arnds(factNamePart3, 12, true);
+
+let factionNoId = -1;
+
+export function getFactionName() {
+    factionNoId++;
+    return `${np1s[factionNoId]} ${np2s[factionNoId]} ${np3s[factionNoId]}`;
+}
+
+export function createNewFaction(): FactionModel {
+    const fm: FactionModel = {
+        id: `faction-${rnd(1, 9999)}`,
+        money: 0,
+        done: false,
+        name: getFactionName(),
+        color: factionColors.pop() || "#FFF",
+    }
+
+    return fm;
+}
+
+
+export function getFactionById(factions: FactionModel[], id: string): FactionModel|undefined {
+    return factions.find((fm: FactionModel) =>  fm.id === id);
+}
