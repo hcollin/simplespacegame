@@ -1,9 +1,10 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { FactionModel, SystemModel, UnitModel } from "../models/Models";
-import { Button, createStyles, makeStyles, Theme } from "@material-ui/core";
+import { createStyles, makeStyles, Theme } from "@material-ui/core";
 import { getFactionById } from "../services/helpers/FactionHelpers";
-import { plusDefense, plusEconomy, plusIndustry, plusWelfare } from "../services/commands/SystemCommands";
+
 import { inSameLocation } from "../utils/locationUtils";
+import useSelectedSystem from "../hooks/useSelectedSystem";
 
 const size = window.innerHeight - 200;
 
@@ -45,8 +46,8 @@ const useStyles = makeStyles((theme: Theme) =>
             },
             "& > div.info": {
                 position: "absolute",
-                top: "5%",
-                left: "5%",
+                top: 0,
+                right: "-20rem",
                 width: "20rem",
                 height: "auto",
                 backgroundColor: "#FFFD",
@@ -74,13 +75,15 @@ interface SimpleMapProps {
 const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
     const classes = useStyles();
 
-    const [selectedSystem, setSelectedSystem] = useState<null | SystemModel>(null);
+    // const [selectedSystem, setSelectedSystem] = useState<null | SystemModel>(null);
+
+    const [selectedSystem, setSelectedSystem] = useSelectedSystem();
 
     function select(star: SystemModel) {
-        setSelectedSystem((prev: SystemModel | null) => {
-            if (prev && prev.id === star.id) return null;
-            return star;
-        });
+        setSelectedSystem(star.id)
+    }
+    function deselect() {
+        setSelectedSystem(null);
     }
 
     return (
@@ -94,48 +97,25 @@ const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
                     width: ownerFaction ? "1%" : "0.5%",
                     height: ownerFaction ? "1%" : "0.5%",
                 };
-                
-                const units = props.units.filter((u: UnitModel) => inSameLocation(u.location, star.location) );
 
+                const units = props.units.filter((u: UnitModel) => inSameLocation(u.location, star.location));
+                const isSelected = selectedSystem && selectedSystem.id === star.id;
                 return (
                     <div
-                        className={`star${selectedSystem && selectedSystem.id === star.id ? " selected" : ""}`}
+                        className={`star${isSelected ? " selected" : ""}`}
                         style={style}
-                        onClick={() => select(star)}
+                        onClick={() => isSelected ? deselect() : select(star)}
                         key={star.id}
                     >
                         {units.length > 0 && <div className="fleet">
-                                F
+                            F
                             </div>}
 
                     </div>
                 );
             })}
 
-            {selectedSystem && (
-                <div className="info">
-                    <h2>{selectedSystem.name}</h2>
-                    <p>Industry: {selectedSystem.industry}</p>
-                    <p>Economy: {selectedSystem.economy}</p>
-                    <p>Defense: {selectedSystem.defense}</p>
-                    <p>Welfare: {selectedSystem.welfare}</p>
 
-                    <div className="buttons">
-                        <Button variant="contained" color="primary" onClick={() => plusEconomy(selectedSystem.id)}>
-                            Economy +
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={() => plusWelfare(selectedSystem.id)}>
-                            Welfare +
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={() => plusIndustry(selectedSystem.id)}>
-                            Industry +
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={() => plusDefense(selectedSystem.id)}>
-                            Defense +
-                        </Button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

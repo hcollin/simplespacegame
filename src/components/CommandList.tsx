@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     commands: {
         position: "absolute",
         top: 0,
-        right: "15rem",
+        right: "14rem",
         bottom: 0,
         width: "14rem",
         backgroundColor: "#0004",

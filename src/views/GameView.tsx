@@ -4,6 +4,7 @@ import React, { FC } from "react"
 import CommandList from "../components/CommandList"
 import FactionInfo from "../components/FactionInfo"
 import SimpleMap from "../components/SimpleMap"
+import SystemInfo from "../components/SystemInfo"
 import { FactionModel, GameModel } from "../models/Models"
 import { processTurn } from "../services/commands/GameCommands"
 
@@ -16,6 +17,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         width: "14rem",
         backgroundColor: "#0002",
         padding: "0.5rem",
+    },
+    rows: {
+        display: "flex",
+        flexDirection: "row",
     },
     nextTurn: {
         position: "absolute",
@@ -30,21 +35,25 @@ const GameView: FC = () => {
     const classes = useStyles();
 
     const [game] = useService<GameModel>("GameService");
-    
 
-    if(!game) return null;
+
+    if (!game) return null;
 
 
 
     return (
         <div>
-            
+
             <h1>Game {game.turn}</h1>
 
-            <SimpleMap systems={game.systems} factions={game.factions} units={game.units} />
+            <div className={classes.rows}>
+                <SimpleMap systems={game.systems} factions={game.factions} units={game.units} />
+
+                <SystemInfo />
+            </div>
 
             <div className={classes.factions}>
-            {game.factions.map((fm: FactionModel) => <FactionInfo faction={fm} key={fm.id} />)}
+                {game.factions.map((fm: FactionModel) => <FactionInfo faction={fm} key={fm.id} />)}
             </div>
 
             <CommandList />
