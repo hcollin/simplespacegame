@@ -7,3 +7,8 @@ export function processTurn() {
          action: "processTurn",
      });
 }
+
+
+export function playerDone() {
+    
+}

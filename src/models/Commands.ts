@@ -1,4 +1,4 @@
-import { GameObject } from "./Models";
+import { Coordinates, GameObject } from "./Models";
 
 export enum CommandType {
     SystemBuild = "SystemBuild",
@@ -15,11 +15,18 @@ export enum CommandType {
 
 export interface Command extends GameObject {
     gameId: string;
+    turn: number;
+    completed: boolean;
     factionId: string;
     type: CommandType;
 }
 
 export interface SystemPlusCommand extends Command {
     targetSystem: string;
+}
+
+export interface FleetCommand extends Command {
+    unitIds: string[];
+    target: Coordinates;
 }
 

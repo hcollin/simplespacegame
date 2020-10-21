@@ -1,13 +1,12 @@
+import { greekAlphabet, romanNumbers, starName } from "../../data/dataWords";
 import { SystemModel } from "../../models/Models";
-import { arnd, rnd } from "../../utils/randUtils";
+import { arnd, rnd, roll } from "../../utils/randUtils";
 
 const starColors: string[] = ["#FFFD", "#FDAD", "#FF8D"];
 
 let sysIds = 1000;
 
-
 export function createNewSystem(): SystemModel {
-
     const id = sysIds++;
 
     const x = rnd(1, 99);
@@ -20,10 +19,10 @@ export function createNewSystem(): SystemModel {
         economy: 0,
         welfare: 0,
         industry: 0,
-        name: `Star ${id}`,
+        name: randomStarName(),
         location: {
             x,
-            y
+            y,
         },
         ownerFactionId: "",
     };
@@ -35,13 +34,23 @@ export function createRandomMap(count: number): SystemModel[] {
     const stars: SystemModel[] = [];
 
     while (stars.length < count) {
-
         const star = createNewSystem();
 
-        if (stars.findIndex((sm: SystemModel) => sm.location.x === star.location.x && sm.location.y === star.location.y) === -1) {
+        if (
+            stars.findIndex(
+                (sm: SystemModel) =>
+                    (sm.location.x === star.location.x && sm.location.y === star.location.y) || sm.name === star.name
+            ) === -1
+        ) {
             stars.push(star);
         }
     }
 
     return stars;
+}
+
+export function randomStarName() {
+    const gr = roll(15) ? ` ${arnd(greekAlphabet)}` : "";
+    const rm = roll(15) ? ` ${arnd(romanNumbers)}` : "";
+    return `${arnd(starName)}${gr}${rm}`;
 }

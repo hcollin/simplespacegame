@@ -13,14 +13,18 @@ export default function createCommandService(serviceId: string, api: JokiService
                     removeCommand(event.data);
                     break;
 
-                case "addCommand": 
+                case "addCommand":
                     addCommand(event.data);
+                    break;
+
+                case "commandDone":
+                    commandDone(event.data);
                     break;
             }
         }
 
-        if(event.action === "nextTurn") {
-            clearCommands();
+        if (event.action === "nextTurn") {
+            clearCompletedCommands();
         }
     }
 
@@ -35,9 +39,17 @@ export default function createCommandService(serviceId: string, api: JokiService
         sendUpdate();
     }
 
+    function commandDone(cmdId: string) {
+        commands = commands.map((cm: Command) => {
+            if (cm.id === cmdId) {
+                cm.completed = true;
+            }
+            return cm;
+        });
+    }
 
-    function clearCommands() {
-        commands = [];
+    function clearCompletedCommands() {
+        commands = commands.filter((cmd: Command) => cmd.completed === false);
         sendUpdate();
     }
 

@@ -1,6 +1,8 @@
 import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
-import { Command, CommandType, SystemPlusCommand } from "../models/Commands";
-import { GameModel, SystemModel } from "../models/Models";
+import { joki } from "jokits-react";
+import { Command, CommandType, FleetCommand, SystemPlusCommand } from "../models/Commands";
+import { GameModel, SystemModel, UnitModel, Coordinates } from "../models/Models";
+import { travelingBetweenCoordinates } from "../utils/MathUtils";
 import { createNewGame } from "./helpers/GameHelpers";
 
 export default function createGameService(serviceId: string, api: JokiServiceApi): JokiService<GameModel> {
@@ -21,6 +23,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 
         if (commands) {
             game = processSystemCommands(commands, game);
+            game = processMovementCommands(commands, game);
         }
 
         // Increase turn counter
@@ -49,8 +52,19 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
     };
 }
 
+function processMovementCommands(commands: Command[], oldGame: GameModel): GameModel {
+    let game = { ...oldGame };
+
+    commands.forEach((cmd: Command) => {
+        if (cmd.type === CommandType.FleetMove) {
+            game = processFleetMoveCommand(cmd as FleetCommand, game);
+        }
+    });
+
+    return game;
+}
+
 function processSystemCommands(commands: Command[], oldGame: GameModel): GameModel {
-   
     let game = { ...oldGame };
 
     commands.forEach((cmd: Command) => {
@@ -74,25 +88,49 @@ function processSystemCommands(commands: Command[], oldGame: GameModel): GameMod
 function processSystemEconomyCommand(command: SystemPlusCommand, game: GameModel): GameModel {
     const system = getSystemFromGame(game, command.targetSystem);
     system.economy++;
+    markCommandDone(command.id);
     return updateSystemInGame(game, system);
 }
 
 function processSystemWelfareCommand(command: SystemPlusCommand, game: GameModel): GameModel {
     const system = getSystemFromGame(game, command.targetSystem);
     system.welfare++;
+    markCommandDone(command.id);
     return updateSystemInGame(game, system);
 }
 
 function processSystemIndustryCommand(command: SystemPlusCommand, game: GameModel): GameModel {
     const system = getSystemFromGame(game, command.targetSystem);
     system.industry++;
+    markCommandDone(command.id);
     return updateSystemInGame(game, system);
 }
 
 function processSysteDefenseCommand(command: SystemPlusCommand, game: GameModel): GameModel {
     const system = getSystemFromGame(game, command.targetSystem);
     system.defense++;
+    markCommandDone(command.id);
     return updateSystemInGame(game, system);
+}
+
+function processFleetMoveCommand(command: FleetCommand, game: GameModel): GameModel {
+    let newPoint: Coordinates | null = null;
+
+    let nGame= {...game};
+
+    command.unitIds.forEach((uid: string) => {
+        const unit = getUnitFromGame(game, uid);
+
+        if (newPoint === null) {
+            newPoint = travelingBetweenCoordinates(unit.location, command.target, unit.speed);
+        }
+
+        const nUnit = { ...unit };
+        nUnit.location = newPoint;
+        nGame = updateUnitInGame(nGame,nUnit);
+    });
+
+    return {...nGame};
 }
 
 function getSystemFromGame(game: GameModel, systemId: string): SystemModel {
@@ -100,22 +138,45 @@ function getSystemFromGame(game: GameModel, systemId: string): SystemModel {
     if (!system) {
         throw new Error(`Invalid system id ${systemId}`);
     }
-
     return system;
 }
 
+function getUnitFromGame(game: GameModel, unitId: string): UnitModel {
+    const unit = game.units.find((u: UnitModel) => u.id === unitId);
+    if (!unit) {
+        throw new Error(`Invalid unit id ${unitId}`);
+    }
+    return unit;
+}
+
 function updateSystemInGame(game: GameModel, updatedSystem: SystemModel): GameModel {
-
     game.systems = game.systems.reduce((systems: SystemModel[], sys: SystemModel) => {
-
-        if(sys.id === updatedSystem.id) {
+        if (sys.id === updatedSystem.id) {
             systems.push(updatedSystem);
         } else {
-            systems.push(sys)
-        };
+            systems.push(sys);
+        }
         return systems;
-
     }, []);
 
-    return {...game};
+    return { ...game };
+}
+
+function updateUnitInGame(game: GameModel, updatedUnit: UnitModel): GameModel {
+    game.units = game.units.map((um: UnitModel) => {
+        if (um.id === updatedUnit.id) {
+            return updatedUnit;
+        }
+        return um;
+    });
+
+    return { ...game };
+}
+
+function markCommandDone(commandId: string) {
+    joki.trigger({
+        to: "CommandService",
+        action: "commandDone",
+        data: commandId,
+    });
 }

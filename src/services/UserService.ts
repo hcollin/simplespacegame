@@ -51,6 +51,12 @@ export default function createUserService(serviceId: string, api: JokiServiceApi
         }
     }
 
+    setTimeout(() => {
+        user = DATAUSERS[0];
+        sendUpdate();
+        
+    }, 500);
+
     return {
         eventHandler,
         getState,

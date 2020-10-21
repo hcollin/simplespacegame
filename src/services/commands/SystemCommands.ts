@@ -83,7 +83,7 @@ export function removeCommand(commandId: string) {
     });
 }
 
-function createEmptyCommandForCurrentFactionAndGame(type: CommandType): Command | undefined {
+export function createEmptyCommandForCurrentFactionAndGame(type: CommandType): Command | undefined {
     const user = joki.service.getState("UserService") as User | null;
     const game = joki.service.getState("GameService") as GameModel;
 
@@ -102,6 +102,8 @@ function createEmptyCommandForCurrentFactionAndGame(type: CommandType): Command 
         gameId: game.id,
         factionId: faction.id,
         type: type,
+        completed: false,
+        turn: game.turn,
     };
 
     return command;
