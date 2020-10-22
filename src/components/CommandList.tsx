@@ -2,6 +2,7 @@ import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import { useService } from "jokits-react";
 import React, { FC } from "react";
 import { Command } from "../models/Commands";
+import { GameModel } from "../models/Models";
 import { removeCommand } from "../services/commands/SystemCommands";
 
 
@@ -24,9 +25,9 @@ interface CommandListProps {
 const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
     const classes = useStyles();
     const [commands] = useService<Command[]>("CommandService");
+    const [game] = useService<GameModel>("GameService");
     
-    
-    if(!commands) return null;
+    if(!commands || !game) return null;
 
     return (
         <div className={classes.commands}>
@@ -35,7 +36,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
             {commands.map((cm: Command) => {
                 return (
                     <div key={cm.id}>
-                        {cm.factionId} {cm.type} <Button variant="contained" color="secondary" onClick={() => removeCommand(cm.id)}>X</Button>
+                        {cm.factionId} {cm.type} <Button variant="contained" color="secondary" onClick={() => removeCommand(cm.id)} disabled={game.turn !== cm.turn}>X</Button>
                     </div>
                 );
             })}

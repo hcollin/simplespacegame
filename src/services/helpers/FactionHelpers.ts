@@ -5,7 +5,7 @@ import { FactionModel } from "../../models/Models";
 import { arnds, rnd, shuffle } from "../../utils/randUtils";
 
 
-const factionColors = shuffle(["#F00", "#F80", "#0C0", "#00F", "#F0F", "#08F", "#AC9"]);
+const factionColors = shuffle(['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4']);
 
 const factNamePart1 = ["Federation of", "Kingdom of", "Empire of", "Republic of", "Commonwealth of", "Tribe of", "Hive of", "Imperium of", "Clan of", "Culture of", "Theocracy of", "Barony of", "Democracy of", "Army of", "Consortium of", "Cohorts of", "Remnants of", "Oligarchy of", "Aristocracy of", "Tyranny of", "United States of", "Church of", "League of", "Protectorate of", "Colony of", "Alliance of", "Hegemony of", "Confederation of"];
 const factNamePart2 = ["Black", "Red", "Purple", "Space", "Pirate", "Warrior", "Engineer", "Merchant", "Priest", "Soldier", "Peace", "Holy", "Unholy", "Ancient", "Future", "Bio", "Cyber", "Renegade", "Telepathic", "Magical", "Robotic", "Artificial", "Psychic", "Fanatic", "Conservative", "Liberal", "Nihilistic", "Chaos", "Multi Dimensional", "Flux", "Power", "Giant", "Ravenous", "World Eating", "Cannibalistic", "Occultist", "Death"];
@@ -39,12 +39,12 @@ export function createNewFaction(): FactionModel {
 }
 
 
-export function getFactionById(factions: FactionModel[], id: string): FactionModel|undefined {
-    return factions.find((fm: FactionModel) =>  fm.id === id);
+export function getFactionById(factions: FactionModel[], id: string): FactionModel | undefined {
+    return factions.find((fm: FactionModel) => fm.id === id);
 }
 
-export function getFactionByUsedId(factions: FactionModel[], userId:string ): FactionModel|undefined {
-    return factions.find((fm: FactionModel) =>  fm.playerId === userId);
+export function getFactionByUsedId(factions: FactionModel[], userId: string): FactionModel | undefined {
+    return factions.find((fm: FactionModel) => fm.playerId === userId);
 }
 
 

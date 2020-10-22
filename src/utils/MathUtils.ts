@@ -29,6 +29,26 @@ export function angleBetweenCoordinates(a: Coordinates, b: Coordinates): number 
 }
 
 
+export function findClosestCoordinate(coords: Coordinates[], point: Coordinates): Coordinates {
+
+    let closest: Coordinates = {x: 0, y: 0};
+    let distance = 1000000;
+
+    coords.forEach((c: Coordinates, i: number) => {
+        
+        const d = Math.pow(c.x - point.x, 2) + Math.pow(c.y - point.y, 2);
+        
+        if(d < distance) {
+            
+            distance = d;
+            closest = c;
+        }
+    })
+
+    return closest;
+}
+
+
 export type Vector = [number, number];
 
 export function getVectorFromCoords(a: Coordinates, b: Coordinates): Vector {

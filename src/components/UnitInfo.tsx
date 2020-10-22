@@ -1,16 +1,40 @@
+import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import React, { FC } from "react";
 import { UnitModel } from "../models/Models";
 import { getFactionById } from "../utils/factionUtils";
 
+
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            margin: "0.5rem 0",
+            fontWeight: "normal",
+            userSelect: "none",
+            "&.selected": {
+                fontWeight: "bold",
+                color: "green",
+            }
+        }
+    }));
+
 interface UnitInfoProps {
     unit: UnitModel;
+    onClick?: (unit: UnitModel) => void;
+    selected?: boolean;
 }
 
 const UnitInfo: FC<UnitInfoProps> = (props: UnitInfoProps) => {
+    const classes = useStyles();
     const faction = getFactionById(props.unit.factionId);
 
+    function click() {
+        if (props.onClick) {
+            props.onClick(props.unit);
+        }
+    }
+
     return (
-        <div>
+        <div onClick={click} className={`${classes.root}${props.selected ? " selected": ""}`}>
             <h3>
                 {props.unit.name} <small>({faction.name})</small>
             </h3>

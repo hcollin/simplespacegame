@@ -1,5 +1,5 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import { plusEconomy, plusWelfare, plusIndustry, plusDefense } from "../services/commands/SystemCommands";
 
@@ -12,6 +12,11 @@ import { Command, CommandType, SystemPlusCommand } from "../models/Commands";
 import useUnitsInSelectedSystem from "../hooks/useUnitsInSelectedSystem";
 import { UnitModel } from "../models/Models";
 import UnitInfo from "./UnitInfo";
+import useUnitSelection from "../hooks/useUnitSelection";
+import { inSameLocation } from "../utils/locationUtils";
+import { moveUnits } from "../services/commands/UnitCommands";
+import useCurrentUser from "../services/hooks/useCurrentUser";
+import useCurrentFaction from "../services/hooks/useCurrentFaction";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -49,7 +54,49 @@ const SystemInfo: FC = () => {
     const comms = useMyCommands();
     const units = useUnitsInSelectedSystem();
 
-    if (star === null) return null;
+    const [user] = useCurrentUser();
+    const faction = useCurrentFaction();
+
+    const [selectedUnits, setSelectedUnits] = useState<UnitModel[]>([]);
+
+    const [fleet, fleetActions] = useUnitSelection();
+
+    if (star === null || !user) return null;
+
+
+    function selectUnit(unit: UnitModel) {
+        console.log(unit.id, faction);
+        if (unit && faction && unit.factionId === faction.id) {
+            const isSelected = selectedUnits.find((um: UnitModel) => um.id === unit.id) !== undefined;
+            console.log("Select Unit", unit, isSelected);
+            if (isSelected) {
+                setSelectedUnits((prev: UnitModel[]) => prev.filter((um: UnitModel) => um.id !== unit.id));
+            } else {
+                setSelectedUnits((prev: UnitModel[]) => {
+                    const n = [...prev];
+                    n.push(unit);
+                    return n;
+                })
+            }
+        }
+    }
+
+    function setFleet() {
+        fleetActions.set([...selectedUnits]);
+        setSelectedUnits([]);
+        
+    }
+
+    function cancelFleet() {
+        fleetActions.clr();
+    }
+
+    function moveFleet() {
+        if(star && fleet.length > 0) {
+            moveUnits(fleet, star.location);
+            fleetActions.clr();
+        }   
+    }
 
     const comPlusInd = comms.filter((c: Command) => {
         const cs = c as SystemPlusCommand;
@@ -105,10 +152,15 @@ const SystemInfo: FC = () => {
             <h2>Units</h2>
 
             {units.map((u: UnitModel) => {
+                const isSelected = selectedUnits.find((um: UnitModel) => um.id === u.id);
                 return (
-                  <UnitInfo key={u.id} unit={u} />
+                    <UnitInfo key={u.id} unit={u} onClick={selectUnit} selected={isSelected !== undefined} />
                 );
             })}
+
+            {selectedUnits.length > 0 && fleet.length === 0 && <Button variant="contained" color="primary" onClick={setFleet}>Move Selected Units</Button>}
+            {fleet.length > 0 && inSameLocation(fleet[0].location, star.location) && <Button variant="contained" color="secondary" onClick={cancelFleet}>Cancel Fleet</Button>}
+            {fleet.length > 0 && !inSameLocation(fleet[0].location, star.location) && <Button variant="contained" color="primary" onClick={moveFleet}>Move Fleet Here</Button>}
         </div>
     );
 };

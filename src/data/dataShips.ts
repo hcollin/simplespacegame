@@ -8,7 +8,7 @@ const DATASHIPS: Ship[] = [
         hull: 3,
         weapons: 1,
         name: "Corvette",
-        speed: 3,
+        speed: 5,
     },
 ];
 
