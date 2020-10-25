@@ -1,5 +1,7 @@
+import { joki } from "jokits-react";
 import { greekAlphabet, romanNumbers, starName } from "../../data/dataWords";
-import { SystemModel } from "../../models/Models";
+import { Coordinates, GameModel, SystemModel } from "../../models/Models";
+import { inSameLocation } from "../../utils/locationUtils";
 import { arnd, rnd, roll } from "../../utils/randUtils";
 
 const starColors: string[] = ["#FFFD", "#FDAD", "#FF8D"];
@@ -76,4 +78,15 @@ export function randomStarName() {
     const gr = roll(15) ? ` ${arnd(greekAlphabet)}` : "";
     const rm = roll(15) ? ` ${arnd(romanNumbers)}` : "";
     return `${arnd(starName)}${gr}${rm}`;
+}
+
+
+export function getSystemById(systemId: string): SystemModel|undefined {
+    const game = joki.service.getState("GameService") as GameModel;
+    return game.systems.find((sm: SystemModel) => sm.id === systemId);
+}
+
+export function getSystemByCoordinates(coords: Coordinates): SystemModel|undefined {
+    const game = joki.service.getState("GameService") as GameModel;
+    return game.systems.find((sm: SystemModel) => inSameLocation(sm.location, coords));
 }

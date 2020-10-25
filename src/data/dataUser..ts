@@ -31,6 +31,16 @@ const DATAUSERS: User[] = [
         name: "Mikko",
         login: "mikko",
     },
+    {
+        id: "user-007",
+        name: "Arttu",
+        login: "arttu",
+    },
+    {
+        id: "user-008",
+        name: "Jesse",
+        login: "jesse",
+    }
 ];
 
 export default DATAUSERS;

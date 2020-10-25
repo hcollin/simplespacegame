@@ -1,13 +1,15 @@
 import { Button, createStyles, makeStyles, Theme } from "@material-ui/core"
 import { useService } from "jokits-react"
-import React, { FC } from "react"
+import React, { FC, useEffect } from "react"
 import CommandList from "../components/CommandList"
 import FactionHeader from "../components/FactionHeader"
 import FactionInfo from "../components/FactionInfo"
-import SimpleMap from "../components/SimpleMap"
+import LargeMap from "../components/LargeMap"
+// import SimpleMap from "../components/SimpleMap"
 import SystemInfo from "../components/SystemInfo"
 import { FactionModel, GameModel } from "../models/Models"
 import { processTurn } from "../services/commands/GameCommands"
+import useCurrentUser from "../services/hooks/useCurrentUser"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     factions: {
@@ -16,8 +18,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         right: 0,
         bottom: 0,
         width: "14rem",
-        backgroundColor: "#0002",
+        backgroundColor: "#333",
         padding: "0.5rem",
+        zIndex: 20,
     },
     rows: {
         marginTop: "5rem",
@@ -38,6 +41,21 @@ const GameView: FC = () => {
 
     const [game] = useService<GameModel>("GameService");
 
+    const [user, send] = useCurrentUser();
+    
+
+    useEffect(() => {
+        if(game && !user && send !== undefined) {
+            
+            setTimeout(() => {
+                const faction = game.factions[0];
+                console.log("login as", faction.name, faction.playerId);
+                send("switch", game.factions[0].playerId);
+            }, 500);
+            
+        }
+
+    }, [user, game, send]);
 
     if (!game) return null;
 
@@ -49,7 +67,9 @@ const GameView: FC = () => {
             
 
             <div className={classes.rows}>
-                <SimpleMap systems={game.systems} factions={game.factions} units={game.units} />
+        {/* <SimpleMap systems={game.systems} factions={game.factions} units={game.units} /> */}
+                <LargeMap systems={game.systems} factions={game.factions} units={game.units} />
+
                 <SystemInfo />
             </div>
 
@@ -61,7 +81,7 @@ const GameView: FC = () => {
 
             <Button variant="contained" color="primary" onClick={processTurn} className={classes.nextTurn}>END TURN</Button>
 
-            <h1>Game {game.turn}</h1>
+            {/* <h1>Game {game.turn}</h1> */}
 
 
         </div>

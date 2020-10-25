@@ -25,7 +25,12 @@ import ShipInfo from "./ShipInfo";
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
+            position: "absolute",
+            zIndex: 100,
+            top: "100px",
+            right: "29rem",
             padding: "1rem",
+            background: "white",
         },
         value: {
             width: "15rem",

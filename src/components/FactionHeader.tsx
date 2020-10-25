@@ -33,6 +33,15 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             justifyContent: "center",
             minWidth: "8rem",
 
+            "& > h1": {
+                fontSize: "1.8rem",
+                "& > span": {
+                    display: "block",
+                    fontSize: "1rem",
+                }
+
+            },
+
             "& > div.mainView": {
                 "& > b": {
                     fontSize: "2rem",
@@ -92,11 +101,12 @@ const FactionHeader: FC = () => {
     const values = factionValues(game, faction.id);
 
     const isReady = game.factionsReady.includes(faction.id);
-    console.log(faction.name, faction.id, game.factionsReady, isReady)
+    // console.log(faction.name, faction.id, game.factionsReady, isReady)
     return (
         <div className={classes.root}>
             <div>
-                <h1>{faction.name}</h1>
+    <h1>{faction.name} <span>{faction.playerId}</span></h1>
+                
             </div>
             <div>
                 <div className="mainView">
