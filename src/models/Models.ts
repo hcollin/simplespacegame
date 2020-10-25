@@ -7,6 +7,7 @@ export interface GameModel extends GameObject {
     factions: FactionModel[];
     units: UnitModel[];
     systems: SystemModel[];
+    factionsReady: string[];
 }
 
 export interface Ship extends GameObject{

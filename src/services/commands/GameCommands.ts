@@ -10,5 +10,8 @@ export function processTurn() {
 
 
 export function playerDone() {
-    
+    joki.trigger({
+        to: "GameService",
+        action: "ready",
+    });
 }

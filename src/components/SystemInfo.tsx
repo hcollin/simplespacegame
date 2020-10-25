@@ -8,7 +8,7 @@ import SecurityIcon from "@material-ui/icons/Security";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import useMyCommands from "../hooks/useMyCommands";
-import { Command, CommandType, SystemPlusCommand } from "../models/Commands";
+import { BuildUnitCommand, Command, CommandType, FleetCommand, SystemPlusCommand } from "../models/Commands";
 import useUnitsInSelectedSystem from "../hooks/useUnitsInSelectedSystem";
 import { Ship, UnitModel } from "../models/Models";
 import UnitInfo from "./UnitInfo";
@@ -18,6 +18,9 @@ import { moveUnits } from "../services/commands/UnitCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { getFactionShips } from "../services/helpers/FactionHelpers";
+import useUserIsReady from "../services/hooks/useUserIsReady";
+import DATASHIPS from "../data/dataShips";
+import ShipInfo from "./ShipInfo";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -54,12 +57,10 @@ const SystemInfo: FC = () => {
     const [star] = useSelectedSystem();
     const comms = useMyCommands();
     const units = useUnitsInSelectedSystem();
-
     const [user] = useCurrentUser();
     const faction = useCurrentFaction();
-
+    const userIsReady = useUserIsReady();
     const [selectedUnits, setSelectedUnits] = useState<UnitModel[]>([]);
-
     const [fleet, fleetActions] = useUnitSelection();
 
     if (star === null || !user) return null;
@@ -84,7 +85,6 @@ const SystemInfo: FC = () => {
     function setFleet() {
         fleetActions.set([...selectedUnits]);
         setSelectedUnits([]);
-
     }
 
     function cancelFleet() {
@@ -118,7 +118,31 @@ const SystemInfo: FC = () => {
 
     const isMine = faction && faction.id === star.ownerFactionId;
 
+    const shipsUnderConstruction: Ship[] = comms.reduce((ships: Ship[], command: Command) => {
 
+        if(command.type === CommandType.SystemBuild){
+            const cmd = command as BuildUnitCommand;
+            if(inSameLocation(cmd.target, star.location)) {
+                const ship = DATASHIPS.find((s: Ship) => s.name === cmd.shipName);
+                if(ship) {
+                    ships.push(ship);
+                }
+            }
+        }
+
+        return ships;
+    }, []);
+
+
+    const unitsInFleet = comms.reduce((unitIds: string[], command: Command) => {
+
+        if(command.type === CommandType.FleetMove) {
+            const cmd = command as FleetCommand;
+            unitIds = [...unitIds, ...cmd.unitIds];
+        }
+
+        return unitIds;
+    }, [])
 
     return (
         <div className={classes.root}>
@@ -127,28 +151,28 @@ const SystemInfo: FC = () => {
             <div className={classes.value}>
                 <BuildIcon />
                 {star.industry}
-                {isMine && <Button variant="contained" color="primary" onClick={() => plusIndustry(star.id)}>
+                {isMine && !userIsReady && <Button variant="contained" color="primary" onClick={() => plusIndustry(star.id)}>
                     +
                 </Button>}
                 {comPlusInd > 0 && <p>+{comPlusInd}</p>}
             </div>
             <div className={classes.value}>
                 <MonetizationOnIcon /> {star.economy}
-                {isMine && <Button variant="contained" color="primary" onClick={() => plusEconomy(star.id)}>
+                {isMine && !userIsReady && <Button variant="contained" color="primary" onClick={() => plusEconomy(star.id)}>
                     +
                 </Button>}
                 {comPlusEco > 0 && <p>+{comPlusEco}</p>}
             </div>
             <div className={classes.value}>
                 <SecurityIcon /> {star.defense}
-                {isMine && star.defense < star.industry && <Button variant="contained" color="primary" onClick={() => plusDefense(star.id)}>
+                {isMine && !userIsReady && star.defense < star.industry && <Button variant="contained" color="primary" onClick={() => plusDefense(star.id)}>
                     +
                 </Button>}
                 {comPlusDef > 0 && <p>+{comPlusDef}</p>}
             </div>
             <div className={classes.value}>
                 <PeopleAltIcon /> {star.welfare}
-                {isMine && <Button variant="contained" color="primary" onClick={() => plusWelfare(star.id)}>
+                {isMine && !userIsReady && <Button variant="contained" color="primary" onClick={() => plusWelfare(star.id)}>
                     +
                 </Button>}
                 {comPlusWlf > 0 && <p>+{comPlusWlf}</p>}
@@ -158,16 +182,30 @@ const SystemInfo: FC = () => {
 
             {units.map((u: UnitModel) => {
                 const isSelected = selectedUnits.find((um: UnitModel) => um.id === u.id);
+                
+                if(unitsInFleet.includes(u.id)) {
+                    return null;
+                }
                 return (
                     <UnitInfo key={u.id} unit={u} onClick={selectUnit} selected={isSelected !== undefined} />
                 );
             })}
 
+            {shipsUnderConstruction.map((s: Ship, ind: number) => {
+                return (
+                    <div key={`ship-${ind}`} className="shipUnderConstruction">
+                        Buidling: <ShipInfo ship={s} key={`ship${ind}`} />
+                    </div>
+                )
+            })}
 
 
-            {selectedUnits.length > 0 && fleet.length === 0 && <Button variant="contained" color="primary" onClick={setFleet}>Move Selected Units</Button>}
-            {fleet.length > 0 && inSameLocation(fleet[0].location, star.location) && <Button variant="contained" color="secondary" onClick={cancelFleet}>Cancel Fleet</Button>}
-            {fleet.length > 0 && !inSameLocation(fleet[0].location, star.location) && <Button variant="contained" color="primary" onClick={moveFleet}>Move Fleet Here</Button>}
+
+
+
+            {selectedUnits.length > 0 && fleet.length === 0 && !userIsReady && <Button variant="contained" color="primary" onClick={setFleet}>Move Selected Units</Button>}
+            {fleet.length > 0 && inSameLocation(fleet[0].location, star.location) && !userIsReady && <Button variant="contained" color="secondary" onClick={cancelFleet}>Cancel Fleet</Button>}
+            {fleet.length > 0 && !inSameLocation(fleet[0].location, star.location) && !userIsReady && <Button variant="contained" color="primary" onClick={moveFleet}>Move Fleet Here</Button>}
 
 
             <h3>Build Ships</h3>
@@ -177,7 +215,7 @@ const SystemInfo: FC = () => {
 
                 const canAfford = faction.money >= ship.cost;
                 const enoughIndustry = star.industry >= ship.minIndustry;                
-                const canBuild = canAfford && enoughIndustry && isMine;
+                const canBuild = canAfford && enoughIndustry && isMine && !userIsReady;
 
                 return (
                     <Button key={`ship-${ship.name}`} variant="contained" color="primary" disabled={!canBuild} onClick={() => buildUnit(ship, star.location)}>{ship.name}</Button>

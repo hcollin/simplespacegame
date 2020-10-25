@@ -56,6 +56,7 @@ export function createNewGame(playerCount = 4): GameModel {
         systems: stars,
         turn: 0,
         units: units,
+        factionsReady: []
     };
 
 

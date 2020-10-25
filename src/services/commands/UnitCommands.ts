@@ -1,7 +1,7 @@
 import { joki } from "jokits-react";
 import { CommandType, FleetCommand } from "../../models/Commands";
-import { Coordinates, Ship, UnitModel } from "../../models/Models";
-import { createUnitFromShip } from "../helpers/UnitHelpers";
+import { Coordinates, UnitModel } from "../../models/Models";
+
 import { createEmptyCommandForCurrentFactionAndGame } from "./SystemCommands";
 
 export function moveUnits(units: UnitModel[], targetCoords: Coordinates) {

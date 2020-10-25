@@ -3,11 +3,12 @@ import { joki } from "jokits-react";
 
 import { BuildUnitCommand, Command, CommandType, FleetCommand, SystemPlusCommand } from "../models/Commands";
 import { GameModel, SystemModel, UnitModel, Coordinates, FactionModel, CombatEvent } from "../models/Models";
-import { expensesCalculator, factionValues } from "../utils/factionUtils";
+import { User } from "../models/User";
+import { factionValues } from "../utils/factionUtils";
 import { inSameLocation } from "../utils/locationUtils";
 import { travelingBetweenCoordinates } from "../utils/MathUtils";
 import { rnd } from "../utils/randUtils";
-import { getFactionById } from "./helpers/FactionHelpers";
+import { getFactionById, getFactionByUsedId } from "./helpers/FactionHelpers";
 import { createNewGame } from "./helpers/GameHelpers";
 import { createUnitFromShip } from "./helpers/UnitHelpers";
 
@@ -20,8 +21,33 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 case "processTurn":
                     processTurn();
                     break;
+                case "ready":
+                    factionReady();
+                    break;
+
             }
         }
+    }
+
+    function factionReady() {
+        const user = api.api.getServiceState<User>("UserService");
+        if (user) {
+
+            const faction = getFactionByUsedId(game.factions, user.id);
+            if (faction) {
+                console.log("READY!", user.name, faction.name);
+                game.factionsReady.push(faction.id);
+                sendUpdate();
+
+
+                if(game.factionsReady.length === game.factions.length) {
+                    processTurn();
+                }
+
+            }
+
+        }
+
     }
 
     function processTurn() {
@@ -29,7 +55,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 
         if (commands) {
             game = processSystemCommands(commands, game);
-            game = processMovementCommands(commands, game);            
+            game = processMovementCommands(commands, game);
 
             game = processCombats(game);
             game = processInvasion(game);
@@ -41,6 +67,9 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 
         // Increase turn counter
         game.turn++;
+
+        // Clear ready states
+        game.factionsReady = [];
 
         // Clear Commands
         api.api.trigger({
@@ -93,7 +122,7 @@ function processSystemCommands(commands: Command[], oldGame: GameModel): GameMod
         if (cmd.type === CommandType.SystemIndustry) {
             game = processSystemIndustryCommand(cmd as SystemPlusCommand, game);
         }
-        if(cmd.type === CommandType.SystemBuild) {
+        if (cmd.type === CommandType.SystemBuild) {
             game = processSystemBuildUnitCommand(cmd as BuildUnitCommand, game);
         }
     });
@@ -126,7 +155,7 @@ function processInvasion(oldGame: GameModel): GameModel {
 
 function processEconomy(game: GameModel): GameModel {
 
-    
+
 
     // const incr = game.systems.reduce((money: Map<string, number>, star: SystemModel) => {
 
@@ -151,7 +180,7 @@ function processEconomy(game: GameModel): GameModel {
         const values = factionValues(game, fm.id);
 
         fm.money += values.income;
-        return {...fm};
+        return { ...fm };
 
     });
 
@@ -217,13 +246,13 @@ function processSystemIndustryCommand(command: SystemPlusCommand, game: GameMode
 }
 
 function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameModel): GameModel {
-    
-    
+
+
     const faction = getFactionById(game.factions, command.factionId);
 
-    if(faction) {
-        const unit = createUnitFromShip(command.shipName, command.factionId, command.target);        
-        if(faction.money >= unit.cost) {
+    if (faction) {
+        const unit = createUnitFromShip(command.shipName, command.factionId, command.target);
+        if (faction.money >= unit.cost) {
             game.units.push(unit);
             faction.money = faction.money - unit.cost;
             markCommandDone(command.id);
@@ -232,7 +261,7 @@ function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameMode
     }
 
     markCommandDone(command.id);
-    return {...game};
+    return { ...game };
 
 }
 
@@ -384,7 +413,7 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
 
         // If only one faction remains, end combat
         const factionCount = countFactionsInUnits(combat.units);
-        if(factionCount <= 1) {
+        if (factionCount <= 1) {
             combat.resolved = true;
         }
 
@@ -397,10 +426,10 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
     console.log(combat, countFactionsInUnits(combat.units));
     processCombatRound(combat);
     let looper = 0;
-    while(combat.resolved === false) {
+    while (combat.resolved === false) {
         combat = processCombatRound(combat);
         looper++;
-        if(looper >=10) {
+        if (looper >= 10) {
             combat.resolved = true;
         }
     }
@@ -411,22 +440,22 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
     const remainingUnitIds = combat.units.map((um: UnitModel) => um.id);
     const originalCombatUnitIds = origCombat.units.map((um: UnitModel) => um.id);
     const destroyedUnitIds = originalCombatUnitIds.filter((umid: string) => {
-            return !remainingUnitIds.includes(umid);
+        return !remainingUnitIds.includes(umid);
     });
 
     game.units = game.units.filter((um: UnitModel) => {
         return !destroyedUnitIds.includes(um.id);
     }).map((um: UnitModel) => {
-        if(remainingUnitIds.includes(um.id)) {
+        if (remainingUnitIds.includes(um.id)) {
             const unit = combat.units.find((umm: UnitModel) => umm.id = um.id);
-            if(unit) {
+            if (unit) {
                 return unit;
             }
         }
         return um;
     });
-    
-    
+
+
     return { ...game };
 }
 
@@ -456,12 +485,12 @@ function updateUnitInGame(game: GameModel, updatedUnit: UnitModel): GameModel {
 
 function updateFactionInGame(game: GameModel, faction: FactionModel): GameModel {
     game.factions = game.factions.map((fm: FactionModel) => {
-        if(fm.id === faction.id) {
+        if (fm.id === faction.id) {
             return faction;
         }
         return fm;
     });
-    return {...game};
+    return { ...game };
 
 }
 

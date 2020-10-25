@@ -1,4 +1,4 @@
-import { makeStyles, Theme, createStyles } from "@material-ui/core";
+import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import React, { FC } from "react";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
@@ -9,6 +9,7 @@ import useMyCommands from "../hooks/useMyCommands";
 import { useService } from "jokits-react";
 import { GameModel } from "../models/Models";
 import { factionValues } from "../utils/factionUtils";
+import { playerDone } from "../services/commands/GameCommands";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -27,13 +28,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             padding: "0 0.5rem",
             borderLeft: "solid 1px black",
             height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minWidth: "8rem",
 
             "& > div.mainView": {
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "100%",
-                width: "8rem",
                 "& > b": {
                     fontSize: "2rem",
                     fontWeight: "bold",
@@ -91,6 +91,8 @@ const FactionHeader: FC = () => {
 
     const values = factionValues(game, faction.id);
 
+    const isReady = game.factionsReady.includes(faction.id);
+    console.log(faction.name, faction.id, game.factionsReady, isReady)
     return (
         <div className={classes.root}>
             <div>
@@ -120,6 +122,9 @@ const FactionHeader: FC = () => {
                 <div className="mainView">
                     <FlashOnIcon /> <b>{commands.length}</b> <span>/ {values.maxCommands}</span>
                 </div>
+            </div>
+            <div>
+                {!isReady && <Button variant="contained" color="primary" onClick={playerDone}>READY</Button>}
             </div>
         </div>
     )
