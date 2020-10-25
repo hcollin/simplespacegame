@@ -120,8 +120,8 @@ const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
                     top: `${star.location.y}%`,
                     left: `${star.location.x}%`,
                     backgroundColor: ownerFaction ? ownerFaction.color : star.color,
-                    width: ownerFaction ? "1%" : "0.5%",
-                    height: ownerFaction ? "1%" : "0.5%",
+                    width: ownerFaction ? "1.25%" : "0.75%",
+                    height: ownerFaction ? "1.25%" : "0.75%",
                 };
 
                 // const units = props.units.filter((u: UnitModel) => inSameLocation(u.location, star.location));

@@ -30,3 +30,7 @@ export interface FleetCommand extends Command {
     target: Coordinates;
 }
 
+export interface BuildUnitCommand extends Command {
+    shipName: string;
+    target: Coordinates;
+}

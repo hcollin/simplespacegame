@@ -2,6 +2,7 @@ import { Button, createStyles, makeStyles, Theme } from "@material-ui/core"
 import { useService } from "jokits-react"
 import React, { FC } from "react"
 import CommandList from "../components/CommandList"
+import FactionHeader from "../components/FactionHeader"
 import FactionInfo from "../components/FactionInfo"
 import SimpleMap from "../components/SimpleMap"
 import SystemInfo from "../components/SystemInfo"
@@ -19,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         padding: "0.5rem",
     },
     rows: {
+        marginTop: "5rem",
         display: "flex",
         flexDirection: "row",
     },
@@ -43,12 +45,11 @@ const GameView: FC = () => {
 
     return (
         <div>
-
-            <h1>Game {game.turn}</h1>
+            <FactionHeader />
+            
 
             <div className={classes.rows}>
                 <SimpleMap systems={game.systems} factions={game.factions} units={game.units} />
-
                 <SystemInfo />
             </div>
 
@@ -59,6 +60,8 @@ const GameView: FC = () => {
             <CommandList />
 
             <Button variant="contained" color="primary" onClick={processTurn} className={classes.nextTurn}>END TURN</Button>
+
+            <h1>Game {game.turn}</h1>
 
 
         </div>

@@ -50,3 +50,13 @@ export interface FactionModel extends GameObject {
     color: string;
     playerId: string;
 }
+
+
+
+export interface CombatEvent {
+    units: UnitModel[];
+    system: SystemModel;
+    round: number;
+    log: string[];
+    resolved: boolean;
+}

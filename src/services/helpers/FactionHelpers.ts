@@ -1,7 +1,9 @@
 import { joki } from "jokits-react";
+import DATASHIPS from "../../data/dataShips";
 import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
-import { FactionModel } from "../../models/Models";
+import { FactionModel, GameModel, Ship } from "../../models/Models";
+import { factionValues } from "../../utils/factionUtils";
 import { arnds, rnd, shuffle } from "../../utils/randUtils";
 
 
@@ -49,7 +51,16 @@ export function getFactionByUsedId(factions: FactionModel[], userId: string): Fa
 
 
 export function factionCanDoMoreCommands(faction: FactionModel): boolean {
+    const game = joki.service.getState("GameService") as GameModel;
+    const values = factionValues(game, faction.id);
     const commands = joki.service.getState("CommandService") as Command[];
     const myCommands = commands.filter((cm: Command) => cm.factionId === faction.id);
-    return myCommands.length < 3;
+    return myCommands.length < values.maxCommands;
+}
+
+
+export function getFactionShips(factionId: string): Ship[] {
+
+    return DATASHIPS;
+
 }

@@ -1,6 +1,6 @@
 import { joki } from "jokits-react";
-import { Command, CommandType, SystemPlusCommand } from "../../models/Commands";
-import { GameModel } from "../../models/Models";
+import { BuildUnitCommand, Command, CommandType, FleetCommand, SystemPlusCommand } from "../../models/Commands";
+import { GameModel, Ship, UnitModel, Coordinates } from "../../models/Models";
 import { User } from "../../models/User";
 import { factionCanDoMoreCommands, getFactionByUsedId } from "../helpers/FactionHelpers";
 
@@ -83,6 +83,27 @@ export function removeCommand(commandId: string) {
     });
 }
 
+export function buildUnit(ship: Ship, targetCoords: Coordinates) {
+    const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemBuild);
+
+    if (!rootCommand) {
+        console.log("Cannot do build unit for ", ship, targetCoords);
+        return;
+    }
+
+    const command = {
+        ...rootCommand,
+        shipName: ship.name,
+        target: targetCoords,
+    } as BuildUnitCommand;
+
+    joki.trigger({
+        to: "CommandService",
+        action: "addCommand",
+        data: command,
+    });
+}
+
 export function createEmptyCommandForCurrentFactionAndGame(type: CommandType): Command | undefined {
     const user = joki.service.getState("UserService") as User | null;
     const game = joki.service.getState("GameService") as GameModel;
@@ -93,7 +114,7 @@ export function createEmptyCommandForCurrentFactionAndGame(type: CommandType): C
 
     if (!faction) return;
 
-    if(!factionCanDoMoreCommands(faction)) {
+    if (!factionCanDoMoreCommands(faction)) {
         return;
     }
 
