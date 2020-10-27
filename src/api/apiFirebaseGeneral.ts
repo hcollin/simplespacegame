@@ -4,6 +4,17 @@ import { db } from "./firebaseDb";
 
 import { GameObject } from "../models/Models";
 
+export interface FirebaseConfiguration {
+    apiKey: string;
+    authDomain: string;
+    databaseURL: string;
+    projectId: string;
+    storageBucket: string;
+    messagingSenderId: string;
+    appId: string;
+    measurementId: string;
+}
+
 // export async function getAllItems<T extends FirebaseStorable>(collectionName: string): Promise<T[]> {
 //     const snap = await db.collection(collectionName).get();
 

@@ -3,11 +3,6 @@ import React, { FC, useState } from "react";
 import { doCreateNewGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 
-
-// 135301141063-gvr96fe8tbitg9clj36qbbq77nv7124c.apps.googleusercontent.com
-
-// XAnkqZoLTa2pity3oGGyaBgU
-
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
