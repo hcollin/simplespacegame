@@ -22,8 +22,22 @@ import { getFactionById, getFactionByUsedId } from "./helpers/FactionHelpers";
 import { createNewGame } from "./helpers/GameHelpers";
 import { createUnitFromShip } from "./helpers/UnitHelpers";
 
+
+export interface NewGameOptions {
+    playerCount: number;
+}
+
 export default function createGameService(serviceId: string, api: JokiServiceApi): JokiService<GameModel> {
-    let game: GameModel = createNewGame();
+    let game: GameModel = {
+        id: "",
+        state: GameState.INIT,
+        turn: 0,
+        systems: [],
+        units: [],
+        factions: [],
+        factionsReady: []
+    }
+    // let game: GameModel = createNewGame();
 
     function eventHandler(event: JokiEvent) {
         if (event.to === serviceId) {
@@ -34,8 +48,19 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 case "ready":
                     factionReady(event.data);
                     break;
+                case "newGame":
+                    newGame(event.data as NewGameOptions);
+                    break;
+
             }
         }
+    }
+
+    function newGame(options: NewGameOptions) {
+        console.log("NEW GAME", options);
+
+        game = createNewGame(options.playerCount);
+        sendUpdate();
     }
 
     function factionReady(factionId?: string) {

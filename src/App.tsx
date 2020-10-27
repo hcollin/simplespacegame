@@ -6,6 +6,8 @@ import {joki} from 'jokits-react';
 import createGameService from './services/GameService';
 import createUserService from './services/UserService';
 import createCommandService from './services/CommandService';
+import { startFirebase } from './api/firebaseDb';
+import MainPage from './views/MainPage';
 
 joki.service.add({
   serviceId: "GameService",
@@ -22,11 +24,12 @@ joki.service.add({
   service: createCommandService,
 });
 
+startFirebase();
 
 function App() {
   return (
     <div className="App">
-     <GameView />
+     <MainPage />
     </div>
   );
 }

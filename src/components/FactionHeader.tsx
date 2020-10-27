@@ -20,10 +20,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         left: 0,
         height: "5rem",
         width: "calc(100% - 28rem)",
-        borderBottom: "solid 1px black",
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
+        borderBottom: "solid 2px #0008",
 
         "& >  div": {
 
@@ -113,7 +113,7 @@ const FactionHeader: FC = () => {
 
     // console.log(faction.name, faction.id, game.factionsReady, isReady)
     return (
-        <div className={classes.root} style={{background: `linear-gradient(to right, ${faction.color} 0,  white 20%)`}}>
+        <div className={classes.root} style={{background: `linear-gradient(170deg, #222 0, ${faction.color} 10%,  white 50%, white 80%, gray 100%)`}}>
             <div>
                 <img src={require(`../images/symbols/${faction.iconFileName}`)} alt={`faction ${faction.name} logo`}/>
             </div>

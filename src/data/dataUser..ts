@@ -4,42 +4,42 @@ const DATAUSERS: User[] = [
     {
         id: "user-001",
         name: "Henrik",
-        login: "henrik",
+        email: "henrik",
     },
     {
         id: "user-002",
         name: "Teo",
-        login: "teo",
+        email: "teo",
     },
     {
         id: "user-003",
         name: "Tommi",
-        login: "tommi",
+        email: "tommi",
     },
     {
         id: "user-004",
         name: "Niklas",
-        login: "niklas",
+        email: "niklas",
     },
     {
         id: "user-005",
         name: "Tuomas",
-        login: "tuomas",
+        email: "tuomas",
     },
     {
         id: "user-006",
         name: "Mikko",
-        login: "mikko",
+        email: "mikko",
     },
     {
         id: "user-007",
         name: "Arttu",
-        login: "arttu",
+        email: "arttu",
     },
     {
         id: "user-008",
         name: "Jesse",
-        login: "jesse",
+        email: "jesse",
     }
 ];
 

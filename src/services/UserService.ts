@@ -2,6 +2,9 @@ import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
 import DATAUSERS from "../data/dataUser.";
 import { User } from "../models/User";
 
+import Firebase from "firebase";
+
+
 export default function createUserService(serviceId: string, api: JokiServiceApi): JokiService<User | null> {
     let user: User | null = null;
 
@@ -9,24 +12,31 @@ export default function createUserService(serviceId: string, api: JokiServiceApi
         if (event.to === serviceId) {
             switch (event.action) {
                 case "login":
-                    login(event.data);
+                    console.error("INVALID LOGIN CALL!");
+                    // login(event.data);
                     break;
                 case "switch":
                     switchUser(event.data);
                     break;
                 case "logout":
                     break;
+                case "loginWithGoogle":
+                    loginWithGoogle();
+                    break;
+                case "loginAsDev":
+                    switchUser(DATAUSERS[0].id);
+                    break;
             }
         }
     }
 
-    function login(userName: string) {
-        const usr = DATAUSERS.find((u: User) => u.login === userName);
-        if (usr) {
-            user = usr;
-            sendUpdate();
-        }
-    }
+    // function login(userName: string) {
+    //     const usr = DATAUSERS.find((u: User) => u.login === userName);
+    //     if (usr) {
+    //         user = usr;
+    //         sendUpdate();
+    //     }
+    // }
 
     function switchUser(userId: string) {
         const usr = DATAUSERS.find((u: User) => u.id === userId);
@@ -34,6 +44,11 @@ export default function createUserService(serviceId: string, api: JokiServiceApi
             user = usr;
             sendUpdate();
         }
+    }
+
+    async function loginWithGoogle() {
+        const provider = new Firebase.auth.GoogleAuthProvider();
+        await Firebase.auth().signInWithRedirect(provider);
     }
 
     function getState(): User | null {
@@ -51,11 +66,31 @@ export default function createUserService(serviceId: string, api: JokiServiceApi
         }
     }
 
-    setTimeout(() => {
-        user = DATAUSERS[0];
-        sendUpdate();
+    Firebase.auth().getRedirectResult().then((result: Firebase.auth.UserCredential) => {
+        console.log("RESULTS", result);
+
+        if(result === null) {
+            user = null;
+            sendUpdate();
+        } else {
+            if(result.user) {
+                const u: User = {
+                    id: result.user.uid,
+                    name: result.user.displayName || "No name",
+                    email: result.user.email || "no email",
+                }
+                user = u;
+                sendUpdate();
+            }
+            
+        }
+    });
+
+    // setTimeout(() => {
+    //     user = DATAUSERS[0];
+    //     sendUpdate();
         
-    }, 500);
+    // }, 500);
 
     return {
         eventHandler,
