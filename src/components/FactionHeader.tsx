@@ -5,9 +5,11 @@ import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 // import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 
 import FlashOnIcon from '@material-ui/icons/FlashOn';
+import AdjustIcon from '@material-ui/icons/Adjust';
+
 import useMyCommands from "../hooks/useMyCommands";
 import { useService } from "jokits-react";
-import { GameModel } from "../models/Models";
+import { GameModel, SystemModel } from "../models/Models";
 import { factionValues } from "../utils/factionUtils";
 import { playerDone } from "../services/commands/GameCommands";
 
@@ -105,11 +107,15 @@ const FactionHeader: FC = () => {
     const values = factionValues(game, faction.id);
 
     const isReady = game.factionsReady.includes(faction.id);
+
+    const totalRingWorlds = game.systems.filter((sm: SystemModel) => sm.ringWorld);
+    const myRingWorlds = totalRingWorlds.filter((sm: SystemModel) => sm.ownerFactionId === faction.id);
+
     // console.log(faction.name, faction.id, game.factionsReady, isReady)
     return (
         <div className={classes.root} style={{background: `linear-gradient(to right, ${faction.color} 0,  white 20%)`}}>
             <div>
-                <img src={require(`../images/symbols/${faction.iconFileName}`)} />
+                <img src={require(`../images/symbols/${faction.iconFileName}`)} alt={`faction ${faction.name} logo`}/>
             </div>
             <div>
                 <h1>{faction.name} <span>{faction.playerId}</span></h1>
@@ -135,6 +141,11 @@ const FactionHeader: FC = () => {
             <div>
                 <div className="mainView">
                     <FlashOnIcon /> <b>{commands.length}</b> <span>/ {values.maxCommands}</span>
+                </div>
+            </div>
+            <div>
+                <div className="mainView">
+                    <AdjustIcon /> <b>{myRingWorlds.length}</b> <span>( / {totalRingWorlds.length} )</span>
                 </div>
             </div>
             <div>

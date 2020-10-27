@@ -24,5 +24,3 @@ export function moveUnits(units: UnitModel[], targetCoords: Coordinates) {
         data: command,
     });
 }
-
-

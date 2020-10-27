@@ -1,4 +1,4 @@
-import { FactionModel, GameModel, SystemModel, UnitModel } from "../../models/Models";
+import { FactionModel, GameModel, GameState, SystemModel, UnitModel } from "../../models/Models";
 import { inSameLocation } from "../../utils/locationUtils";
 import { findClosestCoordinate } from "../../utils/MathUtils";
 import { rnd } from "../../utils/randUtils";
@@ -35,7 +35,7 @@ export function createNewGame(playerCount = 4): GameModel {
             star.industry = 2;
             star.economy = 2;
             star.defense = 0;
-
+            star.keywords.push("HOMEWORLD");
             const unit = createUnitFromShip("Corvette", fm.id, star.location);
             units.push(unit);
 
@@ -56,7 +56,8 @@ export function createNewGame(playerCount = 4): GameModel {
         systems: stars,
         turn: 0,
         units: units,
-        factionsReady: []
+        factionsReady: [],
+        state: GameState.TURN,
     };
 
 

@@ -4,8 +4,6 @@ import { GameModel, UnitModel } from "../models/Models";
 import { inSameLocation } from "../utils/locationUtils";
 import useSelectedSystem from "./useSelectedSystem";
 
-
-
 export default function useUnitsInSelectedSystem(): UnitModel[] {
 
     const [units, setUnits] = useState<UnitModel[]>([]);
@@ -27,6 +25,4 @@ export default function useUnitsInSelectedSystem(): UnitModel[] {
 
 
     return units;
-
-
 }

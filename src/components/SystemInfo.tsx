@@ -1,4 +1,4 @@
-import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
+import { makeStyles, Theme, createStyles, Button, Tab, Tabs, AppBar } from "@material-ui/core";
 import React, { FC, useState } from "react";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import { plusEconomy, plusWelfare, plusIndustry, plusDefense, buildUnit } from "../services/commands/SystemCommands";
@@ -10,7 +10,7 @@ import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import useMyCommands from "../hooks/useMyCommands";
 import { BuildUnitCommand, Command, CommandType, FleetCommand, SystemPlusCommand } from "../models/Commands";
 import useUnitsInSelectedSystem from "../hooks/useUnitsInSelectedSystem";
-import { Ship, UnitModel } from "../models/Models";
+import { Report, Ship, UnitModel } from "../models/Models";
 import UnitInfo from "./UnitInfo";
 import useUnitSelection from "../hooks/useUnitSelection";
 import { inSameLocation } from "../utils/locationUtils";
@@ -29,8 +29,15 @@ const useStyles = makeStyles((theme: Theme) =>
             zIndex: 100,
             top: "100px",
             right: "29rem",
-            padding: "1rem",
+            minWidth: "30rem",
+            padding: "3rem 1rem 1rem 1rem",
             background: "white",
+        },
+        tabs: {
+            "& > nav": {
+                height: "2rem",
+            },
+            "& > div.tab": {},
         },
         value: {
             width: "15rem",
@@ -54,8 +61,41 @@ const useStyles = makeStyles((theme: Theme) =>
                 fontSize: "1rem",
             },
         },
+        report: {
+            "& >p": {
+                margin: 0,
+                padding: 0,
+            },
+        },
     })
 );
+
+function a11yProps(index: any) {
+    return {
+        id: `simple-tab-${index}`,
+        "aria-controls": `simple-tabpanel-${index}`,
+    };
+}
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+    return (
+        <div
+            aria-labelledby={`simple-tab-${index}`}
+            id={`simple-tabpanel-${index}`}
+            hidden={index !== value}
+            {...other}
+        >
+            {children}
+        </div>
+    );
+}
 
 const SystemInfo: FC = () => {
     const classes = useStyles();
@@ -68,13 +108,18 @@ const SystemInfo: FC = () => {
     const [selectedUnits, setSelectedUnits] = useState<UnitModel[]>([]);
     const [fleet, fleetActions] = useUnitSelection();
 
+    const [tab, setTab] = useState<number>(0);
+
     if (star === null || !user) return null;
 
+    function changeTab(event: React.ChangeEvent<{}>, newValue: number) {
+        setTab(newValue);
+    }
+
     function selectUnit(unit: UnitModel) {
-        
         if (unit && faction && unit.factionId === faction.id) {
             const isSelected = selectedUnits.find((um: UnitModel) => um.id === unit.id) !== undefined;
-            
+
             if (isSelected) {
                 setSelectedUnits((prev: UnitModel[]) => prev.filter((um: UnitModel) => um.id !== unit.id));
             } else {
@@ -82,7 +127,7 @@ const SystemInfo: FC = () => {
                     const n = [...prev];
                     n.push(unit);
                     return n;
-                })
+                });
             }
         }
     }
@@ -103,7 +148,6 @@ const SystemInfo: FC = () => {
         }
     }
 
-    
     const comPlusInd = comms.filter((c: Command) => {
         const cs = c as SystemPlusCommand;
         return cs.type === CommandType.SystemIndustry && cs.targetSystem === star.id;
@@ -124,12 +168,11 @@ const SystemInfo: FC = () => {
     const isMine = faction && faction.id === star.ownerFactionId;
 
     const shipsUnderConstruction: Ship[] = comms.reduce((ships: Ship[], command: Command) => {
-
-        if(command.type === CommandType.SystemBuild){
+        if (command.type === CommandType.SystemBuild) {
             const cmd = command as BuildUnitCommand;
-            if(inSameLocation(cmd.target, star.location)) {
+            if (inSameLocation(cmd.target, star.location)) {
                 const ship = DATASHIPS.find((s: Ship) => s.name === cmd.shipName);
-                if(ship) {
+                if (ship) {
                     ships.push(ship);
                 }
             }
@@ -138,101 +181,145 @@ const SystemInfo: FC = () => {
         return ships;
     }, []);
 
-
     const unitsInFleet = comms.reduce((unitIds: string[], command: Command) => {
-
-        if(command.type === CommandType.FleetMove) {
+        if (command.type === CommandType.FleetMove) {
             const cmd = command as FleetCommand;
             unitIds = [...unitIds, ...cmd.unitIds];
         }
 
         return unitIds;
-    }, [])
+    }, []);
 
     return (
         <div className={classes.root}>
+            <AppBar position="absolute">
+                <Tabs value={tab} onChange={changeTab} aria-label="simple tabs example">
+                    <Tab label="System" {...a11yProps(0)} />
+                    <Tab label="Units" {...a11yProps(1)} />
+                    <Tab label="Reports" {...a11yProps(2)} />
+                </Tabs>
+            </AppBar>
+
             <h1>{star.name}</h1>
 
-            <div className={classes.value}>
-                <BuildIcon />
-                {star.industry}
-                {isMine && !userIsReady && <Button variant="contained" color="primary" onClick={() => plusIndustry(star.id)}>
-                    +
-                </Button>}
-                {comPlusInd > 0 && <p>+{comPlusInd}</p>}
-            </div>
-            <div className={classes.value}>
-                <MonetizationOnIcon /> {star.economy}
-                {isMine && !userIsReady && <Button variant="contained" color="primary" onClick={() => plusEconomy(star.id)}>
-                    +
-                </Button>}
-                {comPlusEco > 0 && <p>+{comPlusEco}</p>}
-            </div>
-            <div className={classes.value}>
-                <SecurityIcon /> {star.defense}
-                {isMine && !userIsReady && star.defense < star.industry && <Button variant="contained" color="primary" onClick={() => plusDefense(star.id)}>
-                    +
-                </Button>}
-                {comPlusDef > 0 && <p>+{comPlusDef}</p>}
-            </div>
-            <div className={classes.value}>
-                <PeopleAltIcon /> {star.welfare}
-                {isMine && !userIsReady && <Button variant="contained" color="primary" onClick={() => plusWelfare(star.id)}>
-                    +
-                </Button>}
-                {comPlusWlf > 0 && <p>+{comPlusWlf}</p>}
-            </div>
+            <TabPanel value={tab} index={0}>
+                <h2>System Infrastructure</h2>
 
-            <h2>Units</h2>
+                <div className={classes.value}>
+                    <BuildIcon />
+                    {star.industry}
+                    {isMine && !userIsReady && (
+                        <Button variant="contained" color="primary" onClick={() => plusIndustry(star.id)}>
+                            +
+                        </Button>
+                    )}
+                    {comPlusInd > 0 && <p>+{comPlusInd}</p>}
+                </div>
+                <div className={classes.value}>
+                    <MonetizationOnIcon /> {star.economy}
+                    {isMine && !userIsReady && (
+                        <Button variant="contained" color="primary" onClick={() => plusEconomy(star.id)}>
+                            +
+                        </Button>
+                    )}
+                    {comPlusEco > 0 && <p>+{comPlusEco}</p>}
+                </div>
+                <div className={classes.value}>
+                    <SecurityIcon /> {star.defense}
+                    {isMine && !userIsReady && star.defense < star.industry && (
+                        <Button variant="contained" color="primary" onClick={() => plusDefense(star.id)}>
+                            +
+                        </Button>
+                    )}
+                    {comPlusDef > 0 && <p>+{comPlusDef}</p>}
+                </div>
+                <div className={classes.value}>
+                    <PeopleAltIcon /> {star.welfare}
+                    {isMine && !userIsReady && (
+                        <Button variant="contained" color="primary" onClick={() => plusWelfare(star.id)}>
+                            +
+                        </Button>
+                    )}
+                    {comPlusWlf > 0 && <p>+{comPlusWlf}</p>}
+                </div>
+            </TabPanel>
 
-            {units.map((u: UnitModel) => {
-                const isSelected = selectedUnits.find((um: UnitModel) => um.id === u.id);
-                
-                if(unitsInFleet.includes(u.id)) {
-                    return null;
-                }
-                return (
-                    <UnitInfo key={u.id} unit={u} onClick={selectUnit} selected={isSelected !== undefined} />
-                );
-            })}
+            <TabPanel value={tab} index={1}>
+                <h2>Units</h2>
 
-            {shipsUnderConstruction.map((s: Ship, ind: number) => {
-                return (
-                    <div key={`ship-${ind}`} className="shipUnderConstruction">
-                        Buidling: <ShipInfo ship={s} key={`ship${ind}`} />
-                    </div>
-                )
-            })}
+                {units.map((u: UnitModel) => {
+                    const isSelected = selectedUnits.find((um: UnitModel) => um.id === u.id);
 
+                    if (unitsInFleet.includes(u.id)) {
+                        return null;
+                    }
+                    return <UnitInfo key={u.id} unit={u} onClick={selectUnit} selected={isSelected !== undefined} />;
+                })}
 
+                {shipsUnderConstruction.map((s: Ship, ind: number) => {
+                    return (
+                        <div key={`ship-${ind}`} className="shipUnderConstruction">
+                            Buidling: <ShipInfo ship={s} key={`ship${ind}`} />
+                        </div>
+                    );
+                })}
 
+                {selectedUnits.length > 0 && fleet.length === 0 && !userIsReady && (
+                    <Button variant="contained" color="primary" onClick={setFleet}>
+                        Move Selected Units
+                    </Button>
+                )}
+                {fleet.length > 0 && inSameLocation(fleet[0].location, star.location) && !userIsReady && (
+                    <Button variant="contained" color="secondary" onClick={cancelFleet}>
+                        Cancel Fleet
+                    </Button>
+                )}
+                {fleet.length > 0 && !inSameLocation(fleet[0].location, star.location) && !userIsReady && (
+                    <Button variant="contained" color="primary" onClick={moveFleet}>
+                        Move Fleet Here
+                    </Button>
+                )}
 
+                <h3>Build Ships</h3>
 
-            {selectedUnits.length > 0 && fleet.length === 0 && !userIsReady && <Button variant="contained" color="primary" onClick={setFleet}>Move Selected Units</Button>}
-            {fleet.length > 0 && inSameLocation(fleet[0].location, star.location) && !userIsReady && <Button variant="contained" color="secondary" onClick={cancelFleet}>Cancel Fleet</Button>}
-            {fleet.length > 0 && !inSameLocation(fleet[0].location, star.location) && !userIsReady && <Button variant="contained" color="primary" onClick={moveFleet}>Move Fleet Here</Button>}
+                {faction &&
+                    getFactionShips(faction.id).map((ship: Ship) => {
+                        const canAfford = faction.money >= ship.cost;
+                        const enoughIndustry = star.industry >= ship.minIndustry;
+                        const canBuild = canAfford && enoughIndustry && isMine && !userIsReady;
 
+                        return (
+                            <div key={ship.name}>
+                                <ShipInfo ship={ship} />
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={!canBuild}
+                                    onClick={() => buildUnit(ship, star.location)}
+                                >
+                                    Build
+                                </Button>
+                            </div>
+                        );
+                    })}
+            </TabPanel>
 
-            <h3>Build Ships</h3>
+            <TabPanel value={tab} index={2}>
+                <h2>Report</h2>
 
-            {faction && getFactionShips(faction.id).map((ship: Ship) => {
+                {star.reports.length === 0 && <p>No reports in the system</p>}
+                {star.reports.map((r: Report, ind: number) => {
+                    return (
+                        <div key={`${star.id}-rep-${ind}`} className={classes.report}>
+                            <h3>{r.type}</h3>
 
-
-                const canAfford = faction.money >= ship.cost;
-                const enoughIndustry = star.industry >= ship.minIndustry;                
-                const canBuild = canAfford && enoughIndustry && isMine && !userIsReady;
-
-                return (
-                    <div key={ship.name}>
-                        <ShipInfo ship={ship} />
-                        <Button variant="contained" color="primary" disabled={!canBuild} onClick={() => buildUnit(ship, star.location)}>Build</Button>
-                    </div>
-                    
-                )
-
-
-            })}
-
+                            {r.text.map((s: string, i: number) => {
+                                return <p key={`${star.id}-${ind}-s-${i}`}>{s}</p>;
+                            })}
+                        </div>
+                    );
+                })}
+            </TabPanel>
         </div>
     );
 };

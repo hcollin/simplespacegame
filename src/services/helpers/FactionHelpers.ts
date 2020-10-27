@@ -2,7 +2,7 @@ import { joki } from "jokits-react";
 import DATASHIPS from "../../data/dataShips";
 import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
-import { FactionModel, GameModel, Ship } from "../../models/Models";
+import { FactionModel, FactionState, GameModel, Ship } from "../../models/Models";
 import { factionValues } from "../../utils/factionUtils";
 import { arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
 
@@ -35,7 +35,7 @@ export function createNewFaction(): FactionModel {
     const fm: FactionModel = {
         id: `faction-${rnd(1, 9999)}`,
         money: 0,
-        done: false,
+        state: FactionState.PLAYING,
         name: getFactionName(),
         playerId: pl ? pl.id : "",
         color: factionColors.pop() || "#FFF",

@@ -2,12 +2,21 @@ export interface GameObject {
     id: string;
 }
 
+export enum GameState {
+    "INIT",
+    "OPEN",
+    "TURN",
+    "PROCESSING",
+    "ENDED",
+}
+
 export interface GameModel extends GameObject {
     turn: number;
     factions: FactionModel[];
     units: UnitModel[];
     systems: SystemModel[];
     factionsReady: string[];
+    state: GameState;
 }
 
 export interface Ship extends GameObject{
@@ -46,13 +55,22 @@ export interface SystemModel extends GameObject {
     reports: Report[];
 }
 
+export enum FactionState {
+    "INIT",
+    "PLAYING",
+    "DONE",
+    "WON",
+    "LOST",
+}
+
 export interface FactionModel extends GameObject {
     name: string;
     money: number;
-    done: boolean;
+    state: FactionState;
     color: string;
     iconFileName: string;
     playerId: string;
+
 }
 
 

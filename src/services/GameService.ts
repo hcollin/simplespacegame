@@ -2,7 +2,17 @@ import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
 import { joki } from "jokits-react";
 
 import { BuildUnitCommand, Command, CommandType, FleetCommand, SystemPlusCommand } from "../models/Commands";
-import { GameModel, SystemModel, UnitModel, Coordinates, FactionModel, CombatEvent, ReportType } from "../models/Models";
+import {
+    GameModel,
+    SystemModel,
+    UnitModel,
+    Coordinates,
+    FactionModel,
+    CombatEvent,
+    ReportType,
+    GameState,
+    FactionState,
+} from "../models/Models";
 import { User } from "../models/User";
 import { factionValues } from "../utils/factionUtils";
 import { inSameLocation } from "../utils/locationUtils";
@@ -22,35 +32,39 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                     processTurn();
                     break;
                 case "ready":
-                    factionReady();
+                    factionReady(event.data);
                     break;
-
             }
         }
     }
 
-    function factionReady() {
+    function factionReady(factionId?: string) {
+        if (factionId) {
+            _setFactionDone(factionId);
+            return;
+        }
         const user = api.api.getServiceState<User>("UserService");
         if (user) {
-
             const faction = getFactionByUsedId(game.factions, user.id);
             if (faction) {
-                console.log("READY!", user.name, faction.name);
-                game.factionsReady.push(faction.id);
-                sendUpdate();
-
-
-                if (game.factionsReady.length === game.factions.length) {
-                    processTurn();
-                }
-
+                _setFactionDone(faction.id);
             }
-
         }
+    }
 
+    function _setFactionDone(factionId: string) {
+        if (!game.factionsReady.includes(factionId)) {
+            game.factionsReady.push(factionId);
+            sendUpdate();
+
+            if (game.factionsReady.length === game.factions.length) {
+                processTurn();
+            }
+        }
     }
 
     function processTurn() {
+        if (game.state !== GameState.TURN) return;
 
         game.systems = game.systems.map((sm: SystemModel) => {
             sm.reports = [];
@@ -70,6 +84,8 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         // Process economy
         game = processEconomy(game);
 
+        // Win Conditions
+        game = processWinConditions(game);
 
         // Increase turn counter
         game.turn++;
@@ -98,6 +114,49 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         eventHandler,
         getState,
     };
+}
+
+function processWinConditions(game: GameModel): GameModel {
+    const winners: string[] = [];
+
+    // If any player controls half or more of the ringWorlds
+    const factionControlsRingworlds: Map<string, number> = new Map<string, number>();
+    let totalRingWorlds = 0;
+    game.systems.forEach((sm: SystemModel) => {
+        if (sm.ringWorld === true) {
+            totalRingWorlds++;
+            if (sm.ownerFactionId !== "") {
+                if (!factionControlsRingworlds.has(sm.ownerFactionId)) {
+                    factionControlsRingworlds.set(sm.ownerFactionId, 0);
+                }
+                const owns = factionControlsRingworlds.get(sm.ownerFactionId);
+                if (owns) {
+                    factionControlsRingworlds.set(sm.ownerFactionId, owns + 1);
+                }
+            }
+        }
+    });
+
+    factionControlsRingworlds.forEach((owned: number, owner: string) => {
+        if (owned / totalRingWorlds >= 0.5) {
+            winners.push(owner);
+        }
+    });
+
+    // If there is a winner(s) mark them down and end the game.
+    if (winners.length > 0) {
+        game.factions = game.factions.map((fm: FactionModel) => {
+            if (winners.includes(fm.id)) {
+                fm.state = FactionState.WON;
+            } else {
+                fm.state = FactionState.LOST;
+            }
+            return { ...fm };
+        });
+        game.state = GameState.ENDED;
+    }
+
+    return { ...game };
 }
 
 function processMovementCommands(commands: Command[], oldGame: GameModel): GameModel {
@@ -137,13 +196,11 @@ function processSystemCommands(commands: Command[], oldGame: GameModel): GameMod
 }
 
 function processInvasion(oldGame: GameModel): GameModel {
-
     let game = { ...oldGame };
 
     const invadedSystems: SystemModel[] = [];
 
     oldGame.units.forEach((um: UnitModel) => {
-
         const star = game.systems.find((s: SystemModel) => inSameLocation(s.location, um.location));
         if (star && star.ownerFactionId !== um.factionId) {
             star.ownerFactionId = um.factionId;
@@ -152,21 +209,16 @@ function processInvasion(oldGame: GameModel): GameModel {
     });
 
     invadedSystems.forEach((sm: SystemModel) => {
-        game = updateSystemInGame(game, sm);
-    })
+        game = addReportToSystem(game, sm, ReportType.EVENT, [sm.ownerFactionId], [`System Conquered`]);
+    });
 
     return game;
-
 }
 
 function processEconomy(game: GameModel): GameModel {
-
-
-
     // const incr = game.systems.reduce((money: Map<string, number>, star: SystemModel) => {
 
     //     if (star.ownerFactionId) {
-
 
     //         if (!money.has(star.ownerFactionId)) {
     //             money.set(star.ownerFactionId, 0);
@@ -182,29 +234,22 @@ function processEconomy(game: GameModel): GameModel {
     // }, new Map<string, number>())
 
     game.factions = game.factions.map((fm: FactionModel) => {
-
         const values = factionValues(game, fm.id);
 
         fm.money += values.income;
         return { ...fm };
-
     });
 
     return { ...game };
 }
 
-
-
 function processCombats(game: GameModel): GameModel {
-
-
     const combats: CombatEvent[] = [];
 
     game.systems.forEach((star: SystemModel) => {
         const unitsInSystem = game.units.filter((unit: UnitModel) => inSameLocation(star.location, unit.location));
 
         if (unitsInSystem.length > 0) {
-
             const factions = unitsInSystem.reduce((factions: Set<string>, unit: UnitModel) => {
                 factions.add(unit.factionId);
                 return factions;
@@ -225,7 +270,7 @@ function processCombats(game: GameModel): GameModel {
     combats.length > 0 && console.log("COMBATS", combats);
     combats.forEach((combat: CombatEvent) => {
         game = resolveCombat(game, combat);
-    })
+    });
 
     return { ...game };
 }
@@ -252,8 +297,6 @@ function processSystemIndustryCommand(command: SystemPlusCommand, game: GameMode
 }
 
 function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameModel): GameModel {
-
-
     const faction = getFactionById(game.factions, command.factionId);
 
     if (faction) {
@@ -268,7 +311,6 @@ function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameMode
 
     markCommandDone(command.id);
     return { ...game };
-
 }
 
 function processSysteDefenseCommand(command: SystemPlusCommand, game: GameModel): GameModel {
@@ -317,9 +359,7 @@ function getUnitFromGame(game: GameModel, unitId: string): UnitModel {
     return unit;
 }
 
-
 function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
-
     function countFactionsInUnits(units: UnitModel[]): number {
         const factions = units.reduce((factions: Set<string>, unit: UnitModel) => {
             factions.add(unit.factionId);
@@ -329,13 +369,11 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
     }
 
     function processCombatRound(combat: CombatEvent): CombatEvent {
-
         combat.round++;
         combat.log.push(`Combat Round ${combat.round} starts`);
 
         // Create dice pool for all factions
         const dicePools = combat.units.reduce((dicePool: Map<string, number>, unit: UnitModel) => {
-
             if (!dicePool.has(unit.factionId)) {
                 dicePool.set(unit.factionId, 0);
             }
@@ -344,7 +382,6 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
             if (currentPool !== undefined) {
                 dicePool.set(unit.factionId, currentPool + unit.weapons);
             }
-
 
             return dicePool;
         }, new Map<string, number>());
@@ -356,8 +393,6 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
             }
         }
 
-
-
         // Roll dice
 
         const hits: Map<string, number> = new Map<string, number>();
@@ -365,7 +400,7 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
         dicePools.forEach((pool: number, factionId: string) => {
             combat.log.push(`${factionId} rolls ${pool} dice!`);
 
-            const rolls: number[] = []
+            const rolls: number[] = [];
             for (let i = 0; i < pool; i++) {
                 rolls.push(rnd(1, 10));
             }
@@ -377,20 +412,17 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
             hits.set(factionId, fHits);
         });
 
-
-
         // Assign hits
         hits.forEach((hits: number, factionId: string) => {
-
             let unassignedHits: number = hits;
             while (unassignedHits > 0) {
-
                 const targetUnit = combat.units.find((um: UnitModel) => um.factionId !== factionId);
                 if (targetUnit) {
-
                     targetUnit.damage++;
                     unassignedHits--;
-                    combat.log.push(`${targetUnit.name} from ${targetUnit.factionId} takes one hit and now has ${targetUnit.damage} damage`);
+                    combat.log.push(
+                        `${targetUnit.name} from ${targetUnit.factionId} takes one hit and now has ${targetUnit.damage} damage`
+                    );
 
                     if (targetUnit.damage >= targetUnit.hull) {
                         combat.log.push(`${targetUnit.name} from ${targetUnit.factionId} has been destroyed`);
@@ -406,8 +438,6 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
                 } else {
                     unassignedHits = 0;
                 }
-
-
             }
         });
 
@@ -422,7 +452,6 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
         if (factionCount <= 1) {
             combat.resolved = true;
         }
-
 
         return { ...combat };
     }
@@ -449,37 +478,39 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
         return !remainingUnitIds.includes(umid);
     });
 
-    game.units = game.units.filter((um: UnitModel) => {
-        return !destroyedUnitIds.includes(um.id);
-    }).map((um: UnitModel) => {
-        if (remainingUnitIds.includes(um.id)) {
-            const unit = combat.units.find((umm: UnitModel) => umm.id = um.id);
-            if (unit) {
-                return unit;
+    game.units = game.units
+        .filter((um: UnitModel) => {
+            return !destroyedUnitIds.includes(um.id);
+        })
+        .map((um: UnitModel) => {
+            if (remainingUnitIds.includes(um.id)) {
+                const unit = combat.units.find((umm: UnitModel) => (umm.id = um.id));
+                if (unit) {
+                    return unit;
+                }
             }
-        }
-        return um;
-    });
+            return um;
+        });
 
     const system = { ...combat.system };
 
     const factionIds: string[] = origCombat.units.reduce((fids: string[], u: UnitModel) => {
-        if(!fids.includes(u.factionId) && u.factionId) {
+        if (!fids.includes(u.factionId) && u.factionId) {
             fids.push(u.factionId);
         }
         return fids;
     }, []);
 
-    system.reports.push({
-        factions: factionIds,
-        turn: game.turn,
-        type: ReportType.COMBAT,
-        text: combat.log,
-    });
 
+    return addReportToSystem(game, system, ReportType.COMBAT, factionIds, combat.log);
+    // system.reports.push({
+    //     factions: factionIds,
+    //     turn: game.turn,
+    //     type: ReportType.COMBAT,
+    //     text: combat.log,
+    // });
 
-
-    return updateSystemInGame(game, system);
+    // return updateSystemInGame(game, system);
 }
 
 function updateSystemInGame(game: GameModel, updatedSystem: SystemModel): GameModel {
@@ -514,7 +545,6 @@ function updateFactionInGame(game: GameModel, faction: FactionModel): GameModel 
         return fm;
     });
     return { ...game };
-
 }
 
 function markCommandDone(commandId: string) {
@@ -523,4 +553,17 @@ function markCommandDone(commandId: string) {
         action: "commandDone",
         data: commandId,
     });
+}
+
+
+function addReportToSystem(game: GameModel, system: SystemModel, type: ReportType, factionIds: string[], texts: string[]): GameModel {
+    system.reports.push({
+        factions: factionIds,
+        turn: game.turn,
+        type: type,
+        text: texts,
+    });
+
+    return updateSystemInGame(game, system);
+
 }
