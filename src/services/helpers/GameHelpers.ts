@@ -20,7 +20,7 @@ export function createNewGame(playerCount = 4): GameModel {
     // 8 players
     const searchPoints = playerCount > 4 ? [[12.5, 12.5], [50, 12.5], [87.5, 12.5], [12.5, 50], [87.5, 50], [12.5, 87.5], [50, 87.5], [87.5, 87.5]] : [[12.5, 12.5], [87.5, 12.5], [12.5, 87.5], [87.5, 87.5]];
 
-    const starLocs = stars.map((s: SystemModel) => s.location);
+    const starLocs = stars.filter((s: SystemModel) => s.ringWorld !== true).map((s: SystemModel) => s.location);
 
     factions.forEach((fm: FactionModel, index: number) => {
 

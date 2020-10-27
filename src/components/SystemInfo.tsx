@@ -71,10 +71,10 @@ const SystemInfo: FC = () => {
     if (star === null || !user) return null;
 
     function selectUnit(unit: UnitModel) {
-        console.log(unit.id, faction);
+        
         if (unit && faction && unit.factionId === faction.id) {
             const isSelected = selectedUnits.find((um: UnitModel) => um.id === unit.id) !== undefined;
-            console.log("Select Unit", unit, isSelected);
+            
             if (isSelected) {
                 setSelectedUnits((prev: UnitModel[]) => prev.filter((um: UnitModel) => um.id !== unit.id));
             } else {
@@ -223,7 +223,11 @@ const SystemInfo: FC = () => {
                 const canBuild = canAfford && enoughIndustry && isMine && !userIsReady;
 
                 return (
-                    <Button key={`ship-${ship.name}`} variant="contained" color="primary" disabled={!canBuild} onClick={() => buildUnit(ship, star.location)}>{ship.name}</Button>
+                    <div key={ship.name}>
+                        <ShipInfo ship={ship} />
+                        <Button variant="contained" color="primary" disabled={!canBuild} onClick={() => buildUnit(ship, star.location)}>Build</Button>
+                    </div>
+                    
                 )
 
 

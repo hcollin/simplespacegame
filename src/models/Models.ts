@@ -40,8 +40,10 @@ export interface SystemModel extends GameObject {
     economy: number;
     defense: number;
     welfare: number;
-
     color: string;
+    ringWorld: boolean;
+    keywords: string[];
+    reports: Report[];
 }
 
 export interface FactionModel extends GameObject {
@@ -49,6 +51,7 @@ export interface FactionModel extends GameObject {
     money: number;
     done: boolean;
     color: string;
+    iconFileName: string;
     playerId: string;
 }
 
@@ -60,4 +63,17 @@ export interface CombatEvent {
     round: number;
     log: string[];
     resolved: boolean;
+}
+
+export enum ReportType {
+    COMBAT = "COMBAT",
+    COMMAND = "COMMAND",
+    EVENT = "EVENT",
+}
+
+export interface Report {
+    factions: string[];
+    turn: number;
+    type: ReportType;
+    text: string[];
 }

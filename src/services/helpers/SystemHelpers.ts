@@ -11,8 +11,8 @@ let sysIds = 1000;
 export function createNewSystem(ax = 1, ay = 1, as = 99): SystemModel {
     const id = sysIds++;
 
-    const rx = rnd(0, as/2)*2;
-    const ry = rnd(0, as/2)*2;
+    const rx = rnd(0, as / 2) * 2;
+    const ry = rnd(0, as / 2) * 2;
 
     const x = ax + rx;
     const y = ay + ry;
@@ -30,6 +30,9 @@ export function createNewSystem(ax = 1, ay = 1, as = 99): SystemModel {
             y,
         },
         ownerFactionId: "",
+        ringWorld: false,
+        keywords: [],
+        reports: [],
     };
 
     return star;
@@ -59,8 +62,6 @@ export function createRandomMap(count: number): SystemModel[] {
 
         const star = createNewSystem(conf[0], conf[1], conf[2]);
 
-
-
         if (
             stars.findIndex(
                 (sm: SystemModel) =>
@@ -71,8 +72,44 @@ export function createRandomMap(count: number): SystemModel[] {
         }
     }
 
+    const st = 11;
+
+    const ringWorldAreas: [number, number, number, number][] = [
+        [st, st, st, c], [st*4, st, st, c * 2], [st*7, st, st, c * 3],
+        [st, st*4, st, c * 4], [st*4, st*4, st, c * 6], [st*7, st*4, st, c * 7],
+        [st, st*7, st, c * 8], [st*4, st*7, st, c * 9], [st*7, st*7, st, count],
+    ];
+
+    ringWorldAreas.forEach((conf: [number, number, number, number], ind: number) => {
+
+        function createRingWorld(conf: [number, number, number, number], currentStars: SystemModel[]): boolean {
+            const star = createNewSystem(conf[0], conf[1], conf[2]);
+
+            star.ringWorld = true;
+
+            if (
+                currentStars.findIndex(
+                    (sm: SystemModel) =>
+                        (sm.location.x === star.location.x && sm.location.y === star.location.y) || sm.name === star.name
+                ) === -1
+            ) {
+                currentStars.push(star);
+                return true;
+            }
+            return false;
+        }
+
+        while(createRingWorld(conf, stars) === false) {
+
+        }
+
+    })
+
+
     return stars;
 }
+
+
 
 export function randomStarName() {
     const gr = roll(15) ? ` ${arnd(greekAlphabet)}` : "";
@@ -81,12 +118,12 @@ export function randomStarName() {
 }
 
 
-export function getSystemById(systemId: string): SystemModel|undefined {
+export function getSystemById(systemId: string): SystemModel | undefined {
     const game = joki.service.getState("GameService") as GameModel;
     return game.systems.find((sm: SystemModel) => sm.id === systemId);
 }
 
-export function getSystemByCoordinates(coords: Coordinates): SystemModel|undefined {
+export function getSystemByCoordinates(coords: Coordinates): SystemModel | undefined {
     const game = joki.service.getState("GameService") as GameModel;
     return game.systems.find((sm: SystemModel) => inSameLocation(sm.location, coords));
 }

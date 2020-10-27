@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         alignItems: "center",
 
         "& >  div": {
+
             marginRight: "1rem",
             padding: "0 0.5rem",
             borderLeft: "solid 1px black",
@@ -39,7 +40,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
                     display: "block",
                     fontSize: "1rem",
                 }
+            },
 
+            "& > img": {
+                height: "80%",
             },
 
             "& > div.mainView": {
@@ -103,10 +107,12 @@ const FactionHeader: FC = () => {
     const isReady = game.factionsReady.includes(faction.id);
     // console.log(faction.name, faction.id, game.factionsReady, isReady)
     return (
-        <div className={classes.root}>
+        <div className={classes.root} style={{background: `linear-gradient(to right, ${faction.color} 0,  white 20%)`}}>
             <div>
-    <h1>{faction.name} <span>{faction.playerId}</span></h1>
-                
+                <img src={require(`../images/symbols/${faction.iconFileName}`)} />
+            </div>
+            <div>
+                <h1>{faction.name} <span>{faction.playerId}</span></h1>
             </div>
             <div>
                 <div className="mainView">
@@ -124,8 +130,6 @@ const FactionHeader: FC = () => {
                         <label>income:</label> <span>{values.income}</span>
                     </div>
                 </div>
-
-
 
             </div>
             <div>

@@ -2,7 +2,7 @@ import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
 import { joki } from "jokits-react";
 
 import { BuildUnitCommand, Command, CommandType, FleetCommand, SystemPlusCommand } from "../models/Commands";
-import { GameModel, SystemModel, UnitModel, Coordinates, FactionModel, CombatEvent } from "../models/Models";
+import { GameModel, SystemModel, UnitModel, Coordinates, FactionModel, CombatEvent, ReportType } from "../models/Models";
 import { User } from "../models/User";
 import { factionValues } from "../utils/factionUtils";
 import { inSameLocation } from "../utils/locationUtils";
@@ -40,7 +40,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 sendUpdate();
 
 
-                if(game.factionsReady.length === game.factions.length) {
+                if (game.factionsReady.length === game.factions.length) {
                     processTurn();
                 }
 
@@ -51,6 +51,12 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
     }
 
     function processTurn() {
+
+        game.systems = game.systems.map((sm: SystemModel) => {
+            sm.reports = [];
+            return sm;
+        });
+
         const commands = api.api.getServiceState<Command[]>("CommandService");
 
         if (commands) {
@@ -455,8 +461,25 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
         return um;
     });
 
+    const system = { ...combat.system };
 
-    return { ...game };
+    const factionIds: string[] = origCombat.units.reduce((fids: string[], u: UnitModel) => {
+        if(!fids.includes(u.factionId) && u.factionId) {
+            fids.push(u.factionId);
+        }
+        return fids;
+    }, []);
+
+    system.reports.push({
+        factions: factionIds,
+        turn: game.turn,
+        type: ReportType.COMBAT,
+        text: combat.log,
+    });
+
+
+
+    return updateSystemInGame(game, system);
 }
 
 function updateSystemInGame(game: GameModel, updatedSystem: SystemModel): GameModel {
