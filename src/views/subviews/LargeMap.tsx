@@ -2,17 +2,17 @@ import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import { KonvaEventObject } from "konva/types/Node";
 import React, { FC, useState } from "react";
 import { Circle, Group, Image, Layer, Line, Ring, Stage, Star, Text } from "react-konva";
-import useSelectedSystem from "../hooks/useSelectedSystem";
-import useWindowSize from "../hooks/useWIndowResize";
-import { SystemModel, FactionModel, UnitModel, Coordinates, GameModel, Report, ReportType } from "../models/Models";
-import { getFactionById } from "../services/helpers/FactionHelpers";
+import useSelectedSystem from "../../hooks/useSelectedSystem";
+import useWindowSize from "../../hooks/useWIndowResize";
+import { SystemModel, FactionModel, UnitModel, Coordinates, GameModel, Report, ReportType } from "../../models/Models";
+import { getFactionById } from "../../services/helpers/FactionHelpers";
 import useImage from "use-image";
-import useCurrentFaction from "../services/hooks/useCurrentFaction";
-import useMyCommands from "../hooks/useMyCommands";
-import { unitIsInFleet } from "../utils/commandUtils";
-import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
-import { inSameLocation } from "../utils/locationUtils";
-import useUnitSelection from "../hooks/useUnitSelection";
+import useCurrentFaction from "../../services/hooks/useCurrentFaction";
+import useMyCommands from "../../hooks/useMyCommands";
+import { unitIsInFleet } from "../../utils/commandUtils";
+import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../../models/Commands";
+import { inSameLocation } from "../../utils/locationUtils";
+import useUnitSelection from "../../hooks/useUnitSelection";
 import { useService } from "jokits-react";
 
 const useStyles = makeStyles((theme: Theme) =>

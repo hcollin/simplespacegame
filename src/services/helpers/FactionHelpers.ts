@@ -23,8 +23,6 @@ const players = [...DATAUSERS];
 
 const fonts: string[] = shuffle([
     "Impact",
-    "Arial",
-    "Times New Roman",
     "Averia Serif Libre",
     "Bebas Neue",
     "Carter One",

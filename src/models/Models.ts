@@ -55,6 +55,7 @@ export interface SystemModel extends GameObject {
     economy: number;
     defense: number;
     welfare: number;
+    
     color: string;
     ringWorld: boolean;
     keywords: string[];

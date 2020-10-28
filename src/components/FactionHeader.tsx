@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         position: "absolute",
         top: 0,
         left: 0,
+        zIndex: 100,
         height: "5rem",
         width: "calc(100% - 28rem)",
         display: "flex",
@@ -39,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             "& > h1": {
                 color: "white",
                 fontSize: "1.8rem",
+                fontWeight: "normal",
                 textShadow: "2px 2px 0 black, -2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black",
                 "& > span": {
                     display: "block",

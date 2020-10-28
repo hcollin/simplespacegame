@@ -70,8 +70,8 @@ export function expensesCalculator(game: GameModel, factionId: string): number {
 
     game.systems.forEach((star: SystemModel) => {
         if (star.ownerFactionId === factionId) {
-            const indExp = star.industry < 4 ? 0 : Math.floor(star.industry / 2);
-            const welExp = star.welfare < 5 ? 0 : Math.floor(star.welfare / 2);
+            const indExp = star.industry < 3 ? 0 : Math.floor(star.industry / 2);
+            const welExp = star.welfare < 3 ? 0 : Math.floor(star.welfare / 2);
             const defExp = star.defense;
             expenses = expenses + indExp + welExp + defExp + 1;
         }
