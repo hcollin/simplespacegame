@@ -37,7 +37,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             minWidth: "8rem",
 
             "& > h1": {
+                color: "white",
                 fontSize: "1.8rem",
+                textShadow: "2px 2px 0 black, -2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black",
                 "& > span": {
                     display: "block",
                     fontSize: "1rem",
@@ -111,6 +113,10 @@ const FactionHeader: FC = () => {
     const totalRingWorlds = game.systems.filter((sm: SystemModel) => sm.ringWorld);
     const myRingWorlds = totalRingWorlds.filter((sm: SystemModel) => sm.ownerFactionId === faction.id);
 
+    const factionTitleStyle = {
+        fontFamily: faction.style.fontFamily ? faction.style.fontFamily : "Arial"
+    }
+
     // console.log(faction.name, faction.id, game.factionsReady, isReady)
     return (
         <div className={classes.root} style={{background: `linear-gradient(170deg, #222 0, ${faction.color} 10%,  white 50%, white 80%, gray 100%)`}}>
@@ -118,7 +124,7 @@ const FactionHeader: FC = () => {
                 <img src={require(`../images/symbols/${faction.iconFileName}`)} alt={`faction ${faction.name} logo`}/>
             </div>
             <div>
-                <h1>{faction.name} <span>{faction.playerId}</span></h1>
+    <h1 style={factionTitleStyle}>{faction.name} <span>{faction.playerId} {faction.style.fontFamily}</span></h1>
             </div>
             <div>
                 <div className="mainView">

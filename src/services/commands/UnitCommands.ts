@@ -24,3 +24,43 @@ export function moveUnits(units: UnitModel[], targetCoords: Coordinates) {
         data: command,
     });
 }
+
+
+export function doAddUnitToFleet(unit: UnitModel) {
+    joki.trigger({
+        to: "FleetService",
+        action: "addUnit",
+        data: unit,
+    });
+}
+
+export function doRemoveUnitFromFleet(unit: UnitModel) {
+    joki.trigger({
+        to: "FleetService",
+        action: "addUnit",
+        data: unit.id,
+    });
+}
+
+export function doSetFleetTarget(coordinates: Coordinates|null) {
+    joki.trigger({
+        to: "FleetService",
+        action: "setTarget",
+        data: coordinates,
+    });
+}
+
+
+export function doConfirmFleet(coordinates: Coordinates|null) {
+    joki.trigger({
+        to: "FleetService",
+        action: "confirm",
+    });
+}
+
+export function doCancelFleet(coordinates: Coordinates|null) {
+    joki.trigger({
+        to: "FleetService",
+        action: "cancel",
+    });
+}

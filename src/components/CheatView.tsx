@@ -71,13 +71,12 @@ const CheatView: FC = () => {
         });
     }
 
-
     return (
         <div className={classes.cheats}>
             <h1>Factions</h1>
             {game.factions.map((fm: FactionModel) => {
                 const isDone = game.factionsReady.includes(fm.id);
-                return <Button onClick={() => loginFaction(fm)} disabled={isDone} variant="contained" style={{marginBottom: "0.5rem"}} color={faction && faction.id === fm.id ? "primary": "default"}><img src={require(`../images/symbols/${fm.iconFileName}`)} alt={fm.name} height="32"/> {fm.name}</Button>
+                return <Button key={fm.id} onClick={() => loginFaction(fm)} disabled={isDone} variant="contained" style={{marginBottom: "0.5rem"}} color={faction && faction.id === fm.id ? "primary": "default"}><img src={require(`../images/symbols/${fm.iconFileName}`)} alt={fm.name} height="32"/> {fm.name}</Button>
             })}
 
             <h1>Dev Commands</h1>

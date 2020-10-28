@@ -1,9 +1,6 @@
-import { useAtom, useService } from "jokits-react";
+import { joki, useAtom, useService } from "jokits-react";
 import { useEffect, useState } from "react";
 import { GameModel, SystemModel } from "../models/Models";
-
-
-
 
 export default function useSelectedSystem(): [SystemModel | null, ((id: string | null) => void)] {
 
@@ -17,6 +14,11 @@ export default function useSelectedSystem(): [SystemModel | null, ((id: string |
 
         if (starId === "") {
             setStar(null);
+            joki.trigger({
+                from: "useSelectedSystem",
+                action: "systemSelected",
+                data: null,
+            });
             return;
         }
 
@@ -28,10 +30,15 @@ export default function useSelectedSystem(): [SystemModel | null, ((id: string |
                 if (sm.id === prev.id) return prev;
                 return sm;
             });
+            if(sm) {
+                joki.trigger({
+                    from: "useSelectedSystem",
+                    action: "systemSelected",
+                    data: sm,
+                });
+            }
+            
         }
-
-
-
     }, [starId, game]);
 
     function setNewStar(id: string | null) {

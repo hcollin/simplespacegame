@@ -4,7 +4,7 @@ import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
 import { FactionModel, FactionState, GameModel, Ship } from "../../models/Models";
 import { factionValues } from "../../utils/factionUtils";
-import { arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
+import { arnd, arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
 
 
 const factionColors = shuffle(['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4']);
@@ -21,14 +21,31 @@ let factionNoId = -1;
 
 const players = [...DATAUSERS];
 
+const fonts: string[] = shuffle([
+    "Impact",
+    "Arial",
+    "Times New Roman",
+    "Averia Serif Libre",
+    "Bebas Neue",
+    "Carter One",
+    "Coda",
+    "Fugaz One",
+    "Piedra",
+    "Righteous",
+    "Staatliches",
+    "Trade Winds",
+    "Candara",
+]);
+
 export function getFactionName() {
     factionNoId++;
     return `${np1s[factionNoId]} ${np2s[factionNoId]} ${np3s[factionNoId]}`;
 }
 
 export function createNewFaction(): FactionModel {
-    const pl = players.pop();
+    const pl = players.shift();
 
+    const ff = fonts.shift();
     
     
 
@@ -40,6 +57,9 @@ export function createNewFaction(): FactionModel {
         playerId: pl ? pl.id : "",
         color: factionColors.pop() || "#FFF",
         iconFileName: `abstract-${prnd(1,120)}.svg`,
+        style: {
+            fontFamily: ff || "Arial",
+        }
     }
 
     return fm;

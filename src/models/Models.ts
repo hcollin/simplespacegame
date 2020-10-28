@@ -19,6 +19,12 @@ export interface GameModel extends GameObject {
     state: GameState;
 }
 
+export interface Fleet {
+    units: UnitModel[];
+    target: Coordinates|null;
+
+}
+
 export interface Ship extends GameObject{
     name: string;
     weapons: number;
@@ -70,7 +76,12 @@ export interface FactionModel extends GameObject {
     color: string;
     iconFileName: string;
     playerId: string;
+    style: FactionStyle;
+}
 
+export interface FactionStyle {
+    fontFamily?: string;
+    fleetIcon?: string;
 }
 
 
