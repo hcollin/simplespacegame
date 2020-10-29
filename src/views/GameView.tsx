@@ -27,7 +27,7 @@ import HelpView from "./subviews/HelpView"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     factions: {
-        position: "absolute",
+        position: "fixed",
         top: 0,
         right: 0,
         bottom: 0,
@@ -42,13 +42,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         flexDirection: "row",
     },
     nextTurn: {
-        position: "absolute",
+        position: "fixed",
         bottom: "1rem",
         right: "1rem",
         zIndex: 100,
     },
     mainMenu: {
-        position: "absolute",
+        position: "fixed",
         bottom: 0,
         left: 0,
         zIndex: 100,

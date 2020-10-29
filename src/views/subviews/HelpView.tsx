@@ -17,11 +17,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         left: 0,
         zIndex: 2,
         width: "100%",
-        height: "100vh",
+        minHeight: "100vh",
         color: "#FFFD",
         background: "repeating-linear-gradient(0deg, #000 0, #222 4px, #111 16px)",
-        minHeight: "100vh",
+        height: "100&",
         padding: "2rem",
+        
 
         "& > div.page": {
             marginTop: "4rem",
@@ -30,6 +31,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             color: "#FFFE",
             borderRadius: "1rem",
             width: "calc(100% - 28rem)",
+            marginBottom: "6rem",
         },
     }
 }));

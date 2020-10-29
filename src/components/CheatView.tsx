@@ -8,7 +8,7 @@ import useCurrentFaction from "../services/hooks/useCurrentFaction";
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         cheats: {
-            position: "absolute",
+            position: "fixed",
             top: 0,
             right: 0,
             bottom: 0,

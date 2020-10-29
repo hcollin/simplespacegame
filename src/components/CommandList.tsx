@@ -11,7 +11,7 @@ import useCurrentFaction from "../services/hooks/useCurrentFaction";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     commands: {
-        position: "absolute",
+        position: "fixed",
         top: 0,
         right: "14rem",
         bottom: 0,

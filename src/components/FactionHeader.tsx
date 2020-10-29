@@ -15,7 +15,7 @@ import { playerDone } from "../services/commands/GameCommands";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
-        position: "absolute",
+        position: "fixed",
         top: 0,
         left: 0,
         zIndex: 100,
