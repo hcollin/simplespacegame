@@ -3,7 +3,7 @@ import { joki, useService } from "jokits-react";
 import React, { FC } from "react";
 import { FactionModel, GameModel } from "../models/Models";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
-import FactionInfo from "./FactionInfo";
+// import FactionInfo from "./FactionInfo";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

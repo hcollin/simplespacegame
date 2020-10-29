@@ -4,7 +4,7 @@ import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
 import { FactionModel, FactionState, GameModel, Ship } from "../../models/Models";
 import { factionValues } from "../../utils/factionUtils";
-import { arnd, arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
+import { arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
 
 
 const factionColors = shuffle(['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4']);

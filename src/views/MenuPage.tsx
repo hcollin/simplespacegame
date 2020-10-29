@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const MenuPage: FC = () => {
     const classes = useStyles();
     
-    const [playerCount, setPlayerCount] = useState<number>(4);
+    const [playerCount] = useState<number>(4);
 
     const [user, send] = useCurrentUser();
 

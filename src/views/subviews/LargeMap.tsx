@@ -44,7 +44,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 
     const faction = useCurrentFaction();
     const commands = useMyCommands();
-    const [fleet, fleetActions] = useUnitSelection();
+    const [fleet] = useUnitSelection();
     const [zoomLevel, setZoomLevel] = useState<number>(1);
     const [game] = useService<GameModel>("GameService");
 
@@ -70,34 +70,34 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 
     const showMoveLine = fleet.length > 0 && selectedSystem && !inSameLocation(selectedSystem.location, fleet[0].location);
 
-    function getLinePoints(fromLoc: Coordinates, toLoc: Coordinates, sizeMod: number, zoom: number): [number, number, number, number] {
+    // function getLinePoints(fromLoc: Coordinates, toLoc: Coordinates, sizeMod: number, zoom: number): [number, number, number, number] {
 
-        const x = h * (fromLoc.x / 100) * zoom;
-        const y = h * (fromLoc.y / 100) * zoom;
-
-
-        const ax = x + (sizeMod / 2);
-        const ay = y + (sizeMod / 2);
-        const tx = h * (toLoc.x / 100) * zoom;
-        const ty = h * (toLoc.y / 100) * zoom;
-        return [ax, ay, tx, ty];
-    }
-
-    function getMidPoint(fromLoc: Coordinates, toLoc: Coordinates, sizeMod: number, zoom: number): Coordinates {
-        const x = h * (fromLoc.x / 100) * zoom;
-        const y = h * (fromLoc.y / 100) * zoom;
+    //     const x = h * (fromLoc.x / 100) * zoom;
+    //     const y = h * (fromLoc.y / 100) * zoom;
 
 
-        const ax = x + (sizeMod / 2);
-        const ay = y + (sizeMod / 2);
-        const tx = h * (toLoc.x / 100) * zoom;
-        const ty = h * (toLoc.y / 100) * zoom;
+    //     const ax = x + (sizeMod / 2);
+    //     const ay = y + (sizeMod / 2);
+    //     const tx = h * (toLoc.x / 100) * zoom;
+    //     const ty = h * (toLoc.y / 100) * zoom;
+    //     return [ax, ay, tx, ty];
+    // }
 
-        return {
-            x: tx - ax / 2,
-            y: ty - ay / 2,
-        }
-    }
+    // function getMidPoint(fromLoc: Coordinates, toLoc: Coordinates, sizeMod: number, zoom: number): Coordinates {
+    //     const x = h * (fromLoc.x / 100) * zoom;
+    //     const y = h * (fromLoc.y / 100) * zoom;
+
+
+    //     const ax = x + (sizeMod / 2);
+    //     const ay = y + (sizeMod / 2);
+    //     const tx = h * (toLoc.x / 100) * zoom;
+    //     const ty = h * (toLoc.y / 100) * zoom;
+
+    //     return {
+    //         x: tx - ax / 2,
+    //         y: ty - ay / 2,
+    //     }
+    // }
 
 
 
@@ -221,7 +221,7 @@ interface CoordinateLineProps {
 const CoordinateLine: FC<CoordinateLineProps> = (props) => {
     const windowSize = useWindowSize();
 
-    const w = windowSize.width;
+    // const w = windowSize.width;
     const h = windowSize.height - 80;
 
     const x = h * (props.from.x / 100) * props.zoom;

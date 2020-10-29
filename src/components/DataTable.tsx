@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             fontSize: "1rem",
             fontWeight: "bold",
             padding: "0.25rem 1rem",
+            "&.center": {
+                textAlign: "center",
+            }
         }
     },
     tableBody: {
@@ -34,6 +37,15 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             borderBottom: "none",
             fontSize: "1rem",
             color: "#FFFD",
+
+            "&.center": {
+                textAlign: "center",
+            },
+
+            "&.bigText": {
+                fontSize: "1.4rem",
+            },
+
         }
     }
 }));
@@ -43,6 +55,8 @@ export interface ColumnProps {
     key: string;
     header: string;
     size: number | string;
+    className?: string;
+    wrapper?: (value: any, item: ObjectType|null, index: number, isHeader: boolean) => any;
 }
 
 interface ObjectType {
@@ -64,9 +78,10 @@ const DataTable: FC<DataTableProps> = (props: DataTableProps) => {
                 <TableHead classes={{root: classes.tableHead}}>
                     <TableRow>
                         {props.columns.map((c: ColumnProps) => {
+                            const content = c.wrapper !== undefined ? c.wrapper(c.header, null, -1, true ) : c.header;
                             return (
-                                <TableCell key={c.key} width={c.size}>
-                                    {c.header}
+                                <TableCell key={c.key} width={c.size} className={c.className || ""} >
+                                    {content}
                                 </TableCell>
                             )
                         })}
@@ -74,14 +89,15 @@ const DataTable: FC<DataTableProps> = (props: DataTableProps) => {
                 </TableHead>
 
                 <TableBody classes={{root: classes.tableBody}}>
-                    {props.rows.map((val: any) => {
+                    {props.rows.map((val: any, ind: number) => {
                         return (
                             <TableRow key={val.id}>
 
                                 {props.columns.map((c: ColumnProps) => {
+                                    const content = c.wrapper !== undefined ? c.wrapper(val[c.key], val, ind, false ) : val[c.key];
                                     return (
-                                        <TableCell key={`${val.id}-${c.key}`}>
-                                            {val[c.key]}
+                                        <TableCell key={`${val.id}-${c.key}`} className={c.className || ""}>
+                                            {content}
                                         </TableCell>
                                     )
 

@@ -18,7 +18,11 @@ import iconEconomySvg from '../images/iconEconomy.svg';
 import iconScienceSvg from '../images/iconScience.svg';
 import iconUnitsSvg from '../images/iconUnits.svg';
 import iconDiplomacySvg from '../images/iconDiplomacy.svg';
+import iconHelpSvg from '../images/iconHelp.svg';
+
 import EconomySheet from "./subviews/EconomySheet"
+import HelpView from "./subviews/HelpView"
+
 
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -130,6 +134,7 @@ const GameView: FC = () => {
             
             {view === "map" && <LargeMap systems={game.systems} factions={game.factions} units={game.units} />}
             {view === "economy" && <EconomySheet />}
+            {view === "help" && <HelpView />}
 
 
             {/* </div> */}
@@ -159,6 +164,9 @@ const GameView: FC = () => {
                 </div>
                 <div className={view === "diplomacy" ? "active": ""} onClick={() => setView("diplomacy")}>
                     <img src={iconDiplomacySvg} alt="Diplomacy View" />
+                </div>
+                <div className={view === "help" ? "active": ""} onClick={() => setView("help")}>
+                    <img src={iconHelpSvg} alt="Help View" />
                 </div>
             </div>
 

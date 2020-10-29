@@ -1,7 +1,7 @@
 import { SystemModel } from "../models/Models";
 
 
-interface SystemEconomy {
+export interface SystemEconomy extends SystemModel {
     income: number;
     expenses: number;
     industryExpenses: number;
@@ -12,19 +12,20 @@ interface SystemEconomy {
 
 
 
-export function getSystemEconomy(star: SystemModel):SystemEconomy {
+export function getSystemEconomy(star: SystemModel): SystemEconomy {
 
     const eco: SystemEconomy = {
+        ...star,
         income: star.economy,
         profit: 0,
         expenses: 0,
         industryExpenses:star.industry < 3 ? 0 : Math.floor(star.industry / 2),
         welfareExpenses:star.welfare < 3 ? 0 : Math.floor(star.welfare / 2),
         defenseExpenses: star.defense,  
-    }
+    };
     
     eco.expenses = eco.industryExpenses + eco.defenseExpenses + eco.welfareExpenses;
-    eco.profit = eco.income - eco.expenses;
+    eco.profit = eco.income - eco.expenses - 1;
 
     return eco;
 
