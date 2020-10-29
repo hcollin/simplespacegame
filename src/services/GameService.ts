@@ -51,6 +51,9 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 case "newGame":
                     newGame(event.data as NewGameOptions);
                     break;
+                case "updateFaction":
+                    updateFaction(event.data as FactionModel);
+                    break;
 
             }
         }
@@ -86,6 +89,11 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 processTurn();
             }
         }
+    }
+
+    function updateFaction(fm: FactionModel) {
+        game = updateFactionInGame(game, fm);
+        sendUpdate();
     }
 
     function processTurn() {

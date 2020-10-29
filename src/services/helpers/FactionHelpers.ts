@@ -2,7 +2,7 @@ import { joki } from "jokits-react";
 import DATASHIPS from "../../data/dataShips";
 import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
-import { FactionModel, FactionState, GameModel, Ship } from "../../models/Models";
+import { FactionModel, FactionState, GameModel, Ship, TechnologyField } from "../../models/Models";
 import { factionValues } from "../../utils/factionUtils";
 import { arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
 
@@ -42,14 +42,18 @@ export function getFactionName() {
 
 export function createNewFaction(): FactionModel {
     const pl = players.shift();
-
     const ff = fonts.shift();
     
-    
-
     const fm: FactionModel = {
         id: `faction-${rnd(1, 9999)}`,
         money: 0,
+        technologyFields: [
+            [TechnologyField.BIOLOGY, 0, 1],
+            [TechnologyField.BUSINESS, 0, 1],
+            [TechnologyField.CHEMISTRY, 0, 1],
+            [TechnologyField.PHYSICS, 0, 1],
+            [TechnologyField.SOCIOLOGY, 0, 1],
+        ],
         state: FactionState.PLAYING,
         name: getFactionName(),
         playerId: pl ? pl.id : "",
@@ -57,7 +61,8 @@ export function createNewFaction(): FactionModel {
         iconFileName: `abstract-${prnd(1,120)}.svg`,
         style: {
             fontFamily: ff || "Arial",
-        }
+        },
+        technology: [],
     }
 
     return fm;

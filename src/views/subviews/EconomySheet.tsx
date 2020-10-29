@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
             width: "100%",
             height: "100vh",
             color: "#FFFD",
-            background: "repeating-linear-gradient(0deg, #000 0, #222 4px, #111 16px)",
+            background: "repeating-linear-gradient(0deg, #000 0, #320 4px, #210 16px)",
             minHeight: "100vh",
             padding: "2rem",
 
@@ -142,6 +142,12 @@ const EconomySheet: FC = () => {
                 return <span className="green">{value}</span>;
             },
         },
+        {
+            key: "research",
+            header: "Research",
+            size: 100,
+            className: "center",
+        }
     ];
 
     console.log(mySystems);

@@ -70,19 +70,39 @@ export enum FactionState {
     "LOST",
 }
 
+export type FactionTechSetting = [TechnologyField, number, number];
+
 export interface FactionModel extends GameObject {
     name: string;
     money: number;
+    technologyFields: FactionTechSetting[];  // What field, total points, priority of techs
     state: FactionState;
     color: string;
     iconFileName: string;
     playerId: string;
     style: FactionStyle;
+    technology: string[];
 }
 
 export interface FactionStyle {
     fontFamily?: string;
     fleetIcon?: string;
+}
+
+export enum TechnologyField {
+    PHYSICS = "Physics",
+    CHEMISTRY = "Chemistry",
+    BIOLOGY = "Biology",
+    BUSINESS = "Business",
+    SOCIOLOGY = "Social",
+}
+
+
+export interface Technology {
+    id: string;
+    requirements: [TechnologyField, number][];
+    name: string;
+    description: string;
 }
 
 

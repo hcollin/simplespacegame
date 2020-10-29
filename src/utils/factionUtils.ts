@@ -1,5 +1,5 @@
 import { joki } from "jokits-react";
-import { FactionModel, GameModel, SystemModel, UnitModel } from "../models/Models";
+import { FactionModel, FactionTechSetting, GameModel, SystemModel, UnitModel } from "../models/Models";
 
 export function getFactionById(fid: string): FactionModel {
     const game = joki.service.getState("GameService") as GameModel;
@@ -50,17 +50,17 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
     });
 
     values.unitExpenses = game.units.reduce((sum: number, um: UnitModel) => {
-        if(um.factionId === factionId) {
+        if (um.factionId === factionId) {
             return sum + unitExpenses(um);
         }
         return sum;
-    },0 );
+    }, 0);
     values.unitCount = game.units.filter((um: UnitModel) => um.factionId === factionId).length;
 
     values.expenses = expensesCalculator(game, factionId);
-    
+
     values.systemExpenses = game.systems.reduce((sum: number, sm: SystemModel) => {
-        if(sm.ownerFactionId === factionId) {
+        if (sm.ownerFactionId === factionId) {
             sum += systemExpenses(sm);
         }
         return sum;
@@ -126,7 +126,7 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
 
 
 export function unitExpenses(um: UnitModel): number {
-    return um.cost >= 3 ? Math.floor(um.cost/3) : 1;
+    return um.cost >= 3 ? Math.floor(um.cost / 3) : 1;
 }
 
 export function systemExpenses(sm: SystemModel): number {
@@ -134,4 +134,47 @@ export function systemExpenses(sm: SystemModel): number {
     const welExp = sm.welfare < 3 ? 0 : Math.floor(sm.welfare / 2);
     const defExp = sm.defense;
     return indExp + welExp + defExp + 1;
+}
+
+export function researchPointGenerationCalculator(faction: FactionModel): number {
+
+    const game = joki.service.getState("GameService") as GameModel;
+
+    const points = game.systems.reduce((sum: number, sm: SystemModel) => {
+        if (sm.ownerFactionId === faction.id) {
+            sum += getSystemResearchPointGeneration(sm);
+        }
+        return sum;
+    }, 0);
+    return points;
+}
+
+export function getSystemResearchPointGeneration(sm: SystemModel): number {
+    const welfareCurve = [0, 1, 2, 1, 0, -1, -1, -2, -2, -3, -4];
+    let sum = 0;
+    sum += Math.floor((sm.industry + sm.defense) / 3);
+    sum += Math.floor(sm.economy / 4);
+    sum += sm.welfare < 10 ? welfareCurve[sm.welfare] : -5;
+    return sum;
+}
+
+export function researchPointDistribution(totalPoints: number, faction: FactionModel): number[] {
+
+    let points: number[] = []
+    const totalFocusPoints = faction.technologyFields.reduce((tot: number, tech: FactionTechSetting) => tot + tech[2], 0);
+    
+    const partPoint = totalFocusPoints > 0 ? totalPoints/totalFocusPoints : 0;
+    // const techDistribution = [0.50, 0.50, 0., 0.10, 0];
+    faction.technologyFields.forEach((tech: FactionTechSetting, index: number) => {
+
+        const curSum = points.reduce((tot: number, cur: number) => tot + cur, 0)
+        const remaining = totalPoints - curSum;
+        let newVal = Math.round(partPoint * tech[2]);
+        if(newVal > remaining) {
+            newVal = remaining;
+        }
+        points.push(Math.round(newVal));
+    });
+
+    return points;
 }
