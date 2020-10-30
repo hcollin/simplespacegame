@@ -58,6 +58,7 @@ export function createNewGame(playerCount = 4): GameModel {
         units: units,
         factionsReady: [],
         state: GameState.TURN,
+        trades: [],
     };
 
 

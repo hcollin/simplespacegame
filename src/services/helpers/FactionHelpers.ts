@@ -65,6 +65,7 @@ export function createNewFaction(): FactionModel {
             fontFamily: ff || "Arial",
         },
         technology: ["TECH-PROP-001"],
+
     }
 
     return fm;
@@ -75,7 +76,7 @@ export function getFactionById(factions: FactionModel[], id: string): FactionMod
     return factions.find((fm: FactionModel) => fm.id === id);
 }
 
-export function getFactionByUsedId(factions: FactionModel[], userId: string): FactionModel | undefined {
+export function getFactionByUserId(factions: FactionModel[], userId: string): FactionModel | undefined {
     return factions.find((fm: FactionModel) => fm.playerId === userId);
 }
 
@@ -90,7 +91,6 @@ export function factionCanDoMoreCommands(faction: FactionModel): boolean {
 
 
 export function getFactionShips(factionId: string): Ship[] {
-
     return DATASHIPS;
-
 }
+

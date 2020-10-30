@@ -33,7 +33,22 @@ const useStyles = makeStyles((theme: Theme) =>
             right: "29rem",
             minWidth: "30rem",
             padding: "3rem 1rem 1rem 1rem",
-            background: "white",
+            background: "#FFFD",
+            "& > button.close": {
+                position: "absolute",
+                top: "-0.5rem",
+                right: "-0.5rem",
+                width: "2rem",
+                height: "2rem",
+                zIndex: "1200",
+                borderRadius: "0.5rem",
+                fontWeight: "bold", 
+                boxShadow: "0 0 0.5rem 0.1rem #0008", 
+                cursor: "pointer",
+                "&:hover": {
+                    backgroundColor: "#F88",
+                }
+            }
         },
         tabs: {
             "& > nav": {
@@ -101,7 +116,7 @@ function TabPanel(props: TabPanelProps) {
 
 const SystemInfo: FC = () => {
     const classes = useStyles();
-    const [star] = useSelectedSystem();
+    const [star, setStar] = useSelectedSystem();
     const comms = useMyCommands();
     const units = useUnitsInSelectedSystem();
     const [user] = useCurrentUser();
@@ -194,6 +209,8 @@ const SystemInfo: FC = () => {
 
     return (
         <div className={classes.root}>
+            <button className="close" onClick={() => setStar(null)}>X</button>
+
             <AppBar position="absolute">
                 <Tabs value={tab} onChange={changeTab} aria-label="simple tabs example">
                     <Tab label="System" {...a11yProps(0)} />

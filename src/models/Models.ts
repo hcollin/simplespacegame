@@ -1,3 +1,5 @@
+import { Trade } from "./Communication";
+
 export interface GameObject {
     id: string;
 }
@@ -17,6 +19,7 @@ export interface GameModel extends GameObject {
     systems: SystemModel[];
     factionsReady: string[];
     state: GameState;
+    trades: Trade[];
 }
 
 export interface Fleet {

@@ -137,7 +137,6 @@ const EconomySheet: FC = () => {
             className: "center bigText",
             wrapper: (value: string | number, item: any, index: number, isHeader) => {
                 if (isHeader) return value;
-                console.log("Profit ", value);
                 if (value < 0) return <span className="red">{value}</span>;
                 return <span className="green">{value}</span>;
             },
@@ -150,7 +149,6 @@ const EconomySheet: FC = () => {
         }
     ];
 
-    console.log(mySystems);
     return (
         <div className={classes.root}>
             <div className="page">
@@ -162,6 +160,8 @@ const EconomySheet: FC = () => {
                     <h4>Total Profit: {fValues.income}</h4>
                     <h5>Total Income: {fValues.totalEconomy}</h5>
                     <h5>Total Expenses: {fValues.expenses}</h5>
+
+                    <h5>Trade Income: {fValues.trade}</h5>
                     
                     <p>Unit Cost: {fValues.unitExpenses}</p>
                     <p>System Cost: {fValues.systemExpenses}</p>

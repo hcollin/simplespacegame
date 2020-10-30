@@ -23,6 +23,7 @@ import iconHelpSvg from '../images/iconHelp.svg';
 import EconomySheet from "./subviews/EconomySheet"
 import HelpView from "./subviews/HelpView"
 import ScienceView from "./subviews/ScienceView"
+import DiplomacyView from "./subviews/DiplomacyView"
 
 
 
@@ -136,6 +137,7 @@ const GameView: FC = () => {
             {view === "map" && <LargeMap systems={game.systems} factions={game.factions} units={game.units} />}
             {view === "economy" && <EconomySheet />}
             {view === "science" && <ScienceView />}
+            {view === "diplomacy" && <DiplomacyView />}
             {view === "help" && <HelpView />}
 
 

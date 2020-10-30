@@ -68,13 +68,44 @@ This is the MVP combat system. It is extremely simple and straightforward and pr
 When two hostile forces meet in the system ther is a battle. Battle is resolved by both sides "rolling" a pool dice equal to the total Weapons they have. Each result of 7 or over causes 1 damaage that is assigned to the weakest ship in the enemy fleet. If the hits exceeds the ships hull, that ship is destroyed and removed from the combat. These rolls will continue until only one side is left.
 
 
-## Colonizing a system
+# Tech
 
-If the system has hasn'ty been colonized yet a colony ship can be used to create a settlement. If the system is already under the control of another player, a ship with INVASION must be brought. Both sides will roll d10. The defender will their defence value to that roll the invading player will add the total weapons value of ship with INVASION keyword. If Defender wins Their defence will increase by 1. If the invaders win, they will take over system. On a tie the defender will lose 1 defense and 1 welfare. On a hostile takeover the system will lose 1 industry, 1 economy and 1 welfare point. The defense automatically drops to 0.
+List of ideas for tech
+
+* Ship tech
+  * Movement speed
+  * Combat roll adjustment
+  * Combat rerolls
+  * More hull
+  * Shields that allows us to take more hits.
+  * Cost reduction
+  * Indestry requirement reduction
+* Economy
+  * More money per economy point
+* Industry
+  * Reduce the cost of industry
+  * Automatic industry on new planets
+* Defense
+  * Better rolls for defense
+  * Cheaper defense (first 2 are free)
+* Welfare
+  * Less tech reduction
+  * Faster Actions 1 per 8
+  * Cheaper welfare
+* Other more special tech
+  * Shoot one round before other player (without this tech)
+  * Automatic increase in economy for every three turns
+  * Slow the speed of enemy ships close to your system
+  * Automatic research point per turn
+  * More Research levels adjustment levels
+  * Less destruction on invasion
 
 
-## FAQ
+# Objectives
 
-## No research?
+For now: Control 5 ring worlds
 
-Not at the moment, this is an mvp you know
+# Diplomacy
+
+Diplomacy provides a simple messaging/chat tool between factions. Those messages will transfer immediately
+Actual trades happen on turn processing and require a command

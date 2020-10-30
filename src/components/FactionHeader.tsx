@@ -126,7 +126,7 @@ const FactionHeader: FC = () => {
                 <img src={require(`../images/symbols/${faction.iconFileName}`)} alt={`faction ${faction.name} logo`}/>
             </div>
             <div>
-    <h1 style={factionTitleStyle}>{faction.name} <span>{faction.playerId} {faction.style.fontFamily}</span></h1>
+    <h1 style={factionTitleStyle}>{faction.name} <span>{faction.playerId}</span></h1>
             </div>
             <div>
                 <div className="mainView">

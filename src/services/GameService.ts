@@ -3,6 +3,7 @@ import { joki } from "jokits-react";
 import { DATATECHNOLOGY } from "../data/dataTechnology";
 
 import { BuildUnitCommand, Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand } from "../models/Commands";
+import { Trade } from "../models/Communication";
 import {
     GameModel,
     SystemModel,
@@ -22,7 +23,7 @@ import { inSameLocation } from "../utils/locationUtils";
 import { travelingBetweenCoordinates } from "../utils/MathUtils";
 import { rnd } from "../utils/randUtils";
 import { canAffordTech, factionPaysForTech } from "../utils/techUtils";
-import { getFactionById, getFactionByUsedId } from "./helpers/FactionHelpers";
+import { getFactionById, getFactionByUserId } from "./helpers/FactionHelpers";
 import { createNewGame } from "./helpers/GameHelpers";
 import { createUnitFromShip } from "./helpers/UnitHelpers";
 
@@ -39,6 +40,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         units: [],
         factions: [],
         factionsReady: [],
+        trades: [],
     };
     // let game: GameModel = createNewGame();
 
@@ -57,7 +59,12 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 case "updateFaction":
                     updateFaction(event.data as FactionModel);
                     break;
+                case "updateTrades": 
+                    game.trades = event.data;
+                    sendUpdate();
+                    break;
             }
+
         }
     }
 
@@ -75,7 +82,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         }
         const user = api.api.getServiceState<User>("UserService");
         if (user) {
-            const faction = getFactionByUsedId(game.factions, user.id);
+            const faction = getFactionByUserId(game.factions, user.id);
             if (faction) {
                 _setFactionDone(faction.id);
             }
@@ -111,6 +118,9 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         if (commands) {
             game = processSystemCommands(commands, game);
             game = processMovementCommands(commands, game);
+
+            // Process trades
+            game = processTrades(game);
 
             game = processResearchCommands(commands, game);
 
@@ -225,6 +235,41 @@ function processResearch(oldGame: GameModel) {
 
         return fm;
     });
+
+    return game;
+}
+
+
+function processTrades(oldGame: GameModel): GameModel {
+    let game = { ...oldGame };
+    
+    game.trades = game.trades.map((tr: Trade) => {
+
+        let success = false;
+
+        const fromFaction = getFactionById(game.factions, tr.from);
+        const toFaction = getFactionById(game.factions, tr.to);
+        
+        if(fromFaction && toFaction) {
+
+            if(fromFaction.money >= tr.money) {
+                fromFaction.money -= tr.money;
+                toFaction.money += tr.money;
+                success = true;
+            }
+
+
+        }
+
+        if(success && fromFaction && toFaction) {
+            tr.length--;
+            game = updateFactionInGame(game, fromFaction);
+            game = updateFactionInGame(game, toFaction);
+        }
+        
+    
+        return {...tr};
+    })
 
     return game;
 }

@@ -1,4 +1,5 @@
 import { joki } from "jokits-react";
+import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel, SystemModel, UnitModel } from "../models/Models";
 
 export function getFactionById(fid: string): FactionModel {
@@ -22,6 +23,7 @@ interface FactionValues {
     systemExpenses: number;
     systemCount: number;
     systemIncome: number,
+    trade: number;
 }
 
 export function factionValues(game: GameModel, factionId: string): FactionValues {
@@ -37,6 +39,7 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         systemExpenses: 0,
         systemCount: 0,
         systemIncome: 0,
+        trade: 0,
     };
 
     game.systems.forEach((star: SystemModel) => {
@@ -65,8 +68,18 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         }
         return sum;
 
+    }, 0);
+
+    values.trade = game.trades.reduce((sum: number, t: Trade) => {
+        if(t.to === factionId) {
+            return sum + t.money;
+        }
+        if(t.from === factionId) {
+            return sum - t.money;
+        }
+        return sum;
     }, 0)
-    values.income = values.totalEconomy - values.expenses;
+    values.income = values.totalEconomy + values.trade - values.expenses;
 
 
     values.maxCommands = commandCountCalculator(game, factionId);
