@@ -49,10 +49,12 @@ export function createNewFaction(): FactionModel {
         money: 0,
         technologyFields: [
             [TechnologyField.BIOLOGY, 0, 1],
+            [TechnologyField.SOCIOLOGY, 0, 1],
             [TechnologyField.BUSINESS, 0, 1],
+            [TechnologyField.INFORMATION, 0, 1],
             [TechnologyField.CHEMISTRY, 0, 1],
             [TechnologyField.PHYSICS, 0, 1],
-            [TechnologyField.SOCIOLOGY, 0, 1],
+            
         ],
         state: FactionState.PLAYING,
         name: getFactionName(),
@@ -62,7 +64,7 @@ export function createNewFaction(): FactionModel {
         style: {
             fontFamily: ff || "Arial",
         },
-        technology: [],
+        technology: ["TECH-PROP-001"],
     }
 
     return fm;

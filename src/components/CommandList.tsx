@@ -2,11 +2,12 @@ import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import { useService } from "jokits-react";
 import React, { FC } from "react";
 import useMyCommands from "../hooks/useMyCommands";
-import { BuildUnitCommand, Command, CommandType, FleetCommand, SystemPlusCommand } from "../models/Commands";
+import { BuildUnitCommand, Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand } from "../models/Commands";
 import { GameModel } from "../models/Models";
 import { removeCommand } from "../services/commands/SystemCommands";
 import { getSystemByCoordinates, getSystemById } from "../services/helpers/SystemHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
+import { getTechById } from "../utils/techUtils";
 
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -57,6 +58,8 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                         return <FleetMoveCommandItem command={cm} key={cm.id} game={game} />;
                     case CommandType.SystemBuild:
                         return <SystemBuildCommandItem command={cm} key={cm.id} game={game} />;
+                    case CommandType.TechnologyResearch:
+                        return <ResearchCommandItem command={cm} key={cm.id} game={game} />;
                     default:
                         return <SystemPlusCommandItem command={cm} key={cm.id} game={game} />
                 }
@@ -130,6 +133,19 @@ const SystemBuildCommandItem: FC<CommandProps> = (props) => {
     return (
         <div className={classes.command}>
             Build a {cmd.shipName} in {systemName}
+            <Button variant="contained" color="secondary" onClick={() => removeCommand(cmd.id)} disabled={props.game.turn !== cmd.turn}>X</Button>
+        </div>
+    )
+}
+
+const ResearchCommandItem: FC<CommandProps> = (props) => {
+    const classes = useStyles();
+    const cmd = props.command as ResearchCommand;
+    const tech = getTechById(cmd.techId)
+    
+    return (
+        <div className={classes.command}>
+            Research technology {tech.name}.
             <Button variant="contained" color="secondary" onClick={() => removeCommand(cmd.id)} disabled={props.game.turn !== cmd.turn}>X</Button>
         </div>
     )

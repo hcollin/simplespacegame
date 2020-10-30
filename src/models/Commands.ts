@@ -11,6 +11,7 @@ export enum CommandType {
     FleetColonize = "FleetColonize",
     FleetDefend = "FleetDefend",
     GeneralClaimObjective = "GeneralClaimObjective",
+    TechnologyResearch = "Research",
 }
 
 export interface Command extends GameObject {
@@ -33,4 +34,9 @@ export interface FleetCommand extends Command {
 export interface BuildUnitCommand extends Command {
     shipName: string;
     target: Coordinates;
+}
+
+
+export interface ResearchCommand extends Command {
+    techId: string;
 }

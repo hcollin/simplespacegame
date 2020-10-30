@@ -165,16 +165,30 @@ export function researchPointDistribution(totalPoints: number, faction: FactionM
     
     const partPoint = totalFocusPoints > 0 ? totalPoints/totalFocusPoints : 0;
     // const techDistribution = [0.50, 0.50, 0., 0.10, 0];
+    let highestFieldIndex = -1;
+    let highestFieldValue = -1;
     faction.technologyFields.forEach((tech: FactionTechSetting, index: number) => {
 
-        const curSum = points.reduce((tot: number, cur: number) => tot + cur, 0)
+        const curSum = points.reduce((tot: number, cur: number) => tot + cur, 0);
         const remaining = totalPoints - curSum;
         let newVal = Math.round(partPoint * tech[2]);
         if(newVal > remaining) {
             newVal = remaining;
         }
+        if(tech[2] > highestFieldValue) {
+            highestFieldValue = tech[2];
+            highestFieldIndex = index;
+        }
         points.push(Math.round(newVal));
     });
+
+    const curSum = points.reduce((tot: number, cur: number) => tot + cur, 0);
+    if(curSum < totalPoints) {
+        
+        points[highestFieldIndex] += (totalPoints - curSum);
+        
+
+    }
 
     return points;
 }

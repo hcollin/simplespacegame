@@ -1,6 +1,8 @@
 import { joki } from "jokits-react";
-import { FactionTechSetting, GameModel, TechnologyField } from "../../models/Models";
+import { CommandType, ResearchCommand } from "../../models/Commands";
+import { FactionTechSetting, GameModel, Technology, TechnologyField } from "../../models/Models";
 import { getFactionById } from "../helpers/FactionHelpers";
+import { createEmptyCommandForCurrentFactionAndGame } from "./SystemCommands";
 
 
 
@@ -26,4 +28,23 @@ export function doAdjustTechValues(tech: TechnologyField, newValue: number, fact
         });
     }
 
+}
+
+
+export function doResearchTechCommand(tech: Technology, factionId: string) {
+    
+    const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.TechnologyResearch);
+
+    if (!rootCommand) {
+        console.error(`Cannot research ${tech.name}`);
+        return;
+    }
+
+    const command = { ...rootCommand, techId: tech.id } as ResearchCommand;
+
+    joki.trigger({
+        to: "CommandService",
+        action: "addCommand",
+        data: command,
+    });
 }

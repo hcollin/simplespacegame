@@ -90,17 +90,21 @@ export interface FactionStyle {
 }
 
 export enum TechnologyField {
-    PHYSICS = "Physics",
+    
     CHEMISTRY = "Chemistry",
+    PHYSICS = "Physics",
     BIOLOGY = "Biology",
+    
     BUSINESS = "Business",
     SOCIOLOGY = "Social",
+    INFORMATION = "Information",
 }
 
 
 export interface Technology {
     id: string;
-    requirements: [TechnologyField, number][];
+    fieldreqs: [TechnologyField, number][];
+    techprereq: string[];
     name: string;
     description: string;
 }

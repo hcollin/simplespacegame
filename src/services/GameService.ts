@@ -1,7 +1,8 @@
 import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
 import { joki } from "jokits-react";
+import { DATATECHNOLOGY } from "../data/dataTechnology";
 
-import { BuildUnitCommand, Command, CommandType, FleetCommand, SystemPlusCommand } from "../models/Commands";
+import { BuildUnitCommand, Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand } from "../models/Commands";
 import {
     GameModel,
     SystemModel,
@@ -12,16 +13,18 @@ import {
     ReportType,
     GameState,
     FactionState,
+    FactionTechSetting,
+    Technology,
 } from "../models/Models";
 import { User } from "../models/User";
-import { factionValues } from "../utils/factionUtils";
+import { factionValues, researchPointDistribution, researchPointGenerationCalculator } from "../utils/factionUtils";
 import { inSameLocation } from "../utils/locationUtils";
 import { travelingBetweenCoordinates } from "../utils/MathUtils";
 import { rnd } from "../utils/randUtils";
+import { canAffordTech, factionPaysForTech } from "../utils/techUtils";
 import { getFactionById, getFactionByUsedId } from "./helpers/FactionHelpers";
 import { createNewGame } from "./helpers/GameHelpers";
 import { createUnitFromShip } from "./helpers/UnitHelpers";
-
 
 export interface NewGameOptions {
     playerCount: number;
@@ -35,8 +38,8 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         systems: [],
         units: [],
         factions: [],
-        factionsReady: []
-    }
+        factionsReady: [],
+    };
     // let game: GameModel = createNewGame();
 
     function eventHandler(event: JokiEvent) {
@@ -54,7 +57,6 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 case "updateFaction":
                     updateFaction(event.data as FactionModel);
                     break;
-
             }
         }
     }
@@ -110,12 +112,17 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
             game = processSystemCommands(commands, game);
             game = processMovementCommands(commands, game);
 
+            game = processResearchCommands(commands, game);
+
             game = processCombats(game);
             game = processInvasion(game);
         }
 
         // Process economy
         game = processEconomy(game);
+
+        // Process Research
+        game = processResearch(game);
 
         // Win Conditions
         game = processWinConditions(game);
@@ -198,6 +205,47 @@ function processMovementCommands(commands: Command[], oldGame: GameModel): GameM
     commands.forEach((cmd: Command) => {
         if (cmd.type === CommandType.FleetMove) {
             game = processFleetMoveCommand(cmd as FleetCommand, game);
+        }
+    });
+
+    return game;
+}
+
+function processResearch(oldGame: GameModel) {
+    const game = { ...oldGame };
+
+    game.factions = game.factions.map((fm: FactionModel) => {
+        const pointsGenerated = researchPointGenerationCalculator(fm);
+        const distribution = researchPointDistribution(pointsGenerated, fm);
+
+        fm.technologyFields = fm.technologyFields.map((tech: FactionTechSetting, index: number) => {
+            tech[1] += distribution[index];
+            return [...tech];
+        });
+
+        return fm;
+    });
+
+    return game;
+}
+
+function processResearchCommands(commands: Command[], oldGame: GameModel): GameModel {
+    let game = {...oldGame};
+
+    commands.forEach((cmd: Command) => {
+        if(cmd.type === CommandType.TechnologyResearch) {
+            const command = cmd as ResearchCommand;
+            const faction = getFactionById(game.factions, command.factionId);
+            if(faction) {
+                const tech = DATATECHNOLOGY.find((t: Technology) => t.id === command.techId);
+                if(tech && faction && canAffordTech(tech, faction)) {
+                    faction.technologyFields = factionPaysForTech(faction.technologyFields, tech);
+                    faction.technology.push(tech.id);
+                    game = updateFactionInGame(game, faction);
+                    markCommandDone(cmd.id);
+                    
+                }
+            }
         }
     });
 
@@ -534,7 +582,6 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
         return fids;
     }, []);
 
-
     return addReportToSystem(game, system, ReportType.COMBAT, factionIds, combat.log);
     // system.reports.push({
     //     factions: factionIds,
@@ -588,8 +635,13 @@ function markCommandDone(commandId: string) {
     });
 }
 
-
-function addReportToSystem(game: GameModel, system: SystemModel, type: ReportType, factionIds: string[], texts: string[]): GameModel {
+function addReportToSystem(
+    game: GameModel,
+    system: SystemModel,
+    type: ReportType,
+    factionIds: string[],
+    texts: string[]
+): GameModel {
     system.reports.push({
         factions: factionIds,
         turn: game.turn,
@@ -598,5 +650,4 @@ function addReportToSystem(game: GameModel, system: SystemModel, type: ReportTyp
     });
 
     return updateSystemInGame(game, system);
-
 }
