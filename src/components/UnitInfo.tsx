@@ -21,7 +21,9 @@ interface UnitInfoProps {
     unit: UnitModel;
     onClick?: (unit: UnitModel) => void;
     selected?: boolean;
+    className?: string;
 }
+
 
 const UnitInfo: FC<UnitInfoProps> = (props: UnitInfoProps) => {
     const classes = useStyles();
@@ -34,7 +36,7 @@ const UnitInfo: FC<UnitInfoProps> = (props: UnitInfoProps) => {
     }
 
     return (
-        <div onClick={click} className={`${classes.root}${props.selected ? " selected": ""}`}>
+        <div onClick={click} className={`${classes.root}${props.selected ? " selected": ""} ${props.className || ""}`}>
             <h3>
                 {props.unit.name} <small>({faction.name})</small>
             </h3>

@@ -42,8 +42,8 @@ const useStyles = makeStyles((theme: Theme) =>
                 height: "2rem",
                 zIndex: "1200",
                 borderRadius: "0.5rem",
-                fontWeight: "bold", 
-                boxShadow: "0 0 0.5rem 0.1rem #0008", 
+                fontWeight: "bold",
+                boxShadow: "0 0 0.5rem 0.1rem #0008",
                 cursor: "pointer",
                 "&:hover": {
                     backgroundColor: "#F88",
@@ -84,6 +84,22 @@ const useStyles = makeStyles((theme: Theme) =>
                 padding: 0,
             },
         },
+
+        unitList: {
+            "& > div.selectable": {
+                background: "#0002",
+                cursor: "pointer",
+                padding: "0.25rem",
+                marginBottom: "3px",
+                "&:hover": {
+                    background: "#0802",
+                },
+                "& > h3": {
+                    margin: 0,
+                }
+            }
+            
+        }
     })
 );
 
@@ -265,15 +281,18 @@ const SystemInfo: FC = () => {
 
             <TabPanel value={tab} index={1}>
                 <h2>Units</h2>
+                <p>Click on unit to select it for movement</p>
 
+                <div className={classes.unitList}>
                 {units.map((u: UnitModel) => {
                     const isSelected = selectedUnits.find((um: UnitModel) => um.id === u.id);
 
                     if (unitsInFleet.includes(u.id)) {
                         return null;
                     }
-                    return <UnitInfo key={u.id} unit={u} onClick={selectUnit} selected={isSelected !== undefined} />;
+                    return <UnitInfo key={u.id} unit={u} onClick={selectUnit} selected={isSelected !== undefined} className="selectable" />;
                 })}
+                </div>
 
                 {shipsUnderConstruction.map((s: Ship, ind: number) => {
                     return (

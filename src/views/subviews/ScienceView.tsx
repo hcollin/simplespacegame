@@ -14,6 +14,7 @@ import informationSvg from "../../images/techInformation.svg";
 import TechCard from "../../components/TechCard";
 import { DATATECHNOLOGY } from "../../data/dataTechnology";
 import { canAffordTech } from "../../utils/techUtils";
+import { IconResearchPoint } from "../../components/Icons";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -140,7 +141,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 padding: "1rem",
                 background: "#000B",
                 borderBottomRightRadius: "1rem",
-                borderTopLeftRadius: "1rem",
+                borderTopLeftRadius: "1rem",                
                 "& > button": {
                     marginBottom: "0.25rem",
                     // padding: "0.25rem",
@@ -162,7 +163,7 @@ const ScienceView: FC = () => {
     const pointsGenerated = researchPointGenerationCalculator(faction);
 
     function researchTech(tech: Technology) {
-        console.log("TECH", tech);
+        
         if(faction && tech) {
             doResearchTechCommand(tech, faction.id);
         }
@@ -176,6 +177,7 @@ const ScienceView: FC = () => {
                 <h1>Research</h1>
 
                 <div className={classes.totalPoints}>
+                    <IconResearchPoint size="xl" wrapper="dark"/>
                     <h1>{pointsGenerated} </h1>
                     <span>/ turn</span>
                 </div>

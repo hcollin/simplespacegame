@@ -163,9 +163,9 @@ const GameView: FC = () => {
                 <div className={view === "science" ? "active": ""} onClick={() => setView("science")}>
                     <img src={iconScienceSvg} alt="Science View" />
                 </div>
-                <div className={view === "units" ? "active": ""} onClick={() => setView("units")}>
+                {/* <div className={view === "units" ? "active": ""} onClick={() => setView("units")}>
                     <img src={iconUnitsSvg} alt="Units View" />
-                </div>
+                </div> */}
                 <div className={view === "diplomacy" ? "active": ""} onClick={() => setView("diplomacy")}>
                     <img src={iconDiplomacySvg} alt="Diplomacy View" />
                 </div>

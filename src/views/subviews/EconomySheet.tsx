@@ -32,12 +32,12 @@ const useStyles = makeStyles((theme: Theme) =>
             "& span.red": {
                 color: "red",
                 fontWeight: "bold",
-                
+
             },
             "& span.green": {
                 color: "green",
                 fontWeight: "bold",
-                
+
             },
         },
         systems: {
@@ -162,7 +162,7 @@ const EconomySheet: FC = () => {
                     <h5>Total Expenses: {fValues.expenses}</h5>
 
                     <h5>Trade Income: {fValues.trade}</h5>
-                    
+
                     <p>Unit Cost: {fValues.unitExpenses}</p>
                     <p>System Cost: {fValues.systemExpenses}</p>
                 </div>

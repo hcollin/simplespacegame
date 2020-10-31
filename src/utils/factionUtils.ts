@@ -205,3 +205,37 @@ export function researchPointDistribution(totalPoints: number, faction: FactionM
 
     return points;
 }
+
+
+/**
+ * Calculate the score for faction
+ * 
+ * @param factionId 
+ */
+export function getFactionScore(factionId: string): number {
+
+    const game = joki.service.getState("GameService") as GameModel;
+
+    let score = 0;
+
+    game.systems.forEach((sm: SystemModel) => {
+
+        if(sm.ownerFactionId === factionId) {
+            score += 3;
+            score += Math.round((sm.industry + sm.economy + sm.defense + sm.welfare) / 4);
+            score += sm.ringWorld ? 10 : 0;
+        }
+    });
+
+    game.units.forEach((u: UnitModel) => {
+        if(u.factionId === factionId) {
+            score += Math.round(u.cost/3);
+        }
+    });
+
+    const faction = getFactionById(factionId);
+
+    score += faction.technology.length * 2;
+
+    return score;
+}

@@ -10,8 +10,9 @@ import AdjustIcon from '@material-ui/icons/Adjust';
 import useMyCommands from "../hooks/useMyCommands";
 import { useService } from "jokits-react";
 import { GameModel, SystemModel } from "../models/Models";
-import { factionValues } from "../utils/factionUtils";
+import { factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
 import { playerDone } from "../services/commands/GameCommands";
+import { IconCredit, IconResearchPoint } from "./Icons";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -52,7 +53,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
                 height: "80%",
             },
 
-            "& > div.mainView": {
+            "& > div.mainView, & > div.singleView": {
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
                 "& > b": {
                     fontSize: "2rem",
                     fontWeight: "bold",
@@ -109,7 +114,8 @@ const FactionHeader: FC = () => {
     if (!faction || !game) return null;
 
     const values = factionValues(game, faction.id);
-
+    const pointsGenerated = researchPointGenerationCalculator(faction);
+    
     const isReady = game.factionsReady.includes(faction.id);
 
     const totalRingWorlds = game.systems.filter((sm: SystemModel) => sm.ringWorld);
@@ -130,10 +136,9 @@ const FactionHeader: FC = () => {
             </div>
             <div>
                 <div className="mainView">
-                    <MonetizationOnIcon /> <b>{faction.money}</b> <span>( {values.income} )</span>
+                    <IconCredit size="xl" wrapper="light" /><b>{faction.money}</b> <span>( {values.income} )</span>
                 </div>
                 <div className="hoverView">
-
                     <div className={classes.sheet}>
                         <label>economy:</label> <span>{values.totalEconomy}</span>
                     </div>
@@ -154,6 +159,16 @@ const FactionHeader: FC = () => {
             <div>
                 <div className="mainView">
                     <AdjustIcon /> <b>{myRingWorlds.length}</b> <span>( / {totalRingWorlds.length} )</span>
+                </div>
+            </div>
+            <div>
+                <div className="mainView">
+                    <IconResearchPoint size="xl" wrapper="light" /> <b>{pointsGenerated}</b>
+                </div>
+            </div>
+            <div>
+                <div className="singleView">
+                    <b>{getFactionScore(faction.id)}</b>
                 </div>
             </div>
             <div>
