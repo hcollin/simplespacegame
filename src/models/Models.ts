@@ -1,4 +1,5 @@
 import { Trade } from "./Communication";
+import { ShipUnit } from "./Units";
 
 export interface GameObject {
     id: string;
@@ -15,7 +16,7 @@ export enum GameState {
 export interface GameModel extends GameObject {
     turn: number;
     factions: FactionModel[];
-    units: UnitModel[];
+    units: ShipUnit[];
     systems: SystemModel[];
     factionsReady: string[];
     state: GameState;
@@ -23,7 +24,7 @@ export interface GameModel extends GameObject {
 }
 
 export interface Fleet {
-    units: UnitModel[];
+    units: ShipUnit[];
     target: Coordinates|null;
 
 }
@@ -40,7 +41,7 @@ export interface OldShip extends GameObject{
     description?: string;
 }
 
-export interface UnitModel extends OldShip {
+export interface OldUnitModel extends OldShip {
     location: Coordinates;
     damage: number;
     factionId: string;
@@ -117,7 +118,7 @@ export interface Technology {
 
 
 export interface CombatEvent {
-    units: UnitModel[];
+    units: ShipUnit[];
     system: SystemModel;
     round: number;
     log: string[];
@@ -135,4 +136,12 @@ export interface Report {
     turn: number;
     type: ReportType;
     text: string[];
+}
+
+export interface SpaceCombat {
+    units: ShipUnit[];
+    system: SystemModel | null;
+    round: number;
+    log: string[];
+    done: boolean;
 }

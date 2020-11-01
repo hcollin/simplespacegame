@@ -7,7 +7,6 @@ import { Trade } from "../models/Communication";
 import {
     GameModel,
     SystemModel,
-    UnitModel,
     Coordinates,
     FactionModel,
     CombatEvent,
@@ -16,7 +15,9 @@ import {
     FactionState,
     FactionTechSetting,
     Technology,
+    SpaceCombat,
 } from "../models/Models";
+import { ShipUnit } from "../models/Units";
 import { User } from "../models/User";
 import { techMarketing } from "../tech/businessTech";
 import { factionValues, researchPointDistribution, researchPointGenerationCalculator } from "../utils/factionUtils";
@@ -24,10 +25,11 @@ import { inSameLocation } from "../utils/locationUtils";
 import { travelingBetweenCoordinates } from "../utils/MathUtils";
 import { rnd } from "../utils/randUtils";
 import { canAffordTech, factionPaysForTech } from "../utils/techUtils";
-import { combatRoll, getUnitSpeed } from "../utils/unitUtils";
+import { getUnitSpeed } from "../utils/unitUtils";
 import { getFactionById, getFactionByUserId } from "./helpers/FactionHelpers";
 import { createNewGame } from "./helpers/GameHelpers";
-import { createUnitFromShip } from "./helpers/UnitHelpers";
+import { createShipFromDesign, getDesignByName, spaceCombatMain } from "./helpers/UnitHelpers";
+
 
 export interface NewGameOptions {
     playerCount: number;
@@ -328,7 +330,7 @@ function processInvasion(oldGame: GameModel): GameModel {
 
     const invadedSystems: SystemModel[] = [];
 
-    oldGame.units.forEach((um: UnitModel) => {
+    oldGame.units.forEach((um: ShipUnit) => {
         const star = game.systems.find((s: SystemModel) => inSameLocation(s.location, um.location));
         if (star && star.ownerFactionId !== um.factionId) {
             star.ownerFactionId = um.factionId;
@@ -356,13 +358,13 @@ function processEconomy(game: GameModel): GameModel {
 }
 
 function processCombats(game: GameModel): GameModel {
-    const combats: CombatEvent[] = [];
+    const combats: SpaceCombat[] = [];
 
     game.systems.forEach((star: SystemModel) => {
-        const unitsInSystem = game.units.filter((unit: UnitModel) => inSameLocation(star.location, unit.location));
+        const unitsInSystem = game.units.filter((unit: ShipUnit) => inSameLocation(star.location, unit.location));
 
         if (unitsInSystem.length > 0) {
-            const factions = unitsInSystem.reduce((factions: Set<string>, unit: UnitModel) => {
+            const factions = unitsInSystem.reduce((factions: Set<string>, unit: ShipUnit) => {
                 factions.add(unit.factionId);
                 return factions;
             }, new Set<string>());
@@ -373,14 +375,14 @@ function processCombats(game: GameModel): GameModel {
                     system: star,
                     round: 0,
                     log: [],
-                    resolved: false,
+                    done: false,
                 });
             }
         }
     });
 
     combats.length > 0 && console.log("COMBATS", combats);
-    combats.forEach((combat: CombatEvent) => {
+    combats.forEach((combat: SpaceCombat) => {
         game = resolveCombat(game, combat);
     });
 
@@ -412,7 +414,7 @@ function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameMode
     const faction = getFactionById(game.factions, command.factionId);
 
     if (faction) {
-        const unit = createUnitFromShip(command.shipName, command.factionId, command.target);
+        const unit = createShipFromDesign(getDesignByName(command.shipName), command.factionId, command.target);
         if (faction.money >= unit.cost) {
             game.units.push(unit);
             faction.money = faction.money - unit.cost;
@@ -463,174 +465,31 @@ function getSystemFromGame(game: GameModel, systemId: string): SystemModel {
     return system;
 }
 
-function getUnitFromGame(game: GameModel, unitId: string): UnitModel {
-    const unit = game.units.find((u: UnitModel) => u.id === unitId);
+function getUnitFromGame(game: GameModel, unitId: string): ShipUnit {
+    const unit = game.units.find((u: ShipUnit) => u.id === unitId);
     if (!unit) {
         throw new Error(`Invalid unit id ${unitId}`);
     }
     return unit;
 }
 
-function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
-    function countFactionsInUnits(units: UnitModel[]): number {
-        const factions = units.reduce((factions: Set<string>, unit: UnitModel) => {
-            factions.add(unit.factionId);
-            return factions;
-        }, new Set<string>());
-        return factions.size;
+function resolveCombat(game: GameModel, origCombat: SpaceCombat): GameModel {
+
+    if(origCombat.system === null) {
+        throw new Error(`Combat cannot happen outside of a system, the null is only used in testing needs to be removed`);
     }
 
-    function processCombatRound(combat: CombatEvent): CombatEvent {
-        combat.round++;
-        combat.log.push(`Combat Round ${combat.round} starts`);
-
-        // Roll Dice combat dice for how many hits this unit does
-        const hits = combat.units.reduce((totalHits: Map<string, number>, unit: UnitModel) => {
-
-            const damage = combatRoll(unit, combat);
-            const curHits = totalHits.get(unit.factionId);
-            if (curHits) {
-                totalHits.set(unit.factionId, curHits + damage);
-            } else {
-                totalHits.set(unit.factionId, damage);
-            }
-            return totalHits;
-        }, new Map<string, number>());
-
-
-
-        // // Create dice pool for all factions
-        // const dicePools = combat.units.reduce((dicePool: Map<string, number>, unit: UnitModel) => {
-        //     if (!dicePool.has(unit.factionId)) {
-        //         dicePool.set(unit.factionId, 0);
-        //     }
-
-        //     const currentPool = dicePool.get(unit.factionId);
-        //     if (currentPool !== undefined) {
-        //         dicePool.set(unit.factionId, currentPool + unit.weapons);
-        //     }
-
-        //     return dicePool;
-        // }, new Map<string, number>());
-
-        // if (combat.system.ownerFactionId !== "") {
-        //     const pool = dicePools.get(combat.system.ownerFactionId);
-        //     if (pool) {
-        //         dicePools.set(combat.system.ownerFactionId, pool + combat.system.defense);
-        //     }
-        // }
-
-        // // Roll dice
-
-        // const hits: Map<string, number> = new Map<string, number>();
-
-        // dicePools.forEach((pool: number, factionId: string) => {
-        //     combat.log.push(`${factionId} rolls ${pool} dice!`);
-
-        //     const rolls: number[] = [];
-        //     for (let i = 0; i < pool; i++) {
-
-        //         rolls.push(rnd(1, 10));
-        //     }
-
-        //     const fHits = rolls.filter((res: number) => res >= 6).length;
-
-        //     combat.log.push(`${factionId} rolls ${rolls.join(", ")} producing ${fHits} hits`);
-
-        //     hits.set(factionId, fHits);
-        // });
-
-        // Assign hits
-        hits.forEach((hits: number, factionId: string) => {
-            let unassignedHits: number = hits;
-            while (unassignedHits > 0) {
-                const targetUnit = combat.units.find((um: UnitModel) => um.factionId !== factionId);
-                if (targetUnit) {
-                    targetUnit.damage++;
-                    unassignedHits--;
-                    combat.log.push(
-                        `${targetUnit.name} from ${targetUnit.factionId} takes one hit and now has ${targetUnit.damage} damage`
-                    );
-
-                    if (targetUnit.damage >= targetUnit.hull) {
-                        combat.log.push(`${targetUnit.name} from ${targetUnit.factionId} has been destroyed`);
-                        combat.units = combat.units.filter((um: UnitModel) => um.id !== targetUnit.id);
-                    } else {
-                        combat.units = combat.units.map((um: UnitModel) => {
-                            if (um.id === targetUnit.id) {
-                                return targetUnit;
-                            }
-                            return um;
-                        });
-                    }
-                } else {
-                    unassignedHits = 0;
-                }
-            }
-        });
-
-        // // Check if all dicepools are empty (then the combat ends)
-        // const dicePoolsOverZero = Array.from(dicePools.values()).filter((v: number) => v > 0).length;
-        // if (dicePoolsOverZero === 0) {
-        //     combat.resolved = true;
-        // }
-
-        // // If only one faction remains, end combat
-        // const factionCount = countFactionsInUnits(combat.units);
-        // if (factionCount <= 1) {
-        //     combat.resolved = true;
-        // }
-
-        combat.resolved = true;
-        return { ...combat };
-    }
-
-    let combat = { ...origCombat };
-    combat.log.push(`Combat in ${combat.system.name} begins!`);
-    console.log(combat, countFactionsInUnits(combat.units));
-    processCombatRound(combat);
-    let looper = 0;
-    while (combat.resolved === false) {
-        combat = processCombatRound(combat);
-        looper++;
-        if (looper >= 10) {
-            combat.resolved = true;
-        }
-    }
-
-    combat.log.push(`Combat in ${combat.system.name} has been resolved!`);
-
-    console.log(combat.log, origCombat.units, combat.units);
-    const remainingUnitIds = combat.units.map((um: UnitModel) => um.id);
-    const originalCombatUnitIds = origCombat.units.map((um: UnitModel) => um.id);
-    const destroyedUnitIds = originalCombatUnitIds.filter((umid: string) => {
-        return !remainingUnitIds.includes(umid);
-    });
-
-    game.units = game.units
-        .filter((um: UnitModel) => {
-            return !destroyedUnitIds.includes(um.id);
-        })
-        .map((um: UnitModel) => {
-            if (remainingUnitIds.includes(um.id)) {
-                const unit = combat.units.find((umm: UnitModel) => (umm.id = um.id));
-                if (unit) {
-                    return unit;
-                }
-            }
-            return um;
-        });
-
-    const system = { ...combat.system };
-
-    const factionIds: string[] = origCombat.units.reduce((fids: string[], u: UnitModel) => {
-        if (!fids.includes(u.factionId) && u.factionId) {
-            fids.push(u.factionId);
+    const factionIds = origCombat.units.reduce((fids: Set<string>, u: ShipUnit) => {
+        if(!fids.has(u.factionId)) {
+            fids.add(u.factionId)
         }
         return fids;
-    }, []);
+    }, new Set<string>());
 
-    return addReportToSystem(game, system, ReportType.COMBAT, factionIds, combat.log);
+    const combat = spaceCombatMain(origCombat.units, origCombat.system);
+
+
+    return addReportToSystem(game, origCombat.system, ReportType.COMBAT, Array.from(factionIds), combat.log);
     // system.reports.push({
     //     factions: factionIds,
     //     turn: game.turn,
@@ -654,8 +513,8 @@ function updateSystemInGame(game: GameModel, updatedSystem: SystemModel): GameMo
     return { ...game };
 }
 
-function updateUnitInGame(game: GameModel, updatedUnit: UnitModel): GameModel {
-    game.units = game.units.map((um: UnitModel) => {
+function updateUnitInGame(game: GameModel, updatedUnit: ShipUnit): GameModel {
+    game.units = game.units.map((um: ShipUnit) => {
         if (um.id === updatedUnit.id) {
             return updatedUnit;
         }

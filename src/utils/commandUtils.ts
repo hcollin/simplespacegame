@@ -1,10 +1,9 @@
 import { joki } from "jokits-react";
 import { Command, CommandType, FleetCommand } from "../models/Commands";
-import { UnitModel } from "../models/Models";
+import { ShipUnit } from "../models/Units";
 
 
-
-export function unitIsInFleet(unit: UnitModel): FleetCommand|null {
+export function unitIsInFleet(unit: ShipUnit): FleetCommand|null {
 
     const commands = joki.service.getState("CommandService") as Command[];
 

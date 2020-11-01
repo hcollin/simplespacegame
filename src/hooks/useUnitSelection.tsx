@@ -1,22 +1,22 @@
 import { JokiEvent } from "jokits";
 import { joki } from "jokits-react";
 import { useEffect, useState } from "react";
-import { UnitModel } from "../models/Models";
+import { ShipUnit } from "../models/Units";
 
 
 interface UnitSelectionActions {
-    add: (unit: UnitModel) => void;
-    set: (units: UnitModel[]) => void;
+    add: (unit: ShipUnit) => void;
+    set: (units: ShipUnit[]) => void;
     rem: (unitId: string) => void;
     has: (unitId: string) => boolean;
     clr: () => void;
 }
 
-let globalUnits: UnitModel[] = []
+let globalUnits: ShipUnit[] = []
 
-export default function useUnitSelection(): [UnitModel[], UnitSelectionActions] {
+export default function useUnitSelection(): [ShipUnit[], UnitSelectionActions] {
 
-    const [selectedUnits, setSelectedUnits] = useState<UnitModel[]>(globalUnits);
+    const [selectedUnits, setSelectedUnits] = useState<ShipUnit[]>(globalUnits);
     
 
     // useEffect(() => {
@@ -34,26 +34,26 @@ export default function useUnitSelection(): [UnitModel[], UnitSelectionActions] 
 
     }, []);
 
-    function addUnit(unit: UnitModel) {
+    function addUnit(unit: ShipUnit) {
         const nUnits = [...selectedUnits];
         nUnits.push(unit);
         globalUnits = nUnits;
         sendUpdate(nUnits);
     }
 
-    function setUnits(units: UnitModel[]) {
+    function setUnits(units: ShipUnit[]) {
         globalUnits = units;
         sendUpdate([...units]);
     }
 
     function remUnit(unitId: string) {
-        const nUnits = selectedUnits.filter((um: UnitModel) => um.id !== unitId);
+        const nUnits = selectedUnits.filter((um: ShipUnit) => um.id !== unitId);
         globalUnits = nUnits;
         sendUpdate(nUnits);
     }
 
     function hasUnit(unitId: string): boolean {
-        return selectedUnits.find((um: UnitModel) => um.id === unitId) !== undefined;
+        return selectedUnits.find((um: ShipUnit) => um.id === unitId) !== undefined;
     }
 
     function clearUnits() {
@@ -61,7 +61,7 @@ export default function useUnitSelection(): [UnitModel[], UnitSelectionActions] 
         sendUpdate([]);
     }
 
-    function sendUpdate(units: UnitModel[]) {
+    function sendUpdate(units: ShipUnit[]) {
         joki.trigger({
             from: "useSelectedUnit",
             action: "change",

@@ -55,6 +55,7 @@ export interface ShipDesign extends GameObject {
     shieldRegeneration: number;
     agility: number;
     weapons: ShipWeapon[];
+    description: string;
 }
 
 export interface ShipUnit extends ShipDesign {

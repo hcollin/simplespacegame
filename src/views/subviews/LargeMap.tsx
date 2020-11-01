@@ -4,7 +4,7 @@ import React, { FC, useState } from "react";
 import { Circle, Group, Image, Layer, Line, Ring, Stage, Star, Text } from "react-konva";
 import useSelectedSystem from "../../hooks/useSelectedSystem";
 import useWindowSize from "../../hooks/useWIndowResize";
-import { SystemModel, FactionModel, UnitModel, Coordinates, GameModel, Report, ReportType } from "../../models/Models";
+import { SystemModel, FactionModel, Coordinates, GameModel, Report, ReportType } from "../../models/Models";
 import { getFactionById } from "../../services/helpers/FactionHelpers";
 import useImage from "use-image";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
@@ -15,6 +15,10 @@ import { inSameLocation } from "../../utils/locationUtils";
 import useUnitSelection from "../../hooks/useUnitSelection";
 import { useService } from "jokits-react";
 import { getUnitSpeed } from "../../utils/unitUtils";
+import { ShipUnit } from "../../models/Units";
+
+import starfieldJpeg from '../../images/starfield2.jpg';
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -22,16 +26,19 @@ const useStyles = makeStyles((theme: Theme) =>
             position: "fixed",
             top: "80px",
             zIndex: 0,
+            backgroundImage: `url(${starfieldJpeg})`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
         },
         map: {
-            backgroundColor: "#000",
+            // backgroundColor: "#000",
         }
     }))
 
 interface LargeMapProps {
     systems: SystemModel[];
     factions: FactionModel[];
-    units: UnitModel[];
+    units: ShipUnit[];
 }
 
 const LargeMap: FC<LargeMapProps> = (props) => {
@@ -66,7 +73,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
         })
     }
 
-    function selectUnitGroup(ums: UnitModel[]) {
+    function selectUnitGroup(ums: ShipUnit[]) {
         // if(fleet.length === 0) {
             fleetActions.set([...ums]);
             // console.log("Group selected", ums);
@@ -80,8 +87,8 @@ const LargeMap: FC<LargeMapProps> = (props) => {
     const showMoveLine = fleet.length > 0 && selectedSystem && !inSameLocation(selectedSystem.location, fleet[0].location);
 
 
-    const unitGroupsMap: Map<string, UnitModel[]> = new Map<string, UnitModel[]>();
-    props.units.forEach((um: UnitModel) => {
+    const unitGroupsMap: Map<string, ShipUnit[]> = new Map<string, ShipUnit[]>();
+    props.units.forEach((um: ShipUnit) => {
 
         const cInd = `${um.location.x}-${um.location.y}`;
         if(!unitGroupsMap.has(cInd)) {
@@ -96,14 +103,14 @@ const LargeMap: FC<LargeMapProps> = (props) => {
     
 
     const unitGroups = Array.from(unitGroupsMap.values());
-    
+    console.log("Selected System", selectedSystem);
     return (<div className={classes.root}>
 
         <div className={classes.map}>
 
             <Stage width={w} height={h} draggable={true} onWheel={wheelEvent}>
                 <Layer>
-                    {unitGroups.map((umGroup: UnitModel[]) => {
+                    {unitGroups.map((umGroup: ShipUnit[]) => {
                         const um = umGroup[0];
                         const size = 25 * zoomLevel;
                         const isMyShip = faction && faction.id === um.factionId;

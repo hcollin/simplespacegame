@@ -1,5 +1,6 @@
 import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
-import { Coordinates, Fleet, SystemModel, UnitModel } from "../models/Models";
+import { Coordinates, Fleet, SystemModel } from "../models/Models";
+import { ShipUnit } from "../models/Units";
 import { hasGameObject } from "../utils/arrUtils";
 import { moveUnits } from "./commands/UnitCommands";
 
@@ -10,10 +11,10 @@ export default function createFleetService(serviceId: string, api: JokiServiceAp
         if (event.to === serviceId) {
             switch (event.action) {
                 case "addUnit":
-                    addUnit(event.data as UnitModel);
+                    addUnit(event.data as ShipUnit);
                     break;
                 case "removeUnit":
-                    removeUnit(event.data as UnitModel | string);
+                    removeUnit(event.data as ShipUnit | string);
                     break;
                 case "setTarget":
                     setTarget(event.data as Coordinates|null);
@@ -39,7 +40,7 @@ export default function createFleetService(serviceId: string, api: JokiServiceAp
         }
     }
 
-    function addUnit(u: UnitModel) {
+    function addUnit(u: ShipUnit) {
         _initFleet();
         if (fleet) {
             if (!hasGameObject(fleet.units, u.id)) {
@@ -49,11 +50,11 @@ export default function createFleetService(serviceId: string, api: JokiServiceAp
         }
     }
 
-    function removeUnit(u: UnitModel | string) {
+    function removeUnit(u: ShipUnit | string) {
         if (!fleet) return;
         const uid = typeof u === "string" ? u : u.id;
         if (hasGameObject(fleet.units, uid)) {
-            fleet.units = fleet.units.filter((um: UnitModel) => um.id !== uid);
+            fleet.units = fleet.units.filter((um: ShipUnit) => um.id !== uid);
             sendUpdate();
         }
     }
@@ -97,6 +98,7 @@ export default function createFleetService(serviceId: string, api: JokiServiceAp
     }
 
     function sendUpdate() {
+
         api.updated(fleet === null ? null : { ...fleet });
     }
 

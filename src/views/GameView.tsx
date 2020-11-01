@@ -1,7 +1,6 @@
 import { Button, createStyles, makeStyles, Theme } from "@material-ui/core"
 import { useService } from "jokits-react"
 import React, { FC, useEffect, useState } from "react"
-import CheatView from "../components/CheatView"
 import CommandList from "../components/CommandList"
 import FactionHeader from "../components/FactionHeader"
 // import FactionInfo from "../components/FactionInfo"
@@ -146,11 +145,7 @@ const GameView: FC = () => {
             {view === "help" && <HelpView />}
 
 
-            {/* </div> */}
-
-            
-
-            <CheatView />
+        
 
             <CommandList />
 

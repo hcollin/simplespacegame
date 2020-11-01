@@ -1,6 +1,7 @@
 import { joki } from "jokits-react";
 import { Trade } from "../models/Communication";
-import { FactionModel, FactionTechSetting, GameModel, SystemModel, UnitModel } from "../models/Models";
+import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/Models";
+import { ShipUnit } from "../models/Units";
 import { techMarketing } from "../tech/businessTech";
 
 export function getFactionById(fid: string): FactionModel {
@@ -53,13 +54,13 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         }
     });
 
-    values.unitExpenses = game.units.reduce((sum: number, um: UnitModel) => {
+    values.unitExpenses = game.units.reduce((sum: number, um: ShipUnit) => {
         if (um.factionId === factionId) {
             return sum + unitExpenses(um);
         }
         return sum;
     }, 0);
-    values.unitCount = game.units.filter((um: UnitModel) => um.factionId === factionId).length;
+    values.unitCount = game.units.filter((um: ShipUnit) => um.factionId === factionId).length;
 
     values.expenses = expensesCalculator(game, factionId);
 
@@ -99,7 +100,7 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
 export function expensesCalculator(game: GameModel, factionId: string): number {
     let expenses = 0;
 
-    game.units.forEach((unit: UnitModel) => {
+    game.units.forEach((unit: ShipUnit) => {
         if (unit.factionId === factionId) {
             expenses += unitExpenses(unit);
         }
@@ -139,7 +140,7 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
 }
 
 
-export function unitExpenses(um: UnitModel): number {
+export function unitExpenses(um: ShipUnit): number {
     return um.cost >= 3 ? Math.floor(um.cost / 3) : 1;
 }
 
@@ -228,7 +229,7 @@ export function getFactionScore(factionId: string): number {
         }
     });
 
-    game.units.forEach((u: UnitModel) => {
+    game.units.forEach((u: ShipUnit) => {
         if(u.factionId === factionId) {
             score += Math.round(u.cost/3);
         }

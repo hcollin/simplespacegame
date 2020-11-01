@@ -28,7 +28,7 @@ export const DATATECHNOLOGY: Technology[] = [
             [TechnologyField.PHYSICS, 5],
             [TechnologyField.INFORMATION, 2],
         ],
-        techprereq: ["TECH-PROP-001"],
+        techprereq: [TECHIDS.IonEngines],
         name: "Warp Engines",
         description: "Gain +3 speed to all units",
     },

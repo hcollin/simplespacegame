@@ -12,7 +12,7 @@ import TimerIcon from '@material-ui/icons/Timer';
 
 import useMyCommands from "../hooks/useMyCommands";
 import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
-import { Report, OldShip } from "../models/Models";
+import { Report } from "../models/Models";
 import { inSameLocation } from "../utils/locationUtils";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
@@ -20,6 +20,8 @@ import { getFactionShips } from "../services/helpers/FactionHelpers";
 import useUserIsReady from "../services/hooks/useUserIsReady";
 import DATASHIPS from "../data/dataShips";
 import ShipInfo from "./ShipInfo";
+import { ShipDesign } from "../models/Units";
+import { IconArmor, IconCredit, IconDefense, IconIndustry, IconWelfare } from "./Icons";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -27,11 +29,17 @@ const useStyles = makeStyles((theme: Theme) =>
             position: "absolute",
             zIndex: 100,
             top: "100px",
-            right: "29rem",
+            right: "20rem",
             minWidth: "30rem",
             padding: "3rem 1rem 1rem 1rem",
             // background: "#FFFD",
-            background: "repeating-linear-gradient(0deg, #FFF 0, #FFFD 5px, #DDDF 10px, #FFF 15px)",
+            background: "repeating-linear-gradient(to bottom, #1118 0, #333E 5px, #444E 54px, #777E 67px, #555E 76px, #1118 80px)",
+            color: "#FFFD",
+            boxShadow: "inset 0 0 2rem 0.5rem #000",
+            border: "groove 5px #69DA",
+            "& h1, & h2, & h3": {
+                textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000"
+            },
             "& > button.close": {
                 position: "absolute",
                 top: "-0.5rem",
@@ -46,6 +54,15 @@ const useStyles = makeStyles((theme: Theme) =>
                 "&:hover": {
                     backgroundColor: "#F88",
                 }
+            },
+            "& >header": {
+                background: "linear-gradient(to bottom, #000 0, #333A 0.5rem, #113D 3.5rem, #000 3rem)",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "3rem",
+                borderBottom: "ridge 3px #0008",
             }
         },
         tabs: {
@@ -55,17 +72,31 @@ const useStyles = makeStyles((theme: Theme) =>
             "& > div.tab": {},
         },
         value: {
-            width: "15rem",
-
+            width: "100%",
             padding: "0.5rem 0.5rem 0.5rem 0.5rem",
             fontSize: "1.8rem",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            marginBottom: "0.25rem",
 
-            // "border": "solid 1px black",
-            // "borderRadius": "1rem",
+            border: "ridge 5px #DEF8",
+            borderRadius: "0.5rem",
             fontWeight: "bold",
+            background: "linear-gradient(to bottom, #000 0, #0008 5%, #2228 75%, #444 80%, #000A 95%, #000 100%)",
+            "& > h3": {
+                padding: 0,
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                "& > span": {
+                    margin: 0,
+                    padding: 0,
+                    fontSize: "1rem",
+                    marginLeft: "0.5rem",
+                    lineHeight: "1.8rem",
+                }
+            },
             "& > button": {
                 fontSize: "1.4rem",
                 padding: 0,
@@ -101,7 +132,7 @@ const useStyles = makeStyles((theme: Theme) =>
                         background: "#666",
                         opacity: 1,
                         filter: "none",
-                        
+
                         "&:after": {
                             content: '"CANCEL"',
                             position: "absolute",
@@ -109,6 +140,7 @@ const useStyles = makeStyles((theme: Theme) =>
                             left: 0,
                             right: 0,
                             bottom: 0,
+                            zIndex: 100,
                             fontSize: "3rem",
                             letterSpacing: "6px",
                             color: "#F00C",
@@ -177,12 +209,9 @@ const SystemInfo: FC = () => {
     const classes = useStyles();
     const [star, setStar] = useSelectedSystem();
     const comms = useMyCommands();
-    // const units = useUnitsInSelectedSystem();
     const [user] = useCurrentUser();
     const faction = useCurrentFaction();
     const userIsReady = useUserIsReady();
-    // const [selectedUnits, setSelectedUnits] = useState<UnitModel[]>([]);
-    // const [fleet, fleetActions] = useUnitSelection();
 
     const [tab, setTab] = useState<number>(0);
 
@@ -213,11 +242,11 @@ const SystemInfo: FC = () => {
 
     const isMine = faction && faction.id === star.ownerFactionId;
 
-    const shipsUnderConstruction: OldShip[] = comms.reduce((ships: OldShip[], command: Command) => {
+    const shipsUnderConstruction: ShipDesign[] = comms.reduce((ships: ShipDesign[], command: Command) => {
         if (command.type === CommandType.SystemBuild) {
             const cmd = command as BuildUnitCommand;
             if (inSameLocation(cmd.target, star.location)) {
-                const ship = DATASHIPS.find((s: OldShip) => s.name === cmd.shipName);
+                const ship = DATASHIPS.find((s: ShipDesign) => s.name === cmd.shipName);
                 if (ship) {
                     ships.push(ship);
                 }
@@ -227,7 +256,7 @@ const SystemInfo: FC = () => {
         return ships;
     }, []);
 
-    function cancelConstruction(ship: OldShip) {
+    function cancelConstruction(ship: ShipDesign) {
         const cmd = comms.find((command: Command) => {
             if (command.type === CommandType.SystemBuild && star) {
                 const cmd = command as BuildUnitCommand;
@@ -246,13 +275,15 @@ const SystemInfo: FC = () => {
         <div className={classes.root}>
             <button className="close" onClick={() => setStar(null)}>X</button>
 
-            <AppBar position="absolute">
+            {/* <AppBar position="absolute"> */}
+            <header>
                 <Tabs value={tab} onChange={changeTab} aria-label="simple tabs example">
                     <Tab label="System" {...a11yProps(0)} />
                     <Tab label="Units" {...a11yProps(1)} />
                     <Tab label="Reports" {...a11yProps(2)} />
                 </Tabs>
-            </AppBar>
+            </header>
+            {/* </AppBar> */}
 
             <h1>{star.name}</h1>
 
@@ -260,41 +291,57 @@ const SystemInfo: FC = () => {
                 <h2>System Infrastructure</h2>
 
                 <div className={classes.value}>
-                    <BuildIcon />
-                    {star.industry}
+                    <IconIndustry size="xl" wrapper="light" />
+                    <h3>{star.industry} {comPlusInd > 0 && <span>+{comPlusInd}</span>}</h3>
+
                     {isMine && !userIsReady && (
                         <Button variant="contained" color="primary" onClick={() => plusIndustry(star.id)}>
                             +
                         </Button>
                     )}
-                    {comPlusInd > 0 && <p>+{comPlusInd}</p>}
+
                 </div>
                 <div className={classes.value}>
-                    <MonetizationOnIcon /> {star.economy}
+                    <IconCredit size="xl" wrapper="light" />
+
+                    <h3>
+                        {star.economy}
+                        {comPlusEco > 0 && <span>+{comPlusEco}</span>}
+                    </h3>
+
+
                     {isMine && !userIsReady && (
                         <Button variant="contained" color="primary" onClick={() => plusEconomy(star.id)}>
                             +
                         </Button>
                     )}
-                    {comPlusEco > 0 && <p>+{comPlusEco}</p>}
+
                 </div>
                 <div className={classes.value}>
-                    <SecurityIcon /> {star.defense}
+                    <IconDefense size="xl" wrapper="light" />
+                    <h3>
+                        {star.defense}
+                        {comPlusDef > 0 && <span>+{comPlusDef}</span>}
+                    </h3>
                     {isMine && !userIsReady && star.defense < star.industry && (
                         <Button variant="contained" color="primary" onClick={() => plusDefense(star.id)}>
                             +
                         </Button>
                     )}
-                    {comPlusDef > 0 && <p>+{comPlusDef}</p>}
+
                 </div>
                 <div className={classes.value}>
-                    <PeopleAltIcon /> {star.welfare}
+                    <IconWelfare size="xl" wrapper="light" />
+                    <h3>
+                        {star.welfare}
+                        {comPlusWlf > 0 && <span>+{comPlusWlf}</span>}
+                    </h3>
                     {isMine && !userIsReady && (
                         <Button variant="contained" color="primary" onClick={() => plusWelfare(star.id)}>
                             +
                         </Button>
                     )}
-                    {comPlusWlf > 0 && <p>+{comPlusWlf}</p>}
+
                 </div>
             </TabPanel>
 
@@ -303,7 +350,7 @@ const SystemInfo: FC = () => {
 
                 <h3>Units under construction</h3>
                 <div className={classes.units}>
-                    {shipsUnderConstruction.map((s: OldShip, ind: number) => {
+                    {shipsUnderConstruction.map((s: ShipDesign, ind: number) => {
                         return (
 
                             <ShipInfo ship={s} key={`ship${ind}`} className="underConstruction" onClick={() => cancelConstruction(s)} />
@@ -318,13 +365,17 @@ const SystemInfo: FC = () => {
 
                 <div className={classes.units}>
                     {faction &&
-                        getFactionShips(faction.id).map((ship: OldShip) => {
+                        getFactionShips(faction.id).map((ship: ShipDesign) => {
                             const canAfford = faction.money >= ship.cost;
                             const enoughIndustry = star.industry >= ship.minIndustry;
                             const canBuild = canAfford && enoughIndustry && isMine && !userIsReady;
 
+                            if (!canBuild) {
+                                return <ShipInfo ship={ship} key={ship.name} className="notbuildable" />
+                            }
+
                             return (
-                                <ShipInfo ship={ship} onClick={(s: OldShip) => buildUnit(s, star.location)} key={ship.name} className={!canBuild ? "notbuildable" : ""} />
+                                <ShipInfo ship={ship} onClick={(s: ShipDesign) => buildUnit(s, star.location)} key={ship.name} />
                             );
                         })}
                 </div>

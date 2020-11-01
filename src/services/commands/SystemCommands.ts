@@ -1,6 +1,7 @@
 import { joki } from "jokits-react";
 import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../../models/Commands";
 import { GameModel, OldShip, Coordinates } from "../../models/Models";
+import { ShipDesign } from "../../models/Units";
 import { User } from "../../models/User";
 import { factionCanDoMoreCommands, getFactionByUserId } from "../helpers/FactionHelpers";
 
@@ -83,7 +84,7 @@ export function removeCommand(commandId: string) {
     });
 }
 
-export function buildUnit(ship: OldShip, targetCoords: Coordinates) {
+export function buildUnit(ship: ShipDesign, targetCoords: Coordinates) {
     const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemBuild);
 
     if (!rootCommand) {

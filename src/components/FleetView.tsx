@@ -4,7 +4,8 @@ import React, { FC, useState } from "react";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import useUnitSelection from "../hooks/useUnitSelection";
 import useUnitsInSelectedSystem from "../hooks/useUnitsInSelectedSystem";
-import { SystemModel, UnitModel } from "../models/Models";
+import { SystemModel } from "../models/Models";
+import { ShipUnit } from "../models/Units";
 import { moveUnits } from "../services/commands/UnitCommands";
 import { unitIsMoving } from "../services/helpers/UnitHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
@@ -106,7 +107,7 @@ const FleetView: FC = () => {
 
 
     // const canMove = star && fleet.length > 0 && !inSameLocation(fleet[0].location, star.location);
-    const filteredUnits = units.filter((u: UnitModel) => !unitIsMoving(u));
+    const filteredUnits = units.filter((u: ShipUnit) => !unitIsMoving(u));
     const canCreateFleet = faction && star && fleet.length === 0 && filteredUnits.length > 0 && filteredUnits[0].factionId === faction.id;
 
     if (fleet.length === 0 && !canCreateFleet) return null;
@@ -133,11 +134,11 @@ const FleetView: FC = () => {
             {!canCreateFleet && <h2>Move fleet</h2>}
             
             
-            {fleet.map((unit: UnitModel) => {
+            {fleet.map((unit: ShipUnit) => {
                 return <UnitInfo unit={unit} key={unit.id} />
             })}
 
-            {fleet.length === 0 && canCreateFleet && units.map((unit: UnitModel) => {
+            {fleet.length === 0 && canCreateFleet && units.map((unit: ShipUnit) => {
                 return <UnitInfo unit={unit} key={unit.id} />
             })}
 
@@ -157,7 +158,7 @@ const FleetView: FC = () => {
 }
 
 interface ContentProps {
-    units: UnitModel[];
+    units: ShipUnit[];
     system: SystemModel | null;
     close: () => void;
 
@@ -171,7 +172,7 @@ const ViewFleetContent: FC<ContentProps> = (props) => {
             <h4>Fleet</h4>
 
             <div className="units">
-                {props.units.map((unit: UnitModel) => {
+                {props.units.map((unit: ShipUnit) => {
 
                     const moving = unitIsMoving(unit);
                     if (moving) {
@@ -192,19 +193,19 @@ const ViewFleetContent: FC<ContentProps> = (props) => {
 
 const CreateFleetContent: FC<ContentProps> = (props) => {
 
-    const [funits, setFunits] = useState<Set<UnitModel>>(new Set<UnitModel>());
+    const [funits, setFunits] = useState<Set<ShipUnit>>(new Set<ShipUnit>());
     const fl = useUnitSelection();
 
     const fleetActions = fl[1];
 
-    function toggleUnit(u: UnitModel) {
+    function toggleUnit(u: ShipUnit) {
         if (funits.has(u)) {
-            setFunits((prev: Set<UnitModel>) => {
+            setFunits((prev: Set<ShipUnit>) => {
                 prev.delete(u);
                 return new Set(prev);
             })
         } else {
-            setFunits((prev: Set<UnitModel>) => {
+            setFunits((prev: Set<ShipUnit>) => {
                 prev.add(u);
                 return new Set(prev);
             })
@@ -227,7 +228,7 @@ const CreateFleetContent: FC<ContentProps> = (props) => {
             {props.system && <h2>{props.system.name}</h2>}
 
             <div className="units">
-                {props.units.map((unit: UnitModel) => {
+                {props.units.map((unit: ShipUnit) => {
 
                     const moving = unitIsMoving(unit);
                     if (moving) {
@@ -253,7 +254,7 @@ const MoveFleetContent: FC<ContentProps> = (props) => {
 
     if (fleet.length === 0) return null;
 
-    function removeUnit(unit: UnitModel) {
+    function removeUnit(unit: ShipUnit) {
         fleetActions.rem(unit.id);
     }
 
@@ -274,7 +275,7 @@ const MoveFleetContent: FC<ContentProps> = (props) => {
             {props.system && <h4>{props.system.name}</h4>}
 
             <div className="units">
-                {fleet.map((unit: UnitModel) => {
+                {fleet.map((unit: ShipUnit) => {
                     return (<UnitInfo unit={unit} key={unit.id} onClick={removeUnit} className="removable" />);
                 })}
             </div>

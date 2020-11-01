@@ -1,6 +1,6 @@
 import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import React, { FC } from "react";
-import { UnitModel } from "../models/Models";
+import { ShipUnit } from "../models/Units";
 import { getFactionById } from "../utils/factionUtils";
 
 
@@ -18,8 +18,8 @@ const useStyles = makeStyles((theme: Theme) =>
     }));
 
 interface UnitInfoProps {
-    unit: UnitModel;
-    onClick?: (unit: UnitModel) => void;
+    unit: ShipUnit;
+    onClick?: (unit: ShipUnit) => void;
     selected?: boolean;
     className?: string;
 }

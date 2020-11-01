@@ -18,6 +18,8 @@ const theme = createMuiTheme({
   }
 });
 
+// console.log(joki.config("logger", "ON"));
+
 joki.service.add({
   serviceId: "GameService",
   service: createGameService,

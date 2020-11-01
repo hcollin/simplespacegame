@@ -1,12 +1,13 @@
 import { useService } from "jokits-react";
 import { useEffect, useState } from "react";
-import { GameModel, UnitModel } from "../models/Models";
+import { GameModel } from "../models/Models";
+import { ShipUnit } from "../models/Units";
 import { inSameLocation } from "../utils/locationUtils";
 import useSelectedSystem from "./useSelectedSystem";
 
-export default function useUnitsInSelectedSystem(): UnitModel[] {
+export default function useUnitsInSelectedSystem(): ShipUnit[] {
 
-    const [units, setUnits] = useState<UnitModel[]>([]);
+    const [units, setUnits] = useState<ShipUnit[]>([]);
 
     const [system] = useSelectedSystem();
 
@@ -17,7 +18,7 @@ export default function useUnitsInSelectedSystem(): UnitModel[] {
             if(system === null) {
                 setUnits([]);
             } else {
-                setUnits(game.units.filter((u: UnitModel) => inSameLocation(u.location, system.location)));
+                setUnits(game.units.filter((u: ShipUnit) => inSameLocation(u.location, system.location)));
             }
         }
 

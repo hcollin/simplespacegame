@@ -1,10 +1,11 @@
-import { FactionModel, GameModel, GameState, SystemModel, UnitModel } from "../../models/Models";
+import { FactionModel, GameModel, GameState, SystemModel } from "../../models/Models";
+import { SHIPCLASS, ShipUnit } from "../../models/Units";
 import { inSameLocation } from "../../utils/locationUtils";
 import { findClosestCoordinate } from "../../utils/MathUtils";
 import { rnd } from "../../utils/randUtils";
 import { createNewFaction } from "./FactionHelpers";
 import { createRandomMap } from "./SystemHelpers";
-import { createUnitFromShip } from "./UnitHelpers";
+import { createShipFromDesign, getDesignByName } from "./UnitHelpers";
 
 export function createNewGame(playerCount = 4): GameModel {
 
@@ -15,7 +16,7 @@ export function createNewGame(playerCount = 4): GameModel {
         factions.push(createNewFaction());
     }
 
-    const units: UnitModel[] = [];
+    const units: ShipUnit[] = [];
 
     // 8 players
     const searchPoints = playerCount > 4 ? [[12.5, 12.5], [50, 12.5], [87.5, 12.5], [12.5, 50], [87.5, 50], [12.5, 87.5], [50, 87.5], [87.5, 87.5]] : [[12.5, 12.5], [87.5, 12.5], [12.5, 87.5], [87.5, 87.5]];
@@ -29,6 +30,8 @@ export function createNewGame(playerCount = 4): GameModel {
 
         const star = stars.find((s: SystemModel) => inSameLocation(s.location, closestCoord));
 
+        
+
         if (star) {
             star.ownerFactionId = fm.id;
             star.welfare = 2;
@@ -36,7 +39,7 @@ export function createNewGame(playerCount = 4): GameModel {
             star.economy = 2;
             star.defense = 0;
             star.keywords.push("HOMEWORLD");
-            const unit = createUnitFromShip("Corvette", fm.id, star.location);
+            const unit = createShipFromDesign(getDesignByName("Corvette"), fm.id, star.location);
             units.push(unit);
 
         }

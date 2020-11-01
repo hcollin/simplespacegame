@@ -1,10 +1,11 @@
 import { joki } from "jokits-react";
 import { CommandType, FleetCommand } from "../../models/Commands";
-import { Coordinates, UnitModel } from "../../models/Models";
+import { Coordinates } from "../../models/Models";
+import { ShipUnit } from "../../models/Units";
 
 import { createEmptyCommandForCurrentFactionAndGame } from "./SystemCommands";
 
-export function moveUnits(units: UnitModel[], targetCoords: Coordinates) {
+export function moveUnits(units: ShipUnit[], targetCoords: Coordinates) {
     const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.FleetMove);
 
     if (!rootCommand) {
@@ -14,7 +15,7 @@ export function moveUnits(units: UnitModel[], targetCoords: Coordinates) {
 
     const command = {
         ...rootCommand,
-        unitIds: units.map((um: UnitModel) => um.id),
+        unitIds: units.map((um: ShipUnit) => um.id),
         target: targetCoords,
     } as FleetCommand;
 
@@ -26,7 +27,7 @@ export function moveUnits(units: UnitModel[], targetCoords: Coordinates) {
 }
 
 
-export function doAddUnitToFleet(unit: UnitModel) {
+export function doAddUnitToFleet(unit: ShipUnit) {
     joki.trigger({
         to: "FleetService",
         action: "addUnit",
@@ -34,7 +35,7 @@ export function doAddUnitToFleet(unit: UnitModel) {
     });
 }
 
-export function doRemoveUnitFromFleet(unit: UnitModel) {
+export function doRemoveUnitFromFleet(unit: ShipUnit) {
     joki.trigger({
         to: "FleetService",
         action: "addUnit",

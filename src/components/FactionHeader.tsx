@@ -15,22 +15,36 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         left: 0,
         zIndex: 100,
         height: "5rem",
-        width: "calc(100% - 28rem)",
+        width: "calc(100% - 18rem)",
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         borderBottom: "solid 2px #0008",
+        "&:after": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: "-4px",
+            zIndex: -1,
+            userSelect: "none",
+            pointerEvents: "none",
+            background: "repeating-linear-gradient(-25deg, #0004 0, #8886 20px, #AAA8 50px, #6665 80px, #0006 100px)",
+            borderBottom: "solid 4px #0008",
+        },
 
         "& >  div": {
 
             marginRight: "1rem",
             padding: "0 0.5rem",
-            borderLeft: "solid 1px black",
+            borderLeft: "groove 5px #0008",
             height: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             minWidth: "8rem",
+            background: "linear-gradient(to right, #0008 0, transparent 25%, #FFF6 50%, #0000 100%)",
 
             "& > h1": {
                 color: "white",

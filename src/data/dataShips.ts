@@ -116,7 +116,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         weapons: [
             getWeaponByName("Laser Turret"),
             // getWeaponByName("Rapid Laser")
-        ]
+        ],
+        description: "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires.",
     },
     {
         id: "",
@@ -137,7 +138,8 @@ const DATANEWSHIPS: ShipDesign[] = [
             getWeaponByName("Rapid Laser"),
             getWeaponByName("Rapid Laser"),
             getWeaponByName("Small Railgun"),
-        ]
+        ],
+        description: ""
     },
     {
         id: "",
@@ -161,13 +163,14 @@ const DATANEWSHIPS: ShipDesign[] = [
             getWeaponByName("Laser Turret"),
             getWeaponByName("Laser Turret"),
             getWeaponByName("Mass Cannon"),
-        ]
+        ],
+        description: ""
     },
 ];
 
 
 
-const DATASHIPS = DATAOLDSHIPS;
+const DATASHIPS = DATANEWSHIPS;
 
 export default DATASHIPS;
 

@@ -1,31 +1,13 @@
 import { joki } from "jokits-react";
 import { v4 } from "uuid";
-import DATASHIPS, { shipNameGenerator } from "../../data/dataShips";
+import DATASHIPS, { DATANEWSHIPS, shipNameGenerator } from "../../data/dataShips";
 import { Command, CommandType, FleetCommand } from "../../models/Commands";
-import { UnitModel, OldShip, Coordinates, SystemModel } from "../../models/Models";
+import { OldShip, Coordinates, SystemModel, SpaceCombat } from "../../models/Models";
 import { ShipDesign, ShipUnit, ShipWeapon, WEAPONTYPE } from "../../models/Units";
 import { rnd } from "../../utils/randUtils";
 
-export function createUnitFromShip(shipName: string, factionId: string, location: Coordinates): UnitModel {
-    const ship = DATASHIPS.find((s: OldShip) => s.name === shipName);
 
-    if (!ship) {
-        throw new Error(`Unknown ship name ${shipName}`);
-    }
-
-    const unit: UnitModel = {
-        ...ship,
-        location: location,
-        factionId: factionId,
-        damage: 0,
-        id: v4(),
-    };
-
-    return unit;
-}
-
-
-export function unitIsMoving(unit: UnitModel): boolean {
+export function unitIsMoving(unit: ShipUnit): boolean {
 
     const commands = joki.service.getState("CommandService") as Command[];
 
@@ -62,12 +44,12 @@ export function createShipFromDesign(design: ShipDesign, factionId: string, loca
 }
 
 
-interface SpaceCombat {
-    units: ShipUnit[];
-    system: SystemModel | null;
-    round: number;
-    log: string[];
-    done: boolean;
+export function getDesignByName(name: string): ShipDesign {
+    const sd = DATASHIPS.find((s: ShipDesign) => s.name === name);
+    if(!sd) {
+        throw new Error(`Unknown ship desgin ${name}`);
+    }
+    return sd;
 }
 
 export function spaceCombatMain(units: ShipUnit[], system: SystemModel | null): SpaceCombat {

@@ -1,10 +1,11 @@
 import React, { FC } from "react";
-import { FactionModel, SystemModel, UnitModel } from "../models/Models";
+import { FactionModel, SystemModel } from "../models/Models";
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
 import { getFactionById } from "../services/helpers/FactionHelpers";
 // import { inSameLocation } from "../utils/locationUtils";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import AirplanemodeActiveIcon from '@material-ui/icons/AirplanemodeActive';
+import { ShipUnit } from "../models/Units";
 
 const size = window.innerHeight - 200;
 
@@ -78,7 +79,7 @@ const useStyles = makeStyles((theme: Theme) =>
 interface SimpleMapProps {
     systems: SystemModel[];
     factions: FactionModel[];
-    units: UnitModel[];
+    units: ShipUnit[];
 }
 
 const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
@@ -98,7 +99,7 @@ const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
     return (
         <div className={classes.root}>
 
-            {props.units.map((um: UnitModel) => {
+            {props.units.map((um: ShipUnit) => {
                 const style = {
                     top: `${um.location.y}%`,
                     left: `${um.location.x}%`,
@@ -124,7 +125,7 @@ const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
                     height: ownerFaction ? "1.25%" : "0.75%",
                 };
 
-                // const units = props.units.filter((u: UnitModel) => inSameLocation(u.location, star.location));
+                // const units = props.units.filter((u: ShipUnit) => inSameLocation(u.location, star.location));
                 const isSelected = selectedSystem && selectedSystem.id === star.id;
                 return (
                     <div

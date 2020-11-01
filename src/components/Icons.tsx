@@ -1,4 +1,4 @@
-import { makeStyles, Theme, createStyles } from "@material-ui/core";
+import { makeStyles, Theme, createStyles, Tooltip } from "@material-ui/core";
 import React, { FC } from "react";
 
 import iconCreditSvg from '../images/iconCredit.svg';
@@ -7,6 +7,19 @@ import iconScoreSvg from '../images/iconScore.svg';
 import iconCommandSvg from '../images/iconCommand.svg';
 import iconIndustrySvg from '../images/iconIndustry.svg';
 
+import iconAccuracySvg from '../images/iconAccuracy.svg';
+import iconShieldsSvg from '../images/iconShields.svg';
+import iconHullSvg from '../images/iconHull.svg';
+import iconAgilitySvg from '../images/iconAgility.svg';
+import iconArmorSvg from '../images/iconArmor.svg';
+import iconDamageSvg from '../images/iconDamage.svg';
+import iconCooldownSvg from '../images/iconCooldown.svg';
+import iconSpeedSvg from '../images/iconSpeed.svg';
+
+import iconWelfareSvg from '../images/iconWelfare.svg';
+import iconDefenseSvg from '../images/iconDefense.svg';
+
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -14,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
             height: "1rem",
             width: "1rem",
-            
+
             "&.sm": {
                 height: "0.7rem",
                 width: "0.7rem",
@@ -65,61 +78,106 @@ interface IconProps {
 }
 
 const IconCredit: FC<IconProps> = (props) => {
-    const classes = useStyles();
-    const size = props.size || "md";
-
-    return (<IconWrapper {...props}>
-        <img src={iconCreditSvg} alt="Credit" className={`${classes.root} image ${size} ${props.className || ""}`} />
-    </IconWrapper>);
+    return <GeneralIcon {...props} tooltip="Credits" iconSvg={iconCreditSvg} />;
 }
 
 const IconResearchPoint: FC<IconProps> = (props) => {
-    const classes = useStyles();
-    const size = props.size || "md";
-
-    return (<IconWrapper {...props}>
-        <img src={IconResearchPointSvg} alt="Research Point" className={`${classes.root} image ${size} ${props.className || ""}`} />
-    </IconWrapper>); 
+    return <GeneralIcon {...props} tooltip="Research Point" iconSvg={IconResearchPointSvg} />;
 }
 
 const IconScore: FC<IconProps> = (props) => {
-    const classes = useStyles();
-    const size = props.size || "md";
-
-    return (<IconWrapper {...props}>
-        <img src={iconScoreSvg} alt="Victory Point" className={`${classes.root} image ${size} ${props.className || ""}`} />
-    </IconWrapper>); 
+    return <GeneralIcon {...props} tooltip="Score" iconSvg={iconScoreSvg} />;
 }
 
 const IconCommand: FC<IconProps> = (props) => {
-    const classes = useStyles();
-    const size = props.size || "md";
-
-    return (<IconWrapper {...props}>
-        <img src={iconCommandSvg} alt="Command" className={`${classes.root} image ${size} ${props.className || ""}`} />
-    </IconWrapper>); 
+    return <GeneralIcon {...props} tooltip="Command" iconSvg={iconCommandSvg} />;
 }
-
 
 const IconIndustry: FC<IconProps> = (props) => {
-    const classes = useStyles();
-    const size = props.size || "md";
+    return <GeneralIcon {...props} tooltip="Industry" iconSvg={iconIndustrySvg} />;
+}
 
-    return (<IconWrapper {...props}>
-        <img src={iconIndustrySvg} alt="Industry" className={`${classes.root} image ${size} ${props.className || ""}`} />
-    </IconWrapper>); 
+const IconAccuracy: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Weapon Accuracy" iconSvg={iconAccuracySvg} />;
+}
+
+const IconDamage: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Weapon Damage" iconSvg={iconDamageSvg} />;
+}
+
+const IconShields: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Ship Shields" iconSvg={iconShieldsSvg} />;
+}
+
+const IconHull: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Ship Hull" iconSvg={iconHullSvg} />;
+}
+
+const IconAgility: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Ship Agility" iconSvg={iconAgilitySvg} />;
+}
+
+const IconArmor: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Ship Armor" iconSvg={iconArmorSvg} />;
+}
+
+const IconCooldown: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Weapon Cooldown" iconSvg={iconCooldownSvg} />
+}
+
+const IconSpeed: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Ship FTL Speed" iconSvg={iconSpeedSvg} />
+}
+
+const IconWelfare: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Welfare" iconSvg={iconWelfareSvg} />
+}
+
+const IconDefense: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Defense" iconSvg={iconDefenseSvg} />
 }
 
 
-export { IconCredit, IconResearchPoint, IconScore, IconCommand,IconIndustry };
+export {
+    IconCredit,
+    IconResearchPoint,
+    IconScore,
+    IconCommand,
+    IconIndustry,
+    IconAccuracy, 
+    IconShields, 
+    IconHull, 
+    IconAgility, 
+    IconArmor, 
+    IconDamage, 
+    IconCooldown, 
+    IconSpeed, 
+    IconWelfare, 
+    IconDefense
+
+};
+
+interface GeneralIcon extends IconProps {
+    tooltip: string;
+    iconSvg: string;
+}
 
 
-
-const IconWrapper: FC<IconProps> = (props) => {
+const GeneralIcon: FC<GeneralIcon> = (props) => {
     const classes = useStyles();
-    if (!props.wrapper) return <>{props.children}</>;
+    const { tooltip, iconSvg, ...rest } = props;
 
-    return <div className={`${classes.root} wrapper ${props.wrapper || "light"} ${props.size || "md"}`}>
-        {props.children}
-    </div>
+    if (props.wrapper) {
+        return (
+            <Tooltip title={tooltip}>
+                <div className={`${classes.root} wrapper ${props.wrapper || "light"} ${props.size || "md"}`}>
+                    <img src={iconSvg} alt={tooltip} className={`${classes.root} image ${props.size} ${props.className || ""}`} />
+                </div>
+            </Tooltip>);
+    }
+
+    return (
+        <Tooltip title={tooltip}>
+            <img src={iconSvg} alt={tooltip} className={`${classes.root} image ${props.size} ${props.className || ""}`} />
+        </Tooltip>)
 }

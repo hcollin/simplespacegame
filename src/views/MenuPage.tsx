@@ -1,5 +1,7 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import React, { FC, useState } from "react";
+import ShipInfo from "../components/ShipInfo";
+import DATASHIPS from "../data/dataShips";
 import { doCreateNewGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 
@@ -74,6 +76,13 @@ const MenuPage: FC = () => {
             {user && <div>
                 <h2>List of Games</h2>
             </div>}
+
+
+            <ShipInfo ship={DATASHIPS[0]} />
+
+            <ShipInfo ship={DATASHIPS[1]} />
+
+            <ShipInfo ship={DATASHIPS[2]} />
 
         </div>
     )

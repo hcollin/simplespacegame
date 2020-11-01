@@ -11,7 +11,6 @@ export default function useSelectedSystem(): [SystemModel | null, ((id: string |
 
 
     useEffect(() => {
-
         if (starId === "") {
             setStar(null);
             joki.trigger({
@@ -23,23 +22,30 @@ export default function useSelectedSystem(): [SystemModel | null, ((id: string |
         }
 
         if (game && starId) {
+
+            if (star !== null && star.id === starId) {
+                return;
+            }
+
             const sm = game.systems.find((s: SystemModel) => s.id === starId);
-            setStar((prev: SystemModel | null) => {
-                if (!sm) return null;
-                if (prev === null) return sm;
-                if (sm.id === prev.id) return prev;
-                return sm;
-            });
-            if(sm) {
+
+            if (sm) {
+
+                setStar((prev: SystemModel | null) => {
+                    if (!sm) return null;
+                    if (prev === null) return sm;
+                    if (sm.id === prev.id) return prev;
+                    return sm;
+                });
                 joki.trigger({
                     from: "useSelectedSystem",
                     action: "systemSelected",
                     data: sm,
                 });
             }
-            
+
         }
-    }, [starId, game]);
+    }, [starId, game, star]);
 
     function setNewStar(id: string | null) {
 
@@ -49,6 +55,7 @@ export default function useSelectedSystem(): [SystemModel | null, ((id: string |
             setStarId(id);
         }
     }
+
 
     return [star, setNewStar]
 }
