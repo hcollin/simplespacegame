@@ -17,7 +17,7 @@ let globalUnits: UnitModel[] = []
 export default function useUnitSelection(): [UnitModel[], UnitSelectionActions] {
 
     const [selectedUnits, setSelectedUnits] = useState<UnitModel[]>(globalUnits);
-
+    
 
     // useEffect(() => {
     //     globalUnits = selectedUnits;

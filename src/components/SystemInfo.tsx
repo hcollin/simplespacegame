@@ -1,22 +1,19 @@
 import { makeStyles, Theme, createStyles, Button, Tab, Tabs, AppBar } from "@material-ui/core";
 import React, { FC, useState } from "react";
 import useSelectedSystem from "../hooks/useSelectedSystem";
-import { plusEconomy, plusWelfare, plusIndustry, plusDefense, buildUnit } from "../services/commands/SystemCommands";
+import { plusEconomy, plusWelfare, plusIndustry, plusDefense, buildUnit, removeCommand } from "../services/commands/SystemCommands";
 
 import BuildIcon from "@material-ui/icons/Build";
 import SecurityIcon from "@material-ui/icons/Security";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 
+import TimerIcon from '@material-ui/icons/Timer';
 
 import useMyCommands from "../hooks/useMyCommands";
-import { BuildUnitCommand, Command, CommandType, FleetCommand, SystemPlusCommand } from "../models/Commands";
-import useUnitsInSelectedSystem from "../hooks/useUnitsInSelectedSystem";
-import { Report, Ship, UnitModel } from "../models/Models";
-import UnitInfo from "./UnitInfo";
-import useUnitSelection from "../hooks/useUnitSelection";
+import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
+import { Report, OldShip } from "../models/Models";
 import { inSameLocation } from "../utils/locationUtils";
-import { moveUnits } from "../services/commands/UnitCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { getFactionShips } from "../services/helpers/FactionHelpers";
@@ -33,7 +30,8 @@ const useStyles = makeStyles((theme: Theme) =>
             right: "29rem",
             minWidth: "30rem",
             padding: "3rem 1rem 1rem 1rem",
-            background: "#FFFD",
+            // background: "#FFFD",
+            background: "repeating-linear-gradient(0deg, #FFF 0, #FFFD 5px, #DDDF 10px, #FFF 15px)",
             "& > button.close": {
                 position: "absolute",
                 top: "-0.5rem",
@@ -85,6 +83,51 @@ const useStyles = makeStyles((theme: Theme) =>
             },
         },
 
+        units: {
+            "& > div": {
+                marginBottom: "0.5rem",
+
+                "&.notbuildable": {
+                    background: "#333",
+                },
+
+                "&.underConstruction": {
+                    background: "#666",
+                    opacity: 0.8,
+                    filter: "grayscale(0.7)",
+                    position: "relative",
+
+                    "&:hover": {
+                        background: "#666",
+                        opacity: 1,
+                        filter: "none",
+                        
+                        "&:after": {
+                            content: '"CANCEL"',
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            fontSize: "3rem",
+                            letterSpacing: "6px",
+                            color: "#F00C",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "#000C",
+                            border: "solid 6px #F00C",
+                            borderRadius: "0.5rem",
+                            fontWeight: "bold",
+
+
+                        }
+                    }
+                }
+
+            }
+        },
+
         unitList: {
             "& > div.selectable": {
                 background: "#0002",
@@ -98,7 +141,7 @@ const useStyles = makeStyles((theme: Theme) =>
                     margin: 0,
                 }
             }
-            
+
         }
     })
 );
@@ -134,12 +177,12 @@ const SystemInfo: FC = () => {
     const classes = useStyles();
     const [star, setStar] = useSelectedSystem();
     const comms = useMyCommands();
-    const units = useUnitsInSelectedSystem();
+    // const units = useUnitsInSelectedSystem();
     const [user] = useCurrentUser();
     const faction = useCurrentFaction();
     const userIsReady = useUserIsReady();
-    const [selectedUnits, setSelectedUnits] = useState<UnitModel[]>([]);
-    const [fleet, fleetActions] = useUnitSelection();
+    // const [selectedUnits, setSelectedUnits] = useState<UnitModel[]>([]);
+    // const [fleet, fleetActions] = useUnitSelection();
 
     const [tab, setTab] = useState<number>(0);
 
@@ -149,37 +192,7 @@ const SystemInfo: FC = () => {
         setTab(newValue);
     }
 
-    function selectUnit(unit: UnitModel) {
-        if (unit && faction && unit.factionId === faction.id) {
-            const isSelected = selectedUnits.find((um: UnitModel) => um.id === unit.id) !== undefined;
 
-            if (isSelected) {
-                setSelectedUnits((prev: UnitModel[]) => prev.filter((um: UnitModel) => um.id !== unit.id));
-            } else {
-                setSelectedUnits((prev: UnitModel[]) => {
-                    const n = [...prev];
-                    n.push(unit);
-                    return n;
-                });
-            }
-        }
-    }
-
-    function setFleet() {
-        fleetActions.set([...selectedUnits]);
-        setSelectedUnits([]);
-    }
-
-    function cancelFleet() {
-        fleetActions.clr();
-    }
-
-    function moveFleet() {
-        if (star && fleet.length > 0) {
-            moveUnits(fleet, star.location);
-            fleetActions.clr();
-        }
-    }
 
     const comPlusInd = comms.filter((c: Command) => {
         const cs = c as SystemPlusCommand;
@@ -200,11 +213,11 @@ const SystemInfo: FC = () => {
 
     const isMine = faction && faction.id === star.ownerFactionId;
 
-    const shipsUnderConstruction: Ship[] = comms.reduce((ships: Ship[], command: Command) => {
+    const shipsUnderConstruction: OldShip[] = comms.reduce((ships: OldShip[], command: Command) => {
         if (command.type === CommandType.SystemBuild) {
             const cmd = command as BuildUnitCommand;
             if (inSameLocation(cmd.target, star.location)) {
-                const ship = DATASHIPS.find((s: Ship) => s.name === cmd.shipName);
+                const ship = DATASHIPS.find((s: OldShip) => s.name === cmd.shipName);
                 if (ship) {
                     ships.push(ship);
                 }
@@ -214,14 +227,20 @@ const SystemInfo: FC = () => {
         return ships;
     }, []);
 
-    const unitsInFleet = comms.reduce((unitIds: string[], command: Command) => {
-        if (command.type === CommandType.FleetMove) {
-            const cmd = command as FleetCommand;
-            unitIds = [...unitIds, ...cmd.unitIds];
+    function cancelConstruction(ship: OldShip) {
+        const cmd = comms.find((command: Command) => {
+            if (command.type === CommandType.SystemBuild && star) {
+                const cmd = command as BuildUnitCommand;
+                if (inSameLocation(cmd.target, star.location) && cmd.shipName === ship.name) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        if (cmd) {
+            removeCommand(cmd.id);
         }
-
-        return unitIds;
-    }, []);
+    }
 
     return (
         <div className={classes.root}>
@@ -281,65 +300,34 @@ const SystemInfo: FC = () => {
 
             <TabPanel value={tab} index={1}>
                 <h2>Units</h2>
-                <p>Click on unit to select it for movement</p>
 
-                <div className={classes.unitList}>
-                {units.map((u: UnitModel) => {
-                    const isSelected = selectedUnits.find((um: UnitModel) => um.id === u.id);
+                <h3>Units under construction</h3>
+                <div className={classes.units}>
+                    {shipsUnderConstruction.map((s: OldShip, ind: number) => {
+                        return (
 
-                    if (unitsInFleet.includes(u.id)) {
-                        return null;
-                    }
-                    return <UnitInfo key={u.id} unit={u} onClick={selectUnit} selected={isSelected !== undefined} className="selectable" />;
-                })}
+                            <ShipInfo ship={s} key={`ship${ind}`} className="underConstruction" onClick={() => cancelConstruction(s)} />
+
+
+                        );
+                    })}
                 </div>
-
-                {shipsUnderConstruction.map((s: Ship, ind: number) => {
-                    return (
-                        <div key={`ship-${ind}`} className="shipUnderConstruction">
-                            Buidling: <ShipInfo ship={s} key={`ship${ind}`} />
-                        </div>
-                    );
-                })}
-
-                {selectedUnits.length > 0 && fleet.length === 0 && !userIsReady && (
-                    <Button variant="contained" color="primary" onClick={setFleet}>
-                        Move Selected Units
-                    </Button>
-                )}
-                {fleet.length > 0 && inSameLocation(fleet[0].location, star.location) && !userIsReady && (
-                    <Button variant="contained" color="secondary" onClick={cancelFleet}>
-                        Cancel Fleet
-                    </Button>
-                )}
-                {fleet.length > 0 && !inSameLocation(fleet[0].location, star.location) && !userIsReady && (
-                    <Button variant="contained" color="primary" onClick={moveFleet}>
-                        Move Fleet Here
-                    </Button>
-                )}
 
                 <h3>Build Ships</h3>
 
-                {faction &&
-                    getFactionShips(faction.id).map((ship: Ship) => {
-                        const canAfford = faction.money >= ship.cost;
-                        const enoughIndustry = star.industry >= ship.minIndustry;
-                        const canBuild = canAfford && enoughIndustry && isMine && !userIsReady;
 
-                        return (
-                            <div key={ship.name}>
-                                <ShipInfo ship={ship} />
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={!canBuild}
-                                    onClick={() => buildUnit(ship, star.location)}
-                                >
-                                    Build
-                                </Button>
-                            </div>
-                        );
-                    })}
+                <div className={classes.units}>
+                    {faction &&
+                        getFactionShips(faction.id).map((ship: OldShip) => {
+                            const canAfford = faction.money >= ship.cost;
+                            const enoughIndustry = star.industry >= ship.minIndustry;
+                            const canBuild = canAfford && enoughIndustry && isMine && !userIsReady;
+
+                            return (
+                                <ShipInfo ship={ship} onClick={(s: OldShip) => buildUnit(s, star.location)} key={ship.name} className={!canBuild ? "notbuildable" : ""} />
+                            );
+                        })}
+                </div>
             </TabPanel>
 
             <TabPanel value={tab} index={2}>

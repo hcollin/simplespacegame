@@ -68,9 +68,7 @@ export default function createFleetService(serviceId: string, api: JokiServiceAp
 
     function confirm() {
         if(fleet && fleet.target !== null && fleet.units.length > 0) {
-
             moveUnits(fleet.units, fleet.target);
-
             fleet = null;
             sendUpdate();
         }

@@ -1,6 +1,7 @@
 import { joki } from "jokits-react";
 import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel, SystemModel, UnitModel } from "../models/Models";
+import { techMarketing } from "../tech/businessTech";
 
 export function getFactionById(fid: string): FactionModel {
     const game = joki.service.getState("GameService") as GameModel;
@@ -79,7 +80,7 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         }
         return sum;
     }, 0)
-    values.income = values.totalEconomy + values.trade - values.expenses;
+    values.income = values.totalEconomy + values.trade - values.expenses + techMarketing(getFactionById(factionId), game);
 
 
     values.maxCommands = commandCountCalculator(game, factionId);

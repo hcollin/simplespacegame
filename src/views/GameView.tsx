@@ -16,7 +16,7 @@ import useCurrentUser from "../services/hooks/useCurrentUser"
 import iconMapSvg from '../images/iconMap.svg';
 import iconEconomySvg from '../images/iconEconomy.svg';
 import iconScienceSvg from '../images/iconScience.svg';
-import iconUnitsSvg from '../images/iconUnits.svg';
+
 import iconDiplomacySvg from '../images/iconDiplomacy.svg';
 import iconHelpSvg from '../images/iconHelp.svg';
 
@@ -24,6 +24,7 @@ import EconomySheet from "./subviews/EconomySheet"
 import HelpView from "./subviews/HelpView"
 import ScienceView from "./subviews/ScienceView"
 import DiplomacyView from "./subviews/DiplomacyView"
+import FleetView from "../components/FleetView"
 
 
 
@@ -134,7 +135,11 @@ const GameView: FC = () => {
             {/* <div className={classes.rows}> */}
             {/* <SimpleMap systems={game.systems} factions={game.factions} units={game.units} /> */}
             
-            {view === "map" && <LargeMap systems={game.systems} factions={game.factions} units={game.units} />}
+            {view === "map" && <>
+                <LargeMap systems={game.systems} factions={game.factions} units={game.units} />
+                <SystemInfo />
+                <FleetView />
+            </>}
             {view === "economy" && <EconomySheet />}
             {view === "science" && <ScienceView />}
             {view === "diplomacy" && <DiplomacyView />}
@@ -143,7 +148,7 @@ const GameView: FC = () => {
 
             {/* </div> */}
 
-            <SystemInfo />
+            
 
             <CheatView />
 

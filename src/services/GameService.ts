@@ -18,11 +18,13 @@ import {
     Technology,
 } from "../models/Models";
 import { User } from "../models/User";
+import { techMarketing } from "../tech/businessTech";
 import { factionValues, researchPointDistribution, researchPointGenerationCalculator } from "../utils/factionUtils";
 import { inSameLocation } from "../utils/locationUtils";
 import { travelingBetweenCoordinates } from "../utils/MathUtils";
 import { rnd } from "../utils/randUtils";
 import { canAffordTech, factionPaysForTech } from "../utils/techUtils";
+import { combatRoll, getUnitSpeed } from "../utils/unitUtils";
 import { getFactionById, getFactionByUserId } from "./helpers/FactionHelpers";
 import { createNewGame } from "./helpers/GameHelpers";
 import { createUnitFromShip } from "./helpers/UnitHelpers";
@@ -59,7 +61,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 case "updateFaction":
                     updateFaction(event.data as FactionModel);
                     break;
-                case "updateTrades": 
+                case "updateTrades":
                     game.trades = event.data;
                     sendUpdate();
                     break;
@@ -242,17 +244,17 @@ function processResearch(oldGame: GameModel) {
 
 function processTrades(oldGame: GameModel): GameModel {
     let game = { ...oldGame };
-    
+
     game.trades = game.trades.map((tr: Trade) => {
 
         let success = false;
 
         const fromFaction = getFactionById(game.factions, tr.from);
         const toFaction = getFactionById(game.factions, tr.to);
-        
-        if(fromFaction && toFaction) {
 
-            if(fromFaction.money >= tr.money) {
+        if (fromFaction && toFaction) {
+
+            if (fromFaction.money >= tr.money) {
                 fromFaction.money -= tr.money;
                 toFaction.money += tr.money;
                 success = true;
@@ -261,34 +263,34 @@ function processTrades(oldGame: GameModel): GameModel {
 
         }
 
-        if(success && fromFaction && toFaction) {
+        if (success && fromFaction && toFaction) {
             tr.length--;
             game = updateFactionInGame(game, fromFaction);
             game = updateFactionInGame(game, toFaction);
         }
-        
-    
-        return {...tr};
+
+
+        return { ...tr };
     })
 
     return game;
 }
 
 function processResearchCommands(commands: Command[], oldGame: GameModel): GameModel {
-    let game = {...oldGame};
+    let game = { ...oldGame };
 
     commands.forEach((cmd: Command) => {
-        if(cmd.type === CommandType.TechnologyResearch) {
+        if (cmd.type === CommandType.TechnologyResearch) {
             const command = cmd as ResearchCommand;
             const faction = getFactionById(game.factions, command.factionId);
-            if(faction) {
+            if (faction) {
                 const tech = DATATECHNOLOGY.find((t: Technology) => t.id === command.techId);
-                if(tech && faction && canAffordTech(tech, faction)) {
+                if (tech && faction && canAffordTech(tech, faction)) {
                     faction.technologyFields = factionPaysForTech(faction.technologyFields, tech);
                     faction.technology.push(tech.id);
                     game = updateFactionInGame(game, faction);
                     markCommandDone(cmd.id);
-                    
+
                 }
             }
         }
@@ -342,22 +344,6 @@ function processInvasion(oldGame: GameModel): GameModel {
 }
 
 function processEconomy(game: GameModel): GameModel {
-    // const incr = game.systems.reduce((money: Map<string, number>, star: SystemModel) => {
-
-    //     if (star.ownerFactionId) {
-
-    //         if (!money.has(star.ownerFactionId)) {
-    //             money.set(star.ownerFactionId, 0);
-    //         }
-
-    //         const cur = money.get(star.ownerFactionId);
-    //         if (cur !== undefined) {
-    //             money.set(star.ownerFactionId, cur + star.economy);
-    //         }
-    //     }
-
-    //     return money;
-    // }, new Map<string, number>())
 
     game.factions = game.factions.map((fm: FactionModel) => {
         const values = factionValues(game, fm.id);
@@ -455,7 +441,7 @@ function processFleetMoveCommand(command: FleetCommand, game: GameModel): GameMo
         const unit = getUnitFromGame(game, uid);
 
         if (newPoint === null) {
-            newPoint = travelingBetweenCoordinates(unit.location, command.target, unit.speed);
+            newPoint = travelingBetweenCoordinates(unit.location, command.target, getUnitSpeed(unit));
         }
 
         const nUnit = { ...unit };
@@ -498,45 +484,61 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
         combat.round++;
         combat.log.push(`Combat Round ${combat.round} starts`);
 
-        // Create dice pool for all factions
-        const dicePools = combat.units.reduce((dicePool: Map<string, number>, unit: UnitModel) => {
-            if (!dicePool.has(unit.factionId)) {
-                dicePool.set(unit.factionId, 0);
-            }
+        // Roll Dice combat dice for how many hits this unit does
+        const hits = combat.units.reduce((totalHits: Map<string, number>, unit: UnitModel) => {
 
-            const currentPool = dicePool.get(unit.factionId);
-            if (currentPool !== undefined) {
-                dicePool.set(unit.factionId, currentPool + unit.weapons);
+            const damage = combatRoll(unit, combat);
+            const curHits = totalHits.get(unit.factionId);
+            if (curHits) {
+                totalHits.set(unit.factionId, curHits + damage);
+            } else {
+                totalHits.set(unit.factionId, damage);
             }
-
-            return dicePool;
+            return totalHits;
         }, new Map<string, number>());
 
-        if (combat.system.ownerFactionId !== "") {
-            const pool = dicePools.get(combat.system.ownerFactionId);
-            if (pool) {
-                dicePools.set(combat.system.ownerFactionId, pool + combat.system.defense);
-            }
-        }
 
-        // Roll dice
 
-        const hits: Map<string, number> = new Map<string, number>();
+        // // Create dice pool for all factions
+        // const dicePools = combat.units.reduce((dicePool: Map<string, number>, unit: UnitModel) => {
+        //     if (!dicePool.has(unit.factionId)) {
+        //         dicePool.set(unit.factionId, 0);
+        //     }
 
-        dicePools.forEach((pool: number, factionId: string) => {
-            combat.log.push(`${factionId} rolls ${pool} dice!`);
+        //     const currentPool = dicePool.get(unit.factionId);
+        //     if (currentPool !== undefined) {
+        //         dicePool.set(unit.factionId, currentPool + unit.weapons);
+        //     }
 
-            const rolls: number[] = [];
-            for (let i = 0; i < pool; i++) {
-                rolls.push(rnd(1, 10));
-            }
+        //     return dicePool;
+        // }, new Map<string, number>());
 
-            const fHits = rolls.filter((res: number) => res >= 6).length;
+        // if (combat.system.ownerFactionId !== "") {
+        //     const pool = dicePools.get(combat.system.ownerFactionId);
+        //     if (pool) {
+        //         dicePools.set(combat.system.ownerFactionId, pool + combat.system.defense);
+        //     }
+        // }
 
-            combat.log.push(`${factionId} rolls ${rolls.join(", ")} producing ${fHits} hits`);
+        // // Roll dice
 
-            hits.set(factionId, fHits);
-        });
+        // const hits: Map<string, number> = new Map<string, number>();
+
+        // dicePools.forEach((pool: number, factionId: string) => {
+        //     combat.log.push(`${factionId} rolls ${pool} dice!`);
+
+        //     const rolls: number[] = [];
+        //     for (let i = 0; i < pool; i++) {
+
+        //         rolls.push(rnd(1, 10));
+        //     }
+
+        //     const fHits = rolls.filter((res: number) => res >= 6).length;
+
+        //     combat.log.push(`${factionId} rolls ${rolls.join(", ")} producing ${fHits} hits`);
+
+        //     hits.set(factionId, fHits);
+        // });
 
         // Assign hits
         hits.forEach((hits: number, factionId: string) => {
@@ -567,18 +569,19 @@ function resolveCombat(game: GameModel, origCombat: CombatEvent): GameModel {
             }
         });
 
-        // Check if all dicepools are empty (then the combat ends)
-        const dicePoolsOverZero = Array.from(dicePools.values()).filter((v: number) => v > 0).length;
-        if (dicePoolsOverZero === 0) {
-            combat.resolved = true;
-        }
+        // // Check if all dicepools are empty (then the combat ends)
+        // const dicePoolsOverZero = Array.from(dicePools.values()).filter((v: number) => v > 0).length;
+        // if (dicePoolsOverZero === 0) {
+        //     combat.resolved = true;
+        // }
 
-        // If only one faction remains, end combat
-        const factionCount = countFactionsInUnits(combat.units);
-        if (factionCount <= 1) {
-            combat.resolved = true;
-        }
+        // // If only one faction remains, end combat
+        // const factionCount = countFactionsInUnits(combat.units);
+        // if (factionCount <= 1) {
+        //     combat.resolved = true;
+        // }
 
+        combat.resolved = true;
         return { ...combat };
     }
 

@@ -1,18 +1,12 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import React, { FC } from "react";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
-import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
-// import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
-
-import FlashOnIcon from '@material-ui/icons/FlashOn';
-import AdjustIcon from '@material-ui/icons/Adjust';
-
 import useMyCommands from "../hooks/useMyCommands";
 import { useService } from "jokits-react";
-import { GameModel, SystemModel } from "../models/Models";
+import { GameModel} from "../models/Models";
 import { factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
 import { playerDone } from "../services/commands/GameCommands";
-import { IconCredit, IconResearchPoint } from "./Icons";
+import { IconCommand, IconCredit, IconResearchPoint, IconScore } from "./Icons";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -118,8 +112,8 @@ const FactionHeader: FC = () => {
     
     const isReady = game.factionsReady.includes(faction.id);
 
-    const totalRingWorlds = game.systems.filter((sm: SystemModel) => sm.ringWorld);
-    const myRingWorlds = totalRingWorlds.filter((sm: SystemModel) => sm.ownerFactionId === faction.id);
+    // const totalRingWorlds = game.systems.filter((sm: SystemModel) => sm.ringWorld);
+    // const myRingWorlds = totalRingWorlds.filter((sm: SystemModel) => sm.ownerFactionId === faction.id);
 
     const factionTitleStyle = {
         fontFamily: faction.style.fontFamily ? faction.style.fontFamily : "Arial"
@@ -152,23 +146,23 @@ const FactionHeader: FC = () => {
 
             </div>
             <div>
-                <div className="mainView">
-                    <FlashOnIcon /> <b>{commands.length}</b> <span>/ {values.maxCommands}</span>
+                <div className="singleView">
+                    <IconCommand size="xl" wrapper="light" /> <b>{commands.length}</b> <span>/ {values.maxCommands}</span>
                 </div>
             </div>
-            <div>
-                <div className="mainView">
+            {/* <div>
+                <div className="singleView">
                     <AdjustIcon /> <b>{myRingWorlds.length}</b> <span>( / {totalRingWorlds.length} )</span>
                 </div>
-            </div>
+            </div> */}
             <div>
-                <div className="mainView">
+                <div className="singleView">
                     <IconResearchPoint size="xl" wrapper="light" /> <b>{pointsGenerated}</b>
                 </div>
             </div>
             <div>
                 <div className="singleView">
-                    <b>{getFactionScore(faction.id)}</b>
+                    <IconScore size="xl" wrapper="light" /> <b>{getFactionScore(faction.id)}</b>
                 </div>
             </div>
             <div>

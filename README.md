@@ -50,23 +50,58 @@ Increasing welfare increases the command cap of the system and the total command
 
 Player produces units and units that move together or are located on a single system are considered a fleet.
 
-Each unit has the following base values: Weapons, Hull and Speed. Each unit can also have some basic keywords attached to them that can affect their combat or other values.
+### Non Combat stats
 
-### Units
+* Name - The name of this unique ship
+* Type - The ship class type (this affects some strategies and weapon targets)
+* Cost - How many credits does it cost to build this this
+* Industry - The minimum industry needed to build this ship
+* Troops - How many troops does this ship carry for Invasion/Colonization
+* Keywords - What special abilities or rules apply to this ship
 
-There are X units in the game in the first iteration of it each with certain values (W/H/S/IndReq/Cost/Keywords)
+### Combat stats
 
-Destroyer (1/2/4/1/4/)
-Cruiser (2/4/4/2/4/)
-Battleship (4/10/3/5/8/"INVASION")
-Colony Ship (1/4/2/3/6/"COLONY")
+* Hull - The maximum damage this ship can take, ranges from 20 to 1000+
+* Armor - The amount of damage that is reduced from each hit that reaches the hull up to the minimum of 1.
+* Shields - Temporary shields that regenerate after each turn (not to full mind you). Armor reduction does not matter on shields
+* Agility - How fast the ship is. This affects to the difficulty of hitting it.
+* Weapons - Ship can have multiple weapons, each with different stats
+  * Damage - How much damage does this weapon do in each hit, can be a value or a range
+  * Accuracy - How easy it is to hit with this weapon, can be a value or a range
+  * Cooldown - How many rounds it takes for the weapon to reload for shooting (1 to shoot everyturn)
+  * Type - Weapon type
+  * Special - Weapon Special Keys
+
 
 ## Combat
 
-This is the MVP combat system. It is extremely simple and straightforward and pretty just about dumb luck. Much elegant system is needed.
 
-When two hostile forces meet in the system ther is a battle. Battle is resolved by both sides "rolling" a pool dice equal to the total Weapons they have. Each result of 7 or over causes 1 damaage that is assigned to the weakest ship in the enemy fleet. If the hits exceeds the ships hull, that ship is destroyed and removed from the combat. These rolls will continue until only one side is left.
 
+Combat rounds are executed until only one side remains or the other fleet decides to escape (to the nearest friendly system).
+
+Pre-Combat:
+
+* System Defences fire to the invading forces
+
+Combat Round
+
+* Each faction chooses strategy
+* For each unit in combat, once per weapon in the ship
+  * Choose a target
+  * Shoot at the target if it exists
+  * Assign damage to target
+  * If the ship makes a hit, gain 1 point of EXP
+* Damage phase
+  * Destroy ships with more damage than hull
+  * Recharge shields
+* Check for morale for each faction (attacker first)
+  * Retreat if fails
+
+Post-Combat
+
+* Recharge shields to full
+* Surviving ships gain 1 EXP for each combat round
+* Some emergency repairs
 
 # Tech
 
@@ -74,12 +109,15 @@ List of ideas for tech
 
 * Ship tech
   * Movement speed
-  * Combat roll adjustment
-  * Combat rerolls
+  * Small Increase in base accuracy
+  * Larger increase in WEAPONTYPE based accuracy
+  * Increase in shield regeneration
+  * Increase in armor
   * More hull
   * Shields that allows us to take more hits.
   * Cost reduction
   * Indestry requirement reduction
+  *
 * Economy
   * More money per economy point
 * Industry

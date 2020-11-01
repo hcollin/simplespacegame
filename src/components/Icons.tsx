@@ -3,7 +3,9 @@ import React, { FC } from "react";
 
 import iconCreditSvg from '../images/iconCredit.svg';
 import IconResearchPointSvg from '../images/iconResearchPoint.svg';
-
+import iconScoreSvg from '../images/iconScore.svg';
+import iconCommandSvg from '../images/iconCommand.svg';
+import iconIndustrySvg from '../images/iconIndustry.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -12,13 +14,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
             height: "1rem",
             width: "1rem",
-            "&.lg": {
-                height: "2rem",
-                width: "2rem",
-            },
+            
             "&.sm": {
                 height: "0.7rem",
                 width: "0.7rem",
+            },
+            "&.lg": {
+                height: "1.8rem",
+                width: "1.8rem",
             },
             "&.xl": {
                 height: "3rem",
@@ -68,8 +71,6 @@ const IconCredit: FC<IconProps> = (props) => {
     return (<IconWrapper {...props}>
         <img src={iconCreditSvg} alt="Credit" className={`${classes.root} image ${size} ${props.className || ""}`} />
     </IconWrapper>);
-    // }
-    // return <img src={iconCreditSvg} alt="Credit" className={`${classes.root} ${size} ${props.className || ""}`} />
 }
 
 const IconResearchPoint: FC<IconProps> = (props) => {
@@ -78,10 +79,41 @@ const IconResearchPoint: FC<IconProps> = (props) => {
 
     return (<IconWrapper {...props}>
         <img src={IconResearchPointSvg} alt="Research Point" className={`${classes.root} image ${size} ${props.className || ""}`} />
-    </IconWrapper>);
-
-    // return <img src={IconResearchPointSvg} alt="Research Point" className={`${classes.root} ${size} ${props.className || ""}`} />
+    </IconWrapper>); 
 }
+
+const IconScore: FC<IconProps> = (props) => {
+    const classes = useStyles();
+    const size = props.size || "md";
+
+    return (<IconWrapper {...props}>
+        <img src={iconScoreSvg} alt="Victory Point" className={`${classes.root} image ${size} ${props.className || ""}`} />
+    </IconWrapper>); 
+}
+
+const IconCommand: FC<IconProps> = (props) => {
+    const classes = useStyles();
+    const size = props.size || "md";
+
+    return (<IconWrapper {...props}>
+        <img src={iconCommandSvg} alt="Command" className={`${classes.root} image ${size} ${props.className || ""}`} />
+    </IconWrapper>); 
+}
+
+
+const IconIndustry: FC<IconProps> = (props) => {
+    const classes = useStyles();
+    const size = props.size || "md";
+
+    return (<IconWrapper {...props}>
+        <img src={iconIndustrySvg} alt="Industry" className={`${classes.root} image ${size} ${props.className || ""}`} />
+    </IconWrapper>); 
+}
+
+
+export { IconCredit, IconResearchPoint, IconScore, IconCommand,IconIndustry };
+
+
 
 const IconWrapper: FC<IconProps> = (props) => {
     const classes = useStyles();
@@ -91,5 +123,3 @@ const IconWrapper: FC<IconProps> = (props) => {
         {props.children}
     </div>
 }
-
-export { IconCredit, IconResearchPoint };

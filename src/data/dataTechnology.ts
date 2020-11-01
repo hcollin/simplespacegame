@@ -1,10 +1,18 @@
 import { Technology, TechnologyField } from "../models/Models";
 
 
+export enum TECHIDS {
+    IonEngines      = "T-P-001",
+    WarpEngines     = "T-P-002",
+    Marketing       = "T-B-001",
+    TargetingComp1  = "T-W-001",
+    TurboLasers     = "T-W-002",
+};
+
 
 export const DATATECHNOLOGY: Technology[] = [
     {
-        id: "TECH-PROP-001",
+        id: TECHIDS.IonEngines,
         fieldreqs: [
             [TechnologyField.CHEMISTRY, 3],
             [TechnologyField.PHYSICS, 2],
@@ -14,7 +22,7 @@ export const DATATECHNOLOGY: Technology[] = [
         description: "Gain +1 speed to all units",
     },
     {
-        id: "TECH-PROP-002",
+        id: TECHIDS.WarpEngines,
         fieldreqs: [
             [TechnologyField.CHEMISTRY, 5],
             [TechnologyField.PHYSICS, 5],
@@ -22,10 +30,10 @@ export const DATATECHNOLOGY: Technology[] = [
         ],
         techprereq: ["TECH-PROP-001"],
         name: "Warp Engines",
-        description: "Gain +2 speed to all units",
+        description: "Gain +3 speed to all units",
     },
     {
-        id: "TECH-BUSI-001",
+        id: TECHIDS.Marketing,
         fieldreqs: [
             [TechnologyField.BUSINESS, 4],
             [TechnologyField.SOCIOLOGY, 1],
@@ -35,7 +43,7 @@ export const DATATECHNOLOGY: Technology[] = [
         description: "Gain 1 Money per 5 total economy",
     },
     {
-        id: "TECH-WAR-001",
+        id: TECHIDS.TargetingComp1,
         fieldreqs: [
             [TechnologyField.PHYSICS, 7],
             
@@ -45,7 +53,7 @@ export const DATATECHNOLOGY: Technology[] = [
         description: "Gain +1 for each Weapons roll",
     },
     {
-        id: "TECH-WAR-002",
+        id: TECHIDS.TurboLasers,
         fieldreqs: [
             [TechnologyField.PHYSICS, 7],
             

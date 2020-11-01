@@ -2,7 +2,7 @@ import { joki } from "jokits-react";
 import DATASHIPS from "../../data/dataShips";
 import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
-import { FactionModel, FactionState, GameModel, Ship, TechnologyField } from "../../models/Models";
+import { FactionModel, FactionState, GameModel, OldShip, TechnologyField } from "../../models/Models";
 import { factionValues } from "../../utils/factionUtils";
 import { arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
 
@@ -46,7 +46,7 @@ export function createNewFaction(): FactionModel {
     
     const fm: FactionModel = {
         id: `faction-${rnd(1, 9999)}`,
-        money: 0,
+        money: 3,
         technologyFields: [
             [TechnologyField.BIOLOGY, 0, 1],
             [TechnologyField.SOCIOLOGY, 0, 1],
@@ -90,7 +90,7 @@ export function factionCanDoMoreCommands(faction: FactionModel): boolean {
 }
 
 
-export function getFactionShips(factionId: string): Ship[] {
+export function getFactionShips(factionId: string): OldShip[] {
     return DATASHIPS;
 }
 

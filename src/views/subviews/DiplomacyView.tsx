@@ -8,10 +8,8 @@ import { doTradeAgreement } from "../../services/commands/GameCommands";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { factionValues, getFactionById } from "../../utils/factionUtils";
 
-import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+import {getFactionById } from "../../utils/factionUtils";
 import { IconCredit } from "../../components/Icons";
 
 
