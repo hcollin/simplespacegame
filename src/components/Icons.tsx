@@ -168,7 +168,7 @@ interface GeneralIcon extends IconProps {
 
 const GeneralIcon: FC<GeneralIcon> = (props) => {
     const classes = useStyles();
-    const { tooltip, iconSvg, ...rest } = props;
+    const { tooltip, iconSvg } = props;
 
     if (props.wrapper) {
         return (

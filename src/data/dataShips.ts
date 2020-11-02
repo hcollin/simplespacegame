@@ -182,4 +182,4 @@ export function shipNameGenerator(shipClass: SHIPCLASS): string {
 
 }
 
-export {DATANEWSHIPS};
+export {DATANEWSHIPS, DATAOLDSHIPS};

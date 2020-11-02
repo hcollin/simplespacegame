@@ -1,6 +1,6 @@
 import { joki } from "jokits-react";
 import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../../models/Commands";
-import { GameModel, OldShip, Coordinates } from "../../models/Models";
+import { GameModel, Coordinates } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
 import { User } from "../../models/User";
 import { factionCanDoMoreCommands, getFactionByUserId } from "../helpers/FactionHelpers";

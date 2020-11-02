@@ -19,10 +19,14 @@ const useStyles = makeStyles((theme: Theme) =>
             position: "fixed",
             top: "6rem",
             left: "1rem",
-            background: "#FFFD",
-            border: "solid 2px #0008",
-
-            color: "black",
+            background:
+                "repeating-linear-gradient(to bottom, #1118 0, #333E 5px, #444E 54px, #777E 67px, #555E 76px, #1118 80px)",
+            color: "#FFFD",
+            boxShadow: "inset 0 0 2rem 0.5rem #000",
+            border: "ridge 3px #FFF5",
+            "& h1, & h2, & h3, & h4": {
+                textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+            },
 
             "& h4": {
                 padding: "1rem 1rem 0 1rem",
@@ -35,55 +39,57 @@ const useStyles = makeStyles((theme: Theme) =>
 
             "& div.units": {
                 margin: "0.5rem 0",
-                "& > div": {
-                    padding: "3px 1rem",
-                    borderBottom: "solid 1px #0003",
-                    borderTop: "solid 1px #0001",
-                    backgroundColor: "#4441",
-                    "& h3": {
-                        padding: 0,
-                        margin: 0,
-                    },
-                    "&:nth-child(odd)": {
-                        backgroundColor: "#6661",
-                    },
-                    "&.selected": {
-                        backgroundColor: "#4842",
-                    },
+                padding: "0 0.5rem",
+                // "& > div": {
+                //     padding: "3px 1rem",
+                //     borderBottom: "solid 1px #0003",
+                //     borderTop: "solid 1px #0001",
+                //     backgroundColor: "#4441",
+                //     "& h3": {
+                //         padding: 0,
+                //         margin: 0,
+                //     },
+                //     "&:nth-child(odd)": {
+                //         backgroundColor: "#6661",
+                //     },
+                //     "&.selected": {
+                //         backgroundColor: "#4842",
+                //     },
 
-                    "&.removable": {
-                        position: "relative",
-                        "&:hover": {
-                            cursor: "pointer",
-                            background: "#8442",
-                            "&:after": {
-                                content: '"REMOVE FROM FLEET"',
-                                color: "red",
-                                fontSize: "1.4rem",
-                                fontWeight: "bold",
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                textShadow: "2px 2px 1px #000, -2px 2px 1px #000, -2px -2px 1px #000, 2px -2px 1px #000",
-                            }
-                        }
-                    }
-                }
+                //     "&.removable": {
+                //         position: "relative",
+                //         "&:hover": {
+                //             cursor: "pointer",
+                //             background: "#8442",
+                //             "&:after": {
+                //                 content: '"REMOVE FROM FLEET"',
+                //                 color: "red",
+                //                 fontSize: "1.4rem",
+                //                 fontWeight: "bold",
+                //                 position: "absolute",
+                //                 top: 0,
+                //                 left: 0,
+                //                 right: 0,
+                //                 bottom: 0,
+                //                 display: "flex",
+                //                 alignItems: "center",
+                //                 justifyContent: "center",
+                //                 textShadow: "2px 2px 1px #000, -2px 2px 1px #000, -2px -2px 1px #000, 2px -2px 1px #000",
+                //             }
+                //         }
+                //     }
+                // }
             },
 
             "& div.actions": {
-                background: "#0004",
+                background: "linear-gradient(to bottom, #222 0, #444 10%, #666 20%, #444 25%, #555 80%, #3458 85%, #555 90%, #888 100%)",
                 borderTop: "solid 2px #0008",
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-around",
                 padding: "1rem",
+                boxShadow: "inset 0 0 1rem 0.5rem #0008",
             },
         }
     }));

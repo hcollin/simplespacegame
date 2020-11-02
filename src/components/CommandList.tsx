@@ -148,7 +148,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                 const isReady = game.factionsReady.includes(fm.id);
                 return (
                     <div className={`${classes.faction} ${isReady ? "ready": ""}`} key={fm.id} onClick={() => loginFaction(fm)}>
-                        <img src={require(`../images/symbols/${fm.iconFileName}`)} />
+                        <img src={require(`../images/symbols/${fm.iconFileName}`)} alt={faction.name} />
                         <h3 style={{color: fm.color}}> {fm.name}</h3>
                     </div>
                 )

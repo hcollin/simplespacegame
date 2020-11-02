@@ -9,7 +9,6 @@ import {
     SystemModel,
     Coordinates,
     FactionModel,
-    CombatEvent,
     ReportType,
     GameState,
     FactionState,
@@ -19,11 +18,11 @@ import {
 } from "../models/Models";
 import { ShipUnit } from "../models/Units";
 import { User } from "../models/User";
-import { techMarketing } from "../tech/businessTech";
+// import { techMarketing } from "../tech/businessTech";
 import { factionValues, researchPointDistribution, researchPointGenerationCalculator } from "../utils/factionUtils";
 import { inSameLocation } from "../utils/locationUtils";
 import { travelingBetweenCoordinates } from "../utils/MathUtils";
-import { rnd } from "../utils/randUtils";
+// import { rnd } from "../utils/randUtils";
 import { canAffordTech, factionPaysForTech } from "../utils/techUtils";
 import { getUnitSpeed } from "../utils/unitUtils";
 import { getFactionById, getFactionByUserId } from "./helpers/FactionHelpers";

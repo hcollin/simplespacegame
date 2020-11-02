@@ -1,10 +1,6 @@
-import { TECHIDS } from "../data/dataTechnology";
-import { CombatEvent } from "../models/Models";
 import { ShipUnit } from "../models/Units";
-import { techIonEngines, techTargetingComputerOne, techWarpEngines } from "../tech/shipTech";
-import { factionHasTechnology } from "../tech/techTools";
+import { techIonEngines, techWarpEngines } from "../tech/shipTech";
 import { getFactionById } from "./factionUtils";
-import { rnd } from "./randUtils";
 
 
 

@@ -2,7 +2,7 @@ import { joki } from "jokits-react";
 import DATASHIPS from "../../data/dataShips";
 import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
-import { FactionModel, FactionState, GameModel, OldShip, TechnologyField } from "../../models/Models";
+import { FactionModel, FactionState, GameModel, TechnologyField } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
 import { factionValues } from "../../utils/factionUtils";
 import { arnds, prnd, rnd, shuffle } from "../../utils/randUtils";

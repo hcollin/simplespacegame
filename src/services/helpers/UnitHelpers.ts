@@ -1,9 +1,9 @@
 import { joki } from "jokits-react";
 import { v4 } from "uuid";
-import DATASHIPS, { DATANEWSHIPS, shipNameGenerator } from "../../data/dataShips";
+import DATASHIPS, { shipNameGenerator } from "../../data/dataShips";
 import { Command, CommandType, FleetCommand } from "../../models/Commands";
-import { OldShip, Coordinates, SystemModel, SpaceCombat } from "../../models/Models";
-import { ShipDesign, ShipUnit, ShipWeapon, WEAPONTYPE } from "../../models/Units";
+import { Coordinates, SystemModel, SpaceCombat } from "../../models/Models";
+import { ShipDesign, ShipUnit, ShipWeapon } from "../../models/Units";
 import { rnd } from "../../utils/randUtils";
 
 
@@ -136,23 +136,23 @@ export function spaceCombatAttackChooseTarget(combat: SpaceCombat, attacker: Shi
     });
     if (target) {
         
-        const betterTarget = combat.units.reduce((t: ShipUnit, pos: ShipUnit) => {
-            if(t.factionId !== attacker.factionId) {
-                const oldHitChance = getHitChance(attacker.factionId, weapon, attacker, t);
-                const newHitChance = getHitChance(attacker.factionId, weapon, attacker, pos);
-                const oldDmgPot = damagePotential(weapon, t);
-                const newDmgPot = damagePotential(weapon, pos);
+        // const betterTarget = combat.units.reduce((t: ShipUnit, pos: ShipUnit) => {
+        //     if(t.factionId !== attacker.factionId) {
+        //         const oldHitChance = getHitChance(attacker.factionId, weapon, attacker, t);
+        //         const newHitChance = getHitChance(attacker.factionId, weapon, attacker, pos);
+        //         const oldDmgPot = damagePotential(weapon, t);
+        //         const newDmgPot = damagePotential(weapon, pos);
                 
-                const valueO = oldHitChance + oldDmgPot;
-                const valueN = newHitChance + newDmgPot;
-                if(valueO > valueN) {
-                    return t;
-                } else {
-                    return pos;
-                }
-            }
-            return t;
-        }, target);
+        //         const valueO = oldHitChance + oldDmgPot;
+        //         const valueN = newHitChance + newDmgPot;
+        //         if(valueO > valueN) {
+        //             return t;
+        //         } else {
+        //             return pos;
+        //         }
+        //     }
+        //     return t;
+        // }, target);
 
         return target;
     }

@@ -1,5 +1,5 @@
 import { FactionModel, GameModel, GameState, SystemModel } from "../../models/Models";
-import { SHIPCLASS, ShipUnit } from "../../models/Units";
+import { ShipUnit } from "../../models/Units";
 import { inSameLocation } from "../../utils/locationUtils";
 import { findClosestCoordinate } from "../../utils/MathUtils";
 import { rnd } from "../../utils/randUtils";

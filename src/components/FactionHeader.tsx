@@ -151,14 +151,10 @@ const FactionHeader: FC = () => {
     
     const isReady = game.factionsReady.includes(faction.id);
 
-    // const totalRingWorlds = game.systems.filter((sm: SystemModel) => sm.ringWorld);
-    // const myRingWorlds = totalRingWorlds.filter((sm: SystemModel) => sm.ownerFactionId === faction.id);
-
     const factionTitleStyle = {
         fontFamily: faction.style.fontFamily ? faction.style.fontFamily : "Arial"
     }
 
-    // console.log(faction.name, faction.id, game.factionsReady, isReady)
     return (
         <div className={classes.root} style={{background: `linear-gradient(190deg, #222 0, ${faction.color} 10%,  white 50%, white 80%, gray 100%)`}}>
         
@@ -167,24 +163,13 @@ const FactionHeader: FC = () => {
             </div>
             <div className="title" style={{borderBottom: `ridge 3px ${faction.color}`}}>
                 <h1 style={factionTitleStyle}>{faction.name} 
-                {/* <span>{faction.playerId}</span> */}
                 </h1>
             </div>
             <div>
-                <div className="mainView">
+                <div className="singleView">
                     <IconCredit size="xl" wrapper="light" /><b>{faction.money}</b> <span>( {values.income} )</span>
                 </div>
-                <div className="hoverView">
-                    <div className={classes.sheet}>
-                        <label>economy:</label> <span>{values.totalEconomy}</span>
-                    </div>
-                    <div className={classes.sheet}>
-                        <label>expenses:</label> <span>-{values.expenses}</span>
-                    </div>
-                    <div className={`${classes.sheet} res`}>
-                        <label>income:</label> <span>{values.income}</span>
-                    </div>
-                </div>
+               
 
             </div>
             <div>
@@ -192,11 +177,6 @@ const FactionHeader: FC = () => {
                     <IconCommand size="xl" wrapper="light" /> <b>{commands.length}</b> <span>/ {values.maxCommands}</span>
                 </div>
             </div>
-            {/* <div>
-                <div className="singleView">
-                    <AdjustIcon /> <b>{myRingWorlds.length}</b> <span>( / {totalRingWorlds.length} )</span>
-                </div>
-            </div> */}
             <div>
                 <div className="singleView">
                     <IconResearchPoint size="xl" wrapper="light" /> <b>{pointsGenerated}</b>

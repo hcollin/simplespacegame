@@ -1,11 +1,5 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import React, { FC, useState } from "react";
-
-import SecurityIcon from '@material-ui/icons/Security';
-import SpeedIcon from '@material-ui/icons/Speed';
-
-
-
 import { IconAccuracy, IconAgility, IconArmor, IconCooldown, IconCredit, IconDamage, IconHull, IconIndustry, IconShields, IconSpeed } from "./Icons";
 import { ShipDesign, ShipWeapon } from "../models/Units";
 
