@@ -24,10 +24,11 @@ const useStyles = makeStyles((theme: Theme) =>
             "& > div.page": {
                 marginTop: "4rem",
                 padding: "1rem",
-                background: "#444D",
                 color: "#FFFE",
                 borderRadius: "1rem",
-                width: "calc(100% - 28rem)",
+                width: "calc(100% - 18rem)",
+                background: "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
+                border: "ridge 5px #FFD4",
             },
             "& span.red": {
                 color: "red",

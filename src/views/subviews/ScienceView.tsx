@@ -26,19 +26,33 @@ const useStyles = makeStyles((theme: Theme) =>
             width: "100%",
             minHeight: "100vh",
             color: "#FFFD",
-            background: "repeating-linear-gradient(0deg, #000 0, #132 4px, #021 16px)",
+            // background: "repeating-linear-gradient(0deg, #000 0, #132 4px, #021 16px)",
+            background: "repeating-linear-gradient(160deg, #000 0, #111 5px, #222 100px, #232 130px, #242 140px, #111 150px, #000 155px)",
             height: "100&",
             padding: "2rem",
 
+            "&:after": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: "linear-gradient(-135deg, #000A 20rem, transparent 50%, #000D 100%)",
+
+            },
+
             "& > div.page": {
                 position: "relative",
+                zIndex: 10,
                 marginTop: "4rem",
                 padding: "1rem",
-                background: "#444D",
+                background: "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
                 color: "#FFFE",
                 borderRadius: "1rem",
-                width: "calc(100% - 28rem)",
+                width: "calc(100% - 18rem)",
                 marginBottom: "6rem",
+                border: "ridge 5px #DFD4",
             },
         },
         totalPoints: {

@@ -19,7 +19,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         bottom: 0,
 
         width: "18rem",
-        background: "repeating-linear-gradient(-25deg, #000 0, #555 7px, #777 10px, #666 60px, #444 90px, #222 100px)",
+        background: "linear-gradient(90deg, #000 0,#444 5%, #777 10%, #444 15%,#333 95%,#000 100%)",
+        boxShadow: "inset 0 0 2rem 2rem #0124",
+        // background: "repeating-linear-gradient(-25deg, #000 0, #555 7px, #777 10px, #666 60px, #444 90px, #222 100px)",
         padding: "0.5rem",
         zIndex: 100,
         color: "white",
@@ -31,7 +33,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             right: 0,
             bottom: 0,
             zIndex: -1,
-            background: "linear-gradient(to right, #000C 0, #7898 5%, #9AB3 95%,  #000C 100%)",
+            // background: "linear-gradient(to right, #000C 0, #7898 5%, #9AB3 95%,  #000C 100%)",
+            background: "repeating-linear-gradient(200deg, #000 0, #3338 5px, transparent 10px, #BDF1 120px, transparent 150px, #4448 155px, #000 160px)",
         },
         "& > h1": {
             color: "#FFFD",

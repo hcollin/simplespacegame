@@ -1,14 +1,14 @@
-import { makeStyles, Theme, createStyles, Button, Tab, Tabs, AppBar } from "@material-ui/core";
+import { makeStyles, Theme, createStyles, Button, Tab, Tabs } from "@material-ui/core";
 import React, { FC, useState } from "react";
 import useSelectedSystem from "../hooks/useSelectedSystem";
-import { plusEconomy, plusWelfare, plusIndustry, plusDefense, buildUnit, removeCommand } from "../services/commands/SystemCommands";
-
-import BuildIcon from "@material-ui/icons/Build";
-import SecurityIcon from "@material-ui/icons/Security";
-import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
-import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
-
-import TimerIcon from '@material-ui/icons/Timer';
+import {
+    plusEconomy,
+    plusWelfare,
+    plusIndustry,
+    plusDefense,
+    buildUnit,
+    removeCommand,
+} from "../services/commands/SystemCommands";
 
 import useMyCommands from "../hooks/useMyCommands";
 import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
@@ -21,7 +21,7 @@ import useUserIsReady from "../services/hooks/useUserIsReady";
 import DATASHIPS from "../data/dataShips";
 import ShipInfo from "./ShipInfo";
 import { ShipDesign } from "../models/Units";
-import { IconArmor, IconCredit, IconDefense, IconIndustry, IconWelfare } from "./Icons";
+import { IconCredit, IconDefense, IconIndustry, IconUnderConstruction, IconWelfare } from "./Icons";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -30,30 +30,64 @@ const useStyles = makeStyles((theme: Theme) =>
             zIndex: 100,
             top: "100px",
             right: "20rem",
-            minWidth: "30rem",
+            minWidth: "35rem",
+            minHeight: "25rem",
             padding: "3rem 1rem 1rem 1rem",
             // background: "#FFFD",
-            background: "repeating-linear-gradient(to bottom, #1118 0, #333E 5px, #444E 54px, #777E 67px, #555E 76px, #1118 80px)",
+            background:
+                "repeating-linear-gradient(to bottom, #1118 0, #333E 5px, #444E 54px, #777E 67px, #555E 76px, #1118 80px)",
             color: "#FFFD",
             boxShadow: "inset 0 0 2rem 0.5rem #000",
-            border: "groove 5px #69DA",
+            border: "ridge 3px #FFF5",
+
             "& h1, & h2, & h3": {
-                textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000"
+                textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+            },
+            "& > div.title": {
+                top: "0",
+                left: "-5.0rem",
+                width: "5rem",
+                height: "100%",
+                position: "absolute",
+                background: "linear-gradient(to right, #555D 0, #99A 90%, #446 100%)",
+                borderBottomLeftRadius: "5rem 10rem",
+                borderTopLeftRadius: "1rem",
+                boxShadow: "inset 0 0 2rem 0.5rem #0008",
+                borderRight: "ridge 3px #FFF4",
+                "& > h1": {
+                    margin: "0",
+                    padding: "0",
+                    transform: "rotate(-90deg)",
+                    width: "25rem",
+                    height: "5rem",
+                    transformOrigin: "top left",
+                    textAlign: "right",
+                    lineHeight: "5rem",
+                    position: "absolute",
+                    top: "25rem",
+                    paddingRight: "1rem",
+                },
             },
             "& > button.close": {
-                position: "absolute",
-                top: "-0.5rem",
-                right: "-0.5rem",
-                width: "2rem",
-                height: "2rem",
-                zIndex: "1200",
-                borderRadius: "0.5rem",
-                fontWeight: "bold",
-                boxShadow: "0 0 0.5rem 0.1rem #0008",
+                top: "-1rem",
+                right: "-1.75rem",
+                width: "3rem",
                 cursor: "pointer",
+                height: "3rem",
+                zIndex: "1200",
+                position: "absolute",
+                boxShadow: "0 0 0.5rem 0.1rem #0008, inset 0 0 0.5rem 0.25rem #FFF3",
+                fontWeight: "bold",
+                borderRadius: "1.5rem",
+                background: "#210C",
+                border: "ridge 3px #FFF8",
+                fontSize: "1.6rem",
+                color: "#FFFA",
+                transition: "all 0.2s ease",
                 "&:hover": {
-                    backgroundColor: "#F88",
-                }
+                    backgroundColor: "#630C",
+                    color: "#FFFD",
+                },
             },
             "& >header": {
                 background: "linear-gradient(to bottom, #000 0, #333A 0.5rem, #113D 3.5rem, #000 3rem)",
@@ -63,7 +97,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 right: 0,
                 height: "3rem",
                 borderBottom: "ridge 3px #0008",
-            }
+            },
         },
         tabs: {
             "& > nav": {
@@ -95,7 +129,7 @@ const useStyles = makeStyles((theme: Theme) =>
                     fontSize: "1rem",
                     marginLeft: "0.5rem",
                     lineHeight: "1.8rem",
-                }
+                },
             },
             "& > button": {
                 fontSize: "1.4rem",
@@ -115,49 +149,76 @@ const useStyles = makeStyles((theme: Theme) =>
         },
 
         units: {
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            background: "#345E",
+            padding: "1rem 0",
+            boxShadow: "inset 0 0 3rem 1rem #000D",
+            border: "ridge 3px #CDE8",
+            borderRadius: "0.5rem",
             "& > div": {
+                boxShadow: "0 0 0.5rem 0.15rem #000",
                 marginBottom: "0.5rem",
+                border: "solid 2px #000",
+                borderRadius: "0.5rem",
+                position: "relative",
 
-                "&.notbuildable": {
-                    background: "#333",
-                },
-
-                "&.underConstruction": {
-                    background: "#666",
-                    opacity: 0.8,
-                    filter: "grayscale(0.7)",
-                    position: "relative",
-
-                    "&:hover": {
-                        background: "#666",
-                        opacity: 1,
-                        filter: "none",
-
-                        "&:after": {
-                            content: '"CANCEL"',
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            zIndex: 100,
-                            fontSize: "3rem",
-                            letterSpacing: "6px",
-                            color: "#F00C",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            background: "#000C",
-                            border: "solid 6px #F00C",
-                            borderRadius: "0.5rem",
-                            fontWeight: "bold",
-
-
-                        }
+                "& > img": {
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    marginLeft: "-3rem",
+                    marginTop: "-3rem",
+                    zIndex: 100,
+                    background: "radial-gradient(#042, #000A)",
+                    border: "ridge 3px #FFF8",
+                    borderRadius: "50%",
+                    "&.constructionLogo": {
+                        width: "6rem",
+                        height: "6rem",
                     }
-                }
+                },
+                "& > div": {
+                    "&.notbuildable": {
+                        background: "#333",
+                    },
 
-            }
+                    "&.underConstruction": {
+                        background: "#666",
+                        opacity: 0.8,
+                        filter: "grayscale(0.7)",
+                        position: "relative",
+
+                        "&:hover": {
+                            background: "#666",
+                            opacity: 1,
+                            filter: "none",
+
+                            "&:after": {
+                                content: '"CANCEL"',
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                zIndex: 100,
+                                fontSize: "3rem",
+                                letterSpacing: "6px",
+                                color: "#F00C",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "#000C",
+                                border: "solid 6px #F00C",
+                                borderRadius: "0.5rem",
+                                fontWeight: "bold",
+                            },
+                        },
+                    },
+                },
+            },
         },
 
         unitList: {
@@ -171,10 +232,9 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
                 "& > h3": {
                     margin: 0,
-                }
-            }
-
-        }
+                },
+            },
+        },
     })
 );
 
@@ -220,8 +280,6 @@ const SystemInfo: FC = () => {
     function changeTab(event: React.ChangeEvent<{}>, newValue: number) {
         setTab(newValue);
     }
-
-
 
     const comPlusInd = comms.filter((c: Command) => {
         const cs = c as SystemPlusCommand;
@@ -273,7 +331,9 @@ const SystemInfo: FC = () => {
 
     return (
         <div className={classes.root}>
-            <button className="close" onClick={() => setStar(null)}>X</button>
+            <button className="close" onClick={() => setStar(null)}>
+                X
+            </button>
 
             {/* <AppBar position="absolute"> */}
             <header>
@@ -285,21 +345,24 @@ const SystemInfo: FC = () => {
             </header>
             {/* </AppBar> */}
 
-            <h1>{star.name}</h1>
+            <div className="title">
+                <h1>{star.name}</h1>
+            </div>
 
             <TabPanel value={tab} index={0}>
                 <h2>System Infrastructure</h2>
 
                 <div className={classes.value}>
                     <IconIndustry size="xl" wrapper="light" />
-                    <h3>{star.industry} {comPlusInd > 0 && <span>+{comPlusInd}</span>}</h3>
+                    <h3>
+                        {star.industry} {comPlusInd > 0 && <span>+{comPlusInd}</span>}
+                    </h3>
 
                     {isMine && !userIsReady && (
                         <Button variant="contained" color="primary" onClick={() => plusIndustry(star.id)}>
                             +
                         </Button>
                     )}
-
                 </div>
                 <div className={classes.value}>
                     <IconCredit size="xl" wrapper="light" />
@@ -309,13 +372,11 @@ const SystemInfo: FC = () => {
                         {comPlusEco > 0 && <span>+{comPlusEco}</span>}
                     </h3>
 
-
                     {isMine && !userIsReady && (
                         <Button variant="contained" color="primary" onClick={() => plusEconomy(star.id)}>
                             +
                         </Button>
                     )}
-
                 </div>
                 <div className={classes.value}>
                     <IconDefense size="xl" wrapper="light" />
@@ -328,7 +389,6 @@ const SystemInfo: FC = () => {
                             +
                         </Button>
                     )}
-
                 </div>
                 <div className={classes.value}>
                     <IconWelfare size="xl" wrapper="light" />
@@ -341,7 +401,6 @@ const SystemInfo: FC = () => {
                             +
                         </Button>
                     )}
-
                 </div>
             </TabPanel>
 
@@ -352,16 +411,20 @@ const SystemInfo: FC = () => {
                 <div className={classes.units}>
                     {shipsUnderConstruction.map((s: ShipDesign, ind: number) => {
                         return (
-
-                            <ShipInfo ship={s} key={`ship${ind}`} className="underConstruction" onClick={() => cancelConstruction(s)} />
-
-
+                            <div key={`ship${ind}`}>
+                                <IconUnderConstruction className="constructionLogo" />
+                                <ShipInfo
+                                    ship={s}
+                                    key={`ship${ind}`}
+                                    className="underConstruction"
+                                    onClick={() => cancelConstruction(s)}
+                                />
+                            </div>
                         );
                     })}
                 </div>
 
                 <h3>Build Ships</h3>
-
 
                 <div className={classes.units}>
                     {faction &&
@@ -371,11 +434,17 @@ const SystemInfo: FC = () => {
                             const canBuild = canAfford && enoughIndustry && isMine && !userIsReady;
 
                             if (!canBuild) {
-                                return <ShipInfo ship={ship} key={ship.name} className="notbuildable" />
+                                return (
+                                    <div key={ship.name}>
+                                        <ShipInfo ship={ship} className="notbuildable" />
+                                    </div>
+                                );
                             }
 
                             return (
-                                <ShipInfo ship={ship} onClick={(s: ShipDesign) => buildUnit(s, star.location)} key={ship.name} />
+                                <div key={ship.name}>
+                                    <ShipInfo ship={ship} onClick={(s: ShipDesign) => buildUnit(s, star.location)} />
+                                </div>
                             );
                         })}
                 </div>

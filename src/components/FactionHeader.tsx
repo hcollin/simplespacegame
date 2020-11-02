@@ -19,7 +19,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        borderBottom: "solid 2px #0008",
+        // background: "linear-gradient(170deg, #222 0, red 10%,  white 50%, white 80%, gray 100%)`}}",
+        // background: "linear-gradient(0deg, white 0, black 0)",
+        // borderBottom: "solid 2px #0008",
         "&:after": {
             content: '""',
             position: "absolute",
@@ -30,32 +32,47 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             zIndex: -1,
             userSelect: "none",
             pointerEvents: "none",
-            background: "repeating-linear-gradient(-25deg, #0004 0, #8886 20px, #AAA8 50px, #6665 80px, #0006 100px)",
+            background: "linear-gradient(to bottom, #222 0, #444E 5%, #555D 80%, #777C 90%, #444E 95%, #222 100%)",
             borderBottom: "solid 4px #0008",
         },
 
         "& >  div": {
 
-            marginRight: "1rem",
-            padding: "0 0.5rem",
+            // marginRight: "1rem",
+            // padding: "0 0.5rem",
             borderLeft: "groove 5px #0008",
             height: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             minWidth: "8rem",
-            background: "linear-gradient(to right, #0008 0, transparent 25%, #FFF6 50%, #0000 100%)",
+            background: "linear-gradient(to bottom, #222 0, #444E 5%, #555D 80%, #777C 90%, #444E 95%, #222 100%)",
+            boxShadow: "inset 0 0 1rem 0.5rem #4448",
+            // background: "linear-gradient(to right, #0008 0, transparent 25%, #FFF6 50%, #0000 100%)",
 
-            "& > h1": {
-                color: "white",
-                fontSize: "1.8rem",
-                fontWeight: "normal",
-                textShadow: "2px 2px 0 black, -2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black",
-                "& > span": {
-                    display: "block",
-                    fontSize: "1rem",
-                }
+            "&.title": {
+                background: "linear-gradient(to bottom, #000 5%, #333 10%, #444E 80%, #666D 85%, #333 90%, #000 95%)",
+                boxShadow: "inset 0 0 1rem 0.5rem #0008",
+                "& > h1": {
+                    color: "white",
+                    fontSize: "1.8rem",
+                    fontWeight: "normal",
+                    textShadow: "2px 2px 0 black, -2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black",
+                    margin: "0 1rem",
+                    "& > span": {
+                        padding: 0,
+                        margin: 0,
+                        display: "block",
+                        fontSize: "1rem",
+                    }
+                },
             },
+
+            "&.rest": {
+                flex: "1 1 auto",
+            },
+
+            
 
             "& > img": {
                 height: "80%",
@@ -66,15 +83,23 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
+                padding: "0 1rem",
+                "& > div.wrapper": {
+                    marginRight: "0.5rem",
+                },
                 "& > b": {
                     fontSize: "2rem",
                     fontWeight: "bold",
-                    padding: "0.5rem",
+                    color: "#FFFD",
+                    textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+                    // padding: "0.5rem",
                 },
                 "& >span": {
                     fontSize: "1rem",
                     fontWeight: "normal",
-                    padding: "0.5rem",
+                    color: "#FFFD",
+                    textShadow: "1px 1px 1px #000, -1px 1px 1px #000, -1px -1px 1px #000, 1px -1px 1px #000",
+                    marginLeft: "0.25rem",
                 }
 
             },
@@ -135,12 +160,15 @@ const FactionHeader: FC = () => {
 
     // console.log(faction.name, faction.id, game.factionsReady, isReady)
     return (
-        <div className={classes.root} style={{background: `linear-gradient(170deg, #222 0, ${faction.color} 10%,  white 50%, white 80%, gray 100%)`}}>
-            <div>
+        <div className={classes.root} style={{background: `linear-gradient(190deg, #222 0, ${faction.color} 10%,  white 50%, white 80%, gray 100%)`}}>
+        
+            <div className="logo" style={{background: faction.color}}>
                 <img src={require(`../images/symbols/${faction.iconFileName}`)} alt={`faction ${faction.name} logo`}/>
             </div>
-            <div>
-    <h1 style={factionTitleStyle}>{faction.name} <span>{faction.playerId}</span></h1>
+            <div className="title" style={{borderBottom: `ridge 3px ${faction.color}`}}>
+                <h1 style={factionTitleStyle}>{faction.name} 
+                {/* <span>{faction.playerId}</span> */}
+                </h1>
             </div>
             <div>
                 <div className="mainView">
@@ -181,6 +209,9 @@ const FactionHeader: FC = () => {
             </div>
             <div>
                 {!isReady && <Button variant="contained" color="primary" onClick={playerDone}>READY</Button>}
+            </div>
+            <div className="rest">
+
             </div>
         </div>
     )

@@ -7,11 +7,10 @@ import { FactionModel, GameModel } from "../../models/Models";
 import { doTradeAgreement } from "../../services/commands/GameCommands";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
-import {getFactionById } from "../../utils/factionUtils";
+import { getFactionById } from "../../utils/factionUtils";
 import { IconCredit } from "../../components/Icons";
-
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -26,26 +25,27 @@ const useStyles = makeStyles((theme: Theme) =>
             background: "repeating-linear-gradient(0deg, #000 0, #302 4px, #201 16px)",
             minHeight: "100vh",
             padding: "2rem",
+
             "& > div.page": {
                 marginTop: "4rem",
                 padding: "1rem",
-                background: "#444D",
+                background:
+                    "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
                 color: "#FFFE",
                 borderRadius: "1rem",
-                width: "calc(100% - 28rem)",
+                width: "calc(100% - 18rem)",
+                border: "ridge 5px #FDF4",
                 "& div.columns": {
                     display: "flex",
-                    flexDirection: "row"
+                    flexDirection: "row",
                 },
 
                 "& h3": {
                     borderTop: "solid 2px #0004",
                     padding: "0.5rem 0 0.25rem 0",
                     margin: "1rem 0 0 0",
-                }
-
+                },
             },
-
         },
         factions: {
             display: "flex",
@@ -66,14 +66,12 @@ const useStyles = makeStyles((theme: Theme) =>
                 boxShadow: "inset 0 0 1rem 0.25rem #0008",
                 "& > img": {
                     width: "3rem",
-
                 },
                 "&.active": {
                     border: "solid 2px white",
                     // boxShadow: "0 0 1rem 0.25rem #0008",
-                }
-
-            }
+                },
+            },
         },
         factionChat: {
             flex: "1 1 auto",
@@ -82,9 +80,8 @@ const useStyles = makeStyles((theme: Theme) =>
             "& div.largemessages": {
                 "& > .messages": {
                     height: "60vh",
-                }
-
-            }
+                },
+            },
         },
         trade: {
             flex: "1 1 auto",
@@ -126,28 +123,23 @@ const useStyles = makeStyles((theme: Theme) =>
 
                         "& > svg": {
                             margin: "0 1rem",
-                        }
-
+                        },
                     },
 
                     "& > span.turn": {
                         fontSize: "2rem",
                         "& > span": {
                             fontSize: "1rem",
-                        }
-
+                        },
                     },
-
-                    
                 },
                 "& > p": {
                     padding: "0 1rem",
-                }
-            }
+                },
+            },
         },
         tradeCreator: {
             "& > div.part": {
-
                 "& > p": {
                     margin: "1rem 0 0 0",
                     fontStyle: "italic",
@@ -156,38 +148,28 @@ const useStyles = makeStyles((theme: Theme) =>
                     padding: "0 3rem",
                     "& .MuiSlider-markLabel": {
                         fontSize: "0.7rem",
-                    }
-                }
-
-            }
-
-
-        }
-    }));
-
+                    },
+                },
+            },
+        },
+    })
+);
 
 const DiplomacyView: FC = () => {
     const classes = useStyles();
-    const [game] = useService<GameModel>("GameService")
+    const [game] = useService<GameModel>("GameService");
     const faction = useCurrentFaction();
-
-
-
-
 
     const [targetFaction, setTargetFaction] = useState<FactionModel | null>(null);
 
     useEffect(() => {
-
-
         setTargetFaction((prev: FactionModel | null) => {
             if (prev === null) return prev;
             if (faction === null) return null;
             if (prev.id === faction.id) return null;
             return prev;
-        })
-
-    }, [faction])
+        });
+    }, [faction]);
 
     if (!game || !faction) return null;
 
@@ -199,7 +181,12 @@ const DiplomacyView: FC = () => {
         });
     }
 
-    const activeTrades = game.trades.filter((t: Trade) => targetFaction && ((t.from === targetFaction.id && t.to === faction.id) || (t.from === faction.id && t.to === targetFaction.id)));
+    const activeTrades = game.trades.filter(
+        (t: Trade) =>
+            targetFaction &&
+            ((t.from === targetFaction.id && t.to === faction.id) ||
+                (t.from === faction.id && t.to === targetFaction.id))
+    );
 
     const totalTradeValue = activeTrades.reduce((sum: number, t: Trade) => {
         if (t.to === faction.id) {
@@ -209,7 +196,7 @@ const DiplomacyView: FC = () => {
             return sum - t.money;
         }
         return sum;
-    }, 0)
+    }, 0);
 
     return (
         <div className={classes.root}>
@@ -220,45 +207,66 @@ const DiplomacyView: FC = () => {
                     <div className={classes.factions}>
                         {game.factions.map((fm: FactionModel) => {
                             if (fm.id === faction.id) return null;
-                            return (<div className={`faction ${targetFaction && targetFaction.id === fm.id ? "active" : ""}`} style={{ backgroundColor: fm.color }} onClick={() => switchFaction(fm)}>
-                                <img src={require(`../../images/symbols/${fm.iconFileName}`)} alt={`faction ${fm.name} logo`} />
-                            </div>)
+                            return (
+                                <div
+                                    className={`faction ${targetFaction && targetFaction.id === fm.id ? "active" : ""}`}
+                                    style={{ backgroundColor: fm.color }}
+                                    onClick={() => switchFaction(fm)}
+                                >
+                                    <img
+                                        src={require(`../../images/symbols/${fm.iconFileName}`)}
+                                        alt={`faction ${fm.name} logo`}
+                                    />
+                                </div>
+                            );
                         })}
                     </div>
 
-                    {targetFaction !== null && <div className={classes.trade}>
-                        <h2>{targetFaction.name}</h2>
+                    {targetFaction !== null && (
+                        <div className={classes.trade}>
+                            <h2>{targetFaction.name}</h2>
 
-                        <h3>Active Trades</h3>
+                            <h3>Active Trades</h3>
 
-                        {activeTrades.length === 0 && <p>No active trades with {targetFaction.name}</p>}
-                        {activeTrades.map((trade: Trade) => {
+                            {activeTrades.length === 0 && <p>No active trades with {targetFaction.name}</p>}
+                            {activeTrades.map((trade: Trade) => {
+                                const incoming = trade.to === faction.id;
+                                const money = incoming ? trade.money : trade.money * -1;
+                                const otherFaction = getFactionById(incoming ? trade.from : trade.to);
+                                return (
+                                    <div className={`tradeItem ${incoming ? "incoming" : "outgoing"}`} key={trade.id}>
+                                        <header>
+                                            <span className="goods">
+                                                <IconCredit size="lg" /> {money}
+                                            </span>
+                                            {incoming && (
+                                                <span className="transaction">
+                                                    {otherFaction.name} <ArrowForwardIcon /> ME
+                                                </span>
+                                            )}
+                                            {!incoming && (
+                                                <span className="transaction">
+                                                    ME <ArrowForwardIcon /> {otherFaction.name}
+                                                </span>
+                                            )}
+                                            <span className="turn">
+                                                {trade.length}
+                                                <span> turns left</span>
+                                            </span>
+                                        </header>
 
-                            const incoming = trade.to === faction.id;
-                            const money = incoming ? trade.money : trade.money * -1;
-                            const otherFaction = getFactionById(incoming ? trade.from : trade.to);
-                            return (
-                                <div className={`tradeItem ${incoming ? "incoming" : "outgoing"}`} key={trade.id}>
-                                    <header>
-                                        <span className="goods"><IconCredit size="lg" /> {money}</span>
-                                        {incoming && <span className="transaction">{otherFaction.name} <ArrowForwardIcon /> ME</span>}
-                                        {!incoming && <span className="transaction">ME <ArrowForwardIcon /> {otherFaction.name}</span>}
-                                        <span className="turn">{trade.length}<span> turns left</span></span>
-                                    </header>
+                                        <p className="description">{trade.message}</p>
+                                    </div>
+                                );
+                            })}
 
-                                    <p className="description">{trade.message}</p>
-                                </div>
-                            )
-                        })}
+                            <p>Total trade value {totalTradeValue}.</p>
 
-                        <p>Total trade value {totalTradeValue}.</p>
+                            <h3>Create trade</h3>
 
-                        <h3>Create trade</h3>
-
-                        <TradeCreator targetFaction={targetFaction} />
-
-
-                    </div>}
+                            <TradeCreator targetFaction={targetFaction} />
+                        </div>
+                    )}
 
                     <div className={classes.factionChat}>
                         {targetFaction === null && <h2>Global Discussion</h2>}
@@ -266,18 +274,15 @@ const DiplomacyView: FC = () => {
 
                         <ChatView other={targetFaction ? targetFaction.id : "_GLOBAL"} className="largemessages" />
                     </div>
-
-
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 interface TradeCreatorProps {
     targetFaction: FactionModel;
 }
-
 
 const TradeCreator: FC<TradeCreatorProps> = (props) => {
     const classes = useStyles();
@@ -286,7 +291,6 @@ const TradeCreator: FC<TradeCreatorProps> = (props) => {
 
     const [money, setMoney] = useState<number>(0);
     const [turns, setTurns] = useState<number>(1);
-
 
     if (faction === null) return null;
 
@@ -308,14 +312,11 @@ const TradeCreator: FC<TradeCreatorProps> = (props) => {
                 length: turns,
                 money: money,
                 researchPoints: 0,
-                message: "Greetings partner!"
+                message: "Greetings partner!",
             };
 
             doTradeAgreement(t);
-
-
         }
-
     }
 
     return (
@@ -323,18 +324,40 @@ const TradeCreator: FC<TradeCreatorProps> = (props) => {
             <div className="part">
                 <p>How much money are you sending?</p>
                 <div className="inputWrapper">
-                    <TextField value={money} onChange={handleChangeMoney} type="number" variant="filled" label="Money" color="primary" />
+                    <TextField
+                        value={money}
+                        onChange={handleChangeMoney}
+                        type="number"
+                        variant="filled"
+                        label="Money"
+                        color="primary"
+                    />
                 </div>
             </div>
             <div className="part">
                 <p>How many turns is this trade valid?</p>
                 <div className="inputWrapper">
-                    <Slider value={turns} min={1} max={10} step={1} valueLabelDisplay="auto" marks={[{ value: 1, label: "1 turn" }, { value: 5, label: "5 turns" }, { value: 10, label: "10 turns" }]} aria-label="Turns" onChange={handleChangeTurns} />
+                    <Slider
+                        value={turns}
+                        min={1}
+                        max={10}
+                        step={1}
+                        valueLabelDisplay="auto"
+                        marks={[
+                            { value: 1, label: "1 turn" },
+                            { value: 5, label: "5 turns" },
+                            { value: 10, label: "10 turns" },
+                        ]}
+                        aria-label="Turns"
+                        onChange={handleChangeTurns}
+                    />
                 </div>
             </div>
-            <Button variant="contained" color="primary" onClick={createTrade}>Create</Button>
+            <Button variant="contained" color="primary" onClick={createTrade}>
+                Create
+            </Button>
         </div>
     );
-}
+};
 
 export default DiplomacyView;
