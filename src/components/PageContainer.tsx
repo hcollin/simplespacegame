@@ -5,11 +5,12 @@ import useCurrentFaction from "../services/hooks/useCurrentFaction";
 interface PageContainerProps {
     color: string;
     image: string;
+    font?: string;
 }
 
 const PageContainer: FC<PageContainerProps> = (props) => {
     // const classes = useStyles("#B7D8");
-    
+
     const styles = useMemo(() => {
         const classes = makeStyles((theme: Theme) => {
             return createStyles({
@@ -59,8 +60,31 @@ const PageContainer: FC<PageContainerProps> = (props) => {
                             letterSpacing: "0.25rem",
                             textShadow:
                                 "0 0 1rem #BD7, 2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 4px #000,2px -2px 2px #000",
-                            fontFamily: "Averia Serif Libre",
+                            fontFamily: props.font || "Averia Serif Libre",
                             fontWeight: "normal",
+                        },
+                        "& > div.pointValue": {
+                            border: `ridge 5px ${props.color}`,
+                            display: "flex",
+                            padding: "0.5rem 1rem",
+                            boxShadow: "inset 0 0 2rem 0.15rem #000",
+                            alignItems: "center",
+                            borderRadius: "1rem",
+                            flexDirection: "row",
+                            justifyContent: "space-around",
+                            background: "#0005",
+
+                            "& > h1": {
+                                fontSize: "2rem",
+                                padding: "0 1rem",
+                                margin: 0,
+                            },
+                            "& > span": {
+                                fontSize: "1rem",
+                                fontWeight: "bold",
+                                padding: "0",
+                                color: "#FFFA",
+                            },
                         },
                     },
                 },

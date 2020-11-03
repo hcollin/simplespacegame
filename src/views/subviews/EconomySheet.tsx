@@ -9,6 +9,7 @@ import { getSystemEconomy, SystemEconomy } from "../../utils/systemUtils";
 import PageContainer from "../../components/PageContainer";
 
 import economyimg from '../../images/art/economy.jpg';
+import { IconCredit } from "../../components/Icons";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -154,14 +155,21 @@ const EconomySheet: FC = () => {
 
     return (
         <div className={classes.root}>
-            <PageContainer color="#DD4" image={economyimg}>
+            <PageContainer color="#DD4" image={economyimg} font={faction.style.fontFamily}>
 
-                <header style={{ fontFamily: faction.style.fontFamily || "Sans Serif" }}>
+                <header>
                     <h1>Economy</h1>
 
-                    
+
+                    <div className="pointValue">
+                        <IconCredit size="xl" wrapper="dark" />
+                        <h1>{fValues.income} </h1>
+                        <span>/ turn</span>
+                    </div>
+
+
                 </header>
-                
+
 
                 <h2>Summary</h2>
 

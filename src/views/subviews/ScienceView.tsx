@@ -97,29 +97,6 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
             },
         },
-        totalPoints: {
-            border: "ridge 5px #BD78",
-            display: "flex",
-            padding: "0.5rem 1rem",
-            boxShadow: "inset 0 0 2rem 0.15rem #000",
-            alignItems: "center",
-            borderRadius: "1rem",
-            flexDirection: "row",
-            justifyContent: "space-around",
-            background: "#0005",
-
-            "& > h1": {
-                fontSize: "2rem",
-                padding: "0 1rem",
-                margin: 0,
-            },
-            "& > span": {
-                fontSize: "1rem",
-                fontWeight: "bold",
-                padding: "0",
-                color: "#FFFA",
-            },
-        },
         row: {
             display: "flex",
             flexDirection: "row",
@@ -221,10 +198,10 @@ const ScienceView: FC = () => {
 
     return (
         <div className={classes.root}>
-            <PageContainer image={researchimg} color="#BD7">
+            <PageContainer image={researchimg} color="#BD7" font={faction.style.fontFamily}>
                 <header>
-                    <h1 style={{ fontFamily: faction.style.fontFamily || "Sans Serif" }}>Research & Technology</h1>
-                    <div className={classes.totalPoints}>
+                    <h1>Research & Technology</h1>
+                    <div className="pointValue">
                         <IconResearchPoint size="xl" wrapper="dark" />
                         <h1>{pointsGenerated} </h1>
                         <span>/ turn</span>
