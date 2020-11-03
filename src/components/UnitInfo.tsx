@@ -2,11 +2,12 @@ import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import React, { FC, useState } from "react";
 import { ShipUnit } from "../models/Units";
 import { getFactionById } from "../utils/factionUtils";
-import { IconHull, IconShields } from "./Icons";
+import { IconAgility, IconHull, IconShields, IconSpeed } from "./Icons";
 
 
 import UnfoldMoreIcon from '@material-ui/icons/UnfoldMore';
 import UnfoldLessIcon from '@material-ui/icons/UnfoldLess';
+import { getUnitSpeed } from "../utils/unitUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -174,7 +175,10 @@ const UnitInfo: FC<UnitInfoProps> = (props: UnitInfoProps) => {
 
 
             {dataOpen && <div className="data">
-                Data
+                
+                <p><IconAgility /> {props.unit.agility}</p>
+                <p><IconSpeed /> {getUnitSpeed(props.unit)}</p>
+
             </div>}
 
 

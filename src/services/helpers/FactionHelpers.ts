@@ -1,5 +1,6 @@
 import { joki } from "jokits-react";
 import DATASHIPS from "../../data/dataShips";
+import { TECHIDS } from "../../data/dataTechnology";
 import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
 import { FactionModel, FactionState, GameModel, TechnologyField } from "../../models/Models";
@@ -65,7 +66,7 @@ export function createNewFaction(): FactionModel {
         style: {
             fontFamily: ff || "Arial",
         },
-        technology: ["TECH-PROP-001"],
+        technology: [TECHIDS.EvasionEngine, TECHIDS.PredEvasion],
 
     }
 

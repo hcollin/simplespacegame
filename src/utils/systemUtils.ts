@@ -1,5 +1,5 @@
 import { SystemModel } from "../models/Models";
-import { getSystemResearchPointGeneration } from "./factionUtils";
+import { getFactionById, getSystemResearchPointGeneration } from "./factionUtils";
 
 
 export interface SystemEconomy extends SystemModel {
@@ -12,10 +12,8 @@ export interface SystemEconomy extends SystemModel {
     research: number;
 }
 
-
-
 export function getSystemEconomy(star: SystemModel): SystemEconomy {
-
+    const faction = getFactionById(star.ownerFactionId);
     const eco: SystemEconomy = {
         ...star,
         income: star.economy,
@@ -24,7 +22,7 @@ export function getSystemEconomy(star: SystemModel): SystemEconomy {
         industryExpenses:star.industry < 3 ? 0 : Math.floor(star.industry / 2),
         welfareExpenses:star.welfare < 3 ? 0 : Math.floor(star.welfare / 2),
         defenseExpenses: star.defense,  
-        research: getSystemResearchPointGeneration(star),
+        research: getSystemResearchPointGeneration(star,faction),
     };
     
     eco.expenses = eco.industryExpenses + eco.defenseExpenses + eco.welfareExpenses;

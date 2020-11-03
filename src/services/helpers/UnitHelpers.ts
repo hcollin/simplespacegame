@@ -2,9 +2,11 @@ import { joki } from "jokits-react";
 import { v4 } from "uuid";
 import DATASHIPS, { shipNameGenerator } from "../../data/dataShips";
 import { Command, CommandType, FleetCommand } from "../../models/Commands";
-import { Coordinates, SystemModel, SpaceCombat } from "../../models/Models";
+import { Coordinates, SystemModel, SpaceCombat, FactionModel } from "../../models/Models";
 import { ShipDesign, ShipUnit, ShipWeapon } from "../../models/Units";
+import { getFactionById } from "../../utils/factionUtils";
 import { rnd } from "../../utils/randUtils";
+import { getFactionAdjustedUnit, getFactionAdjustedWeapon } from "../../utils/unitUtils";
 
 
 export function unitIsMoving(unit: ShipUnit): boolean {
@@ -162,13 +164,14 @@ export function spaceCombatAttackChooseTarget(combat: SpaceCombat, attacker: Shi
 
 export function spaceCombatAttackShoot(combat: SpaceCombat, attacker: ShipUnit, weapon: ShipWeapon, target: ShipUnit): SpaceCombat {
 
-
-
-    const hitChance = getHitChance(attacker.factionId, weapon, attacker, target); //50 + weapon.accuracy - target.agility;
+    const attackFaction = getFactionById(attacker.factionId);
+    const hitChance = getHitChance(attackFaction, weapon, attacker, target); //50 + weapon.accuracy - target.agility;
     const hitRoll = rnd(1, 100);
 
     if (hitRoll <= hitChance) {
-        const dmg = (Array.isArray(weapon.damage) ? rnd(weapon.damage[0], weapon.damage[1]) : weapon.damage) - target.armor;
+        const targetFactionUnit = getFactionAdjustedUnit(target);
+        const factionWeapon = getFactionAdjustedWeapon(weapon, attackFaction);
+        const dmg = (Array.isArray(factionWeapon.damage) ? rnd(factionWeapon.damage[0], factionWeapon.damage[1]) : factionWeapon.damage) - targetFactionUnit.armor;
 
         if (target.shields > 0) {
 
@@ -199,15 +202,16 @@ export function spaceCombatAttackShoot(combat: SpaceCombat, attacker: ShipUnit, 
 }
 
 export function spaceCombatDamageResolve(combat: SpaceCombat): SpaceCombat {
-
+    
     combat.units = combat.units.filter((unit: ShipUnit) => {
-
-        const destroyed = unit.damage >= unit.hull;
+        const factionUnit = getFactionAdjustedUnit(unit);
+        
+        const destroyed = unit.damage >= factionUnit.hull;
         if (destroyed) {
-            combat.log.push(`${unit.factionId} ${unit.name} is destroyed with ${unit.damage} / ${unit.hull}!`);
+            combat.log.push(`${unit.factionId} ${unit.name} is destroyed with ${unit.damage} / ${factionUnit.hull}!`);
             return false;
         } else {
-            combat.log.push(`${unit.factionId} ${unit.name} HULL DAMAGE: ${unit.damage} / ${unit.hull} SHIELDS: ${unit.shields} / ${unit.shieldsMax}`);
+            combat.log.push(`${unit.factionId} ${unit.name} HULL DAMAGE: ${unit.damage} / ${factionUnit.hull} SHIELDS: ${unit.shields} / ${factionUnit.shieldsMax}`);
 
         }
         return true;
@@ -225,13 +229,13 @@ export function spaceCombatMorale(combat: SpaceCombat): SpaceCombat {
 export function spaceCombatRoundCleanUp(combat: SpaceCombat): SpaceCombat {
 
     combat.units = combat.units.map((su: ShipUnit) => {
-
+        const factionUnit = getFactionAdjustedUnit(su);
         // Shield Regeneration
-        if (su.shieldsMax > 0) {
-            if (su.shields < su.shieldsMax) {
-                su.shields += su.shieldRegeneration;
-                if (su.shields > su.shieldsMax) {
-                    su.shields = su.shieldsMax;
+        if (factionUnit.shieldsMax > 0) {
+            if (su.shields < factionUnit.shieldsMax) {
+                su.shields += factionUnit.shieldRegeneration;
+                if (su.shields > factionUnit.shieldsMax) {
+                    su.shields = factionUnit.shieldsMax;
                 }
             }
         }
@@ -265,13 +269,17 @@ export function weaponCanFire(weapon: ShipWeapon): boolean {
     return true;
 }
 
-export function getHitChance(factionId: string, weapon: ShipWeapon, attacker: ShipUnit, target: ShipUnit): number {
-    let chance = 50 + weapon.accuracy - target.agility;
+export function getHitChance(faction: FactionModel, weapon: ShipWeapon, attacker: ShipUnit, target: ShipUnit): number {
+    const targetUnit = getFactionAdjustedUnit(target);
+    const factionWeapon = getFactionAdjustedWeapon(weapon, faction);
+    let chance = 50 + factionWeapon.accuracy - targetUnit.agility;
     return chance;   
 }
 
-export function damagePotential(weapon: ShipWeapon, target: ShipUnit): number {
-    const maxDamage = Array.isArray(weapon.damage) ? weapon.damage[1] : weapon.damage;
-    const hpleft = target.hull - target.damage + target.shields ;
+export function damagePotential(weapon: ShipWeapon, target: ShipUnit, faction: FactionModel): number {
+    const targetUnit = getFactionAdjustedUnit(target);
+    const factionWeapon = getFactionAdjustedWeapon(weapon, faction);
+    const maxDamage = Array.isArray(factionWeapon.damage) ? factionWeapon.damage[1] : factionWeapon.damage;
+    const hpleft = targetUnit.hull - target.damage + target.shields ;
     return Math.round((maxDamage / hpleft)*100);
 }

@@ -2,7 +2,7 @@ import { joki } from "jokits-react";
 import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/Models";
 import { ShipUnit } from "../models/Units";
-import { techMarketing } from "../tech/businessTech";
+import { techDecisionEngine, techHigherEducation, techMarketing } from "../tech/businessTech";
 
 export function getFactionById(fid: string): FactionModel {
     const game = joki.service.getState("GameService") as GameModel;
@@ -136,9 +136,13 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
         }
     });
 
-    return 3 + Math.floor(totalWelfare / 10) + bonusCommands;
+    return getWelfareCommands(getFactionById(factionId), totalWelfare) + bonusCommands;
 }
 
+export function getWelfareCommands(faction: FactionModel, welfarePointTotal: number): number {
+    
+    return 3 + Math.floor(welfarePointTotal / techDecisionEngine(faction));
+}
 
 export function unitExpenses(um: ShipUnit): number {
     return um.cost >= 3 ? Math.floor(um.cost / 3) : 1;
@@ -157,19 +161,20 @@ export function researchPointGenerationCalculator(faction: FactionModel): number
 
     const points = game.systems.reduce((sum: number, sm: SystemModel) => {
         if (sm.ownerFactionId === faction.id) {
-            sum += getSystemResearchPointGeneration(sm);
+            sum += getSystemResearchPointGeneration(sm, faction);
         }
         return sum;
     }, 0);
     return points;
 }
 
-export function getSystemResearchPointGeneration(sm: SystemModel): number {
-    const welfareCurve = [0, 1, 2, 1, 0, -1, -1, -2, -2, -3, -4];
+export function getSystemResearchPointGeneration(sm: SystemModel, faction: FactionModel): number {
+    
+    const welfareCurve = techHigherEducation(faction);
     let sum = 0;
     sum += Math.floor((sm.industry + sm.defense) / 3);
     sum += Math.floor(sm.economy / 4);
-    sum += sm.welfare < 10 ? welfareCurve[sm.welfare] : -5;
+    sum += sm.welfare < welfareCurve.length ? welfareCurve[sm.welfare] : -5;
     return sum;
 }
 

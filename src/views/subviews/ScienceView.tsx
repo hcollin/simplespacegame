@@ -16,6 +16,9 @@ import { DATATECHNOLOGY } from "../../data/dataTechnology";
 import { canAffordTech } from "../../utils/techUtils";
 import { IconResearchPoint } from "../../components/Icons";
 
+import researchimg from "../../images/art/research.jpg";
+import PageContainer from "../../components/PageContainer";
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -27,7 +30,8 @@ const useStyles = makeStyles((theme: Theme) =>
             minHeight: "100vh",
             color: "#FFFD",
             // background: "repeating-linear-gradient(0deg, #000 0, #132 4px, #021 16px)",
-            background: "repeating-linear-gradient(160deg, #000 0, #111 5px, #222 100px, #232 130px, #242 140px, #111 150px, #000 155px)",
+            background:
+                "repeating-linear-gradient(160deg, #000 0, #111 5px, #222 100px, #232 130px, #242 140px, #111 150px, #000 155px)",
             height: "100&",
             padding: "2rem",
 
@@ -39,7 +43,6 @@ const useStyles = makeStyles((theme: Theme) =>
                 left: 0,
                 right: 0,
                 background: "linear-gradient(-135deg, #000A 20rem, transparent 50%, #000D 100%)",
-
             },
 
             "& > div.page": {
@@ -47,26 +50,64 @@ const useStyles = makeStyles((theme: Theme) =>
                 zIndex: 10,
                 marginTop: "4rem",
                 padding: "1rem",
-                background: "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
+                background:
+                    "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
                 color: "#FFFE",
                 borderRadius: "1rem",
                 width: "calc(100% - 18rem)",
                 marginBottom: "6rem",
                 border: "ridge 5px #DFD4",
+                "& > header": {
+                    position: "relative",
+                    height: "10rem",
+                    background: "#000",
+                    backgroundImage: `url(${researchimg})`,
+                    width: "100%",
+                    backgroundPosition: "center",
+                    // filter: "grayscale(0.4) sepia(0.7) hue-rotate(52deg)",
+                    boxShadow: "inset 0 0 2em 1rem #000",
+                    border: "ridge 5px #BD78",
+                    borderBottom: "none",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "0 2rem 2rem 2rem",
+                    "&:after": {
+                        content: '""',
+                        background: "linear-gradient(to bottom, transparent 75%, #0008 80%, #777E 97%, #555 100%)",
+                        position: "absolute",
+                        top: 0,
+                        bottom: 0,
+                        left: "-5px",
+                        right: "-5px",
+                        zIndex: 0,
+                        pointerEvents: "none",
+                    },
+                    "&>h1": {
+                        padding: "2rem",
+                        fontSize: "2.75rem",
+                        color: "#FFFD",
+                        letterSpacing: "0.25rem",
+                        textShadow:
+                            "0 0 1rem #BD7, 2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 4px #000,2px -2px 2px #000",
+                        fontFamily: "Averia Serif Libre",
+                        fontWeight: "normal",
+                    },
+                },
             },
         },
         totalPoints: {
-            top: "1rem",
-            right: "1rem",
-            position: "absolute",
-            border: "solid 2px #0006",
-            padding: "0.5rem 1rem",
-            borderRadius: "40%",
-            boxShadow: "inset 0 0 2rem 1rem #0808",
+            border: "ridge 5px #BD78",
             display: "flex",
-            flexDirection: "row",
+            padding: "0.5rem 1rem",
+            boxShadow: "inset 0 0 2rem 0.15rem #000",
             alignItems: "center",
+            borderRadius: "1rem",
+            flexDirection: "row",
             justifyContent: "space-around",
+            background: "#0005",
+
             "& > h1": {
                 fontSize: "2rem",
                 padding: "0 1rem",
@@ -90,23 +131,19 @@ const useStyles = makeStyles((theme: Theme) =>
             display: "flex",
             flexDirection: "row",
             flexWrap: "wrap",
-            
+
             "& > div": {
                 cursor: "pointer",
                 "&.cannotAfford": {
                     opacity: 0.5,
                     cursor: "default",
                 },
-                
+
                 "&.owned": {
                     filter: "sepia(0.9) hue-rotate(60deg)",
                     cursor: "default",
-                    
                 },
             },
-            
-
-            
         },
         TechnologyFieldWrapper: {
             position: "relative",
@@ -155,7 +192,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 padding: "1rem",
                 background: "#000B",
                 borderBottomRightRadius: "1rem",
-                borderTopLeftRadius: "1rem",                
+                borderTopLeftRadius: "1rem",
                 "& > button": {
                     marginBottom: "0.25rem",
                     // padding: "0.25rem",
@@ -177,24 +214,22 @@ const ScienceView: FC = () => {
     const pointsGenerated = researchPointGenerationCalculator(faction);
 
     function researchTech(tech: Technology) {
-        
-        if(faction && tech) {
+        if (faction && tech) {
             doResearchTechCommand(tech, faction.id);
         }
-        
-
     }
 
     return (
         <div className={classes.root}>
-            <div className="page">
-                <h1>Research</h1>
-
-                <div className={classes.totalPoints}>
-                    <IconResearchPoint size="xl" wrapper="dark"/>
-                    <h1>{pointsGenerated} </h1>
-                    <span>/ turn</span>
-                </div>
+            <PageContainer image={researchimg} color="#BD7">
+                <header>
+                    <h1 style={{ fontFamily: faction.style.fontFamily || "Sans Serif" }}>Research & Technology</h1>
+                    <div className={classes.totalPoints}>
+                        <IconResearchPoint size="xl" wrapper="dark" />
+                        <h1>{pointsGenerated} </h1>
+                        <span>/ turn</span>
+                    </div>
+                </header>
 
                 <div className={classes.row}>
                     {faction.technologyFields.map((v: FactionTechSetting) => {
@@ -215,15 +250,23 @@ const ScienceView: FC = () => {
                     {DATATECHNOLOGY.map((tech: Technology) => {
                         const owned = faction.technology.find((s: string) => s === tech.id) !== undefined;
                         const canAfford = canAffordTech(tech, faction);
-                        const techClasses = `${owned ? "owned ": ""}${!owned && !canAfford ? "cannotAfford": ""}`;
-                        if(canAfford && !owned) {
+                        const techClasses = `${owned ? "owned " : ""}${!owned && !canAfford ? "cannotAfford" : ""}`;
+                        if (canAfford && !owned) {
                             console.log("Clickable", tech);
-                            return <TechCard tech={tech} faction={faction} key={tech.id} className={techClasses} onClick={researchTech} />;    
+                            return (
+                                <TechCard
+                                    tech={tech}
+                                    faction={faction}
+                                    key={tech.id}
+                                    className={techClasses}
+                                    onClick={researchTech}
+                                />
+                            );
                         }
-                        return <TechCard tech={tech} faction={faction} key={tech.id} className={techClasses}/>;
+                        return <TechCard tech={tech} faction={faction} key={tech.id} className={techClasses} />;
                     })}
                 </div>
-            </div>
+            </PageContainer>
         </div>
     );
 };

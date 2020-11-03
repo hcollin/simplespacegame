@@ -2,6 +2,8 @@ import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import React, { FC, useState } from "react";
 import { IconAccuracy, IconAgility, IconArmor, IconCooldown, IconCredit, IconDamage, IconHull, IconIndustry, IconShields, IconSpeed } from "./Icons";
 import { ShipDesign, ShipWeapon } from "../models/Units";
+import useCurrentFaction from "../services/hooks/useCurrentFaction";
+import { getShipAgility, getShipArmor, getShipCost, getShipHull, getShipIndustry, getShipShieldsMax, getShipShieldsReg, getShipSpeed } from "../utils/unitUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -227,7 +229,7 @@ interface ShipInfoProps {
 
 const ShipInfo: FC<ShipInfoProps> = (props) => {
     const classes = useStyles();
-
+    const faction = useCurrentFaction();
     const [contentOpen, setContentOpen] = useState<boolean>(false);
 
     function handleClick() {
@@ -244,8 +246,8 @@ const ShipInfo: FC<ShipInfoProps> = (props) => {
 
 
             <div className="corner">
-                {props.ship.minIndustry} <IconIndustry size="lg" />
-                {props.ship.cost} <IconCredit size="lg" />
+                {getShipIndustry(props.ship, faction || undefined)} <IconIndustry size="lg" />
+                {getShipCost(props.ship, faction || undefined)} <IconCredit size="lg" />
             </div>
 
             <div className={`content ${contentOpen ? "" : "hidden"}`}>
@@ -286,13 +288,13 @@ const ShipInfo: FC<ShipInfoProps> = (props) => {
 
             <div className="data">
 
-                <div><IconHull size="lg" /> {props.ship.hull}</div>
-                <div><IconArmor size="lg" /> {props.ship.armor}</div>
-                {props.ship.shieldsMax > 0 && <div><IconShields size="lg" /> {props.ship.shieldsMax} <span> (+{props.ship.shieldRegeneration})</span></div>}
+                <div><IconHull size="lg" /> {getShipHull(props.ship, faction || undefined)}</div>
+                <div><IconArmor size="lg" /> {getShipArmor(props.ship, faction || undefined)}</div>
+                {props.ship.shieldsMax > 0 && <div><IconShields size="lg" /> {getShipShieldsMax(props.ship, faction || undefined)} <span> (+{getShipShieldsReg(props.ship, faction || undefined)})</span></div>}
 
-                <div><IconAgility size="lg" /> {props.ship.agility}</div>
+                <div><IconAgility size="lg" /> {getShipAgility(props.ship, faction || undefined)}</div>
 
-                <div><IconSpeed size="lg" /> {props.ship.speed}</div>
+                <div><IconSpeed size="lg" /> {getShipSpeed(props.ship, faction || undefined)}</div>
 
             </div>
 

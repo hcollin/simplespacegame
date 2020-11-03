@@ -1,5 +1,6 @@
 import { TECHIDS } from "../data/dataTechnology";
 import { FactionModel } from "../models/Models";
+import { ShipWeapon } from "../models/Units";
 
 import { factionHasTechnology } from "./techTools";
 
@@ -21,8 +22,35 @@ export function techWarpEngines(faction: FactionModel): number {
     return 3;
 }
 
-
 export function techTargetingComputerOne(faction: FactionModel): number {
+    if(!factionHasTechnology(faction, TECHIDS.TargetingComp1)) return 0;
+    return 5;
+}
 
-    return 0;
+export function techTargetingComputerTwo(faction: FactionModel): number {
+    if(!factionHasTechnology(faction, TECHIDS.TargetingComp2)) return 0;
+    return 5;
+}
+
+export function techTargetingComputerThree(faction: FactionModel): number {
+    if(!factionHasTechnology(faction, TECHIDS.TargetingComp3)) return 0;
+    return 10;
+}
+
+export function techHeavyRounds(faction: FactionModel, damage: number|[number, number]): number|[number, number] {
+    if(!factionHasTechnology(faction, TECHIDS.HeavyRounds)) return damage;
+    if(Array.isArray(damage)) {
+        return [Math.round(damage[0] * 1.1), Math.round(damage[1] * 1.1)];
+    }
+    return Math.round(damage * 1.1);
+}
+
+export function techEvasionEngine(faction: FactionModel, agility: number): number {
+    if(!factionHasTechnology(faction, TECHIDS.EvasionEngine)) return agility;
+    return Math.round(agility * 1.1);
+}
+
+export function techTimeslipPrediction(faction: FactionModel, agility: number): number {
+    if(!factionHasTechnology(faction, TECHIDS.PredEvasion)) return agility;
+    return Math.round(agility + 10);
 }

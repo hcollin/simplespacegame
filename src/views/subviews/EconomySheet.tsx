@@ -6,6 +6,9 @@ import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 import { factionValues } from "../../utils/factionUtils";
 import DataTable, { ColumnProps } from "../../components/DataTable";
 import { getSystemEconomy, SystemEconomy } from "../../utils/systemUtils";
+import PageContainer from "../../components/PageContainer";
+
+import economyimg from '../../images/art/economy.jpg';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -27,18 +30,17 @@ const useStyles = makeStyles((theme: Theme) =>
                 color: "#FFFE",
                 borderRadius: "1rem",
                 width: "calc(100% - 18rem)",
-                background: "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
+                background:
+                    "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
                 border: "ridge 5px #FFD4",
             },
             "& span.red": {
                 color: "red",
                 fontWeight: "bold",
-
             },
             "& span.green": {
                 color: "green",
                 fontWeight: "bold",
-
             },
         },
         systems: {
@@ -51,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
             width: "100%",
             alignItems: "center",
             justifyContent: "space-around",
-        }
+        },
     })
 );
 
@@ -147,13 +149,19 @@ const EconomySheet: FC = () => {
             header: "Research",
             size: 100,
             className: "center",
-        }
+        },
     ];
 
     return (
         <div className={classes.root}>
-            <div className="page">
-                <h1>Economy</h1>
+            <PageContainer color="#DD4" image={economyimg}>
+
+                <header style={{ fontFamily: faction.style.fontFamily || "Sans Serif" }}>
+                    <h1>Economy</h1>
+
+                    
+                </header>
+                
 
                 <h2>Summary</h2>
 
@@ -173,7 +181,7 @@ const EconomySheet: FC = () => {
                 <div>
                     <DataTable columns={columns} rows={mySystems} />
                 </div>
-            </div>
+            </PageContainer>
         </div>
     );
 };

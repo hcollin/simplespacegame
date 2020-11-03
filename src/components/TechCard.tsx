@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme: Theme) =>
             position: "relative",
             margin: "0.5rem",
             border: "solid 2px #0008",
-            minWidth: "20rem",
+            width: "25rem",
             borderRadius: "0.5rem",
             minHeight: "8rem",
             boxShadow: "inset 0 0 0.25rem 0.25rem #FFF2",
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 position: "relative",
                 padding: "0.25rem 0.5rem",
                 margin: 0,
-                width: "calc(100% - 4rem)",
+                width: "calc(100% - 5rem)",
                 background: "#CDF2",
                 borderBottom: "solid 2px #0006",
             },
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 position: "relative",
                 padding: "0.25rem 0.5rem",
                 margin: 0,
-                width: "calc(100% - 4rem)",
+                width: "calc(100% - 5rem)",
             },
 
             "& >div.prereqtech": {
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
             "& > div.fieldreqs": {
                 top: "0",
                 right: "0",
-                width: "4rem",
+                width: "5rem",
                 display: "flex",
                 position: "absolute",
                 alignItems: "flex-end",
