@@ -20,28 +20,37 @@ const theme = createMuiTheme({
 
 // console.log(joki.config("logger", "ON"));
 
+
+export enum SERVICEID {
+  GameService = "GameService",
+  UserService = "UserService",
+  CommandService = "CommandService",
+  FleetService = "FleetService",
+  ChatService = "ChatService",
+}
+
 joki.service.add({
-  serviceId: "GameService",
+  serviceId: SERVICEID.GameService,
   service: createGameService,
 });
 
 joki.service.add({
-  serviceId: "UserService",
+  serviceId: SERVICEID.UserService,
   service: createUserService,
 });
 
 joki.service.add({
-  serviceId: "CommandService",
+  serviceId: SERVICEID.CommandService,
   service: createCommandService,
 });
 
 joki.service.add({
-  serviceId: "FleetService",
+  serviceId: SERVICEID.FleetService,
   service: createFleetService,
 });
 
 joki.service.add({
-  serviceId: "ChatService",
+  serviceId: SERVICEID.ChatService,
   service: createChatService,
 })
 

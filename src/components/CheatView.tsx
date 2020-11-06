@@ -53,6 +53,7 @@ const CheatView: FC = () => {
         if(game) {
             game.factions.forEach((fm: FactionModel) => {
                 if(!game.factionsReady.includes(fm.id)) {
+                    
                     joki.trigger({
                         to: "GameService",
                         action: "ready",

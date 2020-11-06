@@ -53,8 +53,11 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
     function eventHandler(event: JokiEvent) {
         if (event.to === serviceId) {
             switch (event.action) {
+                case "setGameState":
+                    setGameState(event.data);
+                    break;
                 case "processTurn":
-                    processTurn();
+                    processTurn(event.data);
                     break;
                 case "ready":
                     factionReady(event.data);
@@ -96,6 +99,13 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
             sendUpdate();
             startListening();
         }
+    }
+
+    async function setGameState(st: GameState) {
+        game.state = st;
+        sendUpdate();
+        await saveGame();
+        return 1;
     }
 
     function startListening() {
@@ -155,9 +165,15 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 
             await saveGame();
 
-            if (allReady) {
-                processTurn();
-            }
+            joki.trigger({
+                from: serviceId,
+                action: "playerDone",
+                data: {...game},
+            })
+
+            // if (allReady) {
+            //     processTurn();
+            // }
         }
     }
 
@@ -168,15 +184,15 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         sendUpdate();
     }
 
-    function processTurn() {
-        if (game.state !== GameState.TURN) return;
+    async function processTurn(comms?: Command[]) {
+        if (game.state !== GameState.PROCESSING) return;
 
         game.systems = game.systems.map((sm: SystemModel) => {
             sm.reports = [];
             return sm;
         });
 
-        const commands = api.api.getServiceState<Command[]>("CommandService");
+        const commands = comms ? comms : api.api.getServiceState<Command[]>("CommandService");
 
         if (commands) {
             game = processSystemCommands(commands, game);
@@ -202,6 +218,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 
         // Increase turn counter
         game.turn++;
+        
 
         // Clear ready states
         game.factionsReady = [];
@@ -211,6 +228,10 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
             from: serviceId,
             action: "nextTurn",
         });
+
+        game.state = GameState.TURN;
+
+        await saveGame();
 
         sendUpdate();
     }

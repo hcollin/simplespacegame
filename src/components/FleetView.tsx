@@ -106,14 +106,18 @@ const useStyles = makeStyles((theme: Theme) =>
             },
 
             "& div.actions": {
-                background: "linear-gradient(to bottom, #222 0, #444 10%, #666 20%, #444 25%, #555 80%, #3458 85%, #555 90%, #888 100%)",
+                // background: "linear-gradient(to bottom, #222 0, #444 10%, #666 20%, #444 25%, #555 80%, #3458 85%, #555 90%, #888 100%)",
+                background: "linear-gradient(to bottom, #222 0, #444 10%, #666 20%, #444 25%, #555 80%,  #666 100%)",
                 borderTop: "solid 2px #0008",
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-around",
-                padding: "1rem",
+                padding: "2rem 1rem 1rem 1rem",
                 boxShadow: "inset 0 0 1rem 0.5rem #0008",
+                height: "6rem",
+                marginTop: "1rem",
+                
             },
         }
     }));
@@ -145,8 +149,6 @@ const FleetView: FC = () => {
     let viewMode = "VIEW";
     if (fleet.length > 0 && faction && fleet[0].factionId === faction.id && !unitIsMoving(fleet[0])) viewMode = "MOVE";
     if (canCreateFleet) viewMode = "CREATE";
-
-
 
     function close() {
         fleetActions.clr();
@@ -214,9 +216,9 @@ const ViewFleetContent: FC<ContentProps> = (props) => {
                 })}
             </div>
 
-            <div className="actions">
+            {/* <div className="actions">
                 <Button variant="contained" color="primary" onClick={() => props.close()}>Close</Button>
-            </div>
+            </div> */}
         </>
     )
 
@@ -314,7 +316,7 @@ const MoveFleetContent: FC<ContentProps> = (props) => {
 
 
             <div className="actions">
-                <Button variant="outlined" color="secondary" onClick={() => fleetActions.clr()}>Cancel</Button>
+                {/* <Button variant="outlined" color="secondary" onClick={() => fleetActions.clr()}>Cancel</Button> */}
                 <Button variant="contained" color="primary" onClick={moveFleet} disabled={!canMove}>Move</Button>
             </div>
         </>

@@ -1,5 +1,6 @@
 import { JokiServiceApi, JokiService, JokiEvent } from "jokits";
 import { apiNewChat, apiSubscribeToChat } from "../api/apiChat";
+import { SERVICEID } from "../App";
 import { ChatMessage } from "../models/Communication";
 import { FactionModel, GameModel } from "../models/Models";
 import { User } from "../models/User";
@@ -19,11 +20,11 @@ export function createChatService(serviceId: string, api: JokiServiceApi): JokiS
             }
         }
 
-        if (event.from === "GameService" && event.action === "loaded") {
+        if (event.from === SERVICEID.GameService && event.action === "loaded") {
             gameLoad(event.data);
         }
 
-        if (event.from === "GameService" && event.action === "unloaded") {
+        if (event.from === SERVICEID.GameService && event.action === "unloaded") {
             gameUnload();
         }
     }

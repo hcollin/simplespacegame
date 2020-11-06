@@ -8,7 +8,7 @@ import LargeMap from "./subviews/LargeMap"
 // import SimpleMap from "../components/SimpleMap"
 import SystemInfo from "../components/SystemInfo"
 import { GameModel } from "../models/Models"
-import { processTurn } from "../services/commands/GameCommands"
+// import { doProcessTurn } from "../services/commands/GameCommands"
 import useCurrentUser from "../services/hooks/useCurrentUser"
 
 
@@ -149,7 +149,9 @@ const GameView: FC = () => {
 
             <CommandList />
 
-            <Button variant="contained" color="primary" onClick={processTurn} className={classes.nextTurn}>END TURN</Button>
+            
+
+            {/* <Button variant="contained" color="primary" onClick={processTurn} className={classes.nextTurn}>END TURN</Button> */}
 
             {/* <h1>Game {game.turn}</h1> */}
 

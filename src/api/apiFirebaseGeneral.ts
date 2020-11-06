@@ -61,6 +61,27 @@ export async function getItemsWhere<T extends GameObject>(
     return res;
 }
 
+export async function getItemsWheres<T extends GameObject>(
+    collectionName: string,
+    wheres: [string, Firebase.firestore.WhereFilterOp, string|number][]
+): Promise<T[]> {
+    const collectionRef = db.collection(collectionName);
+    wheres.forEach((where: [string, Firebase.firestore.WhereFilterOp, string|number]) => {
+        console.log("Where", where);
+        collectionRef.where(where[0], where[1], where[2]);
+    });
+    console.log("CollectionRef", collectionRef);
+    const snap = await collectionRef.get();
+
+    const res: T[] = [];
+    snap.forEach((item) => {
+        const d: T = item.data() as T;
+
+        res.push(d);
+    });
+    return res;
+}
+
 export function listenItemWhere<T extends GameObject>(
     collectionName: string,
     where: [string, Firebase.firestore.WhereFilterOp, string],

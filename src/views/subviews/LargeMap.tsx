@@ -103,7 +103,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
     
 
     const unitGroups = Array.from(unitGroupsMap.values());
-    console.log("Selected System", selectedSystem);
+    // console.log("Selected System", selectedSystem);
     return (<div className={classes.root}>
 
         <div className={classes.map}>

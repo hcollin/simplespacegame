@@ -1,5 +1,5 @@
 import { Command } from "../models/Commands";
-import { getItemsWhere, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
+import { getItemsWhere, getItemsWheres, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
 
 const COLLECTION = "Commands";
 
@@ -7,6 +7,16 @@ const COLLECTION = "Commands";
 export async function apiLoadCommands(gameId: string): Promise<Command[]> {
     return await getItemsWhere(COLLECTION, ["gameId", "==", gameId]);
 }
+
+
+export async function apiLoadMyCommands(gameId: string, factionId: string): Promise<Command[]> {
+    return await getItemsWheres(gameId, [["gameId", "==", gameId], ["factionId", "==", factionId]] );
+}
+
+export async function apiLoadCommandsAtTurn(gameId: string, turn: number): Promise<Command[]> {
+    return await getItemsWheres(gameId, [["gameId", "==", gameId], ["turn", "==", turn]] );
+}
+
 
 export async function apiNewCommand(command: Command) {
     const newId = await insertOrUpdateItem<Command>(command, COLLECTION, true);

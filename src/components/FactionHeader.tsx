@@ -5,7 +5,7 @@ import useMyCommands from "../hooks/useMyCommands";
 import { useService } from "jokits-react";
 import { GameModel} from "../models/Models";
 import { factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
-import { playerDone } from "../services/commands/GameCommands";
+import { doPlayerDone } from "../services/commands/GameCommands";
 import { IconCommand, IconCredit, IconResearchPoint, IconScore } from "./Icons";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -188,7 +188,7 @@ const FactionHeader: FC = () => {
                 </div>
             </div>
             <div>
-                {!isReady && <Button variant="contained" color="primary" onClick={playerDone}>READY</Button>}
+                {!isReady && <Button variant="contained" color="primary" onClick={() => doPlayerDone(faction.id)}>READY</Button>}
             </div>
             <div className="rest">
 

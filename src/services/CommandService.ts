@@ -2,11 +2,15 @@ import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
 import { Command } from "../models/Commands";
 
 import { v4 } from "uuid";
+import { joki } from "jokits-react";
+import { apiLoadCommands, apiLoadCommandsAtTurn, apiNewCommand } from "../api/apiCommands";
+import { SERVICEID } from "../App";
+import { GameModel, GameState } from "../models/Models";
 
 export default function createCommandService(serviceId: string, api: JokiServiceApi): JokiService<Command> {
     let commands: Command[] = [];
 
-    let unsub: null |(() => void) = null;
+    let unsub: null | (() => void) = null;
 
     function eventHandler(event: JokiEvent) {
         if (event.to === serviceId) {
@@ -25,12 +29,17 @@ export default function createCommandService(serviceId: string, api: JokiService
             }
         }
 
-        if(event.from === "GameService" && event.action === "loaded") {
+        if (event.from === SERVICEID.GameService && event.action === "loaded") {
             gameLoad(event.data);
         }
 
-        if(event.from === "GameService" && event.action === "unloaded") {
+        if (event.from === SERVICEID.GameService && event.action === "unloaded") {
             gameUnload();
+        }
+
+        if (event.from === SERVICEID.GameService && event.action === "playerDone") {
+            // gameUnload();
+            playerDone(event.data)
         }
 
         if (event.action === "nextTurn") {
@@ -40,20 +49,15 @@ export default function createCommandService(serviceId: string, api: JokiService
 
     function gameLoad(gameId: string) {
         gameUnload();
-
-        
     }
 
     function gameUnload() {
-        if(unsub) {
+        if (unsub) {
             unsub();
         }
     }
 
-    
-
-
-    function addCommand(command: Command) {
+    async function addCommand(command: Command) {
         command.id = v4();
         commands.push(command);
         sendUpdate();
@@ -71,6 +75,39 @@ export default function createCommandService(serviceId: string, api: JokiService
             }
             return cm;
         });
+    }
+
+    function playerDone(game: GameModel) {
+        
+        // Save all commands to Firebase
+        const allSaved: Promise<Command>[] = [];
+        commands.forEach((cmd:  Command) => {
+            if(cmd)
+            cmd.id = "";
+            allSaved.push(apiNewCommand(cmd));
+        });
+
+        Promise.all(allSaved).then((cmds: Command[]) => {
+            console.log("Commands Saved!", cmds);
+
+            if(game.factionsReady.length === game.factions.length) {    
+                loadAllCommandsForProcessing(game.id, game.turn);
+            }
+        });
+    }
+
+    async function loadAllCommandsForProcessing(gameId: string, turn: number) {
+        const allCommands = await apiLoadCommands(gameId);
+        if(allCommands) {
+            
+            commands = allCommands.filter((cmd: Command) => cmd.turn === turn);
+            console.log("All by turn Commands", allCommands, commands);
+            joki.trigger({
+                to: SERVICEID.GameService,
+                action: "processTurn",
+                data: commands,
+            });
+        }
     }
 
     function clearCompletedCommands() {
