@@ -1,5 +1,4 @@
-// import { FirebaseStorable } from "../models/FirebaseStorable";
-// import * as Firebase from "firebase";
+import Firebase from "firebase";
 import { db } from "./firebaseDb";
 
 import { GameObject } from "../models/Models";
@@ -15,27 +14,24 @@ export interface FirebaseConfiguration {
     measurementId: string;
 }
 
-// export async function getAllItems<T extends FirebaseStorable>(collectionName: string): Promise<T[]> {
-//     const snap = await db.collection(collectionName).get();
+export async function getAllItems<T extends GameObject>(collectionName: string): Promise<T[]> {
+    const snap = await db.collection(collectionName).get();
 
-//     const items: T[] = [];
-//     snap.forEach((doc) => {
-//         try {
-//             const item: T = doc.data() as T;
-//             item.id = doc.id;
-//             items.push(item);
-//         } catch (e) {
-//             console.warn(`${doc.id} data could not be stored as an item T`, e);
-//         }
-//     });
+    const items: T[] = [];
+    snap.forEach((doc) => {
+        try {
+            const item: T = doc.data() as T;
+            item.id = doc.id;
+            items.push(item);
+        } catch (e) {
+            console.warn(`${doc.id} data could not be stored as an item T`, e);
+        }
+    });
 
-//     return items;
-// }
+    return items;
+}
 
-export async function getItem<T extends GameObject>(
-    collectionName: string,
-    itemId: string
-): Promise<T | undefined> {
+export async function getItem<T extends GameObject>(collectionName: string, itemId: string): Promise<T | undefined> {
     const snap = await db.collection(collectionName).doc(itemId).get();
 
     if (!snap.data()) {
@@ -50,43 +46,47 @@ export async function getItem<T extends GameObject>(
     return data;
 }
 
-// export async function getItemsWhere<T extends FirebaseStorable>(
-//     collectionName: string,
-//     where: [string, Firebase.firestore.WhereFilterOp, string]
-// ): Promise<T[]> {
-//     const snap = await db.collection(collectionName).where(where[0], where[1], where[2]).get();
+export async function getItemsWhere<T extends GameObject>(
+    collectionName: string,
+    where: [string, Firebase.firestore.WhereFilterOp, string]
+): Promise<T[]> {
+    const snap = await db.collection(collectionName).where(where[0], where[1], where[2]).get();
 
-//     const res: T[] = [];
-//     snap.forEach((item) => {
-//         const d: T = item.data() as T;
+    const res: T[] = [];
+    snap.forEach((item) => {
+        const d: T = item.data() as T;
 
-//         res.push(d);
-//     });
-//     return res;
-// }
+        res.push(d);
+    });
+    return res;
+}
 
-// export function listenItemWhere<T extends FirebaseStorable>(
-//     collectionName: string,
-//     where: [string, Firebase.firestore.WhereFilterOp, string],
-//     callback: (item: T[] | undefined) => void
-// ): () => void {
-//     const subStop = db
-//         .collection(collectionName)
-//         .where(where[0], where[1], where[2])
-//         .onSnapshot((querySnap) => {
-//             const res: T[] = [];
-//             querySnap.forEach((doc) => {
-//                 const item: T = doc.data() as T;
-//                 res.push(item);
-//             });
-//             callback(res);
-//         });
-//     return () => {
-//         subStop();
-//     };
-// }
+export function listenItemWhere<T extends GameObject>(
+    collectionName: string,
+    where: [string, Firebase.firestore.WhereFilterOp, string],
+    callback: (item: T[] | undefined) => void
+): () => void {
+    const subStop = db
+        .collection(collectionName)
+        .where(where[0], where[1], where[2])
+        .onSnapshot((querySnap) => {
+            const res: T[] = [];
+            querySnap.forEach((doc) => {
+                const item: T = doc.data() as T;
+                res.push(item);
+            });
+            callback(res);
+        });
+    return () => {
+        subStop();
+    };
+}
 
-// export function listenCollection<T extends FirebaseStorable>(
+export async function deleteItem<T extends GameObject>(collectionName: string, item: T): Promise<void> {
+    return await db.collection(collectionName).doc(item.id).delete();
+}
+
+// export function listenCollection<T extends GameObject>(
 //     collectionName: string,
 //     callback: (items: T[]) => void
 // ): () => void {
@@ -97,7 +97,7 @@ export async function getItem<T extends GameObject>(
 //     return unsub;
 // }
 
-// export function listenItem<T extends FirebaseStorable>(
+// export function listenItem<T extends GameObject>(
 //     collectionName: string,
 //     fbId: string,
 //     callback: (items: T) => void
@@ -112,24 +112,24 @@ export async function getItem<T extends GameObject>(
 //     return unsub;
 // }
 
-// export async function insertOrUpdateItem<T extends FirebaseStorable>(
-//     item: T,
-//     collectionName: string,
-//     insert?: boolean
-// ): Promise<string> {
-//     try {
-//         if (item.id === "" || insert === true) {
-//             const docRef = await db.collection(collectionName).add(item);
-//             return docRef.id;
-//         }
+export async function insertOrUpdateItem<T extends GameObject>(
+    item: T,
+    collectionName: string,
+    insert?: boolean
+): Promise<string> {
+    try {
+        if (item.id === "" || insert === true) {
+            const docRef = await db.collection(collectionName).add(item);
+            return docRef.id;
+        }
 
-//         await db.collection(collectionName).doc(item.id).set(item);
-//         return item.id;
-//     } catch (e) {
-//         console.error(e);
-//         throw new Error(e);
-//     }
-// }
+        await db.collection(collectionName).doc(item.id).set(item);
+        return item.id;
+    } catch (e) {
+        console.error(e);
+        throw new Error(e);
+    }
+}
 
 // export async function updateItem(fbId: string, updateObject: any, collectionName: string) {
 //     try {

@@ -9,12 +9,12 @@ export function canAffordTech(tech: Technology, faction: FactionModel): boolean 
 
     tech.fieldreqs.forEach((val: [TechnologyField, number]) => {
 
-        const field = faction.technologyFields.find((f: FactionTechSetting) => f[0] === val[0]);
+        const field = faction.technologyFields.find((f: FactionTechSetting) => f.field === val[0]);
         if(!field) {
             throw new Error(`Unknown technology requirement field ${val[0]}`);
         }
 
-        if(field[1] < val[1]) {
+        if(field.points < val[1]) {
             canAfford = false;
         }
         
@@ -36,12 +36,12 @@ export function factionPaysForTech(fields: FactionTechSetting[], tech: Technolog
 
     return fields.map((tf: FactionTechSetting) => {
 
-        const cost = tech.fieldreqs.find((tr: [TechnologyField, number]) => tr[0] === tf[0]);
+        const cost = tech.fieldreqs.find((tr: [TechnologyField, number]) => tr[0] === tf.field);
         if(cost) {
-            tf[1] -= cost[1];
+            tf.points -= cost[1];
         }
 
-        return [...tf];
+        return {...tf};
     })
 
 }

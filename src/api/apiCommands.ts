@@ -1,0 +1,41 @@
+import { Command } from "../models/Commands";
+import { getItemsWhere, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
+
+const COLLECTION = "Commands";
+
+
+export async function apiLoadCommands(gameId: string): Promise<Command[]> {
+    return await getItemsWhere(COLLECTION, ["gameId", "==", gameId]);
+}
+
+export async function apiNewCommand(command: Command) {
+    const newId = await insertOrUpdateItem<Command>(command, COLLECTION, true);
+    command.id = newId;
+    await apiUpdateCommand(command);
+    return command;
+}
+
+export async function apiUpdateCommand(commmand: Command): Promise<boolean> {
+    if (commmand.id !== "") {
+        try {
+            await insertOrUpdateItem<Command>(commmand, COLLECTION);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+    return false;
+}
+
+export async function apiClearCommands(gameId: string, cmdIds: string[]) {
+
+}
+
+export function apiSubscribeToCommands(gameId: string, onChange: (commands: Command[]) => void): () => void {
+    const unsub =  listenItemWhere<Command>(COLLECTION, ["gameId", "==", gameId], ((model: Command[]|undefined) => {
+        if(model !== undefined) {
+            onChange(model);
+        }
+    }));
+    return unsub;
+}

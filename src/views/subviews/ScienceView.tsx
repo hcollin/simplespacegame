@@ -212,9 +212,9 @@ const ScienceView: FC = () => {
                     {faction.technologyFields.map((v: FactionTechSetting) => {
                         return (
                             <TechnologyFieldWrapper
-                                field={v[0]}
+                                field={v.field}
                                 faction={faction}
-                                key={v[0]}
+                                key={v.field}
                                 rpTotal={pointsGenerated}
                             />
                         );
@@ -257,13 +257,13 @@ interface TechFieldProps {
 const TechnologyFieldWrapper: FC<TechFieldProps> = (props) => {
     const classes = useStyles();
 
-    const techF = props.faction.technologyFields.find((v: FactionTechSetting) => v[0] === props.field);
+    const techF = props.faction.technologyFields.find((v: FactionTechSetting) => v.field === props.field);
     const rpDist = researchPointDistribution(props.rpTotal, props.faction);
 
     if (!techF) {
         throw new Error(`Invalid Technology Field ${props.field}`);
     }
-    const index = props.faction.technologyFields.findIndex((tech: FactionTechSetting) => tech[0] === props.field);
+    const index = props.faction.technologyFields.findIndex((tech: FactionTechSetting) => tech.field === props.field);
     if (index < 0) throw new Error(`Cannot find technology field ${props.field}`);
     const pointGen = rpDist[index];
 
@@ -275,7 +275,7 @@ const TechnologyFieldWrapper: FC<TechFieldProps> = (props) => {
 
             <div className="values">
                 <p>Current Points</p>
-                <h1>{techF[1]} </h1>
+                <h1>{techF.points} </h1>
 
                 <p>Points / turn</p>
                 <h2>+{pointGen}</h2>
@@ -283,28 +283,28 @@ const TechnologyFieldWrapper: FC<TechFieldProps> = (props) => {
             <div className="buttons">
                 <Button
                     variant="contained"
-                    color={techF[2] === 3 ? "primary" : "default"}
+                    color={techF.priority === 3 ? "primary" : "default"}
                     onClick={() => doAdjustTechValues(props.field, 3, props.faction.id)}
                 >
                     High
                 </Button>
                 <Button
                     variant="contained"
-                    color={techF[2] === 2 ? "primary" : "default"}
+                    color={techF.priority === 2 ? "primary" : "default"}
                     onClick={() => doAdjustTechValues(props.field, 2, props.faction.id)}
                 >
                     Medium
                 </Button>
                 <Button
                     variant="contained"
-                    color={techF[2] === 1 ? "primary" : "default"}
+                    color={techF.priority === 1 ? "primary" : "default"}
                     onClick={() => doAdjustTechValues(props.field, 1, props.faction.id)}
                 >
                     Low
                 </Button>
                 <Button
                     variant="contained"
-                    color={techF[2] === 0 ? "primary" : "default"}
+                    color={techF.priority === 0 ? "primary" : "default"}
                     onClick={() => doAdjustTechValues(props.field, 0, props.faction.id)}
                 >
                     None

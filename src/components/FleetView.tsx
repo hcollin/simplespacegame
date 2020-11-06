@@ -17,13 +17,36 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             position: "fixed",
-            top: "6rem",
+            top: "100px",
             left: "1rem",
             background:
                 "repeating-linear-gradient(to bottom, #1118 0, #333E 5px, #444E 54px, #777E 67px, #555E 76px, #1118 80px)",
             color: "#FFFD",
             boxShadow: "inset 0 0 2rem 0.5rem #000",
             border: "ridge 3px #FFF5",
+            "& > button.close": {
+                top: "-1rem",
+                right: "-1.75rem",
+                width: "3rem",
+                cursor: "pointer",
+                height: "3rem",
+                zIndex: "1200",
+                position: "absolute",
+                boxShadow: "0 0 0.5rem 0.1rem #0008, inset 0 0 0.5rem 0.25rem #FFF3",
+                fontWeight: "bold",
+                borderRadius: "1.5rem",
+                background: "#210C",
+                border: "ridge 3px #FFF8",
+                fontSize: "1.6rem",
+                color: "#FFFA",
+                transition: "all 0.2s ease",
+                padding: 0,
+                margin: 0,
+                "&:hover": {
+                    backgroundColor: "#630C",
+                    color: "#FFFD",
+                },
+            },
             "& h1, & h2, & h3, & h4": {
                 textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
             },
@@ -40,6 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
             "& div.units": {
                 margin: "0.5rem 0",
                 padding: "0 0.5rem",
+               
                 // "& > div": {
                 //     padding: "3px 1rem",
                 //     borderBottom: "solid 1px #0003",
@@ -129,10 +153,11 @@ const FleetView: FC = () => {
         setStar(null);
     }
 
-    console.log("VIEWMODE", viewMode);
-
     return (
         <div className={classes.root}>
+            <button className="close" onClick={close}>X</button>
+            
+
             {viewMode === "CREATE" && <CreateFleetContent units={units} system={star} close={close} />}
             {viewMode === "MOVE" && <MoveFleetContent units={fleet} system={star} close={close} />}
             {viewMode === "VIEW" && <ViewFleetContent units={fleet} system={null} close={close} />}

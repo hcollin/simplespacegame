@@ -1,5 +1,6 @@
 import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
 import { joki } from "jokits-react";
+import { apiLoadGame, apiNewGame, apiSubscribeToGame, apiUpdateGame } from "../api/apiGame";
 import { DATATECHNOLOGY } from "../data/dataTechnology";
 
 import { BuildUnitCommand, Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand } from "../models/Commands";
@@ -45,6 +46,8 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         factionsReady: [],
         trades: [],
     };
+
+    let unsub: null| (() => void) = null;
     // let game: GameModel = createNewGame();
 
     function eventHandler(event: JokiEvent) {
@@ -59,6 +62,9 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 case "newGame":
                     newGame(event.data as NewGameOptions);
                     break;
+                case "loadGame":
+                    loadGame(event.data);
+                    break;
                 case "updateFaction":
                     updateFaction(event.data as FactionModel);
                     break;
@@ -71,11 +77,50 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         }
     }
 
-    function newGame(options: NewGameOptions) {
+    async function newGame(options: NewGameOptions) {
         console.log("NEW GAME", options);
 
         game = createNewGame(options.playerCount);
+        game = await apiNewGame(game);
+
         sendUpdate();
+        startListening();
+    }
+
+    async function loadGame(gameId: string) {
+        console.log("LOAD GAME", gameId);
+
+        const res = await apiLoadGame(gameId);
+        if(res) {
+            game = res;
+            sendUpdate();
+            startListening();
+        }
+    }
+
+    function startListening() {
+        if(unsub !== null) {
+            unsub();
+            api.api.trigger({
+                from: serviceId,
+                action: "unloaded",
+                data: game.id
+            });
+        }
+
+        if(game.id !== "") {
+            unsub = apiSubscribeToGame(game.id,(gm) => {
+                if(gm.id === game.id) {
+                    game = gm;
+                    sendUpdate();
+                }
+            });
+            api.api.trigger({
+                from: serviceId,
+                action: "loaded",
+                data: game.id
+            });
+        } 
     }
 
     function factionReady(factionId?: string) {
@@ -92,16 +137,31 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         }
     }
 
-    function _setFactionDone(factionId: string) {
+    async function _setFactionDone(factionId: string) {
         if (!game.factionsReady.includes(factionId)) {
             game.factionsReady.push(factionId);
+            
+            
+            
+            let allReady = game.factionsReady.length === game.factions.length
+            
+            if(allReady) {
+                game.state = GameState.PROCESSING;
+            } else {
+                game.state = GameState.TURN;
+            }
+
             sendUpdate();
 
-            if (game.factionsReady.length === game.factions.length) {
+            await saveGame();
+
+            if (allReady) {
                 processTurn();
             }
         }
     }
+
+    
 
     function updateFaction(fm: FactionModel) {
         game = updateFactionInGame(game, fm);
@@ -157,6 +217,10 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 
     function getState(): GameModel {
         return { ...game };
+    }
+
+    async function saveGame() {
+        await apiUpdateGame(game);
     }
 
     function sendUpdate() {
@@ -232,8 +296,8 @@ function processResearch(oldGame: GameModel) {
         const distribution = researchPointDistribution(pointsGenerated, fm);
 
         fm.technologyFields = fm.technologyFields.map((tech: FactionTechSetting, index: number) => {
-            tech[1] += distribution[index];
-            return [...tech];
+            tech.points += distribution[index];
+            return {...tech};
         });
 
         return fm;

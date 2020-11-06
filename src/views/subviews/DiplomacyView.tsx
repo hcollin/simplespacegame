@@ -11,6 +11,7 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
 import { getFactionById } from "../../utils/factionUtils";
 import { IconCredit } from "../../components/Icons";
+import { GLOBALMESSAGEKEY } from "../../services/ChatService";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -272,7 +273,7 @@ const DiplomacyView: FC = () => {
                         {targetFaction === null && <h2>Global Discussion</h2>}
                         {targetFaction !== null && <h2>Private Discussion</h2>}
 
-                        <ChatView other={targetFaction ? targetFaction.id : "_GLOBAL"} className="largemessages" />
+                        <ChatView other={targetFaction ? targetFaction.id : GLOBALMESSAGEKEY} className="largemessages" />
                     </div>
                 </div>
             </div>

@@ -181,7 +181,7 @@ export function getSystemResearchPointGeneration(sm: SystemModel, faction: Facti
 export function researchPointDistribution(totalPoints: number, faction: FactionModel): number[] {
 
     let points: number[] = []
-    const totalFocusPoints = faction.technologyFields.reduce((tot: number, tech: FactionTechSetting) => tot + tech[2], 0);
+    const totalFocusPoints = faction.technologyFields.reduce((tot: number, tech: FactionTechSetting) => tot + tech.priority, 0);
     
     const partPoint = totalFocusPoints > 0 ? totalPoints/totalFocusPoints : 0;
     // const techDistribution = [0.50, 0.50, 0., 0.10, 0];
@@ -191,12 +191,12 @@ export function researchPointDistribution(totalPoints: number, faction: FactionM
 
         const curSum = points.reduce((tot: number, cur: number) => tot + cur, 0);
         const remaining = totalPoints - curSum;
-        let newVal = Math.round(partPoint * tech[2]);
+        let newVal = Math.round(partPoint * tech.priority);
         if(newVal > remaining) {
             newVal = remaining;
         }
-        if(tech[2] > highestFieldValue) {
-            highestFieldValue = tech[2];
+        if(tech.priority > highestFieldValue) {
+            highestFieldValue = tech.priority;
             highestFieldIndex = index;
         }
         points.push(Math.round(newVal));

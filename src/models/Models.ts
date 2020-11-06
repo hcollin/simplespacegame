@@ -76,7 +76,11 @@ export enum FactionState {
     "LOST",
 }
 
-export type FactionTechSetting = [TechnologyField, number, number];
+export interface FactionTechSetting {
+    field: TechnologyField;
+    points: number;
+    priority: number;
+}
 
 export interface FactionModel extends GameObject {
     name: string;

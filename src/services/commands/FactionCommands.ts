@@ -14,9 +14,9 @@ export function doAdjustTechValues(tech: TechnologyField, newValue: number, fact
     const faction = getFactionById(game.factions, factionId);
     if (faction) {
         faction.technologyFields = faction.technologyFields.map((ftf: FactionTechSetting) => {
-            if (ftf[0] === tech) {
-                ftf[2] = newValue;
-                return [...ftf];
+            if (ftf.field === tech) {
+                ftf.priority = newValue;
+                return {...ftf};
             }
             return ftf;
         })

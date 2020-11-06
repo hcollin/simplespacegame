@@ -1,6 +1,7 @@
 import { GameObject } from "./Models";
 
 export interface ChatMessage extends GameObject{
+    gameId: string;
     from: string;
     to: string;
     message: string;

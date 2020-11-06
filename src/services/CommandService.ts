@@ -6,6 +6,8 @@ import { v4 } from "uuid";
 export default function createCommandService(serviceId: string, api: JokiServiceApi): JokiService<Command> {
     let commands: Command[] = [];
 
+    let unsub: null |(() => void) = null;
+
     function eventHandler(event: JokiEvent) {
         if (event.to === serviceId) {
             switch (event.action) {
@@ -23,10 +25,33 @@ export default function createCommandService(serviceId: string, api: JokiService
             }
         }
 
+        if(event.from === "GameService" && event.action === "loaded") {
+            gameLoad(event.data);
+        }
+
+        if(event.from === "GameService" && event.action === "unloaded") {
+            gameUnload();
+        }
+
         if (event.action === "nextTurn") {
             clearCompletedCommands();
         }
     }
+
+    function gameLoad(gameId: string) {
+        gameUnload();
+
+        
+    }
+
+    function gameUnload() {
+        if(unsub) {
+            unsub();
+        }
+    }
+
+    
+
 
     function addCommand(command: Command) {
         command.id = v4();

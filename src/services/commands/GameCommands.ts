@@ -34,6 +34,14 @@ export function doCreateNewGame(plCount: number) {
     })
 }
 
+export function doLoadGame(gameId: string) {
+    joki.trigger({
+        to: "GameService",
+        action: "loadGame",
+        data: gameId
+    });
+}
+
 export function doTradeAgreement(trade: Trade) {
     
     const game = joki.service.getState("GameService") as GameModel;

@@ -2,6 +2,7 @@ import { makeStyles, Theme, createStyles, Button, TextField } from "@material-ui
 import { useService } from "jokits-react";
 import React, { FC, useEffect, useState } from "react";
 import { ChatMessage } from "../models/Communication";
+import { GLOBALMESSAGEKEY } from "../services/ChatService";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { getFactionById } from "../utils/factionUtils";
 
@@ -94,7 +95,7 @@ const ChatView: FC<ChatViewProps> = (props) => {
     useEffect(() => {
         if(faction && allmsgs !== undefined) {
             setMessages(allmsgs.filter((msg: ChatMessage) => {
-                if(props.other === "_GLOBAL" && msg.to === "_GLOBAL") {
+                if(props.other === GLOBALMESSAGEKEY && msg.to === GLOBALMESSAGEKEY) {
                     return true;
                 }
                 return (props.other === msg.from && msg.to === faction.id) || (props.other === msg.to && msg.from === faction.id);
@@ -126,7 +127,7 @@ const ChatView: FC<ChatViewProps> = (props) => {
                     from = faction.name;
                 } else {
                     console.log(msg.from);
-                    if(msg.from !== "_GLOBAL") {
+                    if(msg.from !== GLOBALMESSAGEKEY) {
                         const fromFaction = getFactionById(msg.from);
                         from = fromFaction.name;
                         color = fromFaction.color;
