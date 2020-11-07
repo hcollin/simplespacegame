@@ -28,8 +28,8 @@
       "port": 8081
     },
     "ui": {
-      "enabled": true,
-      "port": 5050
+      "enabled": false,
+      "port": 5051
     }
   }
 }

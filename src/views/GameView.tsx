@@ -1,4 +1,4 @@
-import { Button, createStyles, makeStyles, Theme } from "@material-ui/core"
+import { Button, createStyles, LinearProgress, makeStyles, Theme } from "@material-ui/core"
 import { useService } from "jokits-react"
 import React, { FC, useEffect, useState } from "react"
 import CommandList from "../components/CommandList"
@@ -7,7 +7,7 @@ import FactionHeader from "../components/FactionHeader"
 import LargeMap from "./subviews/LargeMap"
 // import SimpleMap from "../components/SimpleMap"
 import SystemInfo from "../components/SystemInfo"
-import { GameModel } from "../models/Models"
+import { GameModel, GameState } from "../models/Models"
 // import { doProcessTurn } from "../services/commands/GameCommands"
 import useCurrentUser from "../services/hooks/useCurrentUser"
 
@@ -94,6 +94,26 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
         }
 
+    },
+    processing: {
+        display: "flex",
+        height: "100vh",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        background: "radial-gradient(#456 0, #000 100%)",
+        "& > h1" :{
+            color: "#FFFA",
+            fontSize: "4rem",
+            textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+        },
+        "& > div": {
+            width: "60%",
+            height: "1rem",
+            boxShadow: "0 0 1rem 0.25rem #0008",
+        }
+        
     }
 }))
 
@@ -124,6 +144,12 @@ const GameView: FC = () => {
     if (!game) return null;
 
 
+    if(game.state === GameState.PROCESSING) {
+        return <div className={classes.processing}>
+            <h1>Processing Turn {game.turn}</h1>
+            <LinearProgress />
+        </div>
+    }
     
 
     return (
