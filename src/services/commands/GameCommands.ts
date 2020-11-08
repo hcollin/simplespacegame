@@ -3,6 +3,7 @@ import { v4 } from "uuid";
 import { Trade } from "../../models/Communication";
 import { GameModel } from "../../models/Models";
 import { NewGameOptions } from "../GameService";
+import { SERVICEID } from "../services";
 
 
 export function doProcessTurn() {
@@ -35,6 +36,13 @@ export function doCreateNewGame(plCount: number) {
         action: "newGame",
         data: options
     })
+}
+
+export function doCreateDraftGame() {
+    joki.trigger({
+        to: SERVICEID.GameService,
+        action: "createGameDraft",
+    });
 }
 
 export function doLoadGame(gameId: string) {

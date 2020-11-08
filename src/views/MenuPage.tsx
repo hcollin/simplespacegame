@@ -5,7 +5,7 @@ import { apiListGames, apiListMyGames } from "../api/apiGame";
 import ShipInfo from "../components/ShipInfo";
 import DATASHIPS from "../data/dataShips";
 import { GameModel, GameState } from "../models/Models";
-import { doCreateNewGame, doLoadGame } from "../services/commands/GameCommands";
+import { doCreateDraftGame, doCreateNewGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -76,7 +76,8 @@ const MenuPage: FC = () => {
     }
 
     function clickNewGame() {
-        doCreateNewGame(playerCount);
+        // doCreateNewGame(playerCount);
+        doCreateDraftGame();
     }
 
     function loadGame(gid: string) {

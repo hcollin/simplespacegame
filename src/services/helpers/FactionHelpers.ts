@@ -1,3 +1,4 @@
+import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../../configs";
 import DATASHIPS from "../../data/dataShips";
 import { TECHIDS } from "../../data/dataTechnology";
 import DATAUSERS from "../../data/dataUser.";
@@ -5,14 +6,14 @@ import { Command } from "../../models/Commands";
 import { FactionModel, FactionState, GameModel, TechnologyField } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
 import { factionValues } from "../../utils/factionUtils";
-import { arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
+import { arnd, arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
 
 
-const factionColors = shuffle(['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4']);
+const factionColors = shuffle(FACTION_COLORS);
 
-const factNamePart1 = ["Federation of", "Kingdom of", "Empire of", "Republic of", "Commonwealth of", "Tribe of", "Hive of", "Imperium of", "Clan of", "Culture of", "Theocracy of", "Barony of", "Democracy of", "Army of", "Consortium of", "Cohorts of", "Remnants of", "Oligarchy of", "Aristocracy of", "Tyranny of", "United States of", "Church of", "League of", "Protectorate of", "Colony of", "Alliance of", "Hegemony of", "Confederation of", "Matriarchy of"];
-const factNamePart2 = ["Space", "Pirate", "Warrior", "Engineer", "Merchant", "Priest", "Soldier", "Peace", "Holy", "Unholy", "Ancient", "Future", "Bio", "Cyber", "Renegade", "Telepathic", "Magical", "Robotic", "Artificial", "Psychic", "Fanatic", "Conservative", "Liberal", "Nihilistic", "Chaos", "Multi Dimensional", "Flux", "Power", "Giant", "Ravenous", "World Eating", "Cannibalistic", "Occultist", "Death", "Turbo", "Spotted", "Angry", "Cunning", "Lounge", "Parasitic", "Necro"];
-const factNamePart3 = ["Cats", "Dogs", "Turtles", "Wolves", "Lions", "Elephants", "Wasps", "Spiders", "Scorpions", "Parrots", "Eagles", "Reptiles", "Worms", "Serpents", "Ants", "Whales", "Octopuses", "Rhinos", "Sharks", "Gorillas", "Tigers", "Jaguars", "Hyenas", "Hamsters", "Rodents", "Baboons", "Bears", "Moose", "Deer", "Flies", "Owls", "Vultures", "Rabbits", "Kangaroos", "Penguins", "Dragons", "Horses", "Cows", "Pigs", "Sheep", "Chickens", "Giraffes", "Otters", "Medusas", "Fish", "Roaches", "Bugs"];
+const factNamePart1 = FACTION_NAMES[0];
+const factNamePart2 = FACTION_NAMES[1];
+const factNamePart3 = FACTION_NAMES[2];
 
 const np1s = arnds(factNamePart1, 12, true);
 const np2s = arnds(factNamePart2, 12, true);
@@ -22,19 +23,21 @@ let factionNoId = -1;
 
 const players = [...DATAUSERS];
 
-const fonts: string[] = shuffle([
-    "Impact",
-    "Averia Serif Libre",
-    "Bebas Neue",
-    "Carter One",
-    "Coda",
-    "Fugaz One",
-    "Piedra",
-    "Righteous",
-    "Staatliches",
-    "Trade Winds",
-    "Candara",
-]);
+const factionFonts: string[] = shuffle(FACTION_FONTS);
+
+
+export function getFactionFonts(): string[] {
+    return factionFonts;
+}
+
+
+export function getColors(): string[] {
+    return factionColors;
+}
+
+export function randomFactionName(): string {
+    return `${arnd(factNamePart1)} ${arnd(factNamePart2)} ${arnd(factNamePart3)}`;
+}
 
 export function getFactionName() {
     factionNoId++;
@@ -43,7 +46,7 @@ export function getFactionName() {
 
 export function createNewFaction(): FactionModel {
     const pl = players.shift();
-    const ff = fonts.shift();
+    const ff = factionFonts.shift();
     
     const fm: FactionModel = {
         id: `faction-${rnd(1, 9999)}`,
@@ -64,7 +67,7 @@ export function createNewFaction(): FactionModel {
         style: {
             fontFamily: ff || "Arial",
         },
-        technology: [TECHIDS.EvasionEngine, TECHIDS.PredEvasion],
+        technology: [],
 
     }
 

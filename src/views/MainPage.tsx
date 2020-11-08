@@ -1,9 +1,10 @@
 // import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import { useService } from "jokits-react";
 import React, { FC } from "react";
-import { GameModel } from "../models/Models";
+import { GameModel, GameState } from "../models/Models";
 // import { doCreateNewGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
+import GameSetup from "./GameSetup";
 import GameView from "./GameView";
 import MenuPage from "./MenuPage";
 
@@ -36,8 +37,14 @@ const MainPage: FC = () => {
     const [user] = useCurrentUser();
     const [game] = useService<GameModel>("GameService");
 
-    if(user === null || !game || game.id === "") {
+    console.log(game && game.state);
+
+    if(user === null || !game || game.state === GameState.NONE) {
         return <MenuPage />
+    }
+    
+    if(game.state === GameState.INIT || game.id === "") {
+        return <GameSetup />
     }
 
     return <GameView />

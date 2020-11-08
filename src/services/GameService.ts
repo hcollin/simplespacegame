@@ -4,13 +4,13 @@ import { apiLoadGame, apiNewGame, apiSubscribeToGame, apiUpdateGame } from "../a
 
 import { Command } from "../models/Commands";
 
-import {GameModel, FactionModel, GameState } from "../models/Models";
+import { GameModel, FactionModel, GameState } from "../models/Models";
 
 import { User } from "../models/User";
 // import { techMarketing } from "../tech/businessTech";
 // import { rnd } from "../utils/randUtils";
-import {getFactionByUserId } from "./helpers/FactionHelpers";
-import { createNewGame } from "./helpers/GameHelpers";
+import { getFactionByUserId } from "./helpers/FactionHelpers";
+import { createNewGame, randomGameName } from "./helpers/GameHelpers";
 import { SERVICEID } from "./services";
 
 
@@ -21,8 +21,13 @@ export interface NewGameOptions {
 export default function createGameService(serviceId: string, api: JokiServiceApi): JokiService<GameModel> {
     let game: GameModel = {
         id: "",
+        setup: {
+            playerCount: 0,
+            density: "",
+            distances: ""
+        },
         name: "",
-        state: GameState.INIT,
+        state: GameState.NONE,
         turn: 0,
         systems: [],
         units: [],
@@ -60,9 +65,36 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                     game.trades = event.data;
                     sendUpdate();
                     break;
+                case "createGameDraft":
+                    createNewGameDraft();
+                    break;
             }
 
         }
+    }
+
+    function createNewGameDraft() {
+        const draft: GameModel = {
+            id: "",
+            setup: {
+                playerCount: 4,
+                density: "MEDIUM",
+                distances: "MEDIUM"
+            },
+            name: randomGameName(),
+            state: GameState.INIT,
+            turn: 0,
+            systems: [],
+            units: [],
+            factions: [],
+            factionsReady: [],
+            trades: [],
+            playerIds: [],
+        }
+        
+        game = draft;
+
+        sendUpdate();
     }
 
     async function newGame(options: NewGameOptions) {

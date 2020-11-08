@@ -54,6 +54,11 @@ export function createNewGame(playerCount = 4): GameModel {
 
     const game: GameModel = {
         id: `game-${rnd(1, 9999)}`,
+        setup: {
+            playerCount: 4,
+            density: "MEDIUM",
+            distances: "MEDIUM"
+        },
         name: randomGameName(),
         factions: factions,
         systems: stars,
@@ -68,7 +73,6 @@ export function createNewGame(playerCount = 4): GameModel {
 
     return game;
 }
-
 
 
 const gn1 = ["War", "Conflict", "Chaos", "Dawn", "Dusk", "The End of", "Space"];

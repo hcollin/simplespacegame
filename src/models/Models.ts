@@ -6,6 +6,7 @@ export interface GameObject {
 }
 
 export enum GameState {
+    "NONE",
     "INIT",
     "OPEN",
     "TURN",
@@ -13,7 +14,22 @@ export enum GameState {
     "ENDED",
 }
 
+
+export interface GameSetup {
+    playerCount: number;
+    distances: string;
+    density: string;
+}
+
+export interface FactionSetup {
+    name: string;
+    color: string;
+    iconFileName: string;
+    fontFamily: string;
+}
+
 export interface GameModel extends GameObject {
+    setup: GameSetup;
     turn: number;
     name: string;
     factions: FactionModel[];
