@@ -4,8 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { ChatMessage } from "../models/Communication";
 import { GLOBALMESSAGEKEY } from "../services/ChatService";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
-import { getFactionById } from "../utils/factionUtils";
-
+import { getFactionById } from "../utils/factionJokiUtils";
 
 
 const useStyles = makeStyles((theme: Theme) =>

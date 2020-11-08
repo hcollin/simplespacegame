@@ -173,6 +173,8 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 
     if (!commands || !game || !faction) return null;
 
+    const isReady = game.factionsReady.includes(faction.id);
+
     return (
         <div className={classes.commands}>
             <h1>Commands</h1>
@@ -180,13 +182,13 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
             {commands.map((cm: Command) => {
                 switch (cm.type) {
                     case CommandType.FleetMove:
-                        return <FleetMoveCommandItem command={cm} key={cm.id} game={game} />;
+                        return <FleetMoveCommandItem command={cm} key={cm.id} game={game} isReady={isReady}/>;
                     case CommandType.SystemBuild:
-                        return <SystemBuildCommandItem command={cm} key={cm.id} game={game} />;
+                        return <SystemBuildCommandItem command={cm} key={cm.id} game={game} isReady={isReady} />;
                     case CommandType.TechnologyResearch:
-                        return <ResearchCommandItem command={cm} key={cm.id} game={game} />;
+                        return <ResearchCommandItem command={cm} key={cm.id} game={game} isReady={isReady} />;
                     default:
-                        return <SystemPlusCommandItem command={cm} key={cm.id} game={game} />;
+                        return <SystemPlusCommandItem command={cm} key={cm.id} game={game} isReady={isReady} />;
                 }
             })}
 
@@ -223,6 +225,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 interface CommandProps {
     command: Command;
     game: GameModel;
+    isReady: boolean;
 }
 
 const SystemPlusCommandItem: FC<CommandProps> = (props) => {
@@ -245,20 +248,20 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
             break;
     }
 
-    const system = getSystemById(cmd.targetSystem);
+    const system = getSystemById(props.game, cmd.targetSystem);
     const systemName = system ? system.name : cmd.targetSystem;
 
     return (
         <div className={classes.command}>
             {cmdText} in {systemName}{" "}
-            <Button
+            {!props.isReady && <Button
                 variant="contained"
                 color="secondary"
                 onClick={() => removeCommand(cmd.id)}
                 disabled={props.game.turn !== cmd.turn}
             >
                 X
-            </Button>
+            </Button>}
         </div>
     );
 };
@@ -266,21 +269,21 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
 const FleetMoveCommandItem: FC<CommandProps> = (props) => {
     const classes = useStyles();
     const cmd = props.command as FleetCommand;
-    const system = getSystemByCoordinates(cmd.target);
+    const system = getSystemByCoordinates(props.game, cmd.target);
     const systemName = system ? system.name : `coordinates ${cmd.target.x}, ${cmd.target.y}`;
     return (
         <div className={classes.command}>
             <p>
                 {cmd.unitIds.length} Units moving to {systemName}
             </p>
-            <Button
+            {!props.isReady && <Button
                 variant="contained"
                 color="secondary"
                 onClick={() => removeCommand(cmd.id)}
                 disabled={props.game.turn !== cmd.turn}
             >
                 X
-            </Button>
+            </Button>}
         </div>
     );
 };
@@ -288,19 +291,19 @@ const FleetMoveCommandItem: FC<CommandProps> = (props) => {
 const SystemBuildCommandItem: FC<CommandProps> = (props) => {
     const classes = useStyles();
     const cmd = props.command as BuildUnitCommand;
-    const system = getSystemByCoordinates(cmd.target);
+    const system = getSystemByCoordinates(props.game, cmd.target);
     const systemName = system ? system.name : `coordinates ${cmd.target.x}, ${cmd.target.y}`;
     return (
         <div className={classes.command}>
             Build a {cmd.shipName} in {systemName}
-            <Button
+            {!props.isReady && <Button
                 variant="contained"
                 color="secondary"
                 onClick={() => removeCommand(cmd.id)}
                 disabled={props.game.turn !== cmd.turn}
             >
                 X
-            </Button>
+            </Button>}
         </div>
     );
 };
@@ -313,14 +316,14 @@ const ResearchCommandItem: FC<CommandProps> = (props) => {
     return (
         <div className={classes.command}>
             Research technology {tech.name}.
-            <Button
+            {!props.isReady && <Button
                 variant="contained"
                 color="secondary"
                 onClick={() => removeCommand(cmd.id)}
                 disabled={props.game.turn !== cmd.turn}
             >
                 X
-            </Button>
+            </Button>}
         </div>
     );
 };

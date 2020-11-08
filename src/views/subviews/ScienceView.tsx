@@ -1,6 +1,6 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import React, { FC } from "react";
-import { FactionModel, FactionTechSetting, Technology, TechnologyField } from "../../models/Models";
+import { FactionModel, FactionTechSetting, GameModel, Technology, TechnologyField } from "../../models/Models";
 import { doAdjustTechValues, doResearchTechCommand } from "../../services/commands/FactionCommands";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 import { researchPointDistribution, researchPointGenerationCalculator } from "../../utils/factionUtils";
@@ -18,6 +18,9 @@ import { IconResearchPoint } from "../../components/Icons";
 
 import researchimg from "../../images/art/research.jpg";
 import PageContainer from "../../components/PageContainer";
+import { useService } from "jokits-react";
+import { SERVICEID } from "../../services/services";
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -183,12 +186,13 @@ const ScienceView: FC = () => {
     const classes = useStyles();
 
     const faction = useCurrentFaction();
+    const [game] = useService<GameModel>(SERVICEID.GameService);
 
-    if (!faction) return null;
+    if (!faction || !game) return null;
 
     // const techFields = faction.technologyFields.sort((a: FactionTechSetting, b: FactionTechSetting) => a[2] - b[2]);
 
-    const pointsGenerated = researchPointGenerationCalculator(faction);
+    const pointsGenerated = researchPointGenerationCalculator(game, faction);
 
     function researchTech(tech: Technology) {
         if (faction && tech) {

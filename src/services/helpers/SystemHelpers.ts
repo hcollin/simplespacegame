@@ -1,4 +1,4 @@
-import { joki } from "jokits-react";
+
 import { greekAlphabet, romanNumbers, starName } from "../../data/dataWords";
 import { Coordinates, GameModel, SystemModel } from "../../models/Models";
 import { inSameLocation } from "../../utils/locationUtils";
@@ -118,12 +118,12 @@ export function randomStarName() {
 }
 
 
-export function getSystemById(systemId: string): SystemModel | undefined {
-    const game = joki.service.getState("GameService") as GameModel;
+export function getSystemById(game: GameModel, systemId: string): SystemModel | undefined {
+    // const game = joki.service.getState("GameService") as GameModel;
     return game.systems.find((sm: SystemModel) => sm.id === systemId);
 }
 
-export function getSystemByCoordinates(coords: Coordinates): SystemModel | undefined {
-    const game = joki.service.getState("GameService") as GameModel;
+export function getSystemByCoordinates(game: GameModel, coords: Coordinates): SystemModel | undefined {
+    // const game = joki.service.getState("GameService") as GameModel;
     return game.systems.find((sm: SystemModel) => inSameLocation(sm.location, coords));
 }

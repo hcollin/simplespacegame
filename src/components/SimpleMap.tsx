@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { FactionModel, SystemModel } from "../models/Models";
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
-import { getFactionById } from "../services/helpers/FactionHelpers";
+import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 // import { inSameLocation } from "../utils/locationUtils";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import AirplanemodeActiveIcon from '@material-ui/icons/AirplanemodeActive';
@@ -116,7 +116,7 @@ const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
             })}
 
             {props.systems.map((star: SystemModel) => {
-                const ownerFaction = getFactionById(props.factions, star.ownerFactionId);
+                const ownerFaction = getFactionFromArrayById(props.factions, star.ownerFactionId);
                 const style = {
                     top: `${star.location.y}%`,
                     left: `${star.location.x}%`,

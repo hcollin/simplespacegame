@@ -1,9 +1,11 @@
 import { joki } from "jokits-react";
+
 import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../../models/Commands";
 import { GameModel, Coordinates } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
 import { User } from "../../models/User";
 import { factionCanDoMoreCommands, getFactionByUserId } from "../helpers/FactionHelpers";
+import { SERVICEID } from "../services";
 
 export function plusEconomy(targetSystem: string) {
     const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemEconomy);
@@ -106,16 +108,17 @@ export function buildUnit(ship: ShipDesign, targetCoords: Coordinates) {
 }
 
 export function createEmptyCommandForCurrentFactionAndGame(type: CommandType): Command | undefined {
-    const user = joki.service.getState("UserService") as User | null;
-    const game = joki.service.getState("GameService") as GameModel;
+    const user = joki.service.getState(SERVICEID.UserService) as User | null;
+    const game = joki.service.getState(SERVICEID.GameService) as GameModel;
+    const commands = joki.service.getState(SERVICEID.CommandService) as Command[];
 
-    if (!user || !game) return;
+    if (!user || !game || !commands) return;
 
     const faction = getFactionByUserId(game.factions, user.id);
 
     if (!faction) return;
 
-    if (!factionCanDoMoreCommands(faction)) {
+    if (!factionCanDoMoreCommands(game, commands, faction)) {
         return;
     }
 

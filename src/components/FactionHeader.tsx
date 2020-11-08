@@ -147,7 +147,7 @@ const FactionHeader: FC = () => {
     if (!faction || !game) return null;
 
     const values = factionValues(game, faction.id);
-    const pointsGenerated = researchPointGenerationCalculator(faction);
+    const pointsGenerated = researchPointGenerationCalculator(game, faction);
     
     const isReady = game.factionsReady.includes(faction.id);
 
@@ -184,7 +184,7 @@ const FactionHeader: FC = () => {
             </div>
             <div>
                 <div className="singleView">
-                    <IconScore size="xl" wrapper="light" /> <b>{getFactionScore(faction.id)}</b>
+                    <IconScore size="xl" wrapper="light" /> <b>{getFactionScore(game, faction.id)}</b>
                 </div>
             </div>
             <div>

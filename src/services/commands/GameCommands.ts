@@ -2,7 +2,6 @@ import { joki } from "jokits-react";
 import { v4 } from "uuid";
 import { Trade } from "../../models/Communication";
 import { GameModel } from "../../models/Models";
-import { getFactionById } from "../../utils/factionUtils";
 import { NewGameOptions } from "../GameService";
 
 

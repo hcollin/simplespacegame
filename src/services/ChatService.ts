@@ -1,9 +1,10 @@
 import { JokiServiceApi, JokiService, JokiEvent } from "jokits";
 import { apiNewChat, apiSubscribeToChat } from "../api/apiChat";
-import { SERVICEID } from "../App";
+
 import { ChatMessage } from "../models/Communication";
 import { FactionModel, GameModel } from "../models/Models";
 import { User } from "../models/User";
+import { SERVICEID } from "./services";
 
 export function createChatService(serviceId: string, api: JokiServiceApi): JokiService<ChatMessage> {
     let msgs: ChatMessage[] = [];

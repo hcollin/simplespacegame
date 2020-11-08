@@ -15,12 +15,14 @@ export enum GameState {
 
 export interface GameModel extends GameObject {
     turn: number;
+    name: string;
     factions: FactionModel[];
     units: ShipUnit[];
     systems: SystemModel[];
     factionsReady: string[];
     state: GameState;
     trades: Trade[];
+    playerIds: string[];
 }
 
 export interface Fleet {

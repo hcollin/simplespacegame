@@ -1,4 +1,3 @@
-import { joki } from "jokits-react";
 import DATASHIPS from "../../data/dataShips";
 import { TECHIDS } from "../../data/dataTechnology";
 import DATAUSERS from "../../data/dataUser.";
@@ -73,7 +72,7 @@ export function createNewFaction(): FactionModel {
 }
 
 
-export function getFactionById(factions: FactionModel[], id: string): FactionModel | undefined {
+export function getFactionFromArrayById(factions: FactionModel[], id: string): FactionModel | undefined {
     return factions.find((fm: FactionModel) => fm.id === id);
 }
 
@@ -82,10 +81,10 @@ export function getFactionByUserId(factions: FactionModel[], userId: string): Fa
 }
 
 
-export function factionCanDoMoreCommands(faction: FactionModel): boolean {
-    const game = joki.service.getState("GameService") as GameModel;
+export function factionCanDoMoreCommands(game: GameModel, commands: Command[], faction: FactionModel): boolean {
+    // const game = joki.service.getState("GameService") as GameModel;
     const values = factionValues(game, faction.id);
-    const commands = joki.service.getState("CommandService") as Command[];
+    // const commands = joki.service.getState("CommandService") as Command[];
     const myCommands = commands.filter((cm: Command) => cm.factionId === faction.id);
     return myCommands.length < values.maxCommands;
 }

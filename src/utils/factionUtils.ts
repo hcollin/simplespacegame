@@ -1,17 +1,9 @@
-import { joki } from "jokits-react";
+
 import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/Models";
 import { ShipUnit } from "../models/Units";
+import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import { techDecisionEngine, techHigherEducation, techMarketing } from "../tech/businessTech";
-
-export function getFactionById(fid: string): FactionModel {
-    const game = joki.service.getState("GameService") as GameModel;
-    const f = game.factions.find((f: FactionModel) => f.id === fid);
-    if (!f) {
-        throw new Error(`Invalid Faction id ${fid}`);
-    }
-    return f;
-}
 
 interface FactionValues {
     maxCommands: number;
@@ -43,6 +35,10 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         systemIncome: 0,
         trade: 0,
     };
+    const faction = getFactionFromArrayById(game.factions, factionId)
+    if(!faction) {
+        throw new Error("Invalid Faction");
+    }
 
     game.systems.forEach((star: SystemModel) => {
         if (star.ownerFactionId === factionId) {
@@ -81,7 +77,8 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         }
         return sum;
     }, 0)
-    values.income = values.totalEconomy + values.trade - values.expenses + techMarketing(getFactionById(factionId), game);
+    
+    values.income = values.totalEconomy + values.trade - values.expenses + techMarketing(faction, game);
 
 
     values.maxCommands = commandCountCalculator(game, factionId);
@@ -135,8 +132,9 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
             bonusCommands += Math.floor(star.welfare / 5);
         }
     });
-
-    return getWelfareCommands(getFactionById(factionId), totalWelfare) + bonusCommands;
+    const f = getFactionFromArrayById(game.factions, factionId);
+    if(!f) throw new Error(`INvalid factionId${factionId}`);
+    return getWelfareCommands(f, totalWelfare) + bonusCommands;
 }
 
 export function getWelfareCommands(faction: FactionModel, welfarePointTotal: number): number {
@@ -155,9 +153,9 @@ export function systemExpenses(sm: SystemModel): number {
     return indExp + welExp + defExp + 1;
 }
 
-export function researchPointGenerationCalculator(faction: FactionModel): number {
+export function researchPointGenerationCalculator(game: GameModel, faction: FactionModel): number {
 
-    const game = joki.service.getState("GameService") as GameModel;
+    // const game = joki.service.getState("GameService") as GameModel;
 
     const points = game.systems.reduce((sum: number, sm: SystemModel) => {
         if (sm.ownerFactionId === faction.id) {
@@ -219,9 +217,9 @@ export function researchPointDistribution(totalPoints: number, faction: FactionM
  * 
  * @param factionId 
  */
-export function getFactionScore(factionId: string): number {
+export function getFactionScore(game: GameModel, factionId: string): number {
 
-    const game = joki.service.getState("GameService") as GameModel;
+    // const game = joki.service.getState("GameService") as GameModel;
 
     let score = 0;
 
@@ -240,8 +238,8 @@ export function getFactionScore(factionId: string): number {
         }
     });
 
-    const faction = getFactionById(factionId);
-
+    const faction = getFactionFromArrayById(game.factions, factionId);
+    if(!faction) throw new Error(`Invalid faction id ${factionId}`);
     score += faction.technology.length * 2;
 
     return score;

@@ -1,5 +1,6 @@
 import { SystemModel } from "../models/Models";
-import { getFactionById, getSystemResearchPointGeneration } from "./factionUtils";
+import { getFactionById } from "./factionJokiUtils";
+import { getSystemResearchPointGeneration } from "./factionUtils";
 
 
 export interface SystemEconomy extends SystemModel {

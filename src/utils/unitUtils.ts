@@ -2,7 +2,8 @@ import { TECHIDS } from "../data/dataTechnology";
 import { FactionModel } from "../models/Models";
 import { ShipDesign, ShipUnit, ShipWeapon } from "../models/Units";
 import { techEvasionEngine, techHeavyRounds, techIonEngines, techTargetingComputerOne, techTargetingComputerThree, techTargetingComputerTwo, techTimeslipPrediction, techWarpEngines } from "../tech/shipTech";
-import { getFactionById } from "./factionUtils";
+// import { getFactionById } from "./factionJokiUtils";
+
 
 // SHIP VALUES
 // The functions should be used to access the provided ship design value if tech and faction specific modifiers need to be taken account
@@ -107,9 +108,9 @@ export function getFactionAdjustedWeapon(weapon: ShipWeapon, faction?: FactionMo
 }
 
 
-export function getFactionAdjustedUnit(origUnit: ShipUnit): ShipUnit {
+export function getFactionAdjustedUnit(faction: FactionModel, origUnit: ShipUnit): ShipUnit {
 
-    const faction = getFactionById(origUnit.factionId);
+    // const faction = getFactionById(origUnit.factionId);
 
     const ship: ShipUnit = {...origUnit};
     ship.agility = getShipAgility(origUnit, faction);
@@ -131,8 +132,8 @@ export function getFactionAdjustedUnit(origUnit: ShipUnit): ShipUnit {
 
 }
 
-export function getUnitSpeed(um: ShipUnit): number {
-    if (um.speed === 0) return 0;
-    const faction = getFactionById(um.factionId);
-    return getShipSpeed(um, faction);
-}
+// export function getUnitSpeed(um: ShipUnit): number {
+//     if (um.speed === 0) return 0;
+//     const faction = getFactionById(um.factionId);
+//     return getShipSpeed(um, faction);
+// }

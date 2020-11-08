@@ -4,8 +4,9 @@ import { Command } from "../models/Commands";
 import { v4 } from "uuid";
 import { joki } from "jokits-react";
 import { apiLoadCommands, apiLoadCommandsAtTurn, apiNewCommand } from "../api/apiCommands";
-import { SERVICEID } from "../App";
+
 import { GameModel, GameState } from "../models/Models";
+import { SERVICEID } from "./services";
 
 export default function createCommandService(serviceId: string, api: JokiServiceApi): JokiService<Command> {
     let commands: Command[] = [];

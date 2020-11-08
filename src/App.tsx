@@ -10,6 +10,7 @@ import MainPage from './views/MainPage';
 import createFleetService from './services/FleetService';
 import { createChatService } from './services/ChatService';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core';
+import { SERVICEID } from './services/services';
 
 
 const theme = createMuiTheme({
@@ -21,13 +22,6 @@ const theme = createMuiTheme({
 // console.log(joki.config("logger", "ON"));
 
 
-export enum SERVICEID {
-  GameService = "GameService",
-  UserService = "UserService",
-  CommandService = "CommandService",
-  FleetService = "FleetService",
-  ChatService = "ChatService",
-}
 
 joki.service.add({
   serviceId: SERVICEID.GameService,

@@ -1,7 +1,7 @@
 import { joki } from "jokits-react";
 import { CommandType, ResearchCommand } from "../../models/Commands";
 import { FactionTechSetting, GameModel, Technology, TechnologyField } from "../../models/Models";
-import { getFactionById } from "../helpers/FactionHelpers";
+import { getFactionFromArrayById } from "../helpers/FactionHelpers";
 import { createEmptyCommandForCurrentFactionAndGame } from "./SystemCommands";
 
 
@@ -11,7 +11,7 @@ export function doAdjustTechValues(tech: TechnologyField, newValue: number, fact
 
     const game = joki.service.getState("GameService") as GameModel;
     
-    const faction = getFactionById(game.factions, factionId);
+    const faction = getFactionFromArrayById(game.factions, factionId);
     if (faction) {
         faction.technologyFields = faction.technologyFields.map((ftf: FactionTechSetting) => {
             if (ftf.field === tech) {

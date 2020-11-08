@@ -2,7 +2,7 @@ import { FactionModel, GameModel, GameState, SystemModel } from "../../models/Mo
 import { ShipUnit } from "../../models/Units";
 import { inSameLocation } from "../../utils/locationUtils";
 import { findClosestCoordinate } from "../../utils/MathUtils";
-import { rnd } from "../../utils/randUtils";
+import { arnd, rnd } from "../../utils/randUtils";
 import { createNewFaction } from "./FactionHelpers";
 import { createRandomMap } from "./SystemHelpers";
 import { createShipFromDesign, getDesignByName } from "./UnitHelpers";
@@ -24,7 +24,6 @@ export function createNewGame(playerCount = 4): GameModel {
     const starLocs = stars.filter((s: SystemModel) => s.ringWorld !== true).map((s: SystemModel) => s.location);
 
     factions.forEach((fm: FactionModel, index: number) => {
-
 
         const closestCoord = findClosestCoordinate(starLocs, { x: searchPoints[index][0], y: searchPoints[index][1] });
 
@@ -55,6 +54,7 @@ export function createNewGame(playerCount = 4): GameModel {
 
     const game: GameModel = {
         id: `game-${rnd(1, 9999)}`,
+        name: randomGameName(),
         factions: factions,
         systems: stars,
         turn: 0,
@@ -62,6 +62,7 @@ export function createNewGame(playerCount = 4): GameModel {
         factionsReady: [],
         state: GameState.TURN,
         trades: [],
+        playerIds: factions.map((f: FactionModel) => f.playerId),
     };
 
 
@@ -69,3 +70,10 @@ export function createNewGame(playerCount = 4): GameModel {
 }
 
 
+
+const gn1 = ["War", "Conflict", "Chaos", "Dawn", "Dusk", "The End of", "Space"];
+const gn2 = ["Stars", "Imperiums", "Empires", "Races", "Time", "Era"];
+
+export function randomGameName(): string {
+    return `${arnd(gn1)} ${arnd(gn2)}`;
+}

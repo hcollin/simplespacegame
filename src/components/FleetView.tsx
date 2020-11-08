@@ -1,14 +1,17 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
+import { useService } from "jokits-react";
 
 import React, { FC, useState } from "react";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import useUnitSelection from "../hooks/useUnitSelection";
 import useUnitsInSelectedSystem from "../hooks/useUnitsInSelectedSystem";
+import { Command } from "../models/Commands";
 import { SystemModel } from "../models/Models";
 import { ShipUnit } from "../models/Units";
 import { moveUnits } from "../services/commands/UnitCommands";
 import { unitIsMoving } from "../services/helpers/UnitHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
+import { SERVICEID } from "../services/services";
 import { inSameLocation } from "../utils/locationUtils";
 import UnitInfo from "./UnitInfo";
 
@@ -129,7 +132,9 @@ const FleetView: FC = () => {
     const [fleet, fleetActions] = useUnitSelection();
     const units = useUnitsInSelectedSystem();
     const [star, setStar] = useSelectedSystem();
+    const [commands] = useService<Command[]>(SERVICEID.CommandService);
 
+    if(!commands) return null;
     // If the fleet is not the current factions fleet, clear it
     // useEffect(() => {
     //     if (faction && fleet.length > 0) {
@@ -141,13 +146,13 @@ const FleetView: FC = () => {
 
 
     // const canMove = star && fleet.length > 0 && !inSameLocation(fleet[0].location, star.location);
-    const filteredUnits = units.filter((u: ShipUnit) => !unitIsMoving(u));
+    const filteredUnits = units.filter((u: ShipUnit) => !unitIsMoving(commands, u));
     const canCreateFleet = faction && star && fleet.length === 0 && filteredUnits.length > 0 && filteredUnits[0].factionId === faction.id;
 
     if (fleet.length === 0 && !canCreateFleet) return null;
 
     let viewMode = "VIEW";
-    if (fleet.length > 0 && faction && fleet[0].factionId === faction.id && !unitIsMoving(fleet[0])) viewMode = "MOVE";
+    if (fleet.length > 0 && faction && fleet[0].factionId === faction.id && !unitIsMoving(commands, fleet[0])) viewMode = "MOVE";
     if (canCreateFleet) viewMode = "CREATE";
 
     function close() {
@@ -160,9 +165,9 @@ const FleetView: FC = () => {
             <button className="close" onClick={close}>X</button>
             
 
-            {viewMode === "CREATE" && <CreateFleetContent units={units} system={star} close={close} />}
-            {viewMode === "MOVE" && <MoveFleetContent units={fleet} system={star} close={close} />}
-            {viewMode === "VIEW" && <ViewFleetContent units={fleet} system={null} close={close} />}
+            {viewMode === "CREATE" && <CreateFleetContent units={units} system={star} close={close} commands={commands}/>}
+            {viewMode === "MOVE" && <MoveFleetContent units={fleet} system={star} close={close} commands={commands}/>}
+            {viewMode === "VIEW" && <ViewFleetContent units={fleet} system={null} close={close} commands={commands}/>}
             {/* {canCreateFleet && <h2>Create fleet</h2>}
             {!canCreateFleet && <h2>Move fleet</h2>}
             
@@ -193,6 +198,7 @@ const FleetView: FC = () => {
 interface ContentProps {
     units: ShipUnit[];
     system: SystemModel | null;
+    commands: Command[];
     close: () => void;
 
 }
@@ -207,7 +213,7 @@ const ViewFleetContent: FC<ContentProps> = (props) => {
             <div className="units">
                 {props.units.map((unit: ShipUnit) => {
 
-                    const moving = unitIsMoving(unit);
+                    const moving = unitIsMoving(props.commands, unit);
                     if (moving) {
                         return null;
                     }
@@ -263,7 +269,7 @@ const CreateFleetContent: FC<ContentProps> = (props) => {
             <div className="units">
                 {props.units.map((unit: ShipUnit) => {
 
-                    const moving = unitIsMoving(unit);
+                    const moving = unitIsMoving(props.commands, unit);
                     if (moving) {
                         return null;
                     }

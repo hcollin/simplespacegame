@@ -24,5 +24,11 @@ yarn-error.log*
 
 src/api/fireConfig.ts
 
+
 firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+
+*.log
 firestore-debug.log

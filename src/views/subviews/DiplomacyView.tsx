@@ -9,9 +9,10 @@ import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
-import { getFactionById } from "../../utils/factionUtils";
+
 import { IconCredit } from "../../components/Icons";
 import { GLOBALMESSAGEKEY } from "../../services/ChatService";
+import { getFactionById } from "../../utils/factionJokiUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

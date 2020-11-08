@@ -1,5 +1,5 @@
 import { GameModel } from "../models/Models";
-import { getAllItems, getItem, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
+import { getAllItems, getItem, getItemsWhere, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
 
 const COLLECTION = "Games";
 
@@ -27,6 +27,10 @@ export async function apiListGames(): Promise<GameModel[]> {
     return games;
 }
 
+export async function apiListMyGames(playerId: string): Promise<GameModel[]> {
+    const games = await getItemsWhere<GameModel>(COLLECTION, ["playerIds", "array-contains", playerId]);
+    return games;
+}
 export async function apiLoadGame(gameId: string): Promise<GameModel|null> {
     const game = await getItem<GameModel>(COLLECTION, gameId);
     if(!game) {

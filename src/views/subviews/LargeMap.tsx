@@ -5,7 +5,7 @@ import { Circle, Group, Image, Layer, Line, Ring, Stage, Star, Text } from "reac
 import useSelectedSystem from "../../hooks/useSelectedSystem";
 import useWindowSize from "../../hooks/useWIndowResize";
 import { SystemModel, FactionModel, Coordinates, GameModel, Report, ReportType } from "../../models/Models";
-import { getFactionById } from "../../services/helpers/FactionHelpers";
+import { getFactionFromArrayById } from "../../services/helpers/FactionHelpers";
 import useImage from "use-image";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 import useMyCommands from "../../hooks/useMyCommands";
@@ -14,10 +14,11 @@ import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../..
 import { inSameLocation } from "../../utils/locationUtils";
 import useUnitSelection from "../../hooks/useUnitSelection";
 import { useService } from "jokits-react";
-import { getUnitSpeed } from "../../utils/unitUtils";
+
 import { ShipUnit } from "../../models/Units";
 
 import starfieldJpeg from '../../images/starfield2.jpg';
+import { getShipSpeed } from "../../utils/unitUtils";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -114,14 +115,14 @@ const LargeMap: FC<LargeMapProps> = (props) => {
                         const um = umGroup[0];
                         const size = 25 * zoomLevel;
                         const isMyShip = faction && faction.id === um.factionId;
-                        const inCommand = unitIsInFleet(um);
+                        const inCommand = unitIsInFleet(commands, um);
 
                         const onSystem = inCommand ? game.turn === inCommand.turn : true;
 
                         const x = h * (um.location.x / 100) * zoomLevel - (onSystem ? (inCommand === null ? 0 : size) : size / 2);
                         const y = h * (um.location.y / 100) * zoomLevel - (onSystem ? (inCommand === null ? size : 0) : size / 2);
 
-                        const speed = getUnitSpeed(um);
+                        const speed = getShipSpeed(um, getFactionFromArrayById(game.factions, um.factionId));
 
                         return (
                             <Group key={um.id} onClick={() => selectUnitGroup(umGroup)}>
@@ -147,7 +148,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 
                 <Layer>
                     {props.systems.map((star: SystemModel) => {
-                        const ownerFaction = getFactionById(props.factions, star.ownerFactionId);
+                        const ownerFaction = getFactionFromArrayById(props.factions, star.ownerFactionId);
                         const color = ownerFaction ? ownerFaction.color : star.color;
                         const size = ownerFaction ? 8 * zoomLevel : 5 * zoomLevel;
                         const isSelected = selectedSystem && selectedSystem.id === star.id;

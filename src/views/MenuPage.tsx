@@ -1,9 +1,10 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import React, { FC, useEffect, useState } from "react";
-import { apiListGames } from "../api/apiGame";
+import { fnProcessTurn } from "../api/apiFunctions";
+import { apiListGames, apiListMyGames } from "../api/apiGame";
 import ShipInfo from "../components/ShipInfo";
 import DATASHIPS from "../data/dataShips";
-import { GameModel } from "../models/Models";
+import { GameModel, GameState } from "../models/Models";
 import { doCreateNewGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 
@@ -14,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
             background: "radial-gradient(#444, black)",
             color: "#FFFD",
             minHeight: "100vh",
-            "& > header": {
+            "&  header": {
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
@@ -27,6 +28,13 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
             },
         },
+        row: {
+            display: "flex",
+            flexDirection: "row",
+            "& > div": {
+                flex: "1 1 auto",
+            }
+        }
     })
 );
 
@@ -40,16 +48,20 @@ const MenuPage: FC = () => {
 
 
     useEffect(() => {
-        async function loadGames() {
-            const games = await apiListGames();
-            if(games) {
+        
+        async function loadGames(uid: string) {
+            const games = await apiListMyGames(uid);
+
+            if (games) {
                 setGameList(games);
             }
-            
-        }
 
-        loadGames();
-    }, []);
+        }
+        if(user) {
+            loadGames(user.id);
+        }
+        
+    }, [user]);
 
     function loginWithGoogle() {
         if (!user) {
@@ -69,6 +81,20 @@ const MenuPage: FC = () => {
 
     function loadGame(gid: string) {
         doLoadGame(gid);
+    }
+
+    function processTurn(gid: string) {
+        fnProcessTurn(gid);
+    }
+
+    async function refreshList() {
+        if(user) {
+            const games = await apiListMyGames(user.id);
+
+            if (games) {
+                setGameList(games);
+            }
+        }
     }
 
     return (
@@ -105,9 +131,29 @@ const MenuPage: FC = () => {
 
             {user && (
                 <div>
-                    <h2>List of Games</h2>
+                    <header>
+                        <h2>List of Games</h2>
+                        <Button variant="contained" onClick={refreshList}>Refresh</Button>
+                    </header>
+                    
                     {gameList.map((gm: GameModel) => {
-                        return <div key={gm.id} onClick={() => loadGame(gm.id)}>{gm.id}</div>;
+                        return (
+                        <div key={gm.id} className={classes.row}>
+
+                            <div>
+                                <h4>{gm.name}</h4>
+                            </div>
+                            <div>
+                                <p>{gm.turn}</p>
+                            </div>
+                            <div>
+                                <p>{GameState[gm.state]}</p>
+                            </div>
+                            <div>
+                                <Button onClick={() => loadGame(gm.id)} variant="contained">LOAD</Button>
+                                {/* {gm.state !== GameState.PROCESSING && <Button onClick={() => processTurn(gm.id)} variant="outlined">PROCESS</Button>} */}
+                            </div>
+                        </div>);
                     })}
                 </div>
             )}
