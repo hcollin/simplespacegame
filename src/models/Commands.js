@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.CommandType = void 0;
 var CommandType;
 (function (CommandType) {
     CommandType["SystemBuild"] = "SystemBuild";

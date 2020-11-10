@@ -1,19 +1,21 @@
 import { makeStyles, Theme, createStyles, TextField, Select, MenuItem, Button, Box, Grid } from "@material-ui/core";
 import InputLabel from "@material-ui/core/InputLabel/InputLabel";
-import React, { FC, useState } from "react";
-import { FACTION_FONTS, FACTION_NAMES } from "../configs";
+import React, { FC, useEffect, useState } from "react";
+import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../configs";
 import { FactionSetup } from "../models/Models";
 import { randomFactionName } from "../services/helpers/FactionHelpers";
-import { arnd } from "../utils/randUtils";
+import { arnd, rnd } from "../utils/randUtils";
+import CasinoIcon from "@material-ui/icons/Casino";
+import RandomizeButton from "./RandomizeButton";
+import useCurrentUser from "../services/hooks/useCurrentUser";
 
+const ICONSPERPAGE = 16;
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-
-        },
-        part: {
             margin: "1rem 0",
+            padding: "1rem",
 
             "& .row": {
                 display: "flex",
@@ -25,96 +27,305 @@ const useStyles = makeStyles((theme: Theme) =>
                     flex: "1 1 auto",
                     "& > label": {
                         margin: "0.25rem 0",
-                    }
-
-                }
+                    },
+                },
+                "& > label": {
+                    flex: "0 0 auto",
+                    width: "20%",
+                },
             },
 
             "& > div": {
                 margin: "1rem 0",
             },
 
-            "& .field": {
-
-            },
+            "& .field": {},
 
             "& .info": {
                 padding: "1rem",
-            }
 
-        }
-    }));
+                "& div.icon-grid": {
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                    "& > div:not(.pageing)": {
+                        flex: "0 0 auto",
+                        width: "23%",
+                        padding: "1%",
+                        background: "#FFFA",
+                        borderRadius: "5%",
+                        margin: "0.5%",
+                        border: "solid 2px transparent",
+                        userSelect: "none",
 
+                        "&:hover": {
+                            border: "solid 2px #0008",
+                            background: "#ACFA",
+                            cursor: "pointer",
+                        },
 
+                        "&.selected": {
+                            border: "solid 2px #0008",
+                            background: "#BDFA",
+                        },
+                    },
+                    "& >div.pageing": {
+                        flex: "1 1 auto",
+                        width: "100%",
+                        padding: "1rem 0",
 
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-evenly",
+                    },
+                },
 
+                "& div.faction-icon": {
+                    height: "5rem",
+                    width: "5rem",
+                    padding: "0.5rem",
+                    boxShadow: "inset 0 0 1rem 0.25rem #0008",
+                },
 
+                "& div.color-grid": {
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
 
+                    "& > div.color-box": {
+                        width: "3rem",
+                        height: "3rem",
+                        flex: "0 0 auto",
+                        margin: "0.75rem",
+
+                        border: "solid 3px transparent",
+
+                        "&:hover": {
+                            border: "solid 3px gray",
+                        },
+                        "&.selected": {
+                            border: "solid 3px white",
+                            width: "4rem",
+                            height: "4rem",
+                            margin: "0.25rem",
+                        },
+                    },
+                },
+
+                "& h1": {
+                    fontWeight: "normal",
+                    fontSize: "2rem",
+                    lineHeight: "5rem",
+                    padding: 0,
+                    margin: 0,
+                },
+
+                "& label": {
+                    textTransform: "uppercase",
+                    fontSize: "0.8rem",
+                    fontWeight: "bold",
+                    margin: "1rem 0",
+
+                }
+            },
+        },
+    })
+);
 
 const FactionSetupView: FC = () => {
     const classes = useStyles();
 
     const [setup, setSetup] = useState<FactionSetup>({
-        name: "",
-        color: "",
-        fontFamily: "Arial",
+        name: randomFactionName(),
+        color: arnd(FACTION_COLORS),
+        fontFamily: arnd(FACTION_FONTS),
         iconFileName: "abstract-001.svg",
+        playerId: ""
     });
+
+    const [iconIndex, setIconIndex] = useState<number>(1);
+    const [user] = useCurrentUser();
+
+    useEffect(() => {
+        if(user) {
+            setSetup((prev: FactionSetup) => {
+                if(prev.playerId !== user.id) {
+                    return {...prev, playerId: user.id};
+                }
+                return prev;
+            });
+        }
+    }, [user]);
+
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSetup((prev: FactionSetup) => {
             prev.name = event.target.value;
             return { ...prev };
-        })
+        });
     };
 
     const handleFontChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setSetup((prev: FactionSetup) => {
             prev.fontFamily = event.target.value as string;
             return { ...prev };
-        })
+        });
+    };
+
+    const handleChangeIcon = (iconFn: string) => {
+        setSetup((prev: FactionSetup) => {
+            prev.iconFileName = iconFn;
+            return { ...prev };
+        });
+    };
+
+    const handleChangeColor = (color: string) => {
+        setSetup((prev: FactionSetup) => {
+            prev.color = color;
+            return { ...prev };
+        });
     };
 
     function randomName() {
         setSetup((prev: FactionSetup) => {
             prev.name = `${arnd(FACTION_NAMES[0])} ${arnd(FACTION_NAMES[1])} ${arnd(FACTION_NAMES[2])}`;
             return { ...prev };
-
-        })
+        });
     }
 
+    function randomFaction() {
+        if(user) {
+            const newSetup: FactionSetup = {
+                name: `${arnd(FACTION_NAMES[0])} ${arnd(FACTION_NAMES[1])} ${arnd(FACTION_NAMES[2])}`,
+                color: arnd(FACTION_COLORS),
+                fontFamily: arnd(FACTION_FONTS),
+                iconFileName: `abstract-${String(rnd(1, 120)).padStart(3, "0")}.svg`,
+                playerId: user.id
+            };
+            setSetup(newSetup);
+        }
+        
+    }
+
+    const icons: string[] = [];
+    for (let i = iconIndex; i < iconIndex + ICONSPERPAGE; i++) {
+        icons.push(`abstract-${String(i).padStart(3, "0")}.svg`);
+    }
 
     return (
-        <div className={classes.part}>
-            <h2>Faction setup</h2>
+        <div className={classes.root}>
+            <header className="row">
+                <h2>Faction setup</h2>
+                <RandomizeButton variant="contained" color="primary" onClick={randomFaction} toolTip="Randomize Faction!" />
+            </header>
+
+            <div className="info">
+                <Grid container>
+                    <Grid lg={12}>
+                        <label>My faction</label>
+                    </Grid>
+                    <Grid lg={1}>
+                        <div className="faction-icon" style={{ backgroundColor: setup.color }}>
+                            <img src={require(`../images/symbols/${setup.iconFileName}`)} alt="Faction Icon" />
+                        </div>
+                    </Grid>
+                    <Grid lg={11}>
+                        <h1 style={{ fontFamily: setup.fontFamily }}>{setup.name}</h1>
+                    </Grid>
+                </Grid>
+            </div>
+
             <Grid container>
-                <Grid lg={4} spacing={8}>
-                    <div className="info">
+                <Grid lg={6} spacing={8}>
+                    <div className="info row">
                         <InputLabel>Faction Name</InputLabel>
                         <TextField value={setup.name} onChange={handleNameChange} fullWidth={true} />
-                        <Button onClick={randomName} variant="contained">Random</Button>
+                        <RandomizeButton onClick={randomName} variant="contained" toolTip="Give me a random name!" />
                     </div>
 
-                    <div  className="info">
-                        <InputLabel id="faction-font-label">Age</InputLabel>
+                    <div className="info row">
+                        <InputLabel id="faction-font-label">Font</InputLabel>
                         <Select value={setup.fontFamily} labelId="faction-font-label" onChange={handleFontChange}>
-                            <MenuItem value="Arial">Arial</MenuItem>
-                            {FACTION_FONTS.map((ff: string) => <MenuItem value={ff} key={ff}>{ff}</MenuItem>)}
+                            {FACTION_FONTS.map((ff: string) => (
+                                <MenuItem value={ff} key={ff}>
+                                    {ff}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </div>
-                </Grid>
-                <Grid lg={8}>
-                    <div className="info">
-                        <h1 style={{fontFamily: setup.fontFamily}}>{setup.name}</h1>
-                    </div>
+                    <div className="info row">
+                        <InputLabel id="faction-color-label">Color</InputLabel>
 
+                        <div className="color-grid">
+                            {FACTION_COLORS.map((c: string) => (
+                                <div
+                                    className={`color-box ${setup.color === c ? "selected" : ""}`}
+                                    key={c}
+                                    style={{ backgroundColor: c }}
+                                    onClick={() => handleChangeColor(c)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </Grid>
+                <Grid lg={6}>
+                    <div className="info row">
+                        <InputLabel id="faction-icon-label">Icon</InputLabel>
+
+                        <div className="icon-grid">
+                            {icons.map((fn: string) => {
+                                return (
+                                    <div
+                                        key={fn}
+                                        className={`icon-container ${fn === setup.iconFileName ? "selected" : ""}`}
+                                        onClick={() => handleChangeIcon(fn)}
+                                    >
+                                        <img src={require(`../images/symbols/${fn}`)} alt="Icon" />
+                                    </div>
+                                );
+                            })}
+
+                            <div className="pageing">
+                                <Button
+                                    variant="contained"
+                                    disabled={iconIndex <= 1}
+                                    onClick={() =>
+                                        setIconIndex((prev: number) =>
+                                            prev > ICONSPERPAGE + 1 ? prev - ICONSPERPAGE : 1
+                                        )
+                                    }
+                                >
+                                    Prev
+                                </Button>
+                                <RandomizeButton
+                                    variant="contained"
+                                    onClick={() =>
+                                        handleChangeIcon(`abstract-${String(rnd(1, 120)).padStart(3, "0")}.svg`)
+                                    }
+                                    toolTip="Randomize faction icon" 
+                                />
+
+                                <Button
+                                    variant="contained"
+                                    disabled={iconIndex + ICONSPERPAGE >= 120}
+                                    onClick={() =>
+                                        setIconIndex((prev: number) =>
+                                            prev + ICONSPERPAGE < 120 ? prev + ICONSPERPAGE : prev
+                                        )
+                                    }
+                                >
+                                    Next
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </Grid>
             </Grid>
-
-
         </div>
-    )
-
-}
+    );
+};
 
 export default FactionSetupView;

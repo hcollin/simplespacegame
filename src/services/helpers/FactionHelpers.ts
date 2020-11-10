@@ -1,9 +1,10 @@
+import { v4 } from "uuid";
 import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../../configs";
 import DATASHIPS from "../../data/dataShips";
 import { TECHIDS } from "../../data/dataTechnology";
 import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
-import { FactionModel, FactionState, GameModel, TechnologyField } from "../../models/Models";
+import { FactionModel, FactionSetup, FactionState, GameModel, TechnologyField } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
 import { factionValues } from "../../utils/factionUtils";
 import { arnd, arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
@@ -70,6 +71,33 @@ export function createNewFaction(): FactionModel {
         technology: [],
 
     }
+
+    return fm;
+}
+
+export function createFactionFromSetup(setup: FactionSetup): FactionModel {
+    
+    const fm: FactionModel = {
+        id: v4(),
+        money: 3,
+        technologyFields: [
+            {field: TechnologyField.BIOLOGY, points: 0, priority: 0},
+            {field: TechnologyField.SOCIOLOGY, points: 0, priority: 0},
+            {field: TechnologyField.BUSINESS, points: 0, priority: 0},
+            {field: TechnologyField.INFORMATION, points: 0, priority: 0},
+            {field: TechnologyField.CHEMISTRY, points: 0, priority: 0},
+            {field: TechnologyField.PHYSICS, points: 0, priority: 0},
+        ],
+        state: FactionState.PLAYING,
+        name: setup.name,
+        playerId: setup.playerId,
+        color: setup.color,
+        iconFileName: setup.iconFileName,
+        style: {
+            fontFamily: setup.fontFamily,
+        },
+        technology: [],
+    };
 
     return fm;
 }

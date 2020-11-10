@@ -38,22 +38,23 @@ export function createNewSystem(ax = 1, ay = 1, as = 99): SystemModel {
     return star;
 }
 
-export function createRandomMap(count: number): SystemModel[] {
+export function createRandomMap(starCount: number, size=99): SystemModel[] {
     const stars: SystemModel[] = [];
 
-    const c = count / 10;
+    const c = starCount / 10;
+    const p = size / 3;
 
     const ar: [number, number, number, number][] = [
-        [1, 1, 32, c], [33, 1, 34, c * 2], [67, 1, 32, c * 3],
-        [1, 33, 32, c * 4], [33, 33, 34, c * 6], [67, 33, 32, c * 7],
-        [1, 67, 32, c * 8], [33, 67, 34, c * 9], [67, 67, 32, count],
+        [1, 1, p-1, c], [p, 1, p-1, c * 2], [p*2, 1, p-1, c * 3],
+        [1, p, p-1, c * 4], [p, p, p-1, c * 6], [p*2, p, p-1, c * 7],
+        [1, p*2, p-1, c * 8], [p, p*2, p-1, c * 9], [p*2, p*2, p-1, starCount],
     ];
 
     let confIndex = 0;
     let conf = ar[confIndex];
 
 
-    while (stars.length < count) {
+    while (stars.length < starCount) {
 
         if (stars.length > conf[3]) {
             confIndex++;
@@ -77,7 +78,7 @@ export function createRandomMap(count: number): SystemModel[] {
     const ringWorldAreas: [number, number, number, number][] = [
         [st, st, st, c], [st*4, st, st, c * 2], [st*7, st, st, c * 3],
         [st, st*4, st, c * 4], [st*4, st*4, st, c * 6], [st*7, st*4, st, c * 7],
-        [st, st*7, st, c * 8], [st*4, st*7, st, c * 9], [st*7, st*7, st, count],
+        [st, st*7, st, c * 8], [st*4, st*7, st, c * 9], [st*7, st*7, st, starCount],
     ];
 
     ringWorldAreas.forEach((conf: [number, number, number, number], ind: number) => {

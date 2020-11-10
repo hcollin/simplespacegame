@@ -1,14 +1,14 @@
 import { joki } from "jokits-react";
 import { v4 } from "uuid";
 import { Trade } from "../../models/Communication";
-import { GameModel } from "../../models/Models";
+import { GameModel, PreGameSetup } from "../../models/Models";
 import { NewGameOptions } from "../GameService";
 import { SERVICEID } from "../services";
 
 
 export function doProcessTurn() {
      joki.trigger({
-         to: "GameService",
+         to: SERVICEID.GameService,
          action: "processTurn",
      });
 }
@@ -17,7 +17,7 @@ export function doProcessTurn() {
 export function doPlayerDone(factionId: string) {
    
     joki.trigger({
-        to: "GameService",
+        to: SERVICEID.GameService,
         action: "ready",
         data: factionId,
         
@@ -25,16 +25,11 @@ export function doPlayerDone(factionId: string) {
 }
 
 
-export function doCreateNewGame(plCount: number) {
-    
-    const options: NewGameOptions = {
-        playerCount: plCount,
-    }
-
+export function doCreateNewGame(setup: PreGameSetup) {
     joki.trigger({
-        to: "GameService",
+        to: SERVICEID.GameService,
         action: "newGame",
-        data: options
+        data: setup
     })
 }
 
@@ -53,16 +48,24 @@ export function doLoadGame(gameId: string) {
     });
 }
 
+
+export function doCloseCurrentGame() {
+    joki.trigger({
+        to: SERVICEID.GameService,
+        action: "closeGame"
+    });
+}
+
 export function doTradeAgreement(trade: Trade) {
     
-    const game = joki.service.getState("GameService") as GameModel;
+    const game = joki.service.getState(SERVICEID.GameService) as GameModel;
 
     const trades = [...game.trades];
     trade.id = v4();
     trades.push(trade);
 
     joki.trigger({
-        to: "GameService",
+        to: SERVICEID.GameService,
         action: "updateTrades",
         data: trades
     });

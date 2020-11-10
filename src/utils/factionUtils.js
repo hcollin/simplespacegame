@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.getFactionScore = exports.researchPointDistribution = exports.getSystemResearchPointGeneration = exports.researchPointGenerationCalculator = exports.systemExpenses = exports.unitExpenses = exports.getWelfareCommands = exports.commandCountCalculator = exports.expensesCalculator = exports.factionValues = void 0;
 var FactionHelpers_1 = require("../services/helpers/FactionHelpers");
 var businessTech_1 = require("../tech/businessTech");
 function factionValues(game, factionId) {

@@ -4,13 +4,13 @@ import { apiLoadGame, apiNewGame, apiSubscribeToGame, apiUpdateGame } from "../a
 
 import { Command } from "../models/Commands";
 
-import { GameModel, FactionModel, GameState } from "../models/Models";
+import { GameModel, FactionModel, GameState, GameSetup, FactionSetup, PreGameSetup } from "../models/Models";
 
 import { User } from "../models/User";
 // import { techMarketing } from "../tech/businessTech";
 // import { rnd } from "../utils/randUtils";
 import { getFactionByUserId } from "./helpers/FactionHelpers";
-import { createNewGame, randomGameName } from "./helpers/GameHelpers";
+import { createGameFromSetup, createNewGame, randomGameName } from "./helpers/GameHelpers";
 import { SERVICEID } from "./services";
 
 
@@ -53,10 +53,13 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                     factionReady(event.data);
                     break;
                 case "newGame":
-                    newGame(event.data as NewGameOptions);
+                    newGame(event.data);
                     break;
                 case "loadGame":
                     loadGame(event.data);
+                    break;
+                case "closeGame":
+                    closeGame();
                     break;
                 case "updateFaction":
                     updateFaction(event.data as FactionModel);
@@ -97,10 +100,25 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         sendUpdate();
     }
 
-    async function newGame(options: NewGameOptions) {
-        console.log("NEW GAME", options);
+    async function closeGame() {
+        switch(game.state) {
+            case GameState.OPEN:
+            case GameState.INIT:
+                game.state = GameState.NONE;
+                sendUpdate();
+                break;    
+            default:
+                break;    
 
-        game = createNewGame(options.playerCount);
+        }
+        
+    }
+
+    async function newGame(gameSetup: PreGameSetup) {
+        console.log("NEW GAME", gameSetup);
+
+        game = createGameFromSetup(gameSetup);
+        // game = createNewGame(gameSetup.playerCount);
         game = await apiNewGame(game);
 
         sendUpdate();

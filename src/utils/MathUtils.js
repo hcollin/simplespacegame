@@ -11,7 +11,6 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.Vectors = exports.getVectorFromCoords = exports.findClosestCoordinate = exports.angleBetweenCoordinates = exports.travelingBetweenCoordinates = exports.distanceBetweenCoordinates = void 0;
 function distanceBetweenCoordinates(a, b) {
     return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2));
 }

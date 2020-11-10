@@ -21,11 +21,18 @@ export interface GameSetup {
     density: string;
 }
 
+export interface PreGameSetup extends GameSetup {
+    name: string;
+    autoJoin: boolean;
+    faction?: FactionSetup;
+}
+
 export interface FactionSetup {
     name: string;
     color: string;
     iconFileName: string;
     fontFamily: string;
+    playerId: string;
 }
 
 export interface GameModel extends GameObject {

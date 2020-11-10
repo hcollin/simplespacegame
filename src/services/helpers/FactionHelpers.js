@@ -7,35 +7,34 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-exports.getFactionShips = exports.factionCanDoMoreCommands = exports.getFactionByUserId = exports.getFactionFromArrayById = exports.createNewFaction = exports.getFactionName = void 0;
+var configs_1 = require("../../configs");
 var dataShips_1 = require("../../data/dataShips");
-var dataTechnology_1 = require("../../data/dataTechnology");
 var dataUser_1 = require("../../data/dataUser.");
 var Models_1 = require("../../models/Models");
 var factionUtils_1 = require("../../utils/factionUtils");
 var randUtils_1 = require("../../utils/randUtils");
-var factionColors = randUtils_1.shuffle(['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4']);
-var factNamePart1 = ["Federation of", "Kingdom of", "Empire of", "Republic of", "Commonwealth of", "Tribe of", "Hive of", "Imperium of", "Clan of", "Culture of", "Theocracy of", "Barony of", "Democracy of", "Army of", "Consortium of", "Cohorts of", "Remnants of", "Oligarchy of", "Aristocracy of", "Tyranny of", "United States of", "Church of", "League of", "Protectorate of", "Colony of", "Alliance of", "Hegemony of", "Confederation of", "Matriarchy of"];
-var factNamePart2 = ["Space", "Pirate", "Warrior", "Engineer", "Merchant", "Priest", "Soldier", "Peace", "Holy", "Unholy", "Ancient", "Future", "Bio", "Cyber", "Renegade", "Telepathic", "Magical", "Robotic", "Artificial", "Psychic", "Fanatic", "Conservative", "Liberal", "Nihilistic", "Chaos", "Multi Dimensional", "Flux", "Power", "Giant", "Ravenous", "World Eating", "Cannibalistic", "Occultist", "Death", "Turbo", "Spotted", "Angry", "Cunning", "Lounge", "Parasitic", "Necro"];
-var factNamePart3 = ["Cats", "Dogs", "Turtles", "Wolves", "Lions", "Elephants", "Wasps", "Spiders", "Scorpions", "Parrots", "Eagles", "Reptiles", "Worms", "Serpents", "Ants", "Whales", "Octopuses", "Rhinos", "Sharks", "Gorillas", "Tigers", "Jaguars", "Hyenas", "Hamsters", "Rodents", "Baboons", "Bears", "Moose", "Deer", "Flies", "Owls", "Vultures", "Rabbits", "Kangaroos", "Penguins", "Dragons", "Horses", "Cows", "Pigs", "Sheep", "Chickens", "Giraffes", "Otters", "Medusas", "Fish", "Roaches", "Bugs"];
+var factionColors = randUtils_1.shuffle(configs_1.FACTION_COLORS);
+var factNamePart1 = configs_1.FACTION_NAMES[0];
+var factNamePart2 = configs_1.FACTION_NAMES[1];
+var factNamePart3 = configs_1.FACTION_NAMES[2];
 var np1s = randUtils_1.arnds(factNamePart1, 12, true);
 var np2s = randUtils_1.arnds(factNamePart2, 12, true);
 var np3s = randUtils_1.arnds(factNamePart3, 12, true);
 var factionNoId = -1;
 var players = __spreadArrays(dataUser_1["default"]);
-var fonts = randUtils_1.shuffle([
-    "Impact",
-    "Averia Serif Libre",
-    "Bebas Neue",
-    "Carter One",
-    "Coda",
-    "Fugaz One",
-    "Piedra",
-    "Righteous",
-    "Staatliches",
-    "Trade Winds",
-    "Candara",
-]);
+var factionFonts = randUtils_1.shuffle(configs_1.FACTION_FONTS);
+function getFactionFonts() {
+    return factionFonts;
+}
+exports.getFactionFonts = getFactionFonts;
+function getColors() {
+    return factionColors;
+}
+exports.getColors = getColors;
+function randomFactionName() {
+    return randUtils_1.arnd(factNamePart1) + " " + randUtils_1.arnd(factNamePart2) + " " + randUtils_1.arnd(factNamePart3);
+}
+exports.randomFactionName = randomFactionName;
 function getFactionName() {
     factionNoId++;
     return np1s[factionNoId] + " " + np2s[factionNoId] + " " + np3s[factionNoId];
@@ -43,7 +42,7 @@ function getFactionName() {
 exports.getFactionName = getFactionName;
 function createNewFaction() {
     var pl = players.shift();
-    var ff = fonts.shift();
+    var ff = factionFonts.shift();
     var fm = {
         id: "faction-" + randUtils_1.rnd(1, 9999),
         money: 3,
@@ -63,7 +62,7 @@ function createNewFaction() {
         style: {
             fontFamily: ff || "Arial"
         },
-        technology: [dataTechnology_1.TECHIDS.EvasionEngine, dataTechnology_1.TECHIDS.PredEvasion]
+        technology: []
     };
     return fm;
 }
