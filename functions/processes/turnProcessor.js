@@ -54,6 +54,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
+exports.damagePotential = exports.getHitChance = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatMain = exports.processTurn = void 0;
 var dataTechnology_1 = require("../../src/data/dataTechnology");
 var Commands_1 = require("../../src/models/Commands");
 var Models_1 = require("../../src/models/Models");

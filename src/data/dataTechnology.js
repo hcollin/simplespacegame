@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.DATATECHNOLOGY = exports.TECHIDS = void 0;
 var Models_1 = require("../models/Models");
 var TECHIDS;
 (function (TECHIDS) {

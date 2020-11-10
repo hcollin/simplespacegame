@@ -13,7 +13,7 @@ import {
 import { useService } from "jokits-react";
 import React, { FC, useEffect, useState } from "react";
 import FactionSetupView from "../components/FactionSetup";
-import { GameModel, GameState } from "../models/Models";
+import { FactionSetup, GameModel, GameState } from "../models/Models";
 import { doCloseCurrentGame, doCreateNewGame } from "../services/commands/GameCommands";
 import { SERVICEID } from "../services/services";
 
@@ -114,6 +114,8 @@ const GameSetup: FC = () => {
     const [distances, setDistances] = useState<string>("");
     const [autoJoin, setAutoJoin] = useState<boolean>(true);
 
+    const [factionSetup, setFactionSetup] = useState<FactionSetup|undefined>(undefined)
+
     useEffect(() => {
         if (game) {
             setName((prev: string) => {
@@ -153,7 +155,12 @@ const GameSetup: FC = () => {
             density: starDensity,
             distances: distances,
             playerCount: plCount,
+            faction: factionSetup || undefined,
         });
+    }
+
+    function setFaction(fs: FactionSetup) {
+        setFactionSetup(fs);
     }
 
     function startGame() {}
@@ -273,7 +280,7 @@ const GameSetup: FC = () => {
                     </div>
                 </div>
 
-                {autoJoin && <FactionSetupView />}
+                {autoJoin && <FactionSetupView onChange={setFaction} />}
         </MenuPageContainer>
     );
 };

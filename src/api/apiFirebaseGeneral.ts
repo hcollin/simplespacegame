@@ -48,7 +48,7 @@ export async function getItem<T extends GameObject>(collectionName: string, item
 
 export async function getItemsWhere<T extends GameObject>(
     collectionName: string,
-    where: [string, Firebase.firestore.WhereFilterOp, string]
+    where: [string, Firebase.firestore.WhereFilterOp, string|number]
 ): Promise<T[]> {
     const snap = await db.collection(collectionName).where(where[0], where[1], where[2]).get();
 

@@ -11,6 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
+exports.getFactionAdjustedUnit = exports.getFactionAdjustedWeapon = exports.getWeaponCooldownTime = exports.getWeaponAccuracy = exports.getWeaponDamage = exports.getShipAgility = exports.getShipShieldsReg = exports.getShipShieldsMax = exports.getShipArmor = exports.getShipHull = exports.getShipTroops = exports.getShipCost = exports.getShipTechReq = exports.getShipIndustry = exports.getShipSpeed = exports.getAdjustedShip = void 0;
 var shipTech_1 = require("../tech/shipTech");
 // import { getFactionById } from "./factionJokiUtils";
 // SHIP VALUES

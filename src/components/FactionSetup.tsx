@@ -135,10 +135,16 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const FactionSetupView: FC = () => {
+
+interface Props {
+    setup?: FactionSetup;
+    onChange: (setup: FactionSetup) => void;
+}
+
+const FactionSetupView: FC<Props> = (props) => {
     const classes = useStyles();
 
-    const [setup, setSetup] = useState<FactionSetup>({
+    const [setup, setSetup] = useState<FactionSetup>(props.setup || {
         name: randomFactionName(),
         color: arnd(FACTION_COLORS),
         fontFamily: arnd(FACTION_FONTS),
@@ -159,6 +165,10 @@ const FactionSetupView: FC = () => {
             });
         }
     }, [user]);
+
+    useEffect(() => {
+        props.onChange(setup);
+    }, [setup])
 
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {

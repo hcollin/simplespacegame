@@ -36,6 +36,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
                 "& > section": {
                     padding: "1rem",
+                    "& > header": {
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                    }
                 },
 
                 "& > footer": {

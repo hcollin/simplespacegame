@@ -1,7 +1,7 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import React, { FC, useEffect, useState } from "react";
 import { fnProcessTurn } from "../api/apiFunctions";
-import { apiListGames, apiListMyGames } from "../api/apiGame";
+import { apiListGames, apiListMyGames, apiListOpenGames } from "../api/apiGame";
 import MenuPageContainer from "../components/MenuPageContainer";
 import ShipInfo from "../components/ShipInfo";
 import DATASHIPS from "../data/dataShips";
@@ -45,20 +45,36 @@ const MenuPage: FC = () => {
     const [playerCount] = useState<number>(4);
     const [user, send] = useCurrentUser();
 
-    const [gameList, setGameList] = useState<GameModel[]>([]);
+    const [myGames, setMyGames] = useState<GameModel[]>([]);
+    const [openGames, setOpenGames] = useState<GameModel[]>([]);
+
 
     useEffect(() => {
         async function loadGames(uid: string) {
             const games = await apiListMyGames(uid);
 
             if (games) {
-                setGameList(games);
+                setMyGames(games);
             }
         }
         if (user) {
             loadGames(user.id);
         }
     }, [user]);
+
+    useEffect(() => {
+        async function loadGames() {
+
+            const games = await apiListOpenGames();
+            
+            if (games) {
+                setOpenGames(games);
+            }
+        }
+
+        loadGames();
+
+    }, []);
 
     function loginWithGoogle() {
         if (!user) {
@@ -87,12 +103,14 @@ const MenuPage: FC = () => {
 
     async function refreshList() {
         if (user) {
-            const games = await apiListMyGames(user.id);
-
-            if (games) {
-                setGameList(games);
-            }
+            apiListMyGames(user.id).then((games) => {
+                setMyGames(games);
+            });
         }
+
+        apiListOpenGames().then((games) => {
+            setOpenGames(games);
+        });
     }
 
     return (
@@ -110,8 +128,8 @@ const MenuPage: FC = () => {
 
             {user && (
                 <div className="actions">
-                    
-                    
+
+
                     <Button variant="contained" color="primary" onClick={clickNewGame}>
                         New Game
                     </Button>
@@ -120,39 +138,80 @@ const MenuPage: FC = () => {
             )}
 
             {user && (
-                <section>
-                    <header>
-                        <h2>List of Games</h2>
-                        <Button variant="contained" onClick={refreshList}>
-                            Refresh
+                <>
+                    <section>
+                        <header>
+                            <h2>List of My Games</h2>
+                            <Button variant="contained" onClick={refreshList}>
+                                Refresh
                         </Button>
-                    </header>
+                        </header>
 
-                    {gameList.map((gm: GameModel) => {
-                        return (
-                            <div key={gm.id} className={classes.row}>
-                                <div>
-                                    <h4>{gm.name}</h4>
+                        {myGames.map((gm: GameModel) => {
+                            return (
+                                <div key={gm.id} className={classes.row}>
+                                    <div>
+                                        <h4>{gm.name}</h4>
+                                    </div>
+                                    <div>
+                                        <p>{gm.turn}</p>
+                                    </div>
+                                    <div>
+                                        <p>{gm.factions.length}/{gm.setup.playerCount}</p>
+                                    </div>
+                                    <div>
+                                        <p>{GameState[gm.state]}</p>
+                                    </div>
+                                    <div>
+                                        {gm.state === GameState.TURN && <Button onClick={() => loadGame(gm.id)} variant="contained">
+                                            LOAD
+                                    </Button>}
+                                        {gm.state === GameState.OPEN && !gm.playerIds.includes(user.id) && <Button onClick={() => loadGame(gm.id)} variant="contained">
+                                            JOIN
+                                    </Button>}
+                                        {gm.state === GameState.OPEN && gm.playerIds.includes(user.id) && <p>Waiting for more players...</p>}
+                                        {/* {gm.state !== GameState.PROCESSING && <Button onClick={() => processTurn(gm.id)} variant="outlined">PROCESS</Button>} */}
+                                    </div>
                                 </div>
-                                <div>
-                                    <p>{gm.turn}</p>
+                            );
+                        })}
+                    </section>
+
+                    <section>
+                        <header>
+                            <h2>Open Games</h2>
+
+                        </header>
+                        {openGames.map((gm: GameModel) => {
+                            if (gm.playerIds.includes(user.id)) return null;
+                            return (
+                                <div key={gm.id} className={classes.row}>
+                                    <div>
+                                        <h4>{gm.name}</h4>
+                                    </div>
+                                    <div>
+                                        <p>{gm.turn}</p>
+                                    </div>
+                                    <div>
+                                        <p>{gm.factions.length}/{gm.setup.playerCount}</p>
+                                    </div>
+                                    <div>
+                                        <p>{GameState[gm.state]}</p>
+                                    </div>
+                                    <div>
+                                        <Button onClick={() => loadGame(gm.id)} variant="contained">
+                                            JOIN
+                                        </Button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p>{GameState[gm.state]}</p>
-                                </div>
-                                <div>
-                                    <Button onClick={() => loadGame(gm.id)} variant="contained">
-                                        LOAD
-                                    </Button>
-                                    {/* {gm.state !== GameState.PROCESSING && <Button onClick={() => processTurn(gm.id)} variant="outlined">PROCESS</Button>} */}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </section>
+                            );
+                        })}
+
+                    </section></>
             )}
         </MenuPageContainer>
     );
 };
 
 export default MenuPage;
+

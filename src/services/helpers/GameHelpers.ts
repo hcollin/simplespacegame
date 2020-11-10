@@ -1,9 +1,11 @@
-import { FactionModel, GameModel, GameSetup, GameState, PreGameSetup, SystemModel } from "../../models/Models";
+import { v4 } from "uuid";
+import { FactionModel, FactionSetup, FactionState, GameModel, GameSetup, GameState, PreGameSetup, SystemModel, TechnologyField } from "../../models/Models";
 import { ShipUnit } from "../../models/Units";
 import { inSameLocation } from "../../utils/locationUtils";
 import { findClosestCoordinate } from "../../utils/MathUtils";
 import { arnd, rnd, shuffle } from "../../utils/randUtils";
-import { createFactionFromSetup, createNewFaction } from "./FactionHelpers";
+import { createNewFaction } from "./FactionHelpers";
+
 import { createRandomMap } from "./SystemHelpers";
 import { createShipFromDesign, getDesignByName } from "./UnitHelpers";
 
@@ -33,10 +35,16 @@ export function createGameFromSetup(setup: PreGameSetup): GameModel {
         turn: 0,
         units: [],
     };
-
-    if (setup.autoJoin && setup.faction) {
+    
+    if (setup.autoJoin && setup.faction && setup.faction.playerId) {
+        console.log(setup, setup.faction);
+        
         game.playerIds.push(setup.faction.playerId);
-        game.factions.push(createFactionFromSetup(setup.faction));
+        const fs = setup.faction as FactionSetup;
+                
+        const fm = createFactionFromSetup(setup.faction)
+        game.factions.push(fm);
+        
     }
 
     return game;
@@ -183,3 +191,33 @@ const gn2 = ["Stars", "Imperiums", "Empires", "Races", "Time", "Era"];
 export function randomGameName(): string {
     return `${arnd(gn1)} ${arnd(gn2)}`;
 }
+
+
+
+export function createFactionFromSetup(setup: FactionSetup): FactionModel {
+    
+    const fm: FactionModel = {
+        id: v4(),
+        money: 3,
+        technologyFields: [
+            {field: TechnologyField.BIOLOGY, points: 0, priority: 0},
+            {field: TechnologyField.SOCIOLOGY, points: 0, priority: 0},
+            {field: TechnologyField.BUSINESS, points: 0, priority: 0},
+            {field: TechnologyField.INFORMATION, points: 0, priority: 0},
+            {field: TechnologyField.CHEMISTRY, points: 0, priority: 0},
+            {field: TechnologyField.PHYSICS, points: 0, priority: 0},
+        ],
+        state: FactionState.PLAYING,
+        name: setup.name,
+        playerId: setup.playerId,
+        color: setup.color,
+        iconFileName: setup.iconFileName,
+        style: {
+            fontFamily: setup.fontFamily,
+        },
+        technology: [],
+    };
+
+    return fm;
+}
+

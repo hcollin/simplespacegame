@@ -1,4 +1,4 @@
-import { GameModel } from "../models/Models";
+import { GameModel, GameState } from "../models/Models";
 import { getAllItems, getItem, getItemsWhere, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
 
 const COLLECTION = "Games";
@@ -29,6 +29,12 @@ export async function apiListGames(): Promise<GameModel[]> {
 
 export async function apiListMyGames(playerId: string): Promise<GameModel[]> {
     const games = await getItemsWhere<GameModel>(COLLECTION, ["playerIds", "array-contains", playerId]);
+    return games;
+}
+
+
+export async function apiListOpenGames(): Promise<GameModel[]> {
+    const games = await getItemsWhere<GameModel>(COLLECTION, ["state", "==", GameState.OPEN]);
     return games;
 }
 export async function apiLoadGame(gameId: string): Promise<GameModel|null> {

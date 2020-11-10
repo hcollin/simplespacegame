@@ -39,15 +39,33 @@ const MainPage: FC = () => {
 
     console.log(game && game.state);
 
-    if(user === null || !game || game.state === GameState.NONE) {
+    if(user === null || !game) {
         return <MenuPage />
     }
-    
-    if(game.state === GameState.INIT || game.id === "") {
-        return <GameSetup />
+
+    console.log(game.state, GameState[game.state]);
+
+    switch(game.state) {
+        case GameState.INIT:
+            return <GameSetup />
+        case GameState.TURN:
+        case GameState.PROCESSING:
+            return <GameView />
+        default:
+            return <MenuPage />
     }
 
-    return <GameView />
+
+
+    // if(user === null || !game || game.state === GameState.NONE) {
+    //     return <MenuPage />
+    // }
+    
+    // if(game.state === GameState.INIT || game.id === "") {
+    //     return <GameSetup />
+    // }
+
+    // return <GameView />
 
 }
 

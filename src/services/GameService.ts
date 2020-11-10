@@ -4,13 +4,13 @@ import { apiLoadGame, apiNewGame, apiSubscribeToGame, apiUpdateGame } from "../a
 
 import { Command } from "../models/Commands";
 
-import { GameModel, FactionModel, GameState, GameSetup, FactionSetup, PreGameSetup } from "../models/Models";
+import { GameModel, FactionModel, GameState, PreGameSetup } from "../models/Models";
 
 import { User } from "../models/User";
 // import { techMarketing } from "../tech/businessTech";
 // import { rnd } from "../utils/randUtils";
 import { getFactionByUserId } from "./helpers/FactionHelpers";
-import { createGameFromSetup, createNewGame, randomGameName } from "./helpers/GameHelpers";
+import { createGameFromSetup, randomGameName } from "./helpers/GameHelpers";
 import { SERVICEID } from "./services";
 
 
@@ -109,20 +109,19 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 break;    
             default:
                 break;    
-
-        }
-        
+        }   
     }
 
     async function newGame(gameSetup: PreGameSetup) {
         console.log("NEW GAME", gameSetup);
 
         game = createGameFromSetup(gameSetup);
+        
         // game = createNewGame(gameSetup.playerCount);
         game = await apiNewGame(game);
 
         sendUpdate();
-        startListening();
+        // startListening();
     }
 
     async function loadGame(gameId: string) {
