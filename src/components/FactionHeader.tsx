@@ -7,6 +7,7 @@ import { GameModel} from "../models/Models";
 import { factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
 import { doPlayerDone } from "../services/commands/GameCommands";
 import { IconCommand, IconCredit, IconResearchPoint, IconScore } from "./Icons";
+import { Command } from "../models/Commands";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
@@ -155,6 +156,8 @@ const FactionHeader: FC = () => {
         fontFamily: faction.style.fontFamily ? faction.style.fontFamily : "Arial"
     }
 
+    const uncompletedCommands = commands.filter((cmd: Command) => cmd.completed === false)
+
     return (
         <div className={classes.root} style={{background: `linear-gradient(190deg, #222 0, ${faction.color} 10%,  white 50%, white 80%, gray 100%)`}}>
         
@@ -174,7 +177,7 @@ const FactionHeader: FC = () => {
             </div>
             <div>
                 <div className="singleView">
-                    <IconCommand size="xl" wrapper="light" /> <b>{commands.length}</b> <span>/ {values.maxCommands}</span>
+                    <IconCommand size="xl" wrapper="light" /> <b>{uncompletedCommands.length}</b> <span>/ {values.maxCommands}</span>
                 </div>
             </div>
             <div>

@@ -87,8 +87,8 @@ export function factionCanDoMoreCommands(game: GameModel, commands: Command[], f
     // const game = joki.service.getState("GameService") as GameModel;
     const values = factionValues(game, faction.id);
     // const commands = joki.service.getState("CommandService") as Command[];
-    const myCommands = commands.filter((cm: Command) => cm.factionId === faction.id);
-    return myCommands.length < values.maxCommands;
+    const myCurrentCommands = commands.filter((cm: Command) => cm.factionId === faction.id && cm.completed === false);
+    return myCurrentCommands.length < values.maxCommands;
 }
 
 

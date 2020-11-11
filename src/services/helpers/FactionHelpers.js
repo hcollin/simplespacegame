@@ -7,6 +7,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
+exports.getFactionShips = exports.factionCanDoMoreCommands = exports.getFactionByUserId = exports.getFactionFromArrayById = exports.createNewFaction = exports.getFactionName = exports.randomFactionName = exports.getColors = exports.getFactionFonts = void 0;
 var configs_1 = require("../../configs");
 var dataShips_1 = require("../../data/dataShips");
 var dataUser_1 = require("../../data/dataUser.");
@@ -79,8 +80,8 @@ function factionCanDoMoreCommands(game, commands, faction) {
     // const game = joki.service.getState("GameService") as GameModel;
     var values = factionUtils_1.factionValues(game, faction.id);
     // const commands = joki.service.getState("CommandService") as Command[];
-    var myCommands = commands.filter(function (cm) { return cm.factionId === faction.id; });
-    return myCommands.length < values.maxCommands;
+    var myCurrentCommands = commands.filter(function (cm) { return cm.factionId === faction.id && cm.completed === false; });
+    return myCurrentCommands.length < values.maxCommands;
 }
 exports.factionCanDoMoreCommands = factionCanDoMoreCommands;
 function getFactionShips(factionId) {

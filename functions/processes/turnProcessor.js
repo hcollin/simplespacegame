@@ -54,6 +54,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
+exports.damagePotential = exports.getHitChance = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatMain = exports.processTurn = void 0;
 var dataTechnology_1 = require("../../src/data/dataTechnology");
 var Commands_1 = require("../../src/models/Commands");
 var Models_1 = require("../../src/models/Models");
@@ -74,6 +75,7 @@ function processTurn(origGame, commands) {
                 sm.reports = [];
                 return sm;
             });
+            console.log("START TURN PROCESSING!", game.name, game.turn);
             if (commands) {
                 game = processSystemCommands(commands, game);
                 game = processMovementCommands(commands, game);
@@ -101,7 +103,7 @@ function processTurn(origGame, commands) {
             game.state = Models_1.GameState.TURN;
             // await saveGame();
             // sendUpdate();
-            return [2 /*return*/, __assign({}, game)];
+            return [2 /*return*/, [__assign({}, game), __spreadArrays(commands || [])]];
         });
     });
 }
@@ -494,6 +496,8 @@ exports.spaceCombatAttackChooseTarget = spaceCombatAttackChooseTarget;
 function spaceCombatAttackShoot(game, combat, attacker, weapon, target) {
     var attackFaction = FactionHelpers_1.getFactionFromArrayById(game.factions, attacker.factionId);
     var targetFaction = FactionHelpers_1.getFactionFromArrayById(game.factions, target.factionId);
+    if (!attackFaction || !targetFaction)
+        return combat;
     var hitChance = getHitChance(attackFaction, weapon, attacker, target); //50 + weapon.accuracy - target.agility;
     var hitRoll = randUtils_1.rnd(1, 100);
     if (hitRoll <= hitChance) {

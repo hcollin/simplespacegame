@@ -55,7 +55,11 @@ exports.playerReady = functions.https.onCall((data: PlayerReadyData, context: an
                 const cmd = commands[i];
                 cmd.turn = game.turn;
                 cmd.factionId = factionId;
+                
+                console.log("COMMAND TO BE ADDED:", cmd);
                 const docRef = await db.collection("Commands").add(cmd);
+                cmd.id = docRef.id;
+                await db.collection("Commands").doc(cmd.id).set({...cmd});
             }
 
             game.factionsReady.push(factionId);
@@ -102,31 +106,45 @@ async function runTurnProcessor(gameId: string) {
         return;
     }
 
-    if (game === null) {
+    if (game === null || !game) {
         return;
     }
-
 
     // Make sure all players are ready
     if (game.factionsReady.length !== game.factions.length) {
         console.warn("Not all player ready: ", gameId);
         return;
     }
-    
+
     game.state = GameState.PROCESSING;
     await db.collection("Games").doc(game.id).set({ ...game });
-    const turnCommands = commands.filter((cmd: Command) => game && cmd.turn === game.turn);
 
+    const turnCommands = commands.filter((cmd: Command) => {
+        if (!game) return false;
+        if (cmd.completed) return false;
+        if (cmd.turn <= game.turn) return true;
+    });
+    console.log(`${turnCommands.length} commands to be processed!`);
     try {
-        const newGame = await processTurn(game, turnCommands);
-        
-        console.log("new turn: ", newGame.turn, GameState[newGame.state]);
-        await db.collection("Games").doc(game.id).set({ ...game, state: GameState.TURN });
-        
+        const [newGame, comms] = await processTurn(game, turnCommands);
+
+        // console.log("new turn: ", newGame.turn, GameState[newGame.state]);
+        // console.log("commands done now", comms);
+
+        comms.forEach((cmd: Command) => {
+            
+            if(cmd.completed) {
+                console.log("STORE!", cmd);
+                db.collection("Commands").doc(cmd.id).set({ ...cmd });    
+            } 
+        });
+
+        await db.collection("Games").doc(newGame.id).set({ ...newGame });
+
         // newGame.state = GameState.CLEANUP;
         // await db.collection("Games").doc(newGame.id).set({...newGame});
-        
-        
+
+
     } catch (e) {
         console.error("FAILED TO PROCESS THE TURN", e);
     }

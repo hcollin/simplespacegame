@@ -15,7 +15,7 @@ import { getShipSpeed, getFactionAdjustedUnit, getFactionAdjustedWeapon } from "
 
 
 
-export async function processTurn(origGame: GameModel, commands?: Command[]) {
+export async function processTurn(origGame: GameModel, commands?: Command[]): Promise<[GameModel, Command[]]> {
     // if (origGame.state !== GameState.PROCESSING) return origGame;
 
     let game = { ...origGame };
@@ -26,6 +26,7 @@ export async function processTurn(origGame: GameModel, commands?: Command[]) {
     });
 
 
+    console.log("START TURN PROCESSING!", game.name, game.turn);
     if (commands) {
         game = processSystemCommands(commands, game);
         game = processMovementCommands(commands, game);
@@ -65,7 +66,7 @@ export async function processTurn(origGame: GameModel, commands?: Command[]) {
     // await saveGame();
 
     // sendUpdate();
-    return { ...game };
+    return [{ ...game }, [...commands || []]];
 }
 
 function processWinConditions(game: GameModel): GameModel {
@@ -564,6 +565,8 @@ export function spaceCombatAttackShoot(game: GameModel, combat: SpaceCombat, att
     const attackFaction = getFactionFromArrayById(game.factions, attacker.factionId);
     const targetFaction = getFactionFromArrayById(game.factions, target.factionId);
 
+    if(!attackFaction || !targetFaction) return combat;
+    
     const hitChance = getHitChance(attackFaction, weapon, attacker, target); //50 + weapon.accuracy - target.agility;
     const hitRoll = rnd(1, 100);
 

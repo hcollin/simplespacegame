@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.PLAYERCOUNTS = exports.FACTION_NAMES = exports.FACTION_FONTS = exports.FACTION_COLORS = exports.MAPDensities = exports.MAPSizes = void 0;
 // Possible colors for the faction
 var FACTION_COLORS = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4'];
 exports.FACTION_COLORS = FACTION_COLORS;

@@ -17,6 +17,12 @@ import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { getTechById } from "../utils/techUtils";
 import CheatView from "./CheatView";
 
+import CancelIcon from '@material-ui/icons/Cancel';
+
+import iconBuildSvg from '../images/iconUnderConstruction.svg';
+import iconCommandSvg from '../images/iconCommand.svg';
+
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         commands: {
@@ -58,13 +64,68 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         command: {
             color: "white",
-            margin: "0.5rem 0",
-            padding: "0 0.25rem",
+            padding: "0.5rem 0.5rem",
             display: "flex",
             zIndex: 110,
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
+            position: "relative",
+            borderTop: "solid 3px #0008",
+            borderBottom: "solid 3px #123B",
+            background: "linear-gradient(90deg, black 0,#0008 6px, #0008 2.5rem, #4688 2.75rem, #0128 3rem, #0124 90%, #0008 97%, #000 100%)",
+
+            "&.green": {
+                background: "linear-gradient(90deg, black 0,#0408 6px, #0508 1.5rem, #0408 2.5rem, #4688 2.75rem, #0128 3rem, #0124 90%, #0008 97%, #000 100%)",
+            },
+
+            "&.red": {
+                background: "linear-gradient(90deg, black 0,#4008 6px, #5008 1.5rem, #4008 2.5rem, #4688 2.75rem, #0128 3rem, #0124 90%, #0008 97%, #000 100%)",
+            },
+
+            "&.blue": {
+                background: "linear-gradient(90deg, black 0,#0048 6px, #0058 1.5rem, #0048 2.5rem, #4688 2.75rem, #0128 3rem, #0124 90%, #0008 97%, #000 100%)",
+            },
+
+            "&.gray": {
+                background: "linear-gradient(90deg, black 0,#2228 6px, #3338 1.5rem, #2228 2.5rem, #4688 2.75rem, #0128 3rem, #0124 90%, #0008 97%, #000 100%)",
+            },
+
+            "& > img.commandIcon": {
+                width: "1.7rem",
+                "&.lg": {
+                    width: "2.5rem",
+                    marginLeft: "-0.4rem",
+                }
+            },
+            "& > label": {
+                fontSize: "0.7rem",
+                textTransform: "uppercase",
+                position: "absolute",
+                top: 0,
+                left: "3.25rem",
+                right: 0,
+                height: "1rem",
+                background: "#0008",
+                color: "#FFFC",
+                fontWeight: "bold",
+                zIndex: 5,
+            },
+            "& > h2": {
+                position: "absolute",
+                top: "1rem",
+                left: "3.25rem",
+                right: 0,
+                fontSize: "1.1rem",
+                margin:0,
+                padding: 0,
+                zIndex: 5,
+            },
+
+            "& > .cancelButton": {
+                zIndex: 10,
+            }
+
         },
         faction: {
             position: "relative",
@@ -179,6 +240,8 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 
     const isReady = game.factionsReady.includes(faction.id);
 
+    
+
     return (
         <div className={classes.commands}>
             <h1>Commands</h1>
@@ -237,6 +300,7 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
     const cmd = props.command as SystemPlusCommand;
 
     let cmdText = "unknown";
+    let cmdIcon = iconCommandSvg;
     switch (cmd.type) {
         case CommandType.SystemDefense:
             cmdText = "Build defences";
@@ -256,15 +320,20 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
     const systemName = system ? system.name : cmd.targetSystem;
 
     return (
-        <div className={classes.command}>
-            {cmdText} in {systemName}{" "}
+        <div className={`${classes.command} gray`}>
+            <img src={iconBuildSvg} className="commandIcon lg" />
+            {/* <img src={cmdIcon} className="commandIcon" /> */}
+            <label>{cmdText}</label>
+            <h2>{systemName}</h2>
+        
             {!props.isReady && <Button
                 variant="contained"
                 color="secondary"
+                className="cancelButton"
                 onClick={() => removeCommand(cmd.id)}
                 disabled={props.game.turn !== cmd.turn}
             >
-                X
+                <CancelIcon />
             </Button>}
         </div>
     );
@@ -276,17 +345,22 @@ const FleetMoveCommandItem: FC<CommandProps> = (props) => {
     const system = getSystemByCoordinates(props.game, cmd.target);
     const systemName = system ? system.name : `coordinates ${cmd.target.x}, ${cmd.target.y}`;
     return (
-        <div className={classes.command}>
-            <p>
+        <div className={`${classes.command} blue`}>
+            <img src={iconCommandSvg} className="commandIcon" />
+            <label>Fleet Movement to</label>
+            <h2>{systemName}</h2>
+
+            {/* <p>
                 {cmd.unitIds.length} Units moving to {systemName}
-            </p>
+            </p> */}
             {!props.isReady && <Button
                 variant="contained"
                 color="secondary"
+                className="cancelButton"
                 onClick={() => removeCommand(cmd.id)}
                 disabled={props.game.turn !== cmd.turn}
             >
-                X
+                <CancelIcon />
             </Button>}
         </div>
     );
@@ -298,15 +372,21 @@ const SystemBuildCommandItem: FC<CommandProps> = (props) => {
     const system = getSystemByCoordinates(props.game, cmd.target);
     const systemName = system ? system.name : `coordinates ${cmd.target.x}, ${cmd.target.y}`;
     return (
-        <div className={classes.command}>
-            Build a {cmd.shipName} in {systemName}
+        <div className={`${classes.command} green`}>
+            <img src={iconBuildSvg} className="commandIcon lg" />
+            <label>Build Unit</label>
+            <h2>{cmd.shipName} in {systemName}</h2>
+            
+
+            
             {!props.isReady && <Button
                 variant="contained"
                 color="secondary"
+                className="cancelButton"
                 onClick={() => removeCommand(cmd.id)}
                 disabled={props.game.turn !== cmd.turn}
             >
-                X
+                <CancelIcon />
             </Button>}
         </div>
     );
@@ -318,7 +398,7 @@ const ResearchCommandItem: FC<CommandProps> = (props) => {
     const tech = getTechById(cmd.techId);
 
     return (
-        <div className={classes.command}>
+        <div className={`${classes.command} green`}>
             Research technology {tech.name}.
             {!props.isReady && <Button
                 variant="contained"
@@ -326,7 +406,7 @@ const ResearchCommandItem: FC<CommandProps> = (props) => {
                 onClick={() => removeCommand(cmd.id)}
                 disabled={props.game.turn !== cmd.turn}
             >
-                X
+                <CancelIcon />
             </Button>}
         </div>
     );

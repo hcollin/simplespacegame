@@ -71,7 +71,7 @@ exports.playerReady = functions.https.onCall(function (data, context) {
                         game = null;
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 10, , 11]);
+                        _a.trys.push([1, 11, , 12]);
                         return [4 /*yield*/, db.collection("Games").doc(data.gameId).get()];
                     case 2:
                         gameRef = _a.sent();
@@ -86,33 +86,38 @@ exports.playerReady = functions.https.onCall(function (data, context) {
                         i = 0;
                         _a.label = 3;
                     case 3:
-                        if (!(i < commands.length)) return [3 /*break*/, 6];
+                        if (!(i < commands.length)) return [3 /*break*/, 7];
                         cmd = commands[i];
                         cmd.turn = game.turn;
                         cmd.factionId = factionId;
+                        console.log("COMMAND TO BE ADDED:", cmd);
                         return [4 /*yield*/, db.collection("Commands").add(cmd)];
                     case 4:
                         docRef = _a.sent();
-                        _a.label = 5;
+                        cmd.id = docRef.id;
+                        return [4 /*yield*/, db.collection("Commands").doc(cmd.id).set(__assign({}, cmd))];
                     case 5:
+                        _a.sent();
+                        _a.label = 6;
+                    case 6:
                         i++;
                         return [3 /*break*/, 3];
-                    case 6:
+                    case 7:
                         game.factionsReady.push(factionId);
                         return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign({}, game))];
-                    case 7:
-                        _a.sent();
-                        if (!(game.factionsReady.length === game.factions.length)) return [3 /*break*/, 9];
-                        return [4 /*yield*/, runTurnProcessor(game.id)];
                     case 8:
                         _a.sent();
-                        _a.label = 9;
-                    case 9: return [3 /*break*/, 11];
-                    case 10:
+                        if (!(game.factionsReady.length === game.factions.length)) return [3 /*break*/, 10];
+                        return [4 /*yield*/, runTurnProcessor(game.id)];
+                    case 9:
+                        _a.sent();
+                        _a.label = 10;
+                    case 10: return [3 /*break*/, 12];
+                    case 11:
                         e_1 = _a.sent();
                         console.error("Could not load the game", gameId, e_1);
                         return [2 /*return*/];
-                    case 11: return [2 /*return*/];
+                    case 12: return [2 /*return*/];
                 }
             });
         });
@@ -127,33 +132,33 @@ exports.processTurn = functions.https.onCall(function (data, context) {
 });
 function runTurnProcessor(gameId) {
     return __awaiter(this, void 0, void 0, function () {
-        var game, commands, gameRef, cmdsSnap, e_2, turnCommands, newGame, e_3;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var game, commands, gameRef, cmdsSnap, e_2, turnCommands, _a, newGame, comms, e_3;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     game = null;
                     commands = [];
-                    _a.label = 1;
+                    _b.label = 1;
                 case 1:
-                    _a.trys.push([1, 4, , 5]);
+                    _b.trys.push([1, 4, , 5]);
                     return [4 /*yield*/, db.collection("Games").doc(gameId).get()];
                 case 2:
-                    gameRef = _a.sent();
+                    gameRef = _b.sent();
                     game = gameRef.data();
                     return [4 /*yield*/, db.collection("Commands").where("gameId", "==", gameId).get()];
                 case 3:
-                    cmdsSnap = _a.sent();
+                    cmdsSnap = _b.sent();
                     cmdsSnap.forEach(function (item) {
                         var cmd = item.data();
                         commands.push(cmd);
                     });
                     return [3 /*break*/, 5];
                 case 4:
-                    e_2 = _a.sent();
+                    e_2 = _b.sent();
                     console.error("Could not load the game", gameId, e_2);
                     return [2 /*return*/];
                 case 5:
-                    if (game === null) {
+                    if (game === null || !game) {
                         return [2 /*return*/];
                     }
                     // Make sure all players are ready
@@ -164,21 +169,36 @@ function runTurnProcessor(gameId) {
                     game.state = Models_1.GameState.PROCESSING;
                     return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign({}, game))];
                 case 6:
-                    _a.sent();
-                    turnCommands = commands.filter(function (cmd) { return game && cmd.turn === game.turn; });
-                    _a.label = 7;
+                    _b.sent();
+                    turnCommands = commands.filter(function (cmd) {
+                        if (!game)
+                            return false;
+                        if (cmd.completed)
+                            return false;
+                        if (cmd.turn <= game.turn)
+                            return true;
+                    });
+                    console.log(turnCommands.length + " commands to be processed!");
+                    _b.label = 7;
                 case 7:
-                    _a.trys.push([7, 10, , 11]);
+                    _b.trys.push([7, 10, , 11]);
                     return [4 /*yield*/, turnProcessor_1.processTurn(game, turnCommands)];
                 case 8:
-                    newGame = _a.sent();
-                    console.log("new turn: ", newGame.turn, Models_1.GameState[newGame.state]);
-                    return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign(__assign({}, game), { state: Models_1.GameState.TURN }))];
+                    _a = _b.sent(), newGame = _a[0], comms = _a[1];
+                    // console.log("new turn: ", newGame.turn, GameState[newGame.state]);
+                    // console.log("commands done now", comms);
+                    comms.forEach(function (cmd) {
+                        if (cmd.completed) {
+                            console.log("STORE!", cmd);
+                            db.collection("Commands").doc(cmd.id).set(__assign({}, cmd));
+                        }
+                    });
+                    return [4 /*yield*/, db.collection("Games").doc(newGame.id).set(__assign({}, newGame))];
                 case 9:
-                    _a.sent();
+                    _b.sent();
                     return [3 /*break*/, 11];
                 case 10:
-                    e_3 = _a.sent();
+                    e_3 = _b.sent();
                     console.error("FAILED TO PROCESS THE TURN", e_3);
                     return [3 /*break*/, 11];
                 case 11: return [2 /*return*/];
