@@ -1,16 +1,17 @@
 import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
+import { joki } from "jokits-react";
 import { fnPlayerReady, fnProcessTurn } from "../api/apiFunctions";
 import { apiLoadGame, apiNewGame, apiSubscribeToGame, apiUpdateGame } from "../api/apiGame";
 
 import { Command } from "../models/Commands";
 
-import { GameModel, FactionModel, GameState, PreGameSetup } from "../models/Models";
+import { GameModel, FactionModel, GameState, PreGameSetup, FactionSetup } from "../models/Models";
 
 import { User } from "../models/User";
 // import { techMarketing } from "../tech/businessTech";
 // import { rnd } from "../utils/randUtils";
 import { getFactionByUserId } from "./helpers/FactionHelpers";
-import { createGameFromSetup, randomGameName } from "./helpers/GameHelpers";
+import { createFactionFromSetup, createGameFromSetup, randomGameName, startGame } from "./helpers/GameHelpers";
 import { SERVICEID } from "./services";
 
 
@@ -18,24 +19,26 @@ export interface NewGameOptions {
     playerCount: number;
 }
 
+const EMPTYGAME: GameModel = {
+    id: "",
+    setup: {
+        playerCount: 0,
+        density: "",
+        distances: ""
+    },
+    name: "",
+    state: GameState.NONE,
+    turn: 0,
+    systems: [],
+    units: [],
+    factions: [],
+    factionsReady: [],
+    trades: [],
+    playerIds: [],
+}
+
 export default function createGameService(serviceId: string, api: JokiServiceApi): JokiService<GameModel> {
-    let game: GameModel = {
-        id: "",
-        setup: {
-            playerCount: 0,
-            density: "",
-            distances: ""
-        },
-        name: "",
-        state: GameState.NONE,
-        turn: 0,
-        systems: [],
-        units: [],
-        factions: [],
-        factionsReady: [],
-        trades: [],
-        playerIds: [],
-    };
+    let game: GameModel = {...EMPTYGAME};
 
     let unsub: null | (() => void) = null;
     // let game: GameModel = createNewGame();
@@ -57,6 +60,9 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                     break;
                 case "loadGame":
                     loadGame(event.data);
+                    break;
+                case "joinGame":
+                    joinGame(event.data);
                     break;
                 case "closeGame":
                     closeGame();
@@ -101,10 +107,11 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
     }
 
     async function closeGame() {
+        
         switch(game.state) {
             case GameState.OPEN:
             case GameState.INIT:
-                game.state = GameState.NONE;
+                game = {...EMPTYGAME};
                 sendUpdate();
                 break;    
             default:
@@ -124,16 +131,39 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         // startListening();
     }
 
+    async function joinGame(factionSetup: FactionSetup) {
+        const faction = createFactionFromSetup(factionSetup);
+        if(faction) {
+            game.factions.push(faction);
+            game.playerIds.push(factionSetup.playerId);
+            sendUpdate();
+            
+            if(game.factions.length === game.setup.playerCount) {
+                //START THE GAME
+                console.log("START GAME!", game);
+                game = startGame(game);
+            }
+            await apiUpdateGame(game);
+        }
+    }
+
     async function loadGame(gameId: string) {
-        console.log("LOAD GAME", gameId);
+        const user: User|null|undefined = api.api.getServiceState(SERVICEID.UserService);
+        if(!user) {
+            return;
+        }
 
         const res = await apiLoadGame(gameId);
         if (res) {
+            if(res.state >= GameState.TURN &&  !res.playerIds.includes(user.id)) {
+                return;
+            }
             game = res;
             sendUpdate();
             startListening();
         }
     }
+
 
     async function setGameState(st: GameState) {
         game.state = st;
@@ -155,6 +185,13 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         if (game.id !== "") {
             unsub = apiSubscribeToGame(game.id, (gm) => {
                 if (gm.id === game.id) {
+                    if(gm.state === GameState.TURN && game.state === GameState.PROCESSING) {
+                        api.api.trigger({
+                            from: SERVICEID.GameService,
+                            action: "CLEANUP",
+                            data: gm.turn,
+                        });
+                    }
                     game = gm;
                     sendUpdate();
                 }
@@ -190,10 +227,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
             const allCommands = api.api.getServiceState<Command[]>(SERVICEID.CommandService);
             if (allCommands) {
                 await fnPlayerReady(game.id, factionId, allCommands.filter((cmd: Command) => cmd.turn === game.turn && cmd.factionId === factionId));
-
             }
-
-
         }
     }
 

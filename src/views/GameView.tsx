@@ -125,21 +125,20 @@ const GameView: FC = () => {
 
     const [game] = useService<GameModel>("GameService");
 
-    const [user, send] = useCurrentUser();
+    // const [user, send] = useCurrentUser();
 
+    // useEffect(() => {
+    //     // if (game && !user && send !== undefined) {
 
-    useEffect(() => {
-        if (game && !user && send !== undefined) {
+    //     //     setTimeout(() => {
+    //     //         const faction = game.factions[0];
+    //     //         console.log("login as", faction.name, faction.playerId);
+    //     //         send("switch", game.factions[0].playerId);
+    //     //     }, 500);
 
-            setTimeout(() => {
-                const faction = game.factions[0];
-                console.log("login as", faction.name, faction.playerId);
-                send("switch", game.factions[0].playerId);
-            }, 500);
+    //     // }
 
-        }
-
-    }, [user, game, send]);
+    // }, [user, game, send]);
 
     if (!game) return null;
 

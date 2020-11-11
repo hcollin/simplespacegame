@@ -12,6 +12,7 @@ export default function createCommandService(serviceId: string, api: JokiService
     let commands: Command[] = [];
 
     let unsub: null | (() => void) = null;
+    let currentTurn: number = -1;
 
     function eventHandler(event: JokiEvent) {
         if (event.to === serviceId) {
@@ -27,6 +28,11 @@ export default function createCommandService(serviceId: string, api: JokiService
                 case "commandDone":
                     commandDone(event.data);
                     break;
+
+                case "clearCommands":
+                    commands = [];
+                    sendUpdate();
+                    break;
             }
         }
 
@@ -40,11 +46,22 @@ export default function createCommandService(serviceId: string, api: JokiService
 
         if (event.from === SERVICEID.GameService && event.action === "playerDone") {
             // gameUnload();
-            playerDone(event.data)
+            playerDone(event.data);
         }
 
-        if (event.action === "nextTurn") {
-            clearCompletedCommands();
+        if (event.action === "CLEANUP") {
+            clearAllCommands();
+        }
+
+        if (event.from === SERVICEID.GameService && event.action === "ServiceStateUpdated") {
+            if (event.data) {
+                const g = event.data as GameModel;
+                if (currentTurn !== g.turn) {
+                    currentTurn = g.turn;
+                    commands = [];
+                    sendUpdate();
+                }
+            }
         }
     }
 
@@ -79,19 +96,17 @@ export default function createCommandService(serviceId: string, api: JokiService
     }
 
     function playerDone(game: GameModel) {
-        
         // Save all commands to Firebase
         const allSaved: Promise<Command>[] = [];
-        commands.forEach((cmd:  Command) => {
-            if(cmd)
-            cmd.id = "";
+        commands.forEach((cmd: Command) => {
+            if (cmd) cmd.id = "";
             allSaved.push(apiNewCommand(cmd));
         });
 
         Promise.all(allSaved).then((cmds: Command[]) => {
             console.log("Commands Saved!", cmds);
 
-            if(game.factionsReady.length === game.factions.length) {    
+            if (game.factionsReady.length === game.factions.length) {
                 loadAllCommandsForProcessing(game.id, game.turn);
             }
         });
@@ -99,8 +114,7 @@ export default function createCommandService(serviceId: string, api: JokiService
 
     async function loadAllCommandsForProcessing(gameId: string, turn: number) {
         const allCommands = await apiLoadCommands(gameId);
-        if(allCommands) {
-            
+        if (allCommands) {
             commands = allCommands.filter((cmd: Command) => cmd.turn === turn);
             console.log("All by turn Commands", allCommands, commands);
             joki.trigger({
@@ -113,6 +127,11 @@ export default function createCommandService(serviceId: string, api: JokiService
 
     function clearCompletedCommands() {
         commands = commands.filter((cmd: Command) => cmd.completed === false);
+        sendUpdate();
+    }
+
+    function clearAllCommands() {
+        commands = [];
         sendUpdate();
     }
 

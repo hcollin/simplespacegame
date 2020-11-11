@@ -11,7 +11,6 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.getDesignByName = exports.createShipFromDesign = exports.unitIsMoving = void 0;
 var uuid_1 = require("uuid");
 var dataShips_1 = require("../../data/dataShips");
 var Commands_1 = require("../../models/Commands");

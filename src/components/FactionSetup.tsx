@@ -2,7 +2,7 @@ import { makeStyles, Theme, createStyles, TextField, Select, MenuItem, Button, B
 import InputLabel from "@material-ui/core/InputLabel/InputLabel";
 import React, { FC, useEffect, useState } from "react";
 import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../configs";
-import { FactionSetup } from "../models/Models";
+import { FactionModel, FactionSetup } from "../models/Models";
 import { randomFactionName } from "../services/helpers/FactionHelpers";
 import { arnd, rnd } from "../utils/randUtils";
 import CasinoIcon from "@material-ui/icons/Casino";
@@ -69,6 +69,9 @@ const useStyles = makeStyles((theme: Theme) =>
                             border: "solid 2px #0008",
                             background: "#BDFA",
                         },
+                        "&.taken": {
+                            opacity: 0.25,
+                        },
                     },
                     "& >div.pageing": {
                         flex: "1 1 auto",
@@ -112,12 +115,19 @@ const useStyles = makeStyles((theme: Theme) =>
                             height: "4rem",
                             margin: "0.25rem",
                         },
+                        "&.taken": {
+                            opacity: 0.75,
+                            width: "2rem",
+                            height: "2rem",
+                            margin: "1.25rem",
+                            
+                        }
                     },
                 },
 
                 "& h1": {
                     fontWeight: "normal",
-                    fontSize: "2rem",
+                    fontSize: "3rem",
                     lineHeight: "5rem",
                     padding: 0,
                     margin: 0,
@@ -128,38 +138,41 @@ const useStyles = makeStyles((theme: Theme) =>
                     fontSize: "0.8rem",
                     fontWeight: "bold",
                     margin: "1rem 0",
-
-                }
+                },
             },
         },
     })
 );
 
-
 interface Props {
     setup?: FactionSetup;
     onChange: (setup: FactionSetup) => void;
+    factions: FactionModel[];
 }
 
 const FactionSetupView: FC<Props> = (props) => {
     const classes = useStyles();
 
-    const [setup, setSetup] = useState<FactionSetup>(props.setup || {
-        name: randomFactionName(),
-        color: arnd(FACTION_COLORS),
-        fontFamily: arnd(FACTION_FONTS),
-        iconFileName: "abstract-001.svg",
-        playerId: ""
-    });
+    const [setup, setSetup] = useState<FactionSetup>(
+        props.setup || {
+            name: randomFactionName(),
+            color: arnd(FACTION_COLORS),
+            fontFamily: arnd(FACTION_FONTS),
+            iconFileName: "abstract-001.svg",
+            playerId: "",
+        }
+    );
+
+    const [valid, setValid] = useState<boolean>(true);
 
     const [iconIndex, setIconIndex] = useState<number>(1);
     const [user] = useCurrentUser();
 
     useEffect(() => {
-        if(user) {
+        if (user) {
             setSetup((prev: FactionSetup) => {
-                if(prev.playerId !== user.id) {
-                    return {...prev, playerId: user.id};
+                if (prev.playerId !== user.id) {
+                    return { ...prev, playerId: user.id };
                 }
                 return prev;
             });
@@ -167,15 +180,19 @@ const FactionSetupView: FC<Props> = (props) => {
     }, [user]);
 
     useEffect(() => {
-        props.onChange(setup);
-    }, [setup])
-
+        if (valid) {
+            props.onChange(setup);
+        }
+    }, [setup, valid, props.factions]);
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSetup((prev: FactionSetup) => {
-            prev.name = event.target.value;
-            return { ...prev };
-        });
+        const valid = props.factions.find((fm: FactionModel) => fm.name === event.target.value) === undefined;
+        if (valid) {
+            setSetup((prev: FactionSetup) => {
+                prev.name = event.target.value;
+                return { ...prev };
+            });
+        }
     };
 
     const handleFontChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -186,17 +203,23 @@ const FactionSetupView: FC<Props> = (props) => {
     };
 
     const handleChangeIcon = (iconFn: string) => {
-        setSetup((prev: FactionSetup) => {
-            prev.iconFileName = iconFn;
-            return { ...prev };
-        });
+        const valid = props.factions.find((fm: FactionModel) => fm.iconFileName === iconFn) === undefined;
+        if (valid) {
+            setSetup((prev: FactionSetup) => {
+                prev.iconFileName = iconFn;
+                return { ...prev };
+            });
+        }
     };
 
     const handleChangeColor = (color: string) => {
-        setSetup((prev: FactionSetup) => {
-            prev.color = color;
-            return { ...prev };
-        });
+        const validColor = props.factions.find((fm: FactionModel) => fm.color === color) === undefined;
+        if (validColor) {
+            setSetup((prev: FactionSetup) => {
+                prev.color = color;
+                return { ...prev };
+            });
+        }
     };
 
     function randomName() {
@@ -207,17 +230,16 @@ const FactionSetupView: FC<Props> = (props) => {
     }
 
     function randomFaction() {
-        if(user) {
+        if (user) {
             const newSetup: FactionSetup = {
                 name: `${arnd(FACTION_NAMES[0])} ${arnd(FACTION_NAMES[1])} ${arnd(FACTION_NAMES[2])}`,
                 color: arnd(FACTION_COLORS),
                 fontFamily: arnd(FACTION_FONTS),
                 iconFileName: `abstract-${String(rnd(1, 120)).padStart(3, "0")}.svg`,
-                playerId: user.id
+                playerId: user.id,
             };
             setSetup(newSetup);
         }
-        
     }
 
     const icons: string[] = [];
@@ -229,27 +251,32 @@ const FactionSetupView: FC<Props> = (props) => {
         <div className={classes.root}>
             <header className="row">
                 <h2>Faction setup</h2>
-                <RandomizeButton variant="contained" color="primary" onClick={randomFaction} toolTip="Randomize Faction!" />
+                <RandomizeButton
+                    variant="contained"
+                    color="primary"
+                    onClick={randomFaction}
+                    toolTip="Randomize Faction!"
+                />
             </header>
 
             <div className="info">
                 <Grid container>
-                    <Grid lg={12}>
+                    <Grid item lg={12}>
                         <label>My faction</label>
                     </Grid>
-                    <Grid lg={1}>
+                    <Grid item lg={1}>
                         <div className="faction-icon" style={{ backgroundColor: setup.color }}>
                             <img src={require(`../images/symbols/${setup.iconFileName}`)} alt="Faction Icon" />
                         </div>
                     </Grid>
-                    <Grid lg={11}>
+                    <Grid item lg={11}>
                         <h1 style={{ fontFamily: setup.fontFamily }}>{setup.name}</h1>
                     </Grid>
                 </Grid>
             </div>
 
             <Grid container>
-                <Grid lg={6} spacing={8}>
+                <Grid item lg={6}>
                     <div className="info row">
                         <InputLabel>Faction Name</InputLabel>
                         <TextField value={setup.name} onChange={handleNameChange} fullWidth={true} />
@@ -270,28 +297,33 @@ const FactionSetupView: FC<Props> = (props) => {
                         <InputLabel id="faction-color-label">Color</InputLabel>
 
                         <div className="color-grid">
-                            {FACTION_COLORS.map((c: string) => (
-                                <div
-                                    className={`color-box ${setup.color === c ? "selected" : ""}`}
-                                    key={c}
-                                    style={{ backgroundColor: c }}
-                                    onClick={() => handleChangeColor(c)}
-                                />
-                            ))}
+                            {FACTION_COLORS.map((c: string) => {
+                                const available = props.factions.find((fm: FactionModel) => fm.color === c) === undefined;
+                                
+                                return (
+                                    <div
+                                        className={`color-box ${setup.color === c ? "selected" : ""} ${available ? "" : "taken"}`}
+                                        key={c}
+                                        style={{ backgroundColor: c }}
+                                        onClick={() => available ? handleChangeColor(c) : null}
+                                    />
+                                );
+                            })}
                         </div>
                     </div>
                 </Grid>
-                <Grid lg={6}>
+                <Grid item lg={6}>
                     <div className="info row">
                         <InputLabel id="faction-icon-label">Icon</InputLabel>
 
                         <div className="icon-grid">
                             {icons.map((fn: string) => {
+                                const available = props.factions.find((fm: FactionModel) => fm.iconFileName === fn) === undefined;
                                 return (
                                     <div
                                         key={fn}
-                                        className={`icon-container ${fn === setup.iconFileName ? "selected" : ""}`}
-                                        onClick={() => handleChangeIcon(fn)}
+                                        className={`icon-container ${fn === setup.iconFileName ? "selected" : ""} ${available ? "" : "taken"}`}
+                                        onClick={() => available ? handleChangeIcon(fn) : null}
                                     >
                                         <img src={require(`../images/symbols/${fn}`)} alt="Icon" />
                                     </div>
@@ -315,7 +347,7 @@ const FactionSetupView: FC<Props> = (props) => {
                                     onClick={() =>
                                         handleChangeIcon(`abstract-${String(rnd(1, 120)).padStart(3, "0")}.svg`)
                                     }
-                                    toolTip="Randomize faction icon" 
+                                    toolTip="Randomize faction icon"
                                 />
 
                                 <Button

@@ -7,7 +7,6 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-exports.shuffle = exports.reps = exports.grnd = exports.roll = exports.fnreps = exports.arnds = exports.arnd = exports.prnd = exports.rnd = void 0;
 /**
  * Return a random integer number between two provided values
  *

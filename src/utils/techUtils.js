@@ -11,7 +11,6 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.getTechById = exports.factionPaysForTech = exports.canAffordTech = void 0;
 var dataTechnology_1 = require("../data/dataTechnology");
 function canAffordTech(tech, faction) {
     var canAfford = true;

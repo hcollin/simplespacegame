@@ -1,5 +1,18 @@
 import { v4 } from "uuid";
-import { FactionModel, FactionSetup, FactionState, GameModel, GameSetup, GameState, PreGameSetup, SystemModel, TechnologyField } from "../../models/Models";
+import { MAPDensities, MAPSizes } from "../../configs";
+
+import {
+    Coordinates,
+    FactionModel,
+    FactionSetup,
+    FactionState,
+    GameModel,
+    GameSetup,
+    GameState,
+    PreGameSetup,
+    SystemModel,
+    TechnologyField,
+} from "../../models/Models";
 import { ShipUnit } from "../../models/Units";
 import { inSameLocation } from "../../utils/locationUtils";
 import { findClosestCoordinate } from "../../utils/MathUtils";
@@ -9,14 +22,29 @@ import { createNewFaction } from "./FactionHelpers";
 import { createRandomMap } from "./SystemHelpers";
 import { createShipFromDesign, getDesignByName } from "./UnitHelpers";
 
-const SIZES: number[] = [66, 99, 132];
-const DENSITIES: number[] = [10, 18, 24];
+
+export function getDensityMultiplier(density: string): number {
+    console.log(MAPDensities);
+    return density === "LOW" ? MAPDensities[0] : density === "HIGH" ? MAPDensities[2] : MAPDensities[1];
+}
+
+export function getDistanceMultiplier(distance: string): number {
+    return distance === "SHORT" ? MAPSizes[0] : distance === "LONG" ? MAPSizes[2] : MAPSizes[1];
+}
+
+export function getStarCount(density: string, distance: string, playerCount: number) {
+    const densityMultiplier = getDensityMultiplier(density);
+    const sizeCounter = getDistanceMultiplier(distance);
+    return playerCount * densityMultiplier * (sizeCounter/MAPSizes[1]);
+}
+
 
 export function createGameFromSetup(setup: PreGameSetup): GameModel {
-    const densityMultiplier =
-        setup.density === "LOW" ? DENSITIES[0] : setup.density === "DENSE" ? DENSITIES[2] : DENSITIES[1];
-    const sizeCounter = setup.distances === "SHORT" ? SIZES[0] : setup.distances === "LONG" ? SIZES[2] : SIZES[1];
-    const stars = createRandomMap(setup.playerCount * densityMultiplier, sizeCounter);
+    const densityMultiplier = getDensityMultiplier(setup.density);
+    const sizeCounter = getDistanceMultiplier(setup.distances);
+    const starCount = getStarCount(setup.density, setup.distances, setup.playerCount);
+    
+    const stars = createRandomMap(starCount, sizeCounter);
 
     const game: GameModel = {
         id: "",
@@ -35,80 +63,17 @@ export function createGameFromSetup(setup: PreGameSetup): GameModel {
         turn: 0,
         units: [],
     };
-    
+
     if (setup.autoJoin && setup.faction && setup.faction.playerId) {
         console.log(setup, setup.faction);
-        
+
         game.playerIds.push(setup.faction.playerId);
-        const fs = setup.faction as FactionSetup;
-                
-        const fm = createFactionFromSetup(setup.faction)
+
+        const fm = createFactionFromSetup(setup.faction);
         game.factions.push(fm);
-        
     }
 
     return game;
-}
-
-// 0 1 2
-// 3 4 5
-// 6 7 8
-
-export function setHomeSystems(game: GameModel): GameModel {
-    const size = game.setup.distances === "SHORT" ? SIZES[0] : game.setup.distances === "LONG" ? SIZES[2] : SIZES[1];
-    const slotSize = size / 3;
-
-    const slots: [number, number][] = [];
-    for (let x = 0; x < 3; x++) {
-        for (let y = 0; y < 3; y++) {
-            const sx = x * slotSize + slotSize / 2;
-            const sy = y * slotSize + slotSize / 2;
-            slots.push([sx, sy]);
-        }
-    }
-
-    let slotIndexes: number[] = [];
-    switch (game.setup.playerCount) {
-        case 4:
-            slotIndexes = shuffle([1, 3, 5, 7]);
-            break;
-        case 6:
-            slotIndexes = shuffle([0, 1, 2, 6, 7, 8]);
-            break;
-        case 8:
-            slotIndexes = shuffle([0, 1, 2, 3, 4, 6, 7, 8]);
-            break;
-    }
-
-    const starLocs = game.systems.filter((s: SystemModel) => s.ringWorld !== true).map((s: SystemModel) => s.location);
-
-    const units: ShipUnit[] = [];
-    const homeSystems: SystemModel[] = [];
-    game.factions.forEach((fm: FactionModel, index: number) => {
-        const slot = slots[slotIndexes[index]];
-        const closestCoord = findClosestCoordinate(starLocs, { x: slot[0], y: slot[1] });
-        const star = game.systems.find((s: SystemModel) => inSameLocation(s.location, closestCoord));
-        if (star) {
-            star.ownerFactionId = fm.id;
-            star.welfare = 2;
-            star.industry = 2;
-            star.economy = 2;
-            star.defense = 0;
-            star.keywords.push("HOMEWORLD");
-            const unit = createShipFromDesign(getDesignByName("Corvette"), fm.id, star.location);
-            units.push(unit);
-            homeSystems.push(star);
-        }
-    });
-
-
-    game.systems = game.systems.map((sm: SystemModel) => {
-        const homeSystem = homeSystems.find((hm: SystemModel) => hm.id === sm.id);
-        return homeSystem ? homeSystem : sm;
-    });
-    game.units = units;
-
-    return { ...game };
 }
 
 export function createNewGame(playerCount = 4): GameModel {
@@ -192,20 +157,53 @@ export function randomGameName(): string {
     return `${arnd(gn1)} ${arnd(gn2)}`;
 }
 
+export function startGame(game: GameModel): GameModel {
+    // Find and set homesystem for each faction
+    const coords = shuffle(homeSystemPositionsByPlayerCount[game.setup.playerCount]);
 
+    const homeSystems: SystemModel[] = [];
+    const units: ShipUnit[] = [];
+    const densityMultiplier = getDensityMultiplier(game.setup.density);
+    const sizeCounter = getDistanceMultiplier(game.setup.distances);
+    const starLocs = game.systems.filter((s: SystemModel) => s.ringWorld !== true).map((s: SystemModel) => s.location);
+    
+    game.factions.forEach((fm: FactionModel, index: number) => {
+        const targetCoord: Coordinates  = {
+            x: coords[index][0] * sizeCounter,
+            y: coords[index][1] * sizeCounter,
+        }
+        const closestCoord = findClosestCoordinate(starLocs, targetCoord);
+        const star = game.systems.find((s: SystemModel) => inSameLocation(s.location, closestCoord));
+        if(star) {
+            star.ownerFactionId = fm.id;
+            star.welfare = 2;
+            star.industry = 2;
+            star.economy = 2;
+            star.defense = 0;
+            star.keywords.push("HOMEWORLD");
+            const unit = createShipFromDesign(getDesignByName("Corvette"), fm.id, star.location);
+            units.push(unit);
+            homeSystems.push(star);
+        }
+    });
+    game.systems = game.systems.map((sm: SystemModel) => {
+        const hm = homeSystems.find((hm: SystemModel) => hm.id === sm.id);
+        return hm ? hm : sm;
+    });
+    return {...game, units: units, state: GameState.TURN, turn: 1};
+}
 
 export function createFactionFromSetup(setup: FactionSetup): FactionModel {
-    
     const fm: FactionModel = {
         id: v4(),
         money: 3,
         technologyFields: [
-            {field: TechnologyField.BIOLOGY, points: 0, priority: 0},
-            {field: TechnologyField.SOCIOLOGY, points: 0, priority: 0},
-            {field: TechnologyField.BUSINESS, points: 0, priority: 0},
-            {field: TechnologyField.INFORMATION, points: 0, priority: 0},
-            {field: TechnologyField.CHEMISTRY, points: 0, priority: 0},
-            {field: TechnologyField.PHYSICS, points: 0, priority: 0},
+            { field: TechnologyField.BIOLOGY, points: 0, priority: 0 },
+            { field: TechnologyField.SOCIOLOGY, points: 0, priority: 0 },
+            { field: TechnologyField.BUSINESS, points: 0, priority: 0 },
+            { field: TechnologyField.INFORMATION, points: 0, priority: 0 },
+            { field: TechnologyField.CHEMISTRY, points: 0, priority: 0 },
+            { field: TechnologyField.PHYSICS, points: 0, priority: 0 },
         ],
         state: FactionState.PLAYING,
         name: setup.name,
@@ -221,3 +219,64 @@ export function createFactionFromSetup(setup: FactionSetup): FactionModel {
     return fm;
 }
 
+const homeSystemPositionsByPlayerCount: [number, number][][] = [
+    [],
+    [[0.5, 0.5]],
+    [
+        [0.3, 0.3],
+        [0.7, 0.7],
+    ],
+    [
+        [0.25, 0.3],
+        [0.75, 0.3],
+        [0.5, 0.733],
+    ],
+    [
+        [0.25, 0.25],
+        [0.75, 0.25],
+        [0.75, 0.75],
+        [0.25, 0.75],
+    ],
+    [
+        [0.5, 0.2],
+        [0.15, 0.4],
+        [0.85, 0.4],
+        [0.25, 0.8],
+        [0.75, 0.8],
+    ],
+    [
+        [0.5, 0.15],
+        [0.5, 0.85],
+        [0.15, 0.25],
+        [0.85, 0.25],
+        [0.15, 0.75],
+        [0.85, 0.75],
+    ],
+    [
+        [0.5, 0.15],
+        [0.5, 0.85],
+        [0.15, 0.25],
+        [0.85, 0.25],
+        [0.15, 0.75],
+        [0.85, 0.75],
+    ],
+    [
+        [0.5, 0.075],
+        [0.875, 0.225],
+        [0.125, 0.225],
+        [0.05, 0.625],
+        [0.95, 0.625],
+        [0.3, 0.925],
+        [0.7, 0.925],
+    ],
+    [
+        [0.325, 0.05],
+        [1 - 0.325, 0.05],
+        [0.075, 0.325],
+        [1 - 0.075, 0.325],
+        [0.075, 0.675],
+        [1 - 0.075, 0.675],
+        [0.325, 0.95],
+        [1- 0.325, 0.95],
+    ]
+];

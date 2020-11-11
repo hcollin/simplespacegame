@@ -41,9 +41,10 @@ export function createNewSystem(ax = 1, ay = 1, as = 99): SystemModel {
 export function createRandomMap(starCount: number, size=99): SystemModel[] {
     const stars: SystemModel[] = [];
 
-    const c = starCount / 10;
+    const c = Math.round(starCount / 10);
     const p = size / 3;
 
+    // [x, y, size, star count]
     const ar: [number, number, number, number][] = [
         [1, 1, p-1, c], [p, 1, p-1, c * 2], [p*2, 1, p-1, c * 3],
         [1, p, p-1, c * 4], [p, p, p-1, c * 6], [p*2, p, p-1, c * 7],
@@ -52,7 +53,6 @@ export function createRandomMap(starCount: number, size=99): SystemModel[] {
 
     let confIndex = 0;
     let conf = ar[confIndex];
-
 
     while (stars.length < starCount) {
 
@@ -73,38 +73,38 @@ export function createRandomMap(starCount: number, size=99): SystemModel[] {
         }
     }
 
-    const st = 11;
+    // const st = 11;
 
-    const ringWorldAreas: [number, number, number, number][] = [
-        [st, st, st, c], [st*4, st, st, c * 2], [st*7, st, st, c * 3],
-        [st, st*4, st, c * 4], [st*4, st*4, st, c * 6], [st*7, st*4, st, c * 7],
-        [st, st*7, st, c * 8], [st*4, st*7, st, c * 9], [st*7, st*7, st, starCount],
-    ];
+    // const ringWorldAreas: [number, number, number, number][] = [
+    //     [st, st, st, c], [st*4, st, st, c * 2], [st*7, st, st, c * 3],
+    //     [st, st*4, st, c * 4], [st*4, st*4, st, c * 6], [st*7, st*4, st, c * 7],
+    //     [st, st*7, st, c * 8], [st*4, st*7, st, c * 9], [st*7, st*7, st, starCount],
+    // ];
 
-    ringWorldAreas.forEach((conf: [number, number, number, number], ind: number) => {
+    // ringWorldAreas.forEach((conf: [number, number, number, number], ind: number) => {
 
-        function createRingWorld(conf: [number, number, number, number], currentStars: SystemModel[]): boolean {
-            const star = createNewSystem(conf[0], conf[1], conf[2]);
+    //     function createRingWorld(conf: [number, number, number, number], currentStars: SystemModel[]): boolean {
+    //         const star = createNewSystem(conf[0], conf[1], conf[2]);
 
-            star.ringWorld = true;
+    //         star.ringWorld = true;
 
-            if (
-                currentStars.findIndex(
-                    (sm: SystemModel) =>
-                        (sm.location.x === star.location.x && sm.location.y === star.location.y) || sm.name === star.name
-                ) === -1
-            ) {
-                currentStars.push(star);
-                return true;
-            }
-            return false;
-        }
+    //         if (
+    //             currentStars.findIndex(
+    //                 (sm: SystemModel) =>
+    //                     (sm.location.x === star.location.x && sm.location.y === star.location.y) || sm.name === star.name
+    //             ) === -1
+    //         ) {
+    //             currentStars.push(star);
+    //             return true;
+    //         }
+    //         return false;
+    //     }
 
-        while(createRingWorld(conf, stars) === false) {
+    //     while(createRingWorld(conf, stars) === false) {
 
-        }
+    //     }
 
-    })
+    // })
 
 
     return stars;

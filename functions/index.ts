@@ -1,11 +1,12 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-
-// MODELS
 import { GameModel, GameState } from '../src/models/Models';
 import { Command } from '../src/models/Commands';
 import { processTurn } from './processes/turnProcessor';
 
+
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+
+// MODELS
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -107,20 +108,25 @@ async function runTurnProcessor(gameId: string) {
 
 
     // Make sure all players are ready
-    // if (game.factionsReady.length !== game.factions.length) {
-    //     console.warn("Not all player ready: ", gameId);
-    //     return;
-    // }
-    console.log("Turn to process", game.turn);
+    if (game.factionsReady.length !== game.factions.length) {
+        console.warn("Not all player ready: ", gameId);
+        return;
+    }
+    
     game.state = GameState.PROCESSING;
     await db.collection("Games").doc(game.id).set({ ...game });
-    const turnCommands = commands.filter((cmd: Command) => cmd.turn === game.turn);
+    const turnCommands = commands.filter((cmd: Command) => game && cmd.turn === game.turn);
 
     try {
-        const newGame = await processTurn(game, commands);
+        const newGame = await processTurn(game, turnCommands);
+        
         console.log("new turn: ", newGame.turn, GameState[newGame.state]);
-        newGame.state = GameState.TURN;
-        await db.collection("Games").doc(newGame.id).set(newGame);
+        await db.collection("Games").doc(game.id).set({ ...game, state: GameState.TURN });
+        
+        // newGame.state = GameState.CLEANUP;
+        // await db.collection("Games").doc(newGame.id).set({...newGame});
+        
+        
     } catch (e) {
         console.error("FAILED TO PROCESS THE TURN", e);
     }

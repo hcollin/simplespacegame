@@ -47,11 +47,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+var Models_1 = require("../src/models/Models");
+var turnProcessor_1 = require("./processes/turnProcessor");
 var functions = require('firebase-functions');
 var admin = require('firebase-admin');
 // MODELS
-var Models_1 = require("../src/models/Models");
-var turnProcessor_1 = require("./processes/turnProcessor");
 admin.initializeApp();
 var db = admin.firestore();
 /**
@@ -157,25 +157,23 @@ function runTurnProcessor(gameId) {
                         return [2 /*return*/];
                     }
                     // Make sure all players are ready
-                    // if (game.factionsReady.length !== game.factions.length) {
-                    //     console.warn("Not all player ready: ", gameId);
-                    //     return;
-                    // }
-                    console.log("Turn to process", game.turn);
+                    if (game.factionsReady.length !== game.factions.length) {
+                        console.warn("Not all player ready: ", gameId);
+                        return [2 /*return*/];
+                    }
                     game.state = Models_1.GameState.PROCESSING;
                     return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign({}, game))];
                 case 6:
                     _a.sent();
-                    turnCommands = commands.filter(function (cmd) { return cmd.turn === game.turn; });
+                    turnCommands = commands.filter(function (cmd) { return game && cmd.turn === game.turn; });
                     _a.label = 7;
                 case 7:
                     _a.trys.push([7, 10, , 11]);
-                    return [4 /*yield*/, turnProcessor_1.processTurn(game, commands)];
+                    return [4 /*yield*/, turnProcessor_1.processTurn(game, turnCommands)];
                 case 8:
                     newGame = _a.sent();
                     console.log("new turn: ", newGame.turn, Models_1.GameState[newGame.state]);
-                    newGame.state = Models_1.GameState.TURN;
-                    return [4 /*yield*/, db.collection("Games").doc(newGame.id).set(newGame)];
+                    return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign(__assign({}, game), { state: Models_1.GameState.TURN }))];
                 case 9:
                     _a.sent();
                     return [3 /*break*/, 11];

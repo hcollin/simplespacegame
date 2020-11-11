@@ -34,16 +34,22 @@ export function createChatService(serviceId: string, api: JokiServiceApi): JokiS
         gameUnload();
         gameId = gid;
 
-        if (gameId !== "") {
-            const faction = _getMyFaction();
+        
 
-            unsub = apiSubscribeToChat(gameId, (chatMsgs: ChatMessage[]) => {
-                msgs = chatMsgs.filter(
-                    (msg: ChatMessage) =>
-                        msg.from === faction.id || msg.to === faction.id || msg.to === GLOBALMESSAGEKEY
-                );
-                sendUpdate();
-            });
+        try {
+            if (gameId !== "") {
+                const faction = _getMyFaction();
+
+                unsub = apiSubscribeToChat(gameId, (chatMsgs: ChatMessage[]) => {
+                    msgs = chatMsgs.filter(
+                        (msg: ChatMessage) =>
+                            msg.from === faction.id || msg.to === faction.id || msg.to === GLOBALMESSAGEKEY
+                    );
+                    sendUpdate();
+                });
+            }
+        } catch (e) {
+            sendUpdate();
         }
     }
 
@@ -68,7 +74,6 @@ export function createChatService(serviceId: string, api: JokiServiceApi): JokiS
         });
 
         console.log("CHAT MESSAGE", chat);
-        
 
         // sendUpdate();
     }

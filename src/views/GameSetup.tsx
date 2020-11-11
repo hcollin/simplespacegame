@@ -9,16 +9,21 @@ import {
     InputLabel,
     Switch,
     FormControlLabel,
+    Grid,
 } from "@material-ui/core";
 import { useService } from "jokits-react";
 import React, { FC, useEffect, useState } from "react";
 import FactionSetupView from "../components/FactionSetup";
-import { FactionSetup, GameModel, GameState } from "../models/Models";
+import { FactionSetup, GameModel, GameState, SystemModel } from "../models/Models";
 import { doCloseCurrentGame, doCreateNewGame } from "../services/commands/GameCommands";
 import { SERVICEID } from "../services/services";
 
 import starfieldJpeg from "../images/starfield2.jpg";
 import MenuPageContainer from "../components/MenuPageContainer";
+import { getDensityMultiplier, getDistanceMultiplier, getStarCount } from "../services/helpers/GameHelpers";
+import { createRandomMap } from "../services/helpers/SystemHelpers";
+import MiniMap from "../components/MiniMap";
+import { PLAYERCOUNTS } from "../configs";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -100,6 +105,15 @@ const useStyles = makeStyles((theme: Theme) =>
 
             "& .field": {},
         },
+        column: {
+            "& > div": {
+                marginBottom: "2rem",
+                padding: "0.5rem",
+                "& > label": {
+                    margin: "0.5rem 0",
+                },
+            },
+        },
     })
 );
 
@@ -114,7 +128,9 @@ const GameSetup: FC = () => {
     const [distances, setDistances] = useState<string>("");
     const [autoJoin, setAutoJoin] = useState<boolean>(true);
 
-    const [factionSetup, setFactionSetup] = useState<FactionSetup|undefined>(undefined)
+    const [factionSetup, setFactionSetup] = useState<FactionSetup | undefined>(undefined);
+
+    const [exampleMap, setExampleMap] = useState<SystemModel[]>([]);
 
     useEffect(() => {
         if (game) {
@@ -122,7 +138,7 @@ const GameSetup: FC = () => {
                 if (prev === "") return game.name;
                 return prev;
             });
-            if (game.setup.playerCount === 4 || game.setup.playerCount === 8) {
+            if (game.setup.playerCount > 0 && game.setup.playerCount < 9) {
                 setPlCount(game.setup.playerCount);
             }
             setStarDensity((prev: string) => {
@@ -135,6 +151,16 @@ const GameSetup: FC = () => {
             });
         }
     }, [game]);
+
+    useEffect(() => {
+        if (distances !== "" && starDensity !== "" && plCount > 0) {
+            const densityMultiplier = getDensityMultiplier(starDensity);
+            const sizeCounter = getDistanceMultiplier(distances);
+            const starCount = getStarCount(starDensity, distances, plCount);
+            const rndMap = createRandomMap(starCount, sizeCounter);
+            setExampleMap(rndMap);
+        }
+    }, [distances, starDensity, plCount]);
 
     if (!game) return null;
 
@@ -163,58 +189,76 @@ const GameSetup: FC = () => {
         setFactionSetup(fs);
     }
 
-    function startGame() {}
-
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
     };
 
+    const denM = getDensityMultiplier(starDensity);
+    const distM = getDistanceMultiplier(distances);
+
     return (
         <MenuPageContainer title="Game Setup" backHandler={doCloseCurrentGame}>
-                <div className="actions">
-                    <Button variant="contained" color="primary">
-                        Random Game
-                    </Button>
-                    
-                    <Button variant="contained" color="primary" onClick={createGame}>
-                        Create Game
-                    </Button>
-                </div>
-                {/* <header className={classes.header}>
-                    <h1>Game Setup</h1>
-                    <div className="buttons">
-                        <Button variant="contained" onClick={newRandomGame}>
-                            Random Game
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={openGame}>
-                            Open Game
-                        </Button>
-                    </div>
-                </header> */}
+            <div className="actions">
+                <Button variant="contained" color="primary">
+                    Random Game
+                </Button>
 
-                <div className={classes.part}>
-                    
+                <Button variant="contained" color="primary" onClick={createGame}>
+                    Create Game
+                </Button>
+            </div>
 
-                    <h2>Basic Setup</h2>
+            <div className={classes.part}>
+                <h2>Basic Setup</h2>
 
-                    <div className="row">
+                <Grid container spacing={1}>
+                    <Grid item lg={3} className={classes.column}>
                         <div>
                             <InputLabel>Name of the Game</InputLabel>
                             <TextField value={name} variant="outlined" onChange={handleNameChange} />
                         </div>
-
                         <div>
                             <InputLabel>Player Count</InputLabel>
                             <ButtonGroup variant="contained">
+                                {PLAYERCOUNTS.map((plc: number) => {
+                                    return (
+                                        <Button
+                                        key={`playerCount-${plc}`}
+                                            onClick={() => setPlCount(plc)}
+                                            color={plCount === plc ? "primary" : "default"}
+                                        >
+                                            {plc}
+                                        </Button>
+                                    );
+                                })}
+{/* 
                                 <Button onClick={() => setPlCount(4)} color={plCount === 4 ? "primary" : "default"}>
                                     4
                                 </Button>
+                                <Button onClick={() => setPlCount(6)} color={plCount === 6 ? "primary" : "default"}>
+                                    6
+                                </Button>
                                 <Button onClick={() => setPlCount(8)} color={plCount === 8 ? "primary" : "default"}>
                                     8
-                                </Button>
+                                </Button> */}
                             </ButtonGroup>
                         </div>
-
+                        <div>
+                            <InputLabel>Auto Join</InputLabel>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={autoJoin}
+                                        onChange={() => setAutoJoin((prev: boolean) => !prev)}
+                                        color="primary"
+                                    />
+                                }
+                                label={autoJoin ? "Yes" : "No "}
+                                color="default"
+                            />
+                        </div>
+                    </Grid>
+                    <Grid item lg={3} className={classes.column}>
                         <div>
                             <InputLabel>Star Density</InputLabel>
                             <ButtonGroup variant="contained">
@@ -240,13 +284,13 @@ const GameSetup: FC = () => {
                         </div>
 
                         <div>
-                            <InputLabel>Distances</InputLabel>
+                            <InputLabel>Galaxy Size</InputLabel>
                             <ButtonGroup variant="contained">
                                 <Button
                                     onClick={() => setDistances("SHORT")}
                                     color={distances === "SHORT" ? "primary" : "default"}
                                 >
-                                    Short
+                                    Small
                                 </Button>
                                 <Button
                                     onClick={() => setDistances("MEDIUM")}
@@ -258,29 +302,26 @@ const GameSetup: FC = () => {
                                     onClick={() => setDistances("LONG")}
                                     color={distances === "LONG" ? "primary" : "default"}
                                 >
-                                    Long
+                                    Large
                                 </Button>
                             </ButtonGroup>
                         </div>
 
                         <div>
-                            <InputLabel>Auto Join</InputLabel>
-                            <FormControlLabel
-                                control={
-                                    <Switch
-                                        checked={autoJoin}
-                                        onChange={() => setAutoJoin((prev: boolean) => !prev)}
-                                        color="primary"
-                                    />
-                                }
-                                label={autoJoin ? "Yes" : "No "}
-                                color="default"
-                            />
+                            <h4>Map info</h4>
+                            <p>Star count {exampleMap.length}</p>
+                            <p>
+                                Map Size {distM}x{distM}
+                            </p>
                         </div>
-                    </div>
-                </div>
+                    </Grid>
+                    <Grid item lg={6} className={classes.column}>
+                        <MiniMap stars={exampleMap} size={distM * 2} distances={distM} />
+                    </Grid>
+                </Grid>
+            </div>
 
-                {autoJoin && <FactionSetupView onChange={setFaction} />}
+            {autoJoin && <FactionSetupView onChange={setFaction} factions={[]} />}
         </MenuPageContainer>
     );
 };

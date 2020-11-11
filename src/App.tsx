@@ -46,7 +46,9 @@ joki.service.add({
 joki.service.add({
   serviceId: SERVICEID.ChatService,
   service: createChatService,
-})
+});
+
+joki.config("env", process.env.NODE_ENV)
 
 startFirebase();
 

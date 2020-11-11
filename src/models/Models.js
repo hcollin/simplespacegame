@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.ReportType = exports.TechnologyField = exports.FactionState = exports.GameState = void 0;
 var GameState;
 (function (GameState) {
     GameState[GameState["NONE"] = 0] = "NONE";
@@ -8,7 +7,8 @@ var GameState;
     GameState[GameState["OPEN"] = 2] = "OPEN";
     GameState[GameState["TURN"] = 3] = "TURN";
     GameState[GameState["PROCESSING"] = 4] = "PROCESSING";
-    GameState[GameState["ENDED"] = 5] = "ENDED";
+    GameState[GameState["CLEANUP"] = 5] = "CLEANUP";
+    GameState[GameState["ENDED"] = 6] = "ENDED";
 })(GameState = exports.GameState || (exports.GameState = {}));
 var FactionState;
 (function (FactionState) {

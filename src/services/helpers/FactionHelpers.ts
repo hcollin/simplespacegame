@@ -1,24 +1,13 @@
-
-// import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../../configs";
-// import DATASHIPS from "../../data/dataShips";
-// // import { TECHIDS } from "../../data/dataTechnology";
-// import DATAUSERS from "../../data/dataUser.";
-// import { Command } from "../../models/Commands";
-// import { FactionModel, FactionSetup, FactionState, GameModel, TechnologyField } from "../../models/Models";
-// import { ShipDesign } from "../../models/Units";
-// import { factionValues } from "../../utils/factionUtils";
-// import { arnd, arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
-
 import { v4 } from "uuid";
-import { FACTION_COLORS, FACTION_NAMES, FACTION_FONTS } from "../../configs";
+import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../../configs";
 import DATASHIPS from "../../data/dataShips";
+
 import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
-import { FactionModel, TechnologyField, FactionState, GameModel, FactionSetup } from "../../models/Models";
+import { FactionModel, FactionSetup, FactionState, GameModel, TechnologyField } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
 import { factionValues } from "../../utils/factionUtils";
-import { shuffle, arnds, arnd, rnd, prnd } from "../../utils/randUtils";
-
+import { arnd, arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
 
 const factionColors = shuffle(FACTION_COLORS);
 
@@ -36,38 +25,10 @@ const players = [...DATAUSERS];
 
 const factionFonts: string[] = shuffle(FACTION_FONTS);
 
-// export function crFckFrmStp(setup: FactionSetup): FactionModel {
-
-//     const fm: FactionModel = {
-//         id: v4(),
-//         money: 3,
-//         technologyFields: [
-//             { field: TechnologyField.BIOLOGY, points: 0, priority: 0 },
-//             { field: TechnologyField.SOCIOLOGY, points: 0, priority: 0 },
-//             { field: TechnologyField.BUSINESS, points: 0, priority: 0 },
-//             { field: TechnologyField.INFORMATION, points: 0, priority: 0 },
-//             { field: TechnologyField.CHEMISTRY, points: 0, priority: 0 },
-//             { field: TechnologyField.PHYSICS, points: 0, priority: 0 },
-//         ],
-//         state: FactionState.PLAYING,
-//         name: setup.name,
-//         playerId: setup.playerId,
-//         color: setup.color,
-//         iconFileName: setup.iconFileName,
-//         style: {
-//             fontFamily: setup.fontFamily,
-//         },
-//         technology: [],
-//     };
-
-//     return fm;
-// }
-
-
-
 export function getFactionFonts(): string[] {
     return factionFonts;
 }
+
 
 export function getColors(): string[] {
     return factionColors;
@@ -85,23 +46,23 @@ export function getFactionName() {
 export function createNewFaction(): FactionModel {
     const pl = players.shift();
     const ff = factionFonts.shift();
-
+    
     const fm: FactionModel = {
         id: `faction-${rnd(1, 9999)}`,
         money: 3,
         technologyFields: [
-            { field: TechnologyField.BIOLOGY, points: 0, priority: 0 },
-            { field: TechnologyField.SOCIOLOGY, points: 0, priority: 0 },
-            { field: TechnologyField.BUSINESS, points: 0, priority: 0 },
-            { field: TechnologyField.INFORMATION, points: 0, priority: 0 },
-            { field: TechnologyField.CHEMISTRY, points: 0, priority: 0 },
-            { field: TechnologyField.PHYSICS, points: 0, priority: 0 },
+            {field: TechnologyField.BIOLOGY, points: 0, priority: 0},
+            {field: TechnologyField.SOCIOLOGY, points: 0, priority: 0},
+            {field: TechnologyField.BUSINESS, points: 0, priority: 0},
+            {field: TechnologyField.INFORMATION, points: 0, priority: 0},
+            {field: TechnologyField.CHEMISTRY, points: 0, priority: 0},
+            {field: TechnologyField.PHYSICS, points: 0, priority: 0},
         ],
         state: FactionState.PLAYING,
         name: getFactionName(),
         playerId: pl ? pl.id : "",
         color: factionColors.pop() || "#FFF",
-        iconFileName: `abstract-${prnd(1, 120)}.svg`,
+        iconFileName: `abstract-${prnd(1,120)}.svg`,
         style: {
             fontFamily: ff || "Arial",
         },
@@ -111,6 +72,7 @@ export function createNewFaction(): FactionModel {
 
     return fm;
 }
+
 
 export function getFactionFromArrayById(factions: FactionModel[], id: string): FactionModel | undefined {
     return factions.find((fm: FactionModel) => fm.id === id);

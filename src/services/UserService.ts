@@ -24,7 +24,12 @@ export default function createUserService(serviceId: string, api: JokiServiceApi
                     loginWithGoogle();
                     break;
                 case "loginAsDev":
-                    switchUser(DATAUSERS[0].id);
+                    if(typeof event.data === "number") {
+                        switchUser(DATAUSERS[event.data].id);
+                    } else {
+                        switchUser(DATAUSERS[0].id);
+                    }
+                    
                     break;
             }
         }

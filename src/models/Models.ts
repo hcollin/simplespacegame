@@ -11,6 +11,7 @@ export enum GameState {
     "OPEN",
     "TURN",
     "PROCESSING",
+    "CLEANUP",
     "ENDED",
 }
 

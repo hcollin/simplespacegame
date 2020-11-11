@@ -171,6 +171,10 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
         });
     }
 
+    function factionClickHandler(fm: FactionModel) {
+        
+    }
+
     if (!commands || !game || !faction) return null;
 
     const isReady = game.factionsReady.includes(faction.id);

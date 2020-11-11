@@ -1,13 +1,4 @@
 "use strict";
-// import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../../configs";
-// import DATASHIPS from "../../data/dataShips";
-// // import { TECHIDS } from "../../data/dataTechnology";
-// import DATAUSERS from "../../data/dataUser.";
-// import { Command } from "../../models/Commands";
-// import { FactionModel, FactionSetup, FactionState, GameModel, TechnologyField } from "../../models/Models";
-// import { ShipDesign } from "../../models/Units";
-// import { factionValues } from "../../utils/factionUtils";
-// import { arnd, arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -16,7 +7,6 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-exports.getFactionShips = exports.factionCanDoMoreCommands = exports.getFactionByUserId = exports.getFactionFromArrayById = exports.testFn = exports.createNewFaction = exports.getFactionName = exports.randomFactionName = exports.getColors = exports.getFactionFonts = void 0;
 var configs_1 = require("../../configs");
 var dataShips_1 = require("../../data/dataShips");
 var dataUser_1 = require("../../data/dataUser.");
@@ -33,30 +23,6 @@ var np3s = randUtils_1.arnds(factNamePart3, 12, true);
 var factionNoId = -1;
 var players = __spreadArrays(dataUser_1["default"]);
 var factionFonts = randUtils_1.shuffle(configs_1.FACTION_FONTS);
-// export function crFckFrmStp(setup: FactionSetup): FactionModel {
-//     const fm: FactionModel = {
-//         id: v4(),
-//         money: 3,
-//         technologyFields: [
-//             { field: TechnologyField.BIOLOGY, points: 0, priority: 0 },
-//             { field: TechnologyField.SOCIOLOGY, points: 0, priority: 0 },
-//             { field: TechnologyField.BUSINESS, points: 0, priority: 0 },
-//             { field: TechnologyField.INFORMATION, points: 0, priority: 0 },
-//             { field: TechnologyField.CHEMISTRY, points: 0, priority: 0 },
-//             { field: TechnologyField.PHYSICS, points: 0, priority: 0 },
-//         ],
-//         state: FactionState.PLAYING,
-//         name: setup.name,
-//         playerId: setup.playerId,
-//         color: setup.color,
-//         iconFileName: setup.iconFileName,
-//         style: {
-//             fontFamily: setup.fontFamily,
-//         },
-//         technology: [],
-//     };
-//     return fm;
-// }
 function getFactionFonts() {
     return factionFonts;
 }
@@ -101,33 +67,6 @@ function createNewFaction() {
     return fm;
 }
 exports.createNewFaction = createNewFaction;
-function testFn() {
-}
-exports.testFn = testFn;
-// export function createFactionFromSetup(setup: FactionSetup): FactionModel {
-//     const fm: FactionModel = {
-//         id: v4(),
-//         money: 3,
-//         technologyFields: [
-//             {field: TechnologyField.BIOLOGY, points: 0, priority: 0},
-//             {field: TechnologyField.SOCIOLOGY, points: 0, priority: 0},
-//             {field: TechnologyField.BUSINESS, points: 0, priority: 0},
-//             {field: TechnologyField.INFORMATION, points: 0, priority: 0},
-//             {field: TechnologyField.CHEMISTRY, points: 0, priority: 0},
-//             {field: TechnologyField.PHYSICS, points: 0, priority: 0},
-//         ],
-//         state: FactionState.PLAYING,
-//         name: setup.name,
-//         playerId: setup.playerId,
-//         color: setup.color,
-//         iconFileName: setup.iconFileName,
-//         style: {
-//             fontFamily: setup.fontFamily,
-//         },
-//         technology: [],
-//     };
-//     return fm;
-// }
 function getFactionFromArrayById(factions, id) {
     return factions.find(function (fm) { return fm.id === id; });
 }

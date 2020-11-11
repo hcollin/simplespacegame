@@ -6,6 +6,7 @@ import { GameModel, GameState } from "../models/Models";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import GameSetup from "./GameSetup";
 import GameView from "./GameView";
+import JoinGameView from "./JoinGame";
 import MenuPage from "./MenuPage";
 
 
@@ -43,11 +44,13 @@ const MainPage: FC = () => {
         return <MenuPage />
     }
 
-    console.log(game.state, GameState[game.state]);
+    // console.log(game.state, GameState[game.state]);
 
     switch(game.state) {
         case GameState.INIT:
-            return <GameSetup />
+            return <GameSetup />;
+        case GameState.OPEN:
+            return <JoinGameView />;
         case GameState.TURN:
         case GameState.PROCESSING:
             return <GameView />
