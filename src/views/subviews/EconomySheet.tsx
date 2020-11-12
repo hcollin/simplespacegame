@@ -75,7 +75,7 @@ const EconomySheet: FC = () => {
 
     const mySystems: SystemEconomy[] = game.systems.reduce((econ: SystemEconomy[], sm: SystemModel) => {
         if (sm.ownerFactionId === faction.id) {
-            econ.push(getSystemEconomy(sm));
+            econ.push(getSystemEconomy(sm, game));
         }
         return econ;
     }, []);

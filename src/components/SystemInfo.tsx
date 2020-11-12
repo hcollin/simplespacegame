@@ -12,7 +12,7 @@ import {
 
 import useMyCommands from "../hooks/useMyCommands";
 import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
-import { Report } from "../models/Models";
+import { GameModel, Report } from "../models/Models";
 import { inSameLocation } from "../utils/locationUtils";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
@@ -22,6 +22,9 @@ import DATASHIPS from "../data/dataShips";
 import ShipInfo from "./ShipInfo";
 import { ShipDesign } from "../models/Units";
 import { IconCredit, IconDefense, IconIndustry, IconUnderConstruction, IconWelfare } from "./Icons";
+import { getSystemEconomy } from "../utils/systemUtils";
+import { SERVICEID } from "../services/services";
+import { useService } from "jokits-react";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -126,10 +129,16 @@ const useStyles = makeStyles((theme: Theme) =>
                 "& > span": {
                     margin: 0,
                     padding: 0,
-                    fontSize: "1rem",
+                    fontSize: "1.4rem",
                     marginLeft: "0.5rem",
                     lineHeight: "1.8rem",
+                    color: "#8F8",
                 },
+                "& > small": {
+                    fontSize: "1.2rem",
+                    color: "#CCCC",
+                    marginLeft: "0.5rem"
+                }
             },
             "& > button": {
                 fontSize: "1.4rem",
@@ -270,12 +279,13 @@ const SystemInfo: FC = () => {
     const [star, setStar] = useSelectedSystem();
     const comms = useMyCommands();
     const [user] = useCurrentUser();
+    const [game] = useService<GameModel>(SERVICEID.GameService);
     const faction = useCurrentFaction();
     const userIsReady = useUserIsReady();
 
     const [tab, setTab] = useState<number>(0);
 
-    if (star === null || !user) return null;
+    if (star === null || !user || !faction || !game) return null;
 
     function changeTab(event: React.ChangeEvent<{}>, newValue: number) {
         setTab(newValue);
@@ -330,6 +340,8 @@ const SystemInfo: FC = () => {
     }
 
 
+    const sysEco = getSystemEconomy(star, game);
+    
 
     return (
         <div className={classes.root}>
@@ -356,11 +368,11 @@ const SystemInfo: FC = () => {
                 <div className={classes.value}>
                     <IconIndustry size="xl" wrapper="light" />
                     <h3>
-                        {star.industry} {comPlusInd > 0 && <span>+{comPlusInd}</span>}
+                        {star.industry} <small>/ {sysEco.industryMax}</small> {comPlusInd > 0 && <span>+{comPlusInd}</span>}
                     </h3>
 
                     {isMine && !userIsReady && (
-                        <Button variant="contained" color="primary" onClick={() => plusIndustry(star.id)}>
+                        <Button variant="contained" color="primary" onClick={() => plusIndustry(star.id)} disabled={star.industry + comPlusInd >= sysEco.industryMax}>
                             +
                         </Button>
                     )}
@@ -369,12 +381,12 @@ const SystemInfo: FC = () => {
                     <IconCredit size="xl" wrapper="light" />
 
                     <h3>
-                        {star.economy}
+                        {star.economy} <small>/ {sysEco.economyMax}</small> 
                         {comPlusEco > 0 && <span>+{comPlusEco}</span>}
                     </h3>
 
                     {isMine && !userIsReady && (
-                        <Button variant="contained" color="primary" onClick={() => plusEconomy(star.id)}>
+                        <Button variant="contained" color="primary" onClick={() => plusEconomy(star.id)} disabled={star.economy + comPlusEco >= sysEco.economyMax}>
                             +
                         </Button>
                     )}
@@ -382,11 +394,11 @@ const SystemInfo: FC = () => {
                 <div className={classes.value}>
                     <IconDefense size="xl" wrapper="light" />
                     <h3>
-                        {star.defense}
+                        {star.defense} <small>/ {sysEco.defenseMax}</small> 
                         {comPlusDef > 0 && <span>+{comPlusDef}</span>}
                     </h3>
                     {isMine && !userIsReady && star.defense < star.industry && (
-                        <Button variant="contained" color="primary" onClick={() => plusDefense(star.id)}>
+                        <Button variant="contained" color="primary" onClick={() => plusDefense(star.id)} disabled={star.defense + comPlusDef >= sysEco.defenseMax}>
                             +
                         </Button>
                     )}
@@ -394,11 +406,11 @@ const SystemInfo: FC = () => {
                 <div className={classes.value}>
                     <IconWelfare size="xl" wrapper="light" />
                     <h3>
-                        {star.welfare}
+                        {star.welfare} <small>/ {sysEco.welfareMax}</small> 
                         {comPlusWlf > 0 && <span>+{comPlusWlf}</span>}
                     </h3>
                     {isMine && !userIsReady && (
-                        <Button variant="contained" color="primary" onClick={() => plusWelfare(star.id)}>
+                        <Button variant="contained" color="primary" onClick={() => plusWelfare(star.id)} disabled={star.welfare + comPlusWlf >= sysEco.welfareMax}>
                             +
                         </Button>
                     )}
