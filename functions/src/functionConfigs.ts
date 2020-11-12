@@ -1,0 +1,7 @@
+
+
+const COMBAT_MAXROUNDS = 100;
+
+
+
+export { COMBAT_MAXROUNDS };

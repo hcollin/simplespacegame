@@ -7,6 +7,7 @@ import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import StarIcon from '@material-ui/icons/Star';
 import SpeedIcon from '@material-ui/icons/Speed';
+import { IconCredit, IconDefense, IconIndustry, IconWelfare } from "../../components/Icons";
 
 
 
@@ -50,15 +51,15 @@ const HelpView: FC = () => {
 
                 <p>Each system has 4 parameters: Industry, Economy, Defense and Welfare.</p>
                 
-                <h4><BuildIcon /> Industry</h4>
+                <h4><IconIndustry /> Industry</h4>
 
                 <p>Industry represents the infrastructure in the system to build. Larger ships require a larger industry to be built. Also Defense value can never be higher that the Industry.<br /><i>Cost per turn: 1 money per 2 industry after 3.</i></p>
 
-                <h4><MonetizationOnIcon /> Economy</h4> <p>Economy represents the strenght of the commerce in the System. Each point of economy will produce 1 money per turn.</p>
+                <h4><IconCredit /> Economy</h4> <p>Economy represents the strenght of the commerce in the System. Each point of economy will produce 1 money per turn.</p>
                 
-                <h4><SecurityIcon /> Defense</h4> <p>Defense represents the automated defence capability in the system. Each defense point counts as one weapon die for systems owner. If there are no defending ships in the system, these defences are ignored. <br /><i>Cost per turn: 1 money per defense point</i></p>
+                <h4><IconDefense /> Defense</h4> <p>Defense represents the automated defence capability in the system. Each defense point counts as one weapon die for systems owner. If there are no defending ships in the system, these defences are ignored. <br /><i>Cost per turn: 1 money per defense point</i></p>
 
-                <h4><PeopleAltIcon /> Welfare</h4><p>Welfare represents health and living standards of the people living in this system. For each 10 points of total welfare the faction has, it gains one additional command per turn. If the system has 5 welfare, another command is added to the pool. <br /><i>Cost per turn: 1 money per 2 walfare points over 3</i></p>
+                <h4><IconWelfare /> Welfare</h4><p>Welfare represents health and living standards of the people living in this system. For each 10 points of total welfare the faction has, it gains one additional command per turn. If the system has 5 welfare, another command is added to the pool. <br /><i>Cost per turn: 1 money per 2 walfare points over 3</i></p>
 
                 <h3>Research Points</h3>
 

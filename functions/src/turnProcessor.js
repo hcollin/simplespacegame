@@ -56,6 +56,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 exports.__esModule = true;
 exports.damagePotential = exports.getHitChance = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatMain = exports.processTurn = void 0;
 var dataTechnology_1 = require("./data/dataTechnology");
+var functionConfigs_1 = require("./functionConfigs");
 var Commands_1 = require("./models/Commands");
 var Models_1 = require("./models/Models");
 var factionUtils_1 = require("./utils/factionUtils");
@@ -359,6 +360,25 @@ function resolveCombat(game, origCombat) {
         return fids;
     }, new Set());
     var combat = spaceCombatMain(game, origCombat.units, origCombat.system);
+    var destroyedUnits = origCombat.units.filter(function (ou) {
+        var isAlive = combat.units.find(function (au) { return au.id === ou.id; });
+        if (!isAlive) {
+            return true;
+        }
+        return false;
+    }).map(function (u) { return u.id; });
+    game.units = game.units.reduce(function (units, unit) {
+        if (destroyedUnits.includes(unit.id))
+            return units;
+        var cunit = combat.units.find(function (au) { return au.id === unit.id; });
+        if (cunit) {
+            units.push(cunit);
+        }
+        else {
+            units.push(unit);
+        }
+        return units;
+    }, []);
     return addReportToSystem(game, origCombat.system, Models_1.ReportType.COMBAT, Array.from(factionIds), combat.log);
     // return updateSystemInGame(game, system);
 }
@@ -570,7 +590,7 @@ function spaceCombatRoundCleanUp(game, combat) {
     });
     if (combat.units.length === 0)
         combat.done = true;
-    if (combat.round >= 20) {
+    if (combat.round >= functionConfigs_1.COMBAT_MAXROUNDS) {
         combat.done = true;
     }
     return __assign({}, combat);

@@ -1,4 +1,5 @@
 import { DATATECHNOLOGY } from "./data/dataTechnology";
+import { COMBAT_MAXROUNDS } from "./functionConfigs";
 import { Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand, BuildUnitCommand } from "./models/Commands";
 import { Trade } from "./models/Communication";
 import { GameModel, GameState, SystemModel, FactionModel, FactionState, FactionTechSetting, Technology, ReportType, SpaceCombat, Coordinates } from "./models/Models";
@@ -384,6 +385,26 @@ function resolveCombat(game: GameModel, origCombat: SpaceCombat): GameModel {
 
     const combat = spaceCombatMain(game, origCombat.units, origCombat.system);
 
+    const destroyedUnits = origCombat.units.filter((ou: ShipUnit) => {
+        const isAlive = combat.units.find((au: ShipUnit) => au.id === ou.id);
+        if (!isAlive) {
+            return true;
+        }
+        return false;
+    }).map((u: ShipUnit) => u.id);
+
+    game.units = game.units.reduce((units: ShipUnit[], unit: ShipUnit) => {
+        if (destroyedUnits.includes(unit.id)) return units;
+        const cunit = combat.units.find((au: ShipUnit) => au.id === unit.id);
+        if (cunit) {
+            units.push(cunit);
+        } else {
+            units.push(unit);
+        }
+
+        return units;
+    }, []);
+
 
     return addReportToSystem(game, origCombat.system, ReportType.COMBAT, Array.from(factionIds), combat.log);
 
@@ -561,8 +582,8 @@ export function spaceCombatAttackShoot(game: GameModel, combat: SpaceCombat, att
     const attackFaction = getFactionFromArrayById(game.factions, attacker.factionId);
     const targetFaction = getFactionFromArrayById(game.factions, target.factionId);
 
-    if(!attackFaction || !targetFaction) return combat;
-    
+    if (!attackFaction || !targetFaction) return combat;
+
     const hitChance = getHitChance(attackFaction, weapon, attacker, target); //50 + weapon.accuracy - target.agility;
     const hitRoll = rnd(1, 100);
 
@@ -646,7 +667,7 @@ export function spaceCombatRoundCleanUp(game: GameModel, combat: SpaceCombat): S
     })
 
     if (combat.units.length === 0) combat.done = true;
-    if (combat.round >= 20) {
+    if (combat.round >= COMBAT_MAXROUNDS) {
         combat.done = true;
     }
     return { ...combat };
