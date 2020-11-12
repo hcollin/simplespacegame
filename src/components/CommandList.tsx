@@ -295,11 +295,11 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
     const faction = useCurrentFaction();
 
     function loginFaction(fm: FactionModel) {
-        joki.trigger({
-            to: "UserService",
-            action: "switch",
-            data: fm.playerId,
-        });
+        // joki.trigger({
+        //     to: "UserService",
+        //     action: "switch",
+        //     data: fm.playerId,
+        // });
     }
 
     function factionClickHandler(fm: FactionModel) {}

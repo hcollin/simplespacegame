@@ -153,7 +153,7 @@ const MenuPage: FC = () => {
                     <Button variant="contained" color="primary" onClick={loginWithGoogle}>
                         Login with Google
                     </Button>
-                    <Button variant="contained" color="primary" onClick={() => loginInDev(0)}>
+                    {/* <Button variant="contained" color="primary" onClick={() => loginInDev(0)}>
                         Login DEV-1
                     </Button>
                     <Button variant="contained" color="primary" onClick={() => loginInDev(1)}>
@@ -165,7 +165,7 @@ const MenuPage: FC = () => {
 
                     <Button variant="contained" color="primary" onClick={() => loginInDev(3)}>
                         Login DEV-4
-                    </Button>
+                    </Button> */}
                 </div>
             )}
 
