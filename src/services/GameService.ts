@@ -186,12 +186,17 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
             unsub = apiSubscribeToGame(game.id, (gm) => {
                 if (gm.id === game.id) {
                     if(gm.state === GameState.TURN && game.state === GameState.PROCESSING) {
+                        console.log("TURN PROCESSING ENDED!");
                         api.api.trigger({
                             from: SERVICEID.GameService,
                             action: "CLEANUP",
                             data: gm.turn,
                         });
+
+                        
                     }
+                    
+
                     game = gm;
                     sendUpdate();
                 }

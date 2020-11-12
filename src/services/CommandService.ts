@@ -3,7 +3,7 @@ import { Command } from "../models/Commands";
 
 import { v4 } from "uuid";
 import { joki } from "jokits-react";
-import { apiLoadCommands, apiLoadCommandsAtTurn, apiLoadMyCommands, apiNewCommand, apiSubscribeToCommands } from "../api/apiCommands";
+import { apiLoadCommands, apiNewCommand, apiSubscribeToCommands } from "../api/apiCommands";
 
 import { FactionModel, GameModel, GameState } from "../models/Models";
 import { SERVICEID } from "./services";
@@ -32,6 +32,10 @@ export default function createCommandService(serviceId: string, api: JokiService
                     commandDone(event.data);
                     break;
 
+                case "syncCommands":
+                    loadCommands();
+                    break;
+
                 case "clearCommands":
                     commands = [];
                     sendUpdate();
@@ -53,7 +57,12 @@ export default function createCommandService(serviceId: string, api: JokiService
         }
 
         if (event.action === "CLEANUP") {
-            clearAllCommands();
+            // clearAllCommands();
+            console.log("CLEAN UP!", event);
+            setTimeout(() => {
+                loadCommands();
+            }, 10);
+            
         }
 
         if(api.eventIs.updateFromService(event, SERVICEID.UserService)) {
@@ -99,7 +108,8 @@ export default function createCommandService(serviceId: string, api: JokiService
 
                 unsub = apiSubscribeToCommands(gameId, (cmds: Command[]) => {
                     const faction = _getMyFaction();
-                    commands = cmds.filter((cmd: Command) => cmd.factionId === faction.id && cmd.completed === false);
+                    commands = cmds.filter((cmd: Command) => cmd.factionId === faction.id && cmd.completed !== true);
+                    console.log("Commands updated!", commands);
                     sendUpdate();
                 });
             }
@@ -163,11 +173,6 @@ export default function createCommandService(serviceId: string, api: JokiService
                 data: commands,
             });
         }
-    }
-
-    function clearCompletedCommands() {
-        commands = commands.filter((cmd: Command) => cmd.completed === false);
-        sendUpdate();
     }
 
     function clearAllCommands() {

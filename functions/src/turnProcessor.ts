@@ -532,7 +532,8 @@ export function spaceCombatAttacks(game: GameModel, origCombat: SpaceCombat): Sp
                     if (oldDmg < newDmg) hit = true;
                 }
             } else {
-                combat.log.push(`RELOADING: ${ship.factionId} ${ship.name} is reloading ${weapon.name}, ${weapon.cooldown + 1} round until ready to fire`);
+                const faction = getFactionFromArrayById(game.factions, ship.factionId);
+                combat.log.push(`RELOADING: ${faction.name} ${ship.name} is reloading ${weapon.name}, ${weapon.cooldown + 1} round until ready to fire`);
             }
 
 
@@ -605,7 +606,7 @@ export function spaceCombatAttackShoot(game: GameModel, combat: SpaceCombat, att
         }
 
 
-        combat.log.push(`HIT (${hitRoll} <= ${hitChance}): ${attacker.factionId} ${attacker.name} shoots ${target.name} of ${target.factionId} with ${weapon.name} causing ${dmg} points of hull damage.`);
+        combat.log.push(`HIT (${hitRoll} <= ${hitChance}): ${attackFaction.name} ${attacker.name} shoots ${target.name} of ${targetFaction.name} with ${weapon.name} causing ${dmg} points of hull damage.`);
         combat.units = combat.units.map((su: ShipUnit) => {
             if (su.id === target.id) {
                 return target;
@@ -613,7 +614,7 @@ export function spaceCombatAttackShoot(game: GameModel, combat: SpaceCombat, att
             return su;
         })
     } else {
-        combat.log.push(`MISS (${hitRoll} > ${hitChance}): ${attacker.factionId} ${attacker.name} misses ${target.name} of ${target.factionId} with ${weapon.name}.`);
+        combat.log.push(`MISS (${hitRoll} > ${hitChance}): ${attackFaction.name} ${attacker.name} misses ${target.name} of ${targetFaction.name} with ${weapon.name}.`);
     }
 
 

@@ -4,7 +4,6 @@ import React, { FC } from "react";
 import BuildIcon from "@material-ui/icons/Build";
 import SecurityIcon from "@material-ui/icons/Security";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
-import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import StarIcon from '@material-ui/icons/Star';
 import SpeedIcon from '@material-ui/icons/Speed';
 import { IconCredit, IconDefense, IconIndustry, IconWelfare } from "../../components/Icons";

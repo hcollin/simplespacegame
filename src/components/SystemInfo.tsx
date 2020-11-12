@@ -329,13 +329,14 @@ const SystemInfo: FC = () => {
         }
     }
 
+
+
     return (
         <div className={classes.root}>
             <button className="close" onClick={() => setStar(null)}>
                 X
             </button>
 
-            {/* <AppBar position="absolute"> */}
             <header>
                 <Tabs value={tab} onChange={changeTab} aria-label="simple tabs example">
                     <Tab label="System" {...a11yProps(0)} />
@@ -343,7 +344,7 @@ const SystemInfo: FC = () => {
                     <Tab label="Reports" {...a11yProps(2)} />
                 </Tabs>
             </header>
-            {/* </AppBar> */}
+            
 
             <div className="title">
                 <h1>{star.name}</h1>
