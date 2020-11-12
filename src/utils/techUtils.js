@@ -11,7 +11,6 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.getTechById = exports.factionPaysForTech = exports.canAffordTech = void 0;
 var dataTechnology_1 = require("../data/dataTechnology");
 function canAffordTech(tech, faction) {
     var canAfford = true;
@@ -23,6 +22,7 @@ function canAffordTech(tech, faction) {
         if (field.points < val[1]) {
             canAfford = false;
         }
+        console.log(tech.name, field.field, field.points, val[1], canAfford);
     });
     if (tech.techprereq.length > 0 && canAfford) {
         tech.techprereq.forEach(function (tid) {

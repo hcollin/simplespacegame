@@ -316,6 +316,7 @@ const GameSetup: FC = () => {
                         </div>
                     </Grid>
                     <Grid item lg={6} className={classes.column}>
+                        <label>Example of the map</label>
                         <MiniMap stars={exampleMap} size={distM * 2} distances={distM} />
                     </Grid>
                 </Grid>

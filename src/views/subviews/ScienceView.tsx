@@ -232,6 +232,7 @@ const ScienceView: FC = () => {
                         const owned = faction.technology.find((s: string) => s === tech.id) !== undefined;
                         const canAfford = canAffordTech(tech, faction);
                         const techClasses = `${owned ? "owned " : ""}${!owned && !canAfford ? "cannotAfford" : ""}`;
+                        console.log(tech.name, canAfford, owned);
                         if (canAfford && !owned) {
                             console.log("Clickable", tech);
                             return (

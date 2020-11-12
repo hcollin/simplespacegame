@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.DATATECHNOLOGY = exports.TECHIDS = void 0;
 var Models_1 = require("../models/Models");
 var TECHIDS;
 (function (TECHIDS) {
@@ -107,17 +106,6 @@ exports.DATATECHNOLOGY = [
         techprereq: [],
         name: "Heavy Rounds",
         description: "The damage output of all Kinetic Weapons is increased by +10%"
-    },
-    {
-        id: TECHIDS.TargetingComp3,
-        fieldreqs: [
-            [Models_1.TechnologyField.PHYSICS, 10],
-            [Models_1.TechnologyField.INFORMATION, 10],
-            [Models_1.TechnologyField.SOCIOLOGY, 5],
-        ],
-        techprereq: [TECHIDS.TargetingComp3],
-        name: "Targeting computers III",
-        description: "Gain additional +10% for base attack accuracy"
     },
     {
         id: TECHIDS.DeciAppr,

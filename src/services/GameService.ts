@@ -236,6 +236,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
     function updateFaction(fm: FactionModel) {
         game = updateFactionInGame(game, fm);
         sendUpdate();
+        saveGame();
     }
 
     async function processTurn(comms?: Command[]) {
@@ -265,6 +266,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 function updateFactionInGame(game: GameModel, faction: FactionModel): GameModel {
     game.factions = game.factions.map((fm: FactionModel) => {
         if (fm.id === faction.id) {
+            console.log("Update faction", faction.name)
             return faction;
         }
         return fm;

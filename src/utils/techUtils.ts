@@ -13,10 +13,11 @@ export function canAffordTech(tech: Technology, faction: FactionModel): boolean 
         if(!field) {
             throw new Error(`Unknown technology requirement field ${val[0]}`);
         }
-
+        
         if(field.points < val[1]) {
             canAfford = false;
         }
+        console.log(tech.name, field.field, field.points, val[1], canAfford);
         
     });
 

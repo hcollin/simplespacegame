@@ -115,18 +115,6 @@ export const DATATECHNOLOGY: Technology[] = [
         description: "The damage output of all Kinetic Weapons is increased by +10%",
     },
     {
-        id: TECHIDS.TargetingComp3,
-        fieldreqs: [
-            [TechnologyField.PHYSICS, 10],
-            [TechnologyField.INFORMATION, 10],
-            [TechnologyField.SOCIOLOGY, 5],
-            
-        ],
-        techprereq: [TECHIDS.TargetingComp3],
-        name: "Targeting computers III",
-        description: "Gain additional +10% for base attack accuracy",
-    },
-    {
         id: TECHIDS.DeciAppr,
         fieldreqs: [
             [TechnologyField.SOCIOLOGY, 7],
