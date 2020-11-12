@@ -2,7 +2,6 @@ import { GameModel, GameState } from '../src/models/Models';
 import { Command } from '../src/models/Commands';
 import { processTurn } from './processes/turnProcessor';
 
-
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 

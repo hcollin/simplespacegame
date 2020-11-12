@@ -14,7 +14,6 @@ import { getShipSpeed, getFactionAdjustedUnit, getFactionAdjustedWeapon } from "
 
 
 
-
 export async function processTurn(origGame: GameModel, commands?: Command[]): Promise<[GameModel, Command[]]> {
     // if (origGame.state !== GameState.PROCESSING) return origGame;
 
