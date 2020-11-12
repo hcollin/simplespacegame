@@ -36,7 +36,7 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         trade: 0,
     };
     const faction = getFactionFromArrayById(game.factions, factionId)
-    if(!faction) {
+    if (!faction) {
         throw new Error("Invalid Faction");
     }
 
@@ -46,7 +46,6 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
             values.totalWelfare += star.welfare;
             values.systemIncome += star.economy;
             values.systemCount++;
-
         }
     });
 
@@ -69,17 +68,16 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
     }, 0);
 
     values.trade = game.trades.reduce((sum: number, t: Trade) => {
-        if(t.to === factionId) {
+        if (t.to === factionId) {
             return sum + t.money;
         }
-        if(t.from === factionId) {
+        if (t.from === factionId) {
             return sum - t.money;
         }
         return sum;
     }, 0)
-    
-    values.income = values.totalEconomy + values.trade - values.expenses + techMarketing(faction, game);
 
+    values.income = values.totalEconomy + values.trade - values.expenses + techMarketing(faction, game);
 
     values.maxCommands = commandCountCalculator(game, factionId);
 
@@ -133,12 +131,12 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
         }
     });
     const f = getFactionFromArrayById(game.factions, factionId);
-    if(!f) throw new Error(`INvalid factionId${factionId}`);
+    if (!f) throw new Error(`INvalid factionId${factionId}`);
     return getWelfareCommands(f, totalWelfare) + bonusCommands;
 }
 
 export function getWelfareCommands(faction: FactionModel, welfarePointTotal: number): number {
-    
+
     return 3 + Math.floor(welfarePointTotal / techDecisionEngine(faction));
 }
 
@@ -167,7 +165,7 @@ export function researchPointGenerationCalculator(game: GameModel, faction: Fact
 }
 
 export function getSystemResearchPointGeneration(sm: SystemModel, faction: FactionModel): number {
-    
+
     const welfareCurve = techHigherEducation(faction);
     let sum = 0;
     sum += Math.floor((sm.industry + sm.defense) / 3);
@@ -180,8 +178,8 @@ export function researchPointDistribution(totalPoints: number, faction: FactionM
 
     let points: number[] = []
     const totalFocusPoints = faction.technologyFields.reduce((tot: number, tech: FactionTechSetting) => tot + tech.priority, 0);
-    
-    const partPoint = totalFocusPoints > 0 ? totalPoints/totalFocusPoints : 0;
+
+    const partPoint = totalFocusPoints > 0 ? totalPoints / totalFocusPoints : 0;
     // const techDistribution = [0.50, 0.50, 0., 0.10, 0];
     let highestFieldIndex = -1;
     let highestFieldValue = -1;
@@ -190,10 +188,10 @@ export function researchPointDistribution(totalPoints: number, faction: FactionM
         const curSum = points.reduce((tot: number, cur: number) => tot + cur, 0);
         const remaining = totalPoints - curSum;
         let newVal = Math.round(partPoint * tech.priority);
-        if(newVal > remaining) {
+        if (newVal > remaining) {
             newVal = remaining;
         }
-        if(tech.priority > highestFieldValue) {
+        if (tech.priority > highestFieldValue) {
             highestFieldValue = tech.priority;
             highestFieldIndex = index;
         }
@@ -201,11 +199,8 @@ export function researchPointDistribution(totalPoints: number, faction: FactionM
     });
 
     const curSum = points.reduce((tot: number, cur: number) => tot + cur, 0);
-    if(curSum < totalPoints) {
-        
+    if (curSum < totalPoints) {
         points[highestFieldIndex] += (totalPoints - curSum);
-        
-
     }
 
     return points;
@@ -218,28 +213,24 @@ export function researchPointDistribution(totalPoints: number, faction: FactionM
  * @param factionId 
  */
 export function getFactionScore(game: GameModel, factionId: string): number {
-
-    // const game = joki.service.getState("GameService") as GameModel;
-
     let score = 0;
 
     game.systems.forEach((sm: SystemModel) => {
 
-        if(sm.ownerFactionId === factionId) {
+        if (sm.ownerFactionId === factionId) {
             score += 3;
             score += Math.round((sm.industry + sm.economy + sm.defense + sm.welfare) / 4);
-            score += sm.ringWorld ? 10 : 0;
         }
     });
 
     game.units.forEach((u: ShipUnit) => {
-        if(u.factionId === factionId) {
-            score += Math.round(u.cost/3);
+        if (u.factionId === factionId) {
+            score += Math.round(u.cost / 3);
         }
     });
 
     const faction = getFactionFromArrayById(game.factions, factionId);
-    if(!faction) throw new Error(`Invalid faction id ${factionId}`);
+    if (!faction) throw new Error(`Invalid faction id ${factionId}`);
     score += faction.technology.length * 2;
 
     return score;

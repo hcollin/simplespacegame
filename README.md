@@ -2,9 +2,10 @@
 
 This should become an simple turn based space strategy game, where players will conquer star systems, fight with each other and maybe even make alliances
 
+
 ## Winning the game
 
-The game is won by fullfilling N amount of objectives. In the MVP the objectives are simply to control certain Systems at the same time. Each player has 2 secret objectives and there are 5 public objetives for each faction ot fullfill. First to 5 objectives wins the game.
+First to reach the target score will win the game.
 
 ## What to do during the game
 

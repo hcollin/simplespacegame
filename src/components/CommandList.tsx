@@ -1,6 +1,6 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import { joki, useService } from "jokits-react";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import useMyCommands from "../hooks/useMyCommands";
 import {
     BuildUnitCommand,
@@ -26,6 +26,7 @@ import iconFleetSvg from "../images/iconUnits.svg";
 import { IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconScore, IconWelfare } from "./Icons";
 import { factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
 import { doPlayerDone } from "../services/commands/GameCommands";
+import { COMMANDPAGINATIONLIMIT } from "../configs";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -96,6 +97,15 @@ const useStyles = makeStyles((theme: Theme) =>
                     },
                 },
             },
+        },
+        pagination: {
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around",
+            boxShadow: "inset 0 0 1rem 0.5rem #000a",
+            background: "#4688",
+            padding: "0.25rem 0",
         },
         command: {
             color: "white",
@@ -293,9 +303,18 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
     // const [commands] = useService<Command[]>("CommandService");
     const [game] = useService<GameModel>("GameService");
 
-    const commands = useMyCommands();
+    const [cmdIndex, setCmdIndex] = useState<number>(0);
 
+    const commands = useMyCommands();
     const faction = useCurrentFaction();
+
+    useEffect( () => {
+
+        if(cmdIndex >= commands.length) {
+            setCmdIndex((prev: number) => prev > COMMANDPAGINATIONLIMIT ? prev - COMMANDPAGINATIONLIMIT: 0);
+        }
+
+    }, [commands, cmdIndex])
 
     function loginFaction(fm: FactionModel) {
         if(isDev) {
@@ -318,6 +337,9 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 
     const commandsFull = commands.length >= values.maxCommands;
     const pointsGenerated = researchPointGenerationCalculator(game, faction);
+
+    const cmdsShown = commands.slice(cmdIndex, cmdIndex + COMMANDPAGINATIONLIMIT);
+
     return (
         <div className={classes.commands}>
             <header>
@@ -342,7 +364,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                 </small>
             </h1>
 
-            {commands.map((cm: Command) => {
+            {cmdsShown.map((cm: Command) => {
                 switch (cm.type) {
                     case CommandType.FleetMove:
                         return <FleetMoveCommandItem command={cm} key={cm.id} game={game} isReady={isReady} />;
@@ -354,6 +376,15 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                         return <SystemPlusCommandItem command={cm} key={cm.id} game={game} isReady={isReady} />;
                 }
             })}
+            {commands.length > COMMANDPAGINATIONLIMIT && (
+                <div className={classes.pagination}>
+                    <Button variant="contained" onClick={() =>  setCmdIndex((prev: number) => prev >= COMMANDPAGINATIONLIMIT ? prev - COMMANDPAGINATIONLIMIT: 0)} disabled={cmdIndex === 0}> Prev {COMMANDPAGINATIONLIMIT}</Button>
+                    <Button variant="contained" onClick={() =>  setCmdIndex((prev: number) => prev + COMMANDPAGINATIONLIMIT < commands.length ? prev + COMMANDPAGINATIONLIMIT: prev)} disabled={cmdIndex + COMMANDPAGINATIONLIMIT > commands.length}> Next {COMMANDPAGINATIONLIMIT}</Button>
+                </div>
+            )}
+
+            
+
 
             <h1>Factions</h1>
             {game.factions.map((fm: FactionModel) => {
