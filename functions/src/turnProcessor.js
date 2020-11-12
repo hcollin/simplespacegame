@@ -54,17 +54,16 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-var dataTechnology_1 = require("../../src/data/dataTechnology");
-var Commands_1 = require("../../src/models/Commands");
-var Models_1 = require("../../src/models/Models");
-var FactionHelpers_1 = require("../../src/services/helpers/FactionHelpers");
-var UnitHelpers_1 = require("../../src/services/helpers/UnitHelpers");
-var factionUtils_1 = require("../../src/utils/factionUtils");
-var locationUtils_1 = require("../../src/utils/locationUtils");
-var MathUtils_1 = require("../../src/utils/MathUtils");
-var randUtils_1 = require("../../src/utils/randUtils");
-var techUtils_1 = require("../../src/utils/techUtils");
-var unitUtils_1 = require("../../src/utils/unitUtils");
+exports.damagePotential = exports.getHitChance = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatMain = exports.processTurn = void 0;
+var dataTechnology_1 = require("./data/dataTechnology");
+var Commands_1 = require("./models/Commands");
+var Models_1 = require("./models/Models");
+var factionUtils_1 = require("./utils/factionUtils");
+var locationUtils_1 = require("./utils/locationUtils");
+var MathUtils_1 = require("./utils/MathUtils");
+var randUtils_1 = require("./utils/randUtils");
+var techUtils_1 = require("./utils/techUtils");
+var unitUtils_1 = require("./utils/unitUtils");
 function processTurn(origGame, commands) {
     return __awaiter(this, void 0, void 0, function () {
         var game;
@@ -172,8 +171,8 @@ function processTrades(oldGame) {
     var game = __assign({}, oldGame);
     game.trades = game.trades.map(function (tr) {
         var success = false;
-        var fromFaction = FactionHelpers_1.getFactionFromArrayById(game.factions, tr.from);
-        var toFaction = FactionHelpers_1.getFactionFromArrayById(game.factions, tr.to);
+        var fromFaction = factionUtils_1.getFactionFromArrayById(game.factions, tr.from);
+        var toFaction = factionUtils_1.getFactionFromArrayById(game.factions, tr.to);
         if (fromFaction && toFaction) {
             if (fromFaction.money >= tr.money) {
                 fromFaction.money -= tr.money;
@@ -195,7 +194,7 @@ function processResearchCommands(commands, oldGame) {
     commands.forEach(function (cmd) {
         if (cmd.type === Commands_1.CommandType.TechnologyResearch) {
             var command_1 = cmd;
-            var faction = FactionHelpers_1.getFactionFromArrayById(game.factions, command_1.factionId);
+            var faction = factionUtils_1.getFactionFromArrayById(game.factions, command_1.factionId);
             if (faction) {
                 var tech = dataTechnology_1.DATATECHNOLOGY.find(function (t) { return t.id === command_1.techId; });
                 if (tech && faction && techUtils_1.canAffordTech(tech, faction)) {
@@ -298,9 +297,9 @@ function processSystemIndustryCommand(command, game) {
     return updateSystemInGame(game, system);
 }
 function processSystemBuildUnitCommand(command, game) {
-    var faction = FactionHelpers_1.getFactionFromArrayById(game.factions, command.factionId);
+    var faction = factionUtils_1.getFactionFromArrayById(game.factions, command.factionId);
     if (faction) {
-        var unit = UnitHelpers_1.createShipFromDesign(UnitHelpers_1.getDesignByName(command.shipName), command.factionId, command.target);
+        var unit = unitUtils_1.createShipFromDesign(unitUtils_1.getDesignByName(command.shipName), command.factionId, command.target);
         if (faction.money >= unit.cost) {
             game.units.push(unit);
             faction.money = faction.money - unit.cost;
@@ -322,7 +321,7 @@ function processFleetMoveCommand(command, game) {
     var nGame = __assign({}, game);
     command.unitIds.forEach(function (uid) {
         var unit = getUnitFromGame(game, uid);
-        var faction = FactionHelpers_1.getFactionFromArrayById(game.factions, unit.factionId);
+        var faction = factionUtils_1.getFactionFromArrayById(game.factions, unit.factionId);
         if (newPoint === null) {
             newPoint = MathUtils_1.travelingBetweenCoordinates(unit.location, command.target, unitUtils_1.getShipSpeed(unit, faction));
         }
@@ -493,8 +492,8 @@ function spaceCombatAttackChooseTarget(combat, attacker, weapon) {
 }
 exports.spaceCombatAttackChooseTarget = spaceCombatAttackChooseTarget;
 function spaceCombatAttackShoot(game, combat, attacker, weapon, target) {
-    var attackFaction = FactionHelpers_1.getFactionFromArrayById(game.factions, attacker.factionId);
-    var targetFaction = FactionHelpers_1.getFactionFromArrayById(game.factions, target.factionId);
+    var attackFaction = factionUtils_1.getFactionFromArrayById(game.factions, attacker.factionId);
+    var targetFaction = factionUtils_1.getFactionFromArrayById(game.factions, target.factionId);
     if (!attackFaction || !targetFaction)
         return combat;
     var hitChance = getHitChance(attackFaction, weapon, attacker, target); //50 + weapon.accuracy - target.agility;
@@ -531,7 +530,7 @@ function spaceCombatAttackShoot(game, combat, attacker, weapon, target) {
 exports.spaceCombatAttackShoot = spaceCombatAttackShoot;
 function spaceCombatDamageResolve(game, combat) {
     combat.units = combat.units.filter(function (unit) {
-        var faction = FactionHelpers_1.getFactionFromArrayById(game.factions, unit.factionId);
+        var faction = factionUtils_1.getFactionFromArrayById(game.factions, unit.factionId);
         if (!faction)
             throw new Error("Invalid facion on unit " + unit.id + " " + unit.factionId);
         var factionUnit = unitUtils_1.getFactionAdjustedUnit(faction, unit);
@@ -554,7 +553,7 @@ function spaceCombatMorale(game, combat) {
 exports.spaceCombatMorale = spaceCombatMorale;
 function spaceCombatRoundCleanUp(game, combat) {
     combat.units = combat.units.map(function (su) {
-        var faction = FactionHelpers_1.getFactionFromArrayById(game.factions, su.factionId);
+        var faction = factionUtils_1.getFactionFromArrayById(game.factions, su.factionId);
         if (!faction)
             throw new Error("Invalid facion on unit " + su.id + " " + su.factionId);
         var factionUnit = unitUtils_1.getFactionAdjustedUnit(faction, su);

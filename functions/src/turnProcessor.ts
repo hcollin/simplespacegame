@@ -1,17 +1,14 @@
-import { DATATECHNOLOGY } from "../../src/data/dataTechnology";
-import { Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand, BuildUnitCommand } from "../../src/models/Commands";
-import { Trade } from "../../src/models/Communication";
-import { GameModel, GameState, SystemModel, FactionModel, FactionState, FactionTechSetting, Technology, ReportType, SpaceCombat, Coordinates } from "../../src/models/Models";
-import { ShipUnit, ShipWeapon } from "../../src/models/Units";
-import { getFactionFromArrayById } from "../../src/services/helpers/FactionHelpers";
-import { createShipFromDesign, getDesignByName } from "../../src/services/helpers/UnitHelpers";
-import { researchPointGenerationCalculator, researchPointDistribution, factionValues } from "../../src/utils/factionUtils";
-import { inSameLocation } from "../../src/utils/locationUtils";
-import { travelingBetweenCoordinates } from "../../src/utils/MathUtils";
-import { rnd } from "../../src/utils/randUtils";
-import { canAffordTech, factionPaysForTech } from "../../src/utils/techUtils";
-import { getShipSpeed, getFactionAdjustedUnit, getFactionAdjustedWeapon } from "../../src/utils/unitUtils";
-
+import { DATATECHNOLOGY } from "./data/dataTechnology";
+import { Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand, BuildUnitCommand } from "./models/Commands";
+import { Trade } from "./models/Communication";
+import { GameModel, GameState, SystemModel, FactionModel, FactionState, FactionTechSetting, Technology, ReportType, SpaceCombat, Coordinates } from "./models/Models";
+import { ShipUnit, ShipWeapon } from "./models/Units";
+import { researchPointGenerationCalculator, researchPointDistribution, factionValues, getFactionFromArrayById } from "./utils/factionUtils";
+import { inSameLocation } from "./utils/locationUtils";
+import { travelingBetweenCoordinates } from "./utils/MathUtils";
+import { rnd } from "./utils/randUtils";
+import { canAffordTech, factionPaysForTech } from "./utils/techUtils";
+import { getShipSpeed, getFactionAdjustedUnit, getFactionAdjustedWeapon, createShipFromDesign, getDesignByName } from "./utils/unitUtils";
 
 
 export async function processTurn(origGame: GameModel, commands?: Command[]): Promise<[GameModel, Command[]]> {

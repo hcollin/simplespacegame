@@ -6,7 +6,6 @@ import { Coordinates } from "../../models/Models";
 import { ShipDesign, ShipUnit } from "../../models/Units";
 
 
-
 export function unitIsMoving(commands: Command[], unit: ShipUnit): boolean {
 
     // const commands = joki.service.getState("CommandService") as Command[];

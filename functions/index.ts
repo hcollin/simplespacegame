@@ -1,11 +1,11 @@
-import { GameModel, GameState } from '../src/models/Models';
-import { Command } from '../src/models/Commands';
-import { processTurn } from './processes/turnProcessor';
+
+
+import { Command } from './src/models/Commands';
+import { GameModel, GameState } from './src/models/Models';
+import { processTurn } from './src/turnProcessor';
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-
-// MODELS
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -24,6 +24,7 @@ interface PlayerReadyData {
     factionId: string;
     commands: Command[];
 }
+
 
 /**
  * PLayer is ready Cloud function

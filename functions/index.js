@@ -47,11 +47,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var Models_1 = require("../src/models/Models");
-var turnProcessor_1 = require("./processes/turnProcessor");
+var Models_1 = require("./src/models/Models");
+var turnProcessor_1 = require("./src/turnProcessor");
 var functions = require('firebase-functions');
 var admin = require('firebase-admin');
-// MODELS
 admin.initializeApp();
 var db = admin.firestore();
 /**

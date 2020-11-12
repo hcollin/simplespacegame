@@ -283,6 +283,9 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
+const isDev = process.env.NODE_ENV === "development";
+
+
 interface CommandListProps {}
 
 const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
@@ -295,11 +298,14 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
     const faction = useCurrentFaction();
 
     function loginFaction(fm: FactionModel) {
-        // joki.trigger({
-        //     to: "UserService",
-        //     action: "switch",
-        //     data: fm.playerId,
-        // });
+        if(isDev) {
+            joki.trigger({
+                to: "UserService",
+                action: "switch",
+                data: fm.playerId,
+            });
+        }
+        
     }
 
     function factionClickHandler(fm: FactionModel) {}

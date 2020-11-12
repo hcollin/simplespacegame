@@ -25,4 +25,9 @@ yarn-error.log*
 src/api/fireConfig.ts
 
 
+*debug.log
+*.cache
+
 *.log
+functions/.cache/*
+

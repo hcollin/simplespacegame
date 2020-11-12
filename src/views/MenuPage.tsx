@@ -10,6 +10,7 @@ import { FactionModel, GameModel, GameState } from "../models/Models";
 import { doCreateDraftGame, doCreateNewGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import ReplayIcon from '@material-ui/icons/Replay';
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
             marginBottom: "0.5rem",
             "& > div": {
                 flex: "1 1 auto",
-                
+
                 "& > h4, & > p": {
                     margin: 0,
                 },
@@ -62,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 "&.first": {
                     paddingLeft: "1rem",
                 }
-                
+
             },
             "&:nth-child(odd)": {
                 backgroundColor: "#FFF1",
@@ -70,10 +71,12 @@ const useStyles = makeStyles((theme: Theme) =>
             "&:nth-child(even)": {
                 backgroundColor: "#0001",
             }
-            
+
         },
     })
 );
+
+const ENV = process.env.NODE_ENV;
 
 const MenuPage: FC = () => {
     const classes = useStyles();
@@ -146,6 +149,10 @@ const MenuPage: FC = () => {
         });
     }
 
+    console.log("ENV: ", ENV);
+
+
+    const isDev = ENV === "development";
     return (
         <MenuPageContainer title="Frost Galaxy">
             {!user && (
@@ -153,19 +160,19 @@ const MenuPage: FC = () => {
                     <Button variant="contained" color="primary" onClick={loginWithGoogle}>
                         Login with Google
                     </Button>
-                    {/* <Button variant="contained" color="primary" onClick={() => loginInDev(0)}>
+                    {isDev && <><Button variant="contained" color="primary" onClick={() => loginInDev(0)}>
                         Login DEV-1
                     </Button>
-                    <Button variant="contained" color="primary" onClick={() => loginInDev(1)}>
-                        Login DEV-2
+                        <Button variant="contained" color="primary" onClick={() => loginInDev(1)}>
+                            Login DEV-2
                     </Button>
-                    <Button variant="contained" color="primary" onClick={() => loginInDev(2)}>
-                        Login DEV-3
+                        <Button variant="contained" color="primary" onClick={() => loginInDev(2)}>
+                            Login DEV-3
                     </Button>
 
-                    <Button variant="contained" color="primary" onClick={() => loginInDev(3)}>
-                        Login DEV-4
-                    </Button> */}
+                        <Button variant="contained" color="primary" onClick={() => loginInDev(3)}>
+                            Login DEV-4
+                    </Button></>}
                 </div>
             )}
 
@@ -191,7 +198,7 @@ const MenuPage: FC = () => {
                             const faction = gm.factions.find((fm: FactionModel) => fm.playerId === user.id);
                             if (!faction) return null;
                             return (
-                                
+
                                 <div key={gm.id} className={classes.row}>
                                     <div className="lg first">
                                         <h4>{gm.name}</h4>
@@ -211,7 +218,7 @@ const MenuPage: FC = () => {
                                     <div className="sm center">
                                         <p>{GameState[gm.state]}</p>
                                     </div>
-                                    <div  className="md right">
+                                    <div className="md right">
                                         {gm.state === GameState.TURN && (
                                             <Button onClick={() => loadGame(gm.id)} variant="contained">
                                                 LOAD
