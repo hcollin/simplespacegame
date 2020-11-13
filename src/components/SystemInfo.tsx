@@ -12,7 +12,7 @@ import {
 
 import useMyCommands from "../hooks/useMyCommands";
 import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
-import { GameModel, Report } from "../models/Models";
+import { GameModel, Report, SystemModel } from "../models/Models";
 import { inSameLocation } from "../utils/locationUtils";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
@@ -21,10 +21,14 @@ import useUserIsReady from "../services/hooks/useUserIsReady";
 import DATASHIPS from "../data/dataShips";
 import ShipInfo from "./ShipInfo";
 import { ShipDesign } from "../models/Units";
-import { IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconUnderConstruction, IconWelfare } from "./Icons";
+import { IconCredit, IconDefense, IconEconomy, IconIndustry, IconResearchPoint, IconUnderConstruction, IconWelfare } from "./Icons";
 import { getSystemEconomy } from "../utils/systemUtils";
 import { SERVICEID } from "../services/services";
 import { useService } from "jokits-react";
+import { DATABUILDINGS } from "../data/dataBuildings";
+import { BuildingDesign } from "../models/Buildings";
+import BuildingDesignSlot from "./BuildingDesignSlot";
+import { db } from "../api/firebaseDb";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -38,7 +42,8 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: "3rem 1rem 1rem 1rem",
             // background: "#FFFD",
             background:
-                "repeating-linear-gradient(to bottom, #1118 0, #333E 5px, #444E 54px, #777E 67px, #555E 76px, #1118 80px)",
+                // "repeating-linear-gradient(to bottom, #1118 0, #333E 5px, #444E 54px, #777E 67px, #555E 76px, #1118 80px)",
+                "repeating-linear-gradient(to bottom, #000C 0, #111E 3px, #222E 6px, #111E 15px, #111E 65px, #123E 70px, #111E 75px, #000C 80px)",
             color: "#FFFD",
             boxShadow: "inset 0 0 2rem 0.5rem #000",
             border: "ridge 3px #FFF5",
@@ -108,6 +113,10 @@ const useStyles = makeStyles((theme: Theme) =>
                 right: 0,
                 height: "3rem",
                 borderBottom: "ridge 3px #0008",
+                "& button.systemTab": {
+                    minWidth: "auto",
+                }
+
             },
         },
         tabs: {
@@ -292,6 +301,19 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
             },
         },
+
+        buildingGrid: {
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            maxWidth: "48rem",
+            "& > div": {
+                margin: "0.5rem",
+
+            }
+        }
     })
 );
 
@@ -299,6 +321,7 @@ function a11yProps(index: any) {
     return {
         id: `simple-tab-${index}`,
         "aria-controls": `simple-tabpanel-${index}`,
+        className: "systemTab",
     };
 }
 
@@ -399,10 +422,11 @@ const SystemInfo: FC = () => {
             </button>
 
             <header>
-                <Tabs value={tab} onChange={changeTab} aria-label="simple tabs example">
+                <Tabs value={tab} onChange={changeTab} aria-label="tabs">
                     <Tab label="System" {...a11yProps(0)} />
                     <Tab label="Units" {...a11yProps(1)} />
-                    <Tab label="Reports" {...a11yProps(2)} />
+                    <Tab label="Buildings" {...a11yProps(2)} />
+                    <Tab label="Reports" {...a11yProps(3)} />
                 </Tabs>
             </header>
 
@@ -428,7 +452,7 @@ const SystemInfo: FC = () => {
                             )}
                         </div>
                         <div className={classes.value}>
-                            <IconCredit size="xl" wrapper="light" />
+                            <IconEconomy size="xl" wrapper="light" />
 
                             <h3>
                                 {star.economy} <small>/ {sysEco.economyMax}</small>
@@ -523,6 +547,13 @@ const SystemInfo: FC = () => {
             </TabPanel>
 
             <TabPanel value={tab} index={2}>
+                        <BuildingsTab star={star} game={game}/>
+
+
+                
+            </TabPanel>
+
+            <TabPanel value={tab} index={3}>
                 <h2>Report</h2>
 
                 {star.reports.length === 0 && <p>No reports in the system</p>}
@@ -553,5 +584,34 @@ const SystemInfo: FC = () => {
         </div>
     );
 };
+
+interface TabProps {
+    star: SystemModel,
+    game: GameModel,
+}
+
+const BuildingsTab: FC<TabProps> = () => {
+    const classes = useStyles();
+    const designs = DATABUILDINGS;
+
+    return (
+        <>
+        <h2>Buildings</h2>
+
+
+
+        <h3>Designs to build</h3>
+
+        <div className={classes.buildingGrid}>
+        {designs.map((bd: BuildingDesign) => {
+
+            return <BuildingDesignSlot building={bd} key={bd.name} />
+        })}
+        </div>
+        
+
+        </>
+    )
+}
 
 export default SystemInfo;

@@ -32,9 +32,9 @@ export function createNewSystem(ax = 1, ay = 1, as = 99, special = "AVERAGE"): S
             y,
         },
         ownerFactionId: "",
-        ringWorld: false,
         keywords: [],
         reports: [],
+        buildings: [],
     };
 
     if (roll(getSpecialChances(special))) {

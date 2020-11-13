@@ -1,3 +1,4 @@
+import { Building } from "./Buildings";
 import { Trade } from "./Communication";
 import { ShipUnit } from "./Units";
 
@@ -101,9 +102,11 @@ export interface SystemModel extends GameObject {
     welfare: number;
     
     color: string;
-    ringWorld: boolean;
     keywords: (string|SystemKeyword)[];
     reports: Report[];
+
+    buildings: Building[];
+
 }
 
 export enum FactionState {

@@ -137,7 +137,7 @@ export function createNewGame(playerCount = 4): GameModel {
                   [12.5, 87.5],
                   [87.5, 87.5],
               ];
-    const starLocs = stars.filter((s: SystemModel) => s.ringWorld !== true).map((s: SystemModel) => s.location);
+    const starLocs = stars.map((s: SystemModel) => s.location);
     factions.forEach((fm: FactionModel, index: number) => {
         const closestCoord = findClosestCoordinate(starLocs, { x: searchPoints[index][0], y: searchPoints[index][1] });
 
@@ -198,7 +198,7 @@ export function startGame(game: GameModel): GameModel {
     const units: ShipUnit[] = [];
     const densityMultiplier = getDensityMultiplier(game.setup.density);
     const sizeCounter = getDistanceMultiplier(game.setup.distances);
-    const starLocs = game.systems.filter((s: SystemModel) => s.ringWorld !== true).map((s: SystemModel) => s.location);
+    const starLocs = game.systems.map((s: SystemModel) => s.location);
     
     game.factions.forEach((fm: FactionModel, index: number) => {
         const targetCoord: Coordinates  = {

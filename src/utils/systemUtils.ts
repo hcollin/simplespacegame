@@ -1,3 +1,4 @@
+import { buildingArcology } from "../buildings/buildingRules";
 import { GameModel, SystemKeyword, SystemModel } from "../models/Models";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import { getSystemResearchPointGeneration } from "./factionUtils";
@@ -38,7 +39,9 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
     eco.expenses = eco.industryExpenses + eco.defenseExpenses + eco.welfareExpenses;
     eco.profit = eco.income - eco.expenses - 1;
 
-    return eco;
+
+
+    return buildingArcology(eco);
 
 }
 

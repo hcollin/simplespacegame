@@ -10,6 +10,8 @@ import { FactionModel, GameModel, GameState } from "../models/Models";
 import { doCreateDraftGame, doCreateNewGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import ReplayIcon from '@material-ui/icons/Replay';
+import BuildingDesignSlot from "../components/BuildingDesignSlot";
+import { DATABUILDINGS } from "../data/dataBuildings";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -274,6 +276,12 @@ const MenuPage: FC = () => {
                     </section>
                 </>
             )}
+
+            {/* <h3>Test area</h3>
+
+            <BuildingDesignSlot building={DATABUILDINGS[0]} />
+            <BuildingDesignSlot building={DATABUILDINGS[1]} /> */}
+
         </MenuPageContainer>
     );
 };

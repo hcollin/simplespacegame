@@ -247,7 +247,6 @@ const LargeMap: FC<LargeMapProps> = (props) => {
                                     opacity={0.7}
                                 />}
                                 {isSelected && <Circle radius={size * 2} strokeWidth={2} stroke="#FFF" fill="#888" />}
-                                {star.ringWorld && <Ring fill={color} innerRadius={size * 1.5} outerRadius={size * 1.75} />}
                                 {ownerFaction && <Star 
                                     width={size} 
                                     height={size} 
