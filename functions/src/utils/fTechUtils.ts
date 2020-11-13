@@ -1,5 +1,5 @@
-import { DATATECHNOLOGY } from "../data/dataTechnology";
-import { Technology, FactionModel, TechnologyField, FactionTechSetting } from "../models/Models";
+import { DATATECHNOLOGY } from "../data/fDataTechnology";
+import { Technology, FactionModel, TechnologyField, FactionTechSetting } from "../models/fModels";
 
 
 

@@ -1,5 +1,5 @@
-import { TECHIDS } from "../data/dataTechnology";
-import { FactionModel } from "../models/Models";
+import { TECHIDS } from "../data/fDataTechnology";
+import { FactionModel } from "../models/fModels";
 
 
 export function factionHasTechnology(faction: FactionModel, techId: TECHIDS): boolean {

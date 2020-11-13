@@ -1,6 +1,6 @@
-import { TECHIDS } from "../data/dataTechnology";
-import { FactionModel, GameModel, SystemModel } from "../models/Models";
-import { factionHasTechnology } from "./techTools";
+import { TECHIDS } from "../data/fDataTechnology";
+import { FactionModel, GameModel, SystemModel } from "../models/fModels";
+import { factionHasTechnology } from "./fTechTools";
 
 
 

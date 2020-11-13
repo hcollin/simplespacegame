@@ -4,7 +4,6 @@ import { User } from "../models/User";
 
 import Firebase from "firebase";
 
-
 export default function createUserService(serviceId: string, api: JokiServiceApi): JokiService<User | null> {
     let user: User | null = null;
 
@@ -24,12 +23,12 @@ export default function createUserService(serviceId: string, api: JokiServiceApi
                     loginWithGoogle();
                     break;
                 case "loginAsDev":
-                    if(typeof event.data === "number") {
+                    if (typeof event.data === "number") {
                         switchUser(DATAUSERS[event.data].id);
                     } else {
                         switchUser(DATAUSERS[0].id);
                     }
-                    
+
                     break;
             }
         }
@@ -46,6 +45,7 @@ export default function createUserService(serviceId: string, api: JokiServiceApi
     function switchUser(userId: string) {
         const usr = DATAUSERS.find((u: User) => u.id === userId);
         if (usr) {
+            api.api.setAtom<string>("UserLoginState", "LOGGEDIN");
             user = usr;
             sendUpdate();
         }
@@ -70,15 +70,18 @@ export default function createUserService(serviceId: string, api: JokiServiceApi
             api.updated({ ...user });
         }
     }
-
+    api.api.setAtom<string>("UserLoginState", "PROCESSING");
     Firebase.auth().getRedirectResult().then((result: Firebase.auth.UserCredential) => {
         console.log("RESULTS", result);
-
-        if(result === null) {
+        
+        if (result === null) {
+            
             user = null;
+            api.api.setAtom<string>("UserLoginState", "ANONYMOUS");
             sendUpdate();
         } else {
-            if(result.user) {
+            if (result.user) {
+                api.api.setAtom<string>("UserLoginState", "LOGGEDIN");
                 const u: User = {
                     id: result.user.uid,
                     name: result.user.displayName || "No name",
@@ -86,16 +89,11 @@ export default function createUserService(serviceId: string, api: JokiServiceApi
                 }
                 user = u;
                 sendUpdate();
+            } else {
+                api.api.setAtom<string>("UserLoginState", "ANONYMOUS");
             }
-            
         }
     });
-
-    // setTimeout(() => {
-    //     user = DATAUSERS[0];
-    //     sendUpdate();
-        
-    // }, 500);
 
     return {
         eventHandler,

@@ -1,5 +1,5 @@
-import { Trade } from "./Communication";
-import { ShipUnit } from "./Units";
+import { Trade } from "./fCommunication";
+import { ShipUnit } from "./fUnits";
 
 export interface GameObject {
     id: string;
@@ -78,6 +78,17 @@ export interface Coordinates {
     y: number;
 }
 
+export enum SystemKeyword {
+    HOMEWORLD = "Homeworld",
+    MINERALRICH = "Mineral Rich",
+    MINERALPOOR = "Mineral Poor",
+    MINERALRARE = "Rare Minerals",
+    HOSTILE = "Hostile Environment",
+    GAIA = "Gaia world",
+    NATIVES = "Natives",
+    ARTIFACTS = "Alien Artifacts"
+};
+
 export interface SystemModel extends GameObject {
     name: string;
     location: Coordinates;
@@ -90,7 +101,7 @@ export interface SystemModel extends GameObject {
     
     color: string;
     ringWorld: boolean;
-    keywords: string[];
+    keywords: (string|SystemKeyword)[];
     reports: Report[];
 }
 

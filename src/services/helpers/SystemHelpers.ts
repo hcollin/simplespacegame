@@ -1,4 +1,5 @@
 
+import { SYSTEMBONUS } from "../../configs";
 import { greekAlphabet, romanNumbers, starName } from "../../data/dataWords";
 import { Coordinates, GameModel, SystemModel } from "../../models/Models";
 import { inSameLocation } from "../../utils/locationUtils";
@@ -34,6 +35,11 @@ export function createNewSystem(ax = 1, ay = 1, as = 99): SystemModel {
         keywords: [],
         reports: [],
     };
+
+    if(roll(60)) {
+        const key = arnd(SYSTEMBONUS);
+        star.keywords.push(key);
+    }
 
     return star;
 }

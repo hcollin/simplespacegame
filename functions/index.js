@@ -47,7 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var Models_1 = require("./src/models/Models");
+var fModels_1 = require("./src/models/fModels");
 var turnProcessor_1 = require("./src/turnProcessor");
 var functions = require('firebase-functions');
 var admin = require('firebase-admin');
@@ -165,7 +165,7 @@ function runTurnProcessor(gameId) {
                         console.warn("Not all player ready: ", gameId);
                         return [2 /*return*/];
                     }
-                    game.state = Models_1.GameState.PROCESSING;
+                    game.state = fModels_1.GameState.PROCESSING;
                     return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign({}, game))];
                 case 6:
                     _b.sent();

@@ -149,9 +149,6 @@ const MenuPage: FC = () => {
         });
     }
 
-    console.log("ENV: ", ENV);
-
-
     const isDev = ENV === "development";
     return (
         <MenuPageContainer title="Frost Galaxy">

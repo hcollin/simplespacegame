@@ -1,3 +1,4 @@
+import { SystemKeyword } from "./models/Models";
 
 
 // Possible colors for the faction
@@ -28,9 +29,12 @@ const FACTION_NAMES: string[][] = [
 const MAPSizes: number[] = [66, 99, 132];
 const MAPDensities: number[] = [10, 18, 24];
 
+const SYSTEMBONUS: SystemKeyword[] = [SystemKeyword.MINERALRICH, SystemKeyword.MINERALRICH, SystemKeyword.MINERALPOOR, SystemKeyword.MINERALRARE, SystemKeyword.GAIA, SystemKeyword.ARTIFACTS, SystemKeyword.HOSTILE, SystemKeyword.NATIVES, SystemKeyword.NATIVES];
+
+
 const PLAYERCOUNTS: number[] = [2,3,4,5,6,7,8];
 
 
 const COMMANDPAGINATIONLIMIT: number = 5;
 
-export { MAPSizes, MAPDensities, FACTION_COLORS, FACTION_FONTS, FACTION_NAMES, PLAYERCOUNTS, COMMANDPAGINATIONLIMIT };
+export { MAPSizes, MAPDensities, FACTION_COLORS, FACTION_FONTS, FACTION_NAMES, PLAYERCOUNTS, COMMANDPAGINATIONLIMIT, SYSTEMBONUS };

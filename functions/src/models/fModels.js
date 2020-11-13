@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.ReportType = exports.TechnologyField = exports.FactionState = exports.GameState = void 0;
+exports.ReportType = exports.TechnologyField = exports.FactionState = exports.SystemKeyword = exports.GameState = void 0;
 var GameState;
 (function (GameState) {
     GameState[GameState["NONE"] = 0] = "NONE";
@@ -11,6 +11,18 @@ var GameState;
     GameState[GameState["CLEANUP"] = 5] = "CLEANUP";
     GameState[GameState["ENDED"] = 6] = "ENDED";
 })(GameState = exports.GameState || (exports.GameState = {}));
+var SystemKeyword;
+(function (SystemKeyword) {
+    SystemKeyword["HOMEWORLD"] = "Homeworld";
+    SystemKeyword["MINERALRICH"] = "Mineral Rich";
+    SystemKeyword["MINERALPOOR"] = "Mineral Poor";
+    SystemKeyword["MINERALRARE"] = "Rare Minerals";
+    SystemKeyword["HOSTILE"] = "Hostile Environment";
+    SystemKeyword["GAIA"] = "Gaia world";
+    SystemKeyword["NATIVES"] = "Natives";
+    SystemKeyword["ARTIFACTS"] = "Alien Artifacts";
+})(SystemKeyword = exports.SystemKeyword || (exports.SystemKeyword = {}));
+;
 var FactionState;
 (function (FactionState) {
     FactionState[FactionState["INIT"] = 0] = "INIT";

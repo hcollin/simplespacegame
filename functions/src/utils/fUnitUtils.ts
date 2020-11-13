@@ -1,9 +1,9 @@
-import DATASHIPS, { shipNameGenerator } from "../data/dataShips";
-import { TECHIDS } from "../data/dataTechnology";
-import { FactionModel, Coordinates } from "../models/Models";
-import { ShipDesign, ShipUnit, ShipWeapon } from "../models/Units";
-import { techEvasionEngine, techHeavyRounds, techIonEngines, techTargetingComputerOne, techTargetingComputerThree, techTargetingComputerTwo, techTimeslipPrediction, techWarpEngines } from "../tech/shipTech";
-import { rndId } from "./randUtils";
+import DATASHIPS, { shipNameGenerator } from "../data/fDataShips";
+import { TECHIDS } from "../data/fDataTechnology";
+import { FactionModel, Coordinates } from "../models/fModels";
+import { ShipDesign, ShipUnit, ShipWeapon } from "../models/fUnits";
+import { techEvasionEngine, techHeavyRounds, techIonEngines, techTargetingComputerOne, techTargetingComputerThree, techTargetingComputerTwo, techTimeslipPrediction, techWarpEngines } from "../tech/fShipTech";
+import { rndId } from "./fRandUtils";
 // import { getFactionById } from "./factionJokiUtils";
 
 

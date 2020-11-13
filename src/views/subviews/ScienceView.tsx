@@ -13,7 +13,7 @@ import socialSvg from "../../images/techSocial.svg";
 import informationSvg from "../../images/techInformation.svg";
 import TechCard from "../../components/TechCard";
 import { DATATECHNOLOGY } from "../../data/dataTechnology";
-import { canAffordTech } from "../../utils/techUtils";
+import { canAffordTech, getTechValue } from "../../utils/techUtils";
 import { IconResearchPoint } from "../../components/Icons";
 
 import researchimg from "../../images/art/research.jpg";
@@ -200,6 +200,11 @@ const ScienceView: FC = () => {
         }
     }
 
+    const techs = [...DATATECHNOLOGY].sort((a: Technology, b:Technology) => {
+        return getTechValue(a) - getTechValue(b);
+
+    })
+
     return (
         <div className={classes.root}>
             <PageContainer image={researchimg} color="#BD7" font={faction.style.fontFamily}>
@@ -228,7 +233,7 @@ const ScienceView: FC = () => {
                 <h2>Technologies</h2>
 
                 <div className={classes.technologyGrid}>
-                    {DATATECHNOLOGY.map((tech: Technology) => {
+                    {techs.map((tech: Technology) => {
                         const owned = faction.technology.find((s: string) => s === tech.id) !== undefined;
                         const canAfford = canAffordTech(tech, faction);
                         const techClasses = `${owned ? "owned " : ""}${!owned && !canAfford ? "cannotAfford" : ""}`;

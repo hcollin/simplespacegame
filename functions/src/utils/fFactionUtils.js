@@ -1,7 +1,7 @@
 "use strict";
 exports.__esModule = true;
 exports.getFactionScore = exports.researchPointDistribution = exports.getSystemResearchPointGeneration = exports.researchPointGenerationCalculator = exports.systemExpenses = exports.unitExpenses = exports.getWelfareCommands = exports.commandCountCalculator = exports.expensesCalculator = exports.factionValues = exports.getFactionFromArrayById = void 0;
-var businessTech_1 = require("../tech/businessTech");
+var fBusinessTech_1 = require("../tech/fBusinessTech");
 function getFactionFromArrayById(factions, id) {
     return factions.find(function (fm) { return fm.id === id; });
 }
@@ -56,7 +56,7 @@ function factionValues(game, factionId) {
         }
         return sum;
     }, 0);
-    values.income = values.totalEconomy + values.trade - values.expenses + businessTech_1.techMarketing(faction, game);
+    values.income = values.totalEconomy + values.trade - values.expenses + fBusinessTech_1.techMarketing(faction, game);
     values.maxCommands = commandCountCalculator(game, factionId);
     return values;
 }
@@ -109,7 +109,7 @@ function commandCountCalculator(game, factionId) {
 }
 exports.commandCountCalculator = commandCountCalculator;
 function getWelfareCommands(faction, welfarePointTotal) {
-    return 3 + Math.floor(welfarePointTotal / businessTech_1.techDecisionEngine(faction));
+    return 3 + Math.floor(welfarePointTotal / fBusinessTech_1.techDecisionEngine(faction));
 }
 exports.getWelfareCommands = getWelfareCommands;
 function unitExpenses(um) {
@@ -135,7 +135,7 @@ function researchPointGenerationCalculator(game, faction) {
 }
 exports.researchPointGenerationCalculator = researchPointGenerationCalculator;
 function getSystemResearchPointGeneration(sm, faction) {
-    var welfareCurve = businessTech_1.techHigherEducation(faction);
+    var welfareCurve = fBusinessTech_1.techHigherEducation(faction);
     var sum = 0;
     sum += Math.floor((sm.industry + sm.defense) / 3);
     sum += Math.floor(sm.economy / 4);

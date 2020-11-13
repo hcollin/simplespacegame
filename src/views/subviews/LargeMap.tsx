@@ -67,10 +67,12 @@ const LargeMap: FC<LargeMapProps> = (props) => {
     }
 
     function wheelEvent(e: KonvaEventObject<WheelEvent>) {
+        if(e.evt.deltaY === 0) return;
         setZoomLevel((prev: number) => {
             if (prev <= 0.5 && e.evt.deltaY > 0) return prev;
             if (prev > 3 && e.evt.deltaY < 0) return prev;
-            return prev + ((e.evt.deltaY / 1000) * -1);
+            const zoomSpeed = e.evt.deltaY > 0 ? 100 : -100;
+            return prev + ((zoomSpeed / 1000) * -1);
         })
     }
 

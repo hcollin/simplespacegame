@@ -1,8 +1,8 @@
 
-import { Trade } from "../models/Communication";
-import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/Models";
-import { ShipUnit } from "../models/Units";
-import { techDecisionEngine, techHigherEducation, techMarketing } from "../tech/businessTech";
+import { Trade } from "../models/fCommunication";
+import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/fModels";
+import { ShipUnit } from "../models/fUnits";
+import { techDecisionEngine, techHigherEducation, techMarketing } from "../tech/fBusinessTech";
 
 interface FactionValues {
     maxCommands: number;

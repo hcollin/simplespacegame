@@ -1,6 +1,6 @@
-import { GameModel, SystemKeyword, SystemModel } from "../models/Models";
-import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
-import { getSystemResearchPointGeneration } from "./factionUtils";
+import { GameModel, SystemKeyword, SystemModel } from "../models/fModels";
+
+import { getFactionFromArrayById, getSystemResearchPointGeneration } from "./fFactionUtils";
 
 
 export interface SystemEconomy extends SystemModel {
@@ -41,6 +41,9 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
     return eco;
 
 }
+
+
+
 
 export function getStarIndustryMax(star: SystemModel, game: GameModel): number {
     // const faction = getFactionFromArrayById(game.factions, star.ownerFactionId);

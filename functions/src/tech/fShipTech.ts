@@ -1,8 +1,8 @@
-import { TECHIDS } from "../data/dataTechnology";
-import { FactionModel } from "../models/Models";
-import { ShipWeapon } from "../models/Units";
+import { TECHIDS } from "../data/fDataTechnology";
+import { FactionModel } from "../models/fModels";
+import { ShipWeapon } from "../models/fUnits";
 
-import { factionHasTechnology } from "./techTools";
+import { factionHasTechnology } from "./fTechTools";
 
 
 /**

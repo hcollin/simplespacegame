@@ -180,7 +180,7 @@ export function startGame(game: GameModel): GameModel {
             star.industry = 2;
             star.economy = 2;
             star.defense = 0;
-            star.keywords.push("HOMEWORLD");
+            star.keywords = ["HOMEWORLD"];
             const unit = createShipFromDesign(getDesignByName("Corvette"), fm.id, star.location);
             units.push(unit);
             homeSystems.push(star);

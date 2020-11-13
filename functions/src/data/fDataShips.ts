@@ -1,9 +1,8 @@
-"use strict";
-exports.__esModule = true;
-exports.DATAOLDSHIPS = exports.DATANEWSHIPS = exports.shipNameGenerator = void 0;
-var Units_1 = require("../models/Units");
-var randUtils_1 = require("../utils/randUtils");
-var DATAOLDSHIPS = [
+import { OldShip } from "../models/fModels";
+import { SHIPCLASS, ShipDesign, ShipWeapon, WEAPONTYPE } from "../models/fUnits";
+import { arnd } from "../utils/fRandUtils";
+
+const DATAOLDSHIPS: OldShip[] = [
     {
         id: "",
         cost: 3,
@@ -12,7 +11,7 @@ var DATAOLDSHIPS = [
         weapons: 1,
         name: "Corvette",
         speed: 5,
-        description: "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires."
+        description: "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires.",
     },
     {
         id: "",
@@ -21,7 +20,7 @@ var DATAOLDSHIPS = [
         hull: 5,
         weapons: 1,
         name: "Frigate",
-        speed: 7
+        speed: 7,
     },
     {
         id: "",
@@ -30,7 +29,7 @@ var DATAOLDSHIPS = [
         hull: 10,
         weapons: 3,
         name: "Cruiser",
-        speed: 5
+        speed: 5,
     },
     {
         id: "",
@@ -39,14 +38,15 @@ var DATAOLDSHIPS = [
         hull: 16,
         weapons: 6,
         name: "Battleship",
-        speed: 4
+        speed: 4,
     },
+
 ];
-exports.DATAOLDSHIPS = DATAOLDSHIPS;
-var DATASHIPWEAPONS = [
+
+const DATASHIPWEAPONS: ShipWeapon[] = [
     {
         name: "Rapid Laser",
-        type: Units_1.WEAPONTYPE.ENERGY,
+        type: WEAPONTYPE.ENERGY,
         accuracy: 80,
         cooldown: 0,
         cooldownTime: 0,
@@ -55,7 +55,7 @@ var DATASHIPWEAPONS = [
     },
     {
         name: "Laser Turret",
-        type: Units_1.WEAPONTYPE.ENERGY,
+        type: WEAPONTYPE.ENERGY,
         accuracy: 70,
         cooldown: 0,
         cooldownTime: 0,
@@ -64,7 +64,7 @@ var DATASHIPWEAPONS = [
     },
     {
         name: "Small Railgun",
-        type: Units_1.WEAPONTYPE.KINETIC,
+        type: WEAPONTYPE.KINETIC,
         accuracy: 50,
         cooldown: 0,
         cooldownTime: 0,
@@ -73,7 +73,7 @@ var DATASHIPWEAPONS = [
     },
     {
         name: "Mass Cannon",
-        type: Units_1.WEAPONTYPE.KINETIC,
+        type: WEAPONTYPE.KINETIC,
         accuracy: 60,
         cooldown: 0,
         cooldownTime: 1,
@@ -82,7 +82,7 @@ var DATASHIPWEAPONS = [
     },
     {
         name: "Homig Missile",
-        type: Units_1.WEAPONTYPE.MISSILE,
+        type: WEAPONTYPE.MISSILE,
         accuracy: 50,
         cooldown: 0,
         cooldownTime: 0,
@@ -90,16 +90,17 @@ var DATASHIPWEAPONS = [
         special: []
     },
 ];
-function getWeaponByName(name) {
-    var w = DATASHIPWEAPONS.find(function (w) { return w.name === name; });
-    if (!w)
-        throw new Error("Unknown weapon " + name);
+
+function getWeaponByName(name: string): ShipWeapon {
+    const w = DATASHIPWEAPONS.find((w: ShipWeapon) => w.name === name);
+    if(!w) throw new Error(`Unknown weapon ${name}`);
     return w;
 }
-var DATANEWSHIPS = [
+
+const DATANEWSHIPS: ShipDesign[] = [
     {
         id: "",
-        type: Units_1.SHIPCLASS.CORVETTE,
+        type: SHIPCLASS.CORVETTE,
         name: "Corvette",
         cost: 3,
         minIndustry: 2,
@@ -114,12 +115,13 @@ var DATANEWSHIPS = [
         keywords: [],
         weapons: [
             getWeaponByName("Laser Turret"),
+            // getWeaponByName("Rapid Laser")
         ],
-        description: "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires."
+        description: "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires.",
     },
     {
         id: "",
-        type: Units_1.SHIPCLASS.FRIGATE,
+        type: SHIPCLASS.FRIGATE,
         name: "Frigate",
         cost: 6,
         minIndustry: 3,
@@ -141,7 +143,7 @@ var DATANEWSHIPS = [
     },
     {
         id: "",
-        type: Units_1.SHIPCLASS.DESTROYER,
+        type: SHIPCLASS.DESTROYER,
         name: "Destroyer",
         cost: 12,
         minIndustry: 5,
@@ -165,12 +167,19 @@ var DATANEWSHIPS = [
         description: ""
     },
 ];
-exports.DATANEWSHIPS = DATANEWSHIPS;
-var DATASHIPS = DATANEWSHIPS;
-exports["default"] = DATASHIPS;
-function shipNameGenerator(shipClass) {
-    var partA = ["New", "Old", "Millenium", "Angry", "SS", "MS", "Phantom", "Ghost", "Dark", "Light"];
-    var partB = ["Skipper", "Falcon", "Enterprise", "Terror", "Reign", "Memorial", "Ronan", "Samurai", "Ninja", "Knight", "Pride", "Spear", "Sword", "Hammer", "Shield"];
-    return randUtils_1.arnd(partA) + " " + randUtils_1.arnd(partB);
+
+
+
+const DATASHIPS = DATANEWSHIPS;
+
+export default DATASHIPS;
+
+
+export function shipNameGenerator(shipClass: SHIPCLASS): string {
+    const partA = ["New", "Old", "Millenium", "Angry", "SS", "MS", "Phantom", "Ghost", "Dark", "Light"];
+    const partB = ["Skipper", "Falcon", "Enterprise", "Terror", "Reign", "Memorial", "Ronan", "Samurai", "Ninja", "Knight", "Pride", "Spear", "Sword", "Hammer", "Shield"];
+    return `${arnd(partA)} ${arnd(partB)}`;
+
 }
-exports.shipNameGenerator = shipNameGenerator;
+
+export {DATANEWSHIPS, DATAOLDSHIPS};

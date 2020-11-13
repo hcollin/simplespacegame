@@ -1,4 +1,4 @@
-import { makeStyles, Theme, createStyles, Button, Tab, Tabs } from "@material-ui/core";
+import { makeStyles, Theme, createStyles, Button, Tab, Tabs, Grid } from "@material-ui/core";
 import React, { FC, useState } from "react";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import {
@@ -43,8 +43,16 @@ const useStyles = makeStyles((theme: Theme) =>
             boxShadow: "inset 0 0 2rem 0.5rem #000",
             border: "ridge 3px #FFF5",
 
-            "& h1, & h2, & h3": {
+            "& h1, & h2, & h3, & h4": {
                 textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+            },
+            "& label.info": {
+                textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+                textTransform: "uppercase",
+                fontSize: "0.9rem",
+                fontWeight: "bold",
+                color: "#BDFA",
+                fontStyle: "italic",
             },
             "& > div.title": {
                 top: "0",
@@ -341,7 +349,7 @@ const SystemInfo: FC = () => {
 
 
     const sysEco = getSystemEconomy(star, game);
-    
+
 
     return (
         <div className={classes.root}>
@@ -356,7 +364,7 @@ const SystemInfo: FC = () => {
                     <Tab label="Reports" {...a11yProps(2)} />
                 </Tabs>
             </header>
-            
+
 
             <div className="title">
                 <h1>{star.name}</h1>
@@ -364,57 +372,67 @@ const SystemInfo: FC = () => {
 
             <TabPanel value={tab} index={0}>
                 <h2>System Infrastructure</h2>
+                <Grid container spacing={1}>
+                    <Grid item lg={7}>
+                        <div className={classes.value}>
+                            <IconIndustry size="xl" wrapper="light" />
+                            <h3>
+                                {star.industry} <small>/ {sysEco.industryMax}</small> {comPlusInd > 0 && <span>+{comPlusInd}</span>}
+                            </h3>
 
-                <div className={classes.value}>
-                    <IconIndustry size="xl" wrapper="light" />
-                    <h3>
-                        {star.industry} <small>/ {sysEco.industryMax}</small> {comPlusInd > 0 && <span>+{comPlusInd}</span>}
-                    </h3>
+                            {isMine && !userIsReady && (
+                                <Button variant="contained" color="primary" onClick={() => plusIndustry(star.id)} disabled={star.industry + comPlusInd >= sysEco.industryMax}>
+                                    +
+                                </Button>
+                            )}
+                        </div>
+                        <div className={classes.value}>
+                            <IconCredit size="xl" wrapper="light" />
 
-                    {isMine && !userIsReady && (
-                        <Button variant="contained" color="primary" onClick={() => plusIndustry(star.id)} disabled={star.industry + comPlusInd >= sysEco.industryMax}>
-                            +
-                        </Button>
-                    )}
-                </div>
-                <div className={classes.value}>
-                    <IconCredit size="xl" wrapper="light" />
+                            <h3>
+                                {star.economy} <small>/ {sysEco.economyMax}</small>
+                                {comPlusEco > 0 && <span>+{comPlusEco}</span>}
+                            </h3>
 
-                    <h3>
-                        {star.economy} <small>/ {sysEco.economyMax}</small> 
-                        {comPlusEco > 0 && <span>+{comPlusEco}</span>}
-                    </h3>
+                            {isMine && !userIsReady && (
+                                <Button variant="contained" color="primary" onClick={() => plusEconomy(star.id)} disabled={star.economy + comPlusEco >= sysEco.economyMax}>
+                                    +
+                                </Button>
+                            )}
+                        </div>
+                        <div className={classes.value}>
+                            <IconDefense size="xl" wrapper="light" />
+                            <h3>
+                                {star.defense} <small>/ {sysEco.defenseMax}</small>
+                                {comPlusDef > 0 && <span>+{comPlusDef}</span>}
+                            </h3>
+                            {isMine && !userIsReady && star.defense < star.industry && (
+                                <Button variant="contained" color="primary" onClick={() => plusDefense(star.id)} disabled={star.defense + comPlusDef >= sysEco.defenseMax}>
+                                    +
+                                </Button>
+                            )}
+                        </div>
+                        <div className={classes.value}>
+                            <IconWelfare size="xl" wrapper="light" />
+                            <h3>
+                                {star.welfare} <small>/ {sysEco.welfareMax}</small>
+                                {comPlusWlf > 0 && <span>+{comPlusWlf}</span>}
+                            </h3>
+                            {isMine && !userIsReady && (
+                                <Button variant="contained" color="primary" onClick={() => plusWelfare(star.id)} disabled={star.welfare + comPlusWlf >= sysEco.welfareMax}>
+                                    +
+                                </Button>
+                            )}
+                        </div>
+                    </Grid>
 
-                    {isMine && !userIsReady && (
-                        <Button variant="contained" color="primary" onClick={() => plusEconomy(star.id)} disabled={star.economy + comPlusEco >= sysEco.economyMax}>
-                            +
-                        </Button>
-                    )}
-                </div>
-                <div className={classes.value}>
-                    <IconDefense size="xl" wrapper="light" />
-                    <h3>
-                        {star.defense} <small>/ {sysEco.defenseMax}</small> 
-                        {comPlusDef > 0 && <span>+{comPlusDef}</span>}
-                    </h3>
-                    {isMine && !userIsReady && star.defense < star.industry && (
-                        <Button variant="contained" color="primary" onClick={() => plusDefense(star.id)} disabled={star.defense + comPlusDef >= sysEco.defenseMax}>
-                            +
-                        </Button>
-                    )}
-                </div>
-                <div className={classes.value}>
-                    <IconWelfare size="xl" wrapper="light" />
-                    <h3>
-                        {star.welfare} <small>/ {sysEco.welfareMax}</small> 
-                        {comPlusWlf > 0 && <span>+{comPlusWlf}</span>}
-                    </h3>
-                    {isMine && !userIsReady && (
-                        <Button variant="contained" color="primary" onClick={() => plusWelfare(star.id)} disabled={star.welfare + comPlusWlf >= sysEco.welfareMax}>
-                            +
-                        </Button>
-                    )}
-                </div>
+                    <Grid item lg={5}>
+                            <label className="info">Keywords</label>
+                            <h3>{star.keywords.join(", ")}</h3>
+                            
+                    </Grid>
+                </Grid>
+
             </TabPanel>
 
             <TabPanel value={tab} index={1}>

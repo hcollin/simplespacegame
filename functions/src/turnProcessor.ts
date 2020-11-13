@@ -1,15 +1,15 @@
-import { DATATECHNOLOGY } from "./data/dataTechnology";
+import { DATATECHNOLOGY } from "./data/fDataTechnology";
 import { COMBAT_MAXROUNDS } from "./functionConfigs";
-import { Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand, BuildUnitCommand } from "./models/Commands";
-import { Trade } from "./models/Communication";
-import { GameModel, GameState, SystemModel, FactionModel, FactionState, FactionTechSetting, Technology, ReportType, SpaceCombat, Coordinates } from "./models/Models";
-import { ShipUnit, ShipWeapon } from "./models/Units";
-import { researchPointGenerationCalculator, researchPointDistribution, factionValues, getFactionFromArrayById } from "./utils/factionUtils";
-import { inSameLocation } from "./utils/locationUtils";
-import { travelingBetweenCoordinates } from "./utils/MathUtils";
-import { rnd } from "./utils/randUtils";
-import { canAffordTech, factionPaysForTech } from "./utils/techUtils";
-import { getShipSpeed, getFactionAdjustedUnit, getFactionAdjustedWeapon, createShipFromDesign, getDesignByName } from "./utils/unitUtils";
+import { Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand, BuildUnitCommand } from "./models/fCommands";
+import { Trade } from "./models/fCommunication";
+import { GameModel, GameState, SystemModel, FactionModel, FactionState, FactionTechSetting, Technology, ReportType, SpaceCombat, Coordinates } from "./models/fModels";
+import { ShipUnit, ShipWeapon } from "./models/fUnits";
+import { researchPointGenerationCalculator, researchPointDistribution, factionValues, getFactionFromArrayById } from "./utils/fFactionUtils";
+import { inSameLocation } from "./utils/fLocationUtils";
+import { travelingBetweenCoordinates } from "./utils/fMathUtils";
+import { rnd } from "./utils/fRandUtils";
+import { canAffordTech, factionPaysForTech } from "./utils/fTechUtils";
+import { getShipSpeed, getFactionAdjustedUnit, getFactionAdjustedWeapon, createShipFromDesign, getDesignByName } from "./utils/fUnitUtils";
 
 
 export async function processTurn(origGame: GameModel, commands?: Command[]): Promise<[GameModel, Command[]]> {

@@ -12,7 +12,7 @@ var __assign = (this && this.__assign) || function () {
 };
 exports.__esModule = true;
 exports.getTechById = exports.factionPaysForTech = exports.canAffordTech = void 0;
-var dataTechnology_1 = require("../data/dataTechnology");
+var fDataTechnology_1 = require("../data/fDataTechnology");
 function canAffordTech(tech, faction) {
     var canAfford = true;
     tech.fieldreqs.forEach(function (val) {
@@ -46,7 +46,7 @@ function factionPaysForTech(fields, tech) {
 }
 exports.factionPaysForTech = factionPaysForTech;
 function getTechById(techId) {
-    var tech = dataTechnology_1.DATATECHNOLOGY.find(function (t) { return t.id === techId; });
+    var tech = fDataTechnology_1.DATATECHNOLOGY.find(function (t) { return t.id === techId; });
     if (!tech) {
         throw new Error("Not a valid technology id " + techId);
     }

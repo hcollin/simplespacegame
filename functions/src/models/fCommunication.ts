@@ -1,4 +1,4 @@
-import { GameObject } from "./Models";
+import { GameObject } from "./fModels";
 
 export interface ChatMessage extends GameObject{
     gameId: string;

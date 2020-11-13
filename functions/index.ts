@@ -1,7 +1,7 @@
 
 
-import { Command } from './src/models/Commands';
-import { GameModel, GameState } from './src/models/Models';
+import { Command } from './src/models/fCommands';
+import { GameModel, GameState } from './src/models/fModels';
 import { processTurn } from './src/turnProcessor';
 
 const functions = require('firebase-functions');

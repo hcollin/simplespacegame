@@ -56,3 +56,19 @@ export function getTechById(techId: string): Technology {
 
 
 }
+
+/**
+ * Total value (as in cost) for the provided technology. This useful in sorting for example.
+ * 
+ * @param tech 
+ */
+export function getTechValue(tech: Technology): number {
+    
+    const reqSum = tech.fieldreqs.reduce((tot: number, req: [TechnologyField, number]) => {
+        return tot + req[1];
+    }, 0);
+
+    
+
+    return reqSum + (tech.techprereq.length * 5);
+}

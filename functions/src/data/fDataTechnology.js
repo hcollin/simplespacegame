@@ -1,7 +1,7 @@
 "use strict";
 exports.__esModule = true;
 exports.DATATECHNOLOGY = exports.TECHIDS = void 0;
-var Models_1 = require("../models/Models");
+var fModels_1 = require("../models/fModels");
 var TECHIDS;
 (function (TECHIDS) {
     TECHIDS["IonEngines"] = "T-P-001";
@@ -21,8 +21,8 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.IonEngines,
         fieldreqs: [
-            [Models_1.TechnologyField.CHEMISTRY, 3],
-            [Models_1.TechnologyField.PHYSICS, 2],
+            [fModels_1.TechnologyField.CHEMISTRY, 3],
+            [fModels_1.TechnologyField.PHYSICS, 2],
         ],
         techprereq: [],
         name: "Ion Engines",
@@ -31,9 +31,9 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.WarpEngines,
         fieldreqs: [
-            [Models_1.TechnologyField.CHEMISTRY, 5],
-            [Models_1.TechnologyField.PHYSICS, 5],
-            [Models_1.TechnologyField.INFORMATION, 2],
+            [fModels_1.TechnologyField.CHEMISTRY, 5],
+            [fModels_1.TechnologyField.PHYSICS, 5],
+            [fModels_1.TechnologyField.INFORMATION, 2],
         ],
         techprereq: [TECHIDS.IonEngines],
         name: "Warp Engines",
@@ -42,8 +42,8 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.Marketing,
         fieldreqs: [
-            [Models_1.TechnologyField.BUSINESS, 4],
-            [Models_1.TechnologyField.SOCIOLOGY, 1],
+            [fModels_1.TechnologyField.BUSINESS, 4],
+            [fModels_1.TechnologyField.SOCIOLOGY, 1],
         ],
         techprereq: [],
         name: "Marketing",
@@ -52,8 +52,8 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.EvasionEngine,
         fieldreqs: [
-            [Models_1.TechnologyField.CHEMISTRY, 6],
-            [Models_1.TechnologyField.INFORMATION, 2]
+            [fModels_1.TechnologyField.CHEMISTRY, 6],
+            [fModels_1.TechnologyField.INFORMATION, 2]
         ],
         techprereq: [],
         name: "Evasion Engine",
@@ -62,8 +62,8 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.PredEvasion,
         fieldreqs: [
-            [Models_1.TechnologyField.PHYSICS, 6],
-            [Models_1.TechnologyField.INFORMATION, 9]
+            [fModels_1.TechnologyField.PHYSICS, 6],
+            [fModels_1.TechnologyField.INFORMATION, 9]
         ],
         techprereq: [TECHIDS.EvasionEngine],
         name: "TimeSlip Prediction",
@@ -72,7 +72,7 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.TargetingComp1,
         fieldreqs: [
-            [Models_1.TechnologyField.INFORMATION, 5],
+            [fModels_1.TechnologyField.INFORMATION, 5],
         ],
         techprereq: [],
         name: "Targeting computers I",
@@ -81,8 +81,8 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.TargetingComp2,
         fieldreqs: [
-            [Models_1.TechnologyField.PHYSICS, 5],
-            [Models_1.TechnologyField.INFORMATION, 5],
+            [fModels_1.TechnologyField.PHYSICS, 5],
+            [fModels_1.TechnologyField.INFORMATION, 5],
         ],
         techprereq: [TECHIDS.TargetingComp1],
         name: "Targeting computers II",
@@ -91,9 +91,9 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.TargetingComp3,
         fieldreqs: [
-            [Models_1.TechnologyField.PHYSICS, 10],
-            [Models_1.TechnologyField.INFORMATION, 10],
-            [Models_1.TechnologyField.SOCIOLOGY, 5],
+            [fModels_1.TechnologyField.PHYSICS, 10],
+            [fModels_1.TechnologyField.INFORMATION, 10],
+            [fModels_1.TechnologyField.SOCIOLOGY, 5],
         ],
         techprereq: [TECHIDS.TargetingComp3],
         name: "Targeting computers III",
@@ -102,7 +102,7 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.HeavyRounds,
         fieldreqs: [
-            [Models_1.TechnologyField.PHYSICS, 10],
+            [fModels_1.TechnologyField.PHYSICS, 10],
         ],
         techprereq: [],
         name: "Heavy Rounds",
@@ -111,8 +111,8 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.DeciAppr,
         fieldreqs: [
-            [Models_1.TechnologyField.SOCIOLOGY, 7],
-            [Models_1.TechnologyField.INFORMATION, 5],
+            [fModels_1.TechnologyField.SOCIOLOGY, 7],
+            [fModels_1.TechnologyField.INFORMATION, 5],
         ],
         techprereq: [],
         name: "Decision Apparatus",
@@ -121,8 +121,8 @@ exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.HigherEdu,
         fieldreqs: [
-            [Models_1.TechnologyField.SOCIOLOGY, 8],
-            [Models_1.TechnologyField.BIOLOGY, 4],
+            [fModels_1.TechnologyField.SOCIOLOGY, 8],
+            [fModels_1.TechnologyField.BIOLOGY, 4],
         ],
         techprereq: [],
         name: "Higher Education",

@@ -1,4 +1,4 @@
-import { Coordinates, GameObject } from "./Models";
+import { Coordinates, GameObject } from "./fModels";
 
 export enum CommandType {
     SystemBuild = "SystemBuild",

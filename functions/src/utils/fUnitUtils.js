@@ -12,9 +12,9 @@ var __assign = (this && this.__assign) || function () {
 };
 exports.__esModule = true;
 exports.getDesignByName = exports.createShipFromDesign = exports.getFactionAdjustedUnit = exports.getFactionAdjustedWeapon = exports.getWeaponCooldownTime = exports.getWeaponAccuracy = exports.getWeaponDamage = exports.getShipAgility = exports.getShipShieldsReg = exports.getShipShieldsMax = exports.getShipArmor = exports.getShipHull = exports.getShipTroops = exports.getShipCost = exports.getShipTechReq = exports.getShipIndustry = exports.getShipSpeed = exports.getAdjustedShip = void 0;
-var dataShips_1 = require("../data/dataShips");
-var shipTech_1 = require("../tech/shipTech");
-var randUtils_1 = require("./randUtils");
+var fDataShips_1 = require("../data/fDataShips");
+var fShipTech_1 = require("../tech/fShipTech");
+var fRandUtils_1 = require("./fRandUtils");
 // import { getFactionById } from "./factionJokiUtils";
 // SHIP VALUES
 // The functions should be used to access the provided ship design value if tech and faction specific modifiers need to be taken account
@@ -39,7 +39,7 @@ exports.getAdjustedShip = getAdjustedShip;
 function getShipSpeed(ship, faction) {
     if (!faction)
         return ship.speed;
-    return ship.speed + shipTech_1.techIonEngines(faction) + shipTech_1.techWarpEngines(faction);
+    return ship.speed + fShipTech_1.techIonEngines(faction) + fShipTech_1.techWarpEngines(faction);
 }
 exports.getShipSpeed = getShipSpeed;
 function getShipIndustry(ship, faction) {
@@ -93,20 +93,20 @@ exports.getShipShieldsReg = getShipShieldsReg;
 function getShipAgility(ship, faction) {
     if (!faction)
         return ship.agility;
-    return shipTech_1.techTimeslipPrediction(faction, shipTech_1.techEvasionEngine(faction, ship.agility));
+    return fShipTech_1.techTimeslipPrediction(faction, fShipTech_1.techEvasionEngine(faction, ship.agility));
 }
 exports.getShipAgility = getShipAgility;
 // WEAPON VALUES
 function getWeaponDamage(weapon, faction) {
     if (!faction)
         return weapon.damage;
-    return shipTech_1.techHeavyRounds(faction, weapon.damage);
+    return fShipTech_1.techHeavyRounds(faction, weapon.damage);
 }
 exports.getWeaponDamage = getWeaponDamage;
 function getWeaponAccuracy(weapon, faction) {
     if (!faction)
         return weapon.accuracy;
-    return weapon.accuracy + shipTech_1.techTargetingComputerOne(faction) + shipTech_1.techTargetingComputerTwo(faction) + shipTech_1.techTargetingComputerThree(faction);
+    return weapon.accuracy + fShipTech_1.techTargetingComputerOne(faction) + fShipTech_1.techTargetingComputerTwo(faction) + fShipTech_1.techTargetingComputerThree(faction);
 }
 exports.getWeaponAccuracy = getWeaponAccuracy;
 function getWeaponCooldownTime(weapon, faction) {
@@ -144,12 +144,12 @@ function getFactionAdjustedUnit(faction, origUnit) {
 exports.getFactionAdjustedUnit = getFactionAdjustedUnit;
 /// FROM HELPERS
 function createShipFromDesign(design, factionId, location) {
-    var ship = __assign(__assign({}, design), { id: randUtils_1.rndId(), damage: 0, morale: 100, shields: design.shieldsMax, location: location, factionId: factionId, experience: 0, name: dataShips_1.shipNameGenerator(design.type) });
+    var ship = __assign(__assign({}, design), { id: fRandUtils_1.rndId(), damage: 0, morale: 100, shields: design.shieldsMax, location: location, factionId: factionId, experience: 0, name: fDataShips_1.shipNameGenerator(design.type) });
     return ship;
 }
 exports.createShipFromDesign = createShipFromDesign;
 function getDesignByName(name) {
-    var sd = dataShips_1["default"].find(function (s) { return s.name === name; });
+    var sd = fDataShips_1["default"].find(function (s) { return s.name === name; });
     if (!sd) {
         throw new Error("Unknown ship desgin " + name);
     }

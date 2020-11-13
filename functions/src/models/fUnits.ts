@@ -1,5 +1,5 @@
-import { TECHIDS } from "../data/dataTechnology";
-import { Coordinates, GameObject } from "./Models";
+import { TECHIDS } from "../data/fDataTechnology";
+import { Coordinates, GameObject } from "./fModels";
 
 
 

@@ -1,4 +1,4 @@
-import { Technology, TechnologyField } from "../models/Models";
+import { Technology, TechnologyField } from "../models/fModels";
 
 
 export enum TECHIDS {
