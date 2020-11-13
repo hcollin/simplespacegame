@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 "& > div": {
                     flex: "1 1 auto",
                     color: "#FFFD",
-                    fontSize: "1.4rem",
+                    fontSize: "1.1rem",
                     fontWeight: "bold",
                     display: "flex",
                     alignItems: "center",
@@ -353,6 +353,10 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                 <div>
                     <IconScore size="lg" />
                     {getFactionScore(game, faction.id)}
+                </div>
+                <div>
+                    <IconWelfare size="lg" />
+                    {values.totalWelfare}
                 </div>
             </header>
 

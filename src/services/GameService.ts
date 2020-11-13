@@ -24,7 +24,8 @@ const EMPTYGAME: GameModel = {
     setup: {
         playerCount: 0,
         density: "",
-        distances: ""
+        distances: "",
+        specials: "",
     },
     name: "",
     state: GameState.NONE,
@@ -88,7 +89,8 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
             setup: {
                 playerCount: 4,
                 density: "MEDIUM",
-                distances: "MEDIUM"
+                distances: "MEDIUM",
+                specials: "AVERAGE",
             },
             name: randomGameName(),
             state: GameState.INIT,

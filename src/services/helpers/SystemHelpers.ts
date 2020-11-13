@@ -1,15 +1,16 @@
 
 import { SYSTEMBONUS } from "../../configs";
 import { greekAlphabet, romanNumbers, starName } from "../../data/dataWords";
-import { Coordinates, GameModel, SystemModel } from "../../models/Models";
+import { Coordinates, GameModel, SystemKeyword, SystemModel } from "../../models/Models";
 import { inSameLocation } from "../../utils/locationUtils";
 import { arnd, rnd, roll } from "../../utils/randUtils";
+import { getSpecialChances } from "./GameHelpers";
 
 const starColors: string[] = ["#FFFD", "#FDAD", "#FF8D"];
 
 let sysIds = 1000;
 
-export function createNewSystem(ax = 1, ay = 1, as = 99): SystemModel {
+export function createNewSystem(ax = 1, ay = 1, as = 99, special = "AVERAGE"): SystemModel {
     const id = sysIds++;
 
     const rx = rnd(0, as / 2) * 2;
@@ -36,15 +37,26 @@ export function createNewSystem(ax = 1, ay = 1, as = 99): SystemModel {
         reports: [],
     };
 
-    if(roll(60)) {
+    if (roll(getSpecialChances(special))) {
         const key = arnd(SYSTEMBONUS);
         star.keywords.push(key);
     }
 
+    let fillC = "#777";
+    if (star.keywords.includes(SystemKeyword.HOSTILE)) { fillC = "#F00"; }
+    if (star.keywords.includes(SystemKeyword.MINERALRARE)) { fillC = "#FFD700"; }
+    if (star.keywords.includes(SystemKeyword.MINERALRICH)) { fillC = "#68C"; }
+    if (star.keywords.includes(SystemKeyword.NATIVES)) { fillC = "#88F"; }
+    if (star.keywords.includes(SystemKeyword.ARTIFACTS)) { fillC = "#F0F"; }
+    if (star.keywords.includes(SystemKeyword.GAIA)) { fillC = "#0F0"; }
+    if (star.keywords.includes(SystemKeyword.MINERALPOOR)) { fillC = "#A33"; }
+
+    star.color = fillC;
+
     return star;
 }
 
-export function createRandomMap(starCount: number, size=99): SystemModel[] {
+export function createRandomMap(starCount: number, size = 99, special = "AVERAGE"): SystemModel[] {
     const stars: SystemModel[] = [];
 
     const c = Math.round(starCount / 10);
@@ -52,9 +64,10 @@ export function createRandomMap(starCount: number, size=99): SystemModel[] {
 
     // [x, y, size, star count]
     const ar: [number, number, number, number][] = [
-        [1, 1, p-1, c], [p, 1, p-1, c * 2], [p*2, 1, p-1, c * 3],
-        [1, p, p-1, c * 4], [p, p, p-1, c * 6], [p*2, p, p-1, c * 7],
-        [1, p*2, p-1, c * 8], [p, p*2, p-1, c * 9], [p*2, p*2, p-1, starCount],
+        [1, 1, p - 1, c], [p, 1, p - 1, c * 2], [p * 2, 1, p - 1, c * 3],
+        [1, p, p - 1, c * 4], [p, p, p - 1, c * 5], [p * 2, p, p - 1, c * 6],
+        [1, p * 2, p - 1, c * 7], [p, p * 2, p - 1, c * 8], [p * 2, p * 2, p - 1, c * 9],
+        [p, p, p - 1, starCount]
     ];
 
     let confIndex = 0;
@@ -67,7 +80,7 @@ export function createRandomMap(starCount: number, size=99): SystemModel[] {
             conf = ar[confIndex];
         }
 
-        const star = createNewSystem(conf[0], conf[1], conf[2]);
+        const star = createNewSystem(conf[0], conf[1], conf[2], special);
 
         if (
             stars.findIndex(

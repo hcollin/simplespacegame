@@ -1,6 +1,6 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import { KonvaEventObject } from "konva/types/Node";
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { Circle, Group, Image, Layer, Line, Ring, Stage, Star, Text } from "react-konva";
 import useSelectedSystem from "../../hooks/useSelectedSystem";
 import useWindowSize from "../../hooks/useWIndowResize";
@@ -52,6 +52,10 @@ interface LargeMapProps {
     units: ShipUnit[];
 }
 
+let ozoom: number = 1;
+let ox: number = 0;
+let oy: number = 0;
+
 const LargeMap: FC<LargeMapProps> = (props) => {
 
     const mapRef = useRef<Konva.Stage>(null);
@@ -66,10 +70,15 @@ const LargeMap: FC<LargeMapProps> = (props) => {
     const faction = useCurrentFaction();
     const commands = useMyCommands();
     const [fleet, fleetActions] = useUnitSelection();
-    const [zoomLevel, setZoomLevel] = useState<number>(1);
+    const [zoomLevel, setZoomLevel] = useState<number>(ozoom);
     const [game] = useService<GameModel>("GameService");
 
-    const [mapAdj, setMapAdj] = useState<[number, number]>([0,0])
+    const [mapAdj, setMapAdj] = useState<[number, number]>([ox, oy])
+
+    useEffect(() => {
+        ox = mapAdj[0];
+        oy = mapAdj[1];
+    }, [mapAdj]);
 
     if (!game) return null;
 
@@ -88,24 +97,25 @@ const LargeMap: FC<LargeMapProps> = (props) => {
     }
 
     function wheelEvent(e: KonvaEventObject<WheelEvent>) {
-        if(e.evt.deltaY === 0) return;
+        if (e.evt.deltaY === 0) return;
         const newZoom = calcNewZoom(zoomLevel, e.evt.deltaY);
-        
-        if(mapRef.current !== null) {
+
+        if (mapRef.current !== null) {
             const curX = mapRef.current.getAttr("x");
             const curY = mapRef.current.getAttr("y");
             const curWidth = mapRef.current.getAttr("width");
             const curHeight = mapRef.current.getAttr("height");
             const dif = Math.round((curHeight * newZoom) - (curHeight * zoomLevel));
-            
+
             const mousePosX = e.evt.x / (curWidth);
             const mousePosY = e.evt.y / (curHeight);
 
-            const mouseAdjX = (mousePosX * dif) - dif/2;
-            const mouseAdjY = (mousePosY * dif) - dif/2;
+            const mouseAdjX = (mousePosX * dif) - dif / 2;
+            const mouseAdjY = (mousePosY * dif) - dif / 2;
 
-            mapRef.current.setAttr("x", curX - dif/2 - mouseAdjX)
-            mapRef.current.setAttr("y", curY - dif/2 - mouseAdjY)
+            mapRef.current.setAttr("x", curX - dif / 2 - mouseAdjX);
+            mapRef.current.setAttr("y", curY - dif / 2 - mouseAdjY);
+            ozoom = newZoom;
         }
 
         setZoomLevel(newZoom)
@@ -113,10 +123,10 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 
     function selectUnitGroup(ums: ShipUnit[]) {
         // if(fleet.length === 0) {
-            fleetActions.set([...ums]);
-            // console.log("Group selected", ums);
+        fleetActions.set([...ums]);
+        // console.log("Group selected", ums);
         // }
-        
+
     }
 
     const w = windowSize.width;
@@ -129,43 +139,43 @@ const LargeMap: FC<LargeMapProps> = (props) => {
     props.units.forEach((um: ShipUnit) => {
 
         const cInd = `${um.location.x}-${um.location.y}`;
-        if(!unitGroupsMap.has(cInd)) {
+        if (!unitGroupsMap.has(cInd)) {
             unitGroupsMap.set(cInd, []);
         }
         const unitsInLoc = unitGroupsMap.get(cInd);
-        if(unitsInLoc) {
+        if (unitsInLoc) {
             unitsInLoc.push(um);
             unitGroupsMap.set(cInd, unitsInLoc);
         }
     });
-    
+
 
     function reset() {
-        
 
-        if(mapRef.current) {
-            
-            setMapAdj([0,0]);
 
-            setZoomLevel((prev) => prev === 1? 1.0001 : 1);
-            
+        if (mapRef.current) {
+
+            setMapAdj([0, 0]);
+
+            setZoomLevel((prev) => prev === 1 ? 1.0001 : 1);
+
             mapRef.current.setAttr("x", 0);
             mapRef.current.setAttr("y", 0);
-            
+
 
         }
     }
 
     const unitGroups = Array.from(unitGroupsMap.values());
     // console.log("Selected System", selectedSystem);
-    
-    const showReset = mapRef.current !== null && (Math.abs(mapAdj[0]) > mapRef.current.getAttr("width")/2 || Math.abs(mapAdj[1]) > mapRef.current.getAttr("height")/2 )
-    
+
+    const showReset = mapRef.current !== null && (Math.abs(mapAdj[0]) > mapRef.current.getAttr("width") * zoomLevel || Math.abs(mapAdj[1]) > mapRef.current.getAttr("height") * zoomLevel)
+
     return (<div className={classes.root}>
         {showReset && <Button variant="contained" onClick={reset} className="reset" color="secondary">RESET MAP</Button>}
         <div className={classes.map}>
 
-            <Stage width={w} height={h} draggable={true} onWheel={wheelEvent} ref={mapRef} onDragEnd={(e: KonvaEventObject<DragEvent>) => setMapAdj([e.currentTarget.getAttr("x"), e.currentTarget.getAttr("y")]) }>
+            <Stage x={mapAdj[0]} y={mapAdj[1]} width={w} height={h} draggable={true} onWheel={wheelEvent} ref={mapRef} onDragEnd={(e: KonvaEventObject<DragEvent>) => setMapAdj([e.currentTarget.getAttr("x"), e.currentTarget.getAttr("y")])}>
                 <Layer>
                     {unitGroups.map((umGroup: ShipUnit[]) => {
                         const um = umGroup[0];
@@ -238,8 +248,28 @@ const LargeMap: FC<LargeMapProps> = (props) => {
                                 />}
                                 {isSelected && <Circle radius={size * 2} strokeWidth={2} stroke="#FFF" fill="#888" />}
                                 {star.ringWorld && <Ring fill={color} innerRadius={size * 1.5} outerRadius={size * 1.75} />}
-                                {ownerFaction && <Star width={size} height={size} fill={color} numPoints={6} innerRadius={size / 1.5} outerRadius={size * 1.25} />}
-                                {!ownerFaction && <Circle radius={size} fill={color} />}
+                                {ownerFaction && <Star 
+                                    width={size} 
+                                    height={size} 
+                                    // fill={color} 
+                                    fillRadialGradientStartPoint={{x: 0, y:0 }}
+                                    fillRadialGradientStartRadius={0}
+                                    fillRadialGradientEndPoint={ { x: 0, y: 0 }}
+                                    fillRadialGradientEndRadius={size}
+                                    fillRadialGradientColorStops={[0, 'white', 0.3, `${color}`, 0.9, `${color}`,1, '#000']}
+                                    numPoints={6} 
+                                    innerRadius={size / 1.5} 
+                                    outerRadius={size * 1.25} 
+                                />}
+                                {!ownerFaction && <Circle
+                                    radius={size}
+                                    // fill={color}
+                                    fillRadialGradientStartPoint={{x: 0, y:0 }}
+                                    fillRadialGradientStartRadius={0}
+                                    fillRadialGradientEndPoint={ { x: 0, y: 0 }}
+                                    fillRadialGradientEndRadius={size}
+                                    fillRadialGradientColorStops={[0, 'white', 0.8, `${color}`, 1, 'black']}
+                                />}
                                 {hasTargetedCommand && <Text text="!" fill="white" width={size} align="center" x={size * -0.5} y={-0.8 * size} fontSize={20 * zoomLevel} strokeWidth={1} stroke="black" />}
                                 {zoomLevel > 1.3 && <Text text={star.name} fill="#FFF" align="center" opacity={0.8} x={-70} y={10 * zoomLevel} width={140} />}
                             </Group>
@@ -273,7 +303,7 @@ const CoordinateLine: FC<CoordinateLineProps> = (props) => {
     const windowSize = useWindowSize();
 
     // const w = windowSize.width;
-    const h = windowSize.height - 80;
+    const h = windowSize.height;
 
     const x = h * (props.from.x / 100) * props.zoom;
     const y = h * (props.from.y / 100) * props.zoom;

@@ -16,12 +16,12 @@ import { GameModel, Report } from "../models/Models";
 import { inSameLocation } from "../utils/locationUtils";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
-import { getFactionShips } from "../services/helpers/FactionHelpers";
+import { getFactionFromArrayById, getFactionShips } from "../services/helpers/FactionHelpers";
 import useUserIsReady from "../services/hooks/useUserIsReady";
 import DATASHIPS from "../data/dataShips";
 import ShipInfo from "./ShipInfo";
 import { ShipDesign } from "../models/Units";
-import { IconCredit, IconDefense, IconIndustry, IconUnderConstruction, IconWelfare } from "./Icons";
+import { IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconUnderConstruction, IconWelfare } from "./Icons";
 import { getSystemEconomy } from "../utils/systemUtils";
 import { SERVICEID } from "../services/services";
 import { useService } from "jokits-react";
@@ -163,6 +163,46 @@ const useStyles = makeStyles((theme: Theme) =>
                 margin: 0,
                 padding: 0,
             },
+        },
+        footer: {
+            position: "relative",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around",
+            background: "linear-gradient(180deg, #0008, #111D 10%, #111E 80%, #0008 100%)",
+            margin: "1rem -1rem -1rem -1rem",
+            "& > div": {
+                position: "relative",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 2,
+                flex: "1 1 auto",
+                boxShadow: "inset 0 0 0.5rem 6px #0004",
+                padding: "0.5rem",
+
+                "& > h3": {
+                    margin: "0 0.5rem",
+                    color: "#FFFE",
+                    "& > small": {
+                        fontSize: "1rem",
+                        fontWeight: "normal",
+                        color: "#CCCA",
+                    }
+                }
+            },
+            "&:after": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: "linear-gradient(180deg, #000E, #1118 10%, #1110 50%, #111A 80%, #000E 100%)",
+                zIndex: 1,
+            }
         },
 
         units: {
@@ -350,6 +390,7 @@ const SystemInfo: FC = () => {
 
     const sysEco = getSystemEconomy(star, game);
 
+    const starFaction = getFactionFromArrayById(game.factions, star.ownerFactionId);
 
     return (
         <div className={classes.root}>
@@ -497,6 +538,18 @@ const SystemInfo: FC = () => {
                     );
                 })}
             </TabPanel>
+
+            <footer className={classes.footer} style={{background: starFaction ? starFaction.color : "#888"}}>
+                <div>
+                    <IconCredit wrapper="dark" size="lg" /> <h3>{sysEco.profit} <small> / turn</small></h3>
+                </div>
+
+                <div>
+                    <IconResearchPoint wrapper="dark" size="lg"/><h3> {sysEco.research} <small> / turn</small></h3>
+                </div>
+
+                
+            </footer>
         </div>
     );
 };

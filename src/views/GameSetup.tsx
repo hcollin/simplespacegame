@@ -24,6 +24,7 @@ import { getDensityMultiplier, getDistanceMultiplier, getStarCount } from "../se
 import { createRandomMap } from "../services/helpers/SystemHelpers";
 import MiniMap from "../components/MiniMap";
 import { PLAYERCOUNTS } from "../configs";
+import { copyFile } from "fs";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -126,6 +127,7 @@ const GameSetup: FC = () => {
     const [plCount, setPlCount] = useState<number>(4);
     const [starDensity, setStarDensity] = useState<string>("");
     const [distances, setDistances] = useState<string>("");
+    const [specials, setSpecials] = useState<string>("AVERAGE");
     const [autoJoin, setAutoJoin] = useState<boolean>(true);
 
     const [factionSetup, setFactionSetup] = useState<FactionSetup | undefined>(undefined);
@@ -153,14 +155,16 @@ const GameSetup: FC = () => {
     }, [game]);
 
     useEffect(() => {
+        console.log("Example map")
         if (distances !== "" && starDensity !== "" && plCount > 0) {
             const densityMultiplier = getDensityMultiplier(starDensity);
             const sizeCounter = getDistanceMultiplier(distances);
             const starCount = getStarCount(starDensity, distances, plCount);
-            const rndMap = createRandomMap(starCount, sizeCounter);
+            console.log("StarCount", starCount);
+            const rndMap = createRandomMap(starCount, sizeCounter,specials);
             setExampleMap(rndMap);
         }
-    }, [distances, starDensity, plCount]);
+    }, [distances, starDensity, plCount, specials]);
 
     if (!game) return null;
 
@@ -182,6 +186,7 @@ const GameSetup: FC = () => {
             distances: distances,
             playerCount: plCount,
             faction: factionSetup || undefined,
+            specials: "AVERAGE",
         });
     }
 
@@ -258,7 +263,7 @@ const GameSetup: FC = () => {
                             />
                         </div>
                     </Grid>
-                    <Grid item lg={3} className={classes.column}>
+                    <Grid item lg={4} className={classes.column}>
                         <div>
                             <InputLabel>Star Density</InputLabel>
                             <ButtonGroup variant="contained">
@@ -308,6 +313,42 @@ const GameSetup: FC = () => {
                         </div>
 
                         <div>
+                            <InputLabel>Specials</InputLabel>
+                            <ButtonGroup variant="contained">
+                                <Button
+                                    onClick={() => setSpecials("NONE")}
+                                    color={specials === "NONE" ? "primary" : "default"}
+                                >
+                                    None
+                                </Button>
+                                <Button
+                                    onClick={() => setSpecials("RARE")}
+                                    color={specials === "RARE" ? "primary" : "default"}
+                                >
+                                    Rare
+                                </Button>
+                                <Button
+                                    onClick={() => setSpecials("AVERAGE")}
+                                    color={specials === "AVERAGE" ? "primary" : "default"}
+                                >
+                                    Average
+                                </Button>
+                                <Button
+                                    onClick={() => setSpecials("COMMON")}
+                                    color={specials === "COMMON" ? "primary" : "default"}
+                                >
+                                    Common
+                                </Button>
+                                <Button
+                                    onClick={() => setSpecials("ALL")}
+                                    color={specials === "ALL" ? "primary" : "default"}
+                                >
+                                    All
+                                </Button>
+                            </ButtonGroup>
+                        </div>
+
+                        <div>
                             <h4>Map info</h4>
                             <p>Star count {exampleMap.length}</p>
                             <p>
@@ -315,7 +356,7 @@ const GameSetup: FC = () => {
                             </p>
                         </div>
                     </Grid>
-                    <Grid item lg={6} className={classes.column}>
+                    <Grid item lg={5} className={classes.column}>
                         <label>Example of the map</label>
                         <MiniMap stars={exampleMap} size={distM * 2} distances={distM} />
                     </Grid>

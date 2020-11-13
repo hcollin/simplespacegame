@@ -20,6 +20,7 @@ export interface GameSetup {
     playerCount: number;
     distances: string;
     density: string;
+    specials: string;
 }
 
 export interface PreGameSetup extends GameSetup {

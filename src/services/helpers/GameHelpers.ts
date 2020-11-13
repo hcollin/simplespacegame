@@ -24,7 +24,6 @@ import { createShipFromDesign, getDesignByName } from "./UnitHelpers";
 
 
 export function getDensityMultiplier(density: string): number {
-    console.log(MAPDensities);
     return density === "LOW" ? MAPDensities[0] : density === "HIGH" ? MAPDensities[2] : MAPDensities[1];
 }
 
@@ -32,10 +31,42 @@ export function getDistanceMultiplier(distance: string): number {
     return distance === "SHORT" ? MAPSizes[0] : distance === "LONG" ? MAPSizes[2] : MAPSizes[1];
 }
 
+export function getSpecialChances(special: string): number {
+    switch(special) {
+        case "NONE":
+            return 0;
+        case "RARE":
+            return 15;
+        case "AVERAGE":
+            return 50;
+        case "COMMON":
+            return 75;
+        case "ALL":
+             return 100;
+        default: 
+            return 40;
+    }
+}
+
+/**
+ * How many stars are in the map
+ * 
+ * size  = how long is the side of the square
+ * density = stars per 1000 slots which is (size/2)^2
+ * 
+ * 
+ * @param density 
+ * @param distance 
+ * @param playerCount 
+ */
 export function getStarCount(density: string, distance: string, playerCount: number) {
     const densityMultiplier = getDensityMultiplier(density);
     const sizeCounter = getDistanceMultiplier(distance);
-    return playerCount * densityMultiplier * (sizeCounter/MAPSizes[1]);
+    const dens = Math.pow(sizeCounter/2, 2);
+    const plPlus = (Math.round((playerCount*2)/5) +1)*playerCount;
+    console.log(densityMultiplier, sizeCounter, playerCount, dens);
+    return Math.round(((dens)/1000)*densityMultiplier+plPlus+10);
+    // return playerCount * densityMultiplier * (sizeCounter/MAPSizes[1]);
 }
 
 
@@ -44,7 +75,7 @@ export function createGameFromSetup(setup: PreGameSetup): GameModel {
     const sizeCounter = getDistanceMultiplier(setup.distances);
     const starCount = getStarCount(setup.density, setup.distances, setup.playerCount);
     
-    const stars = createRandomMap(starCount, sizeCounter);
+    const stars = createRandomMap(starCount, sizeCounter, setup.specials);
 
     const game: GameModel = {
         id: "",
@@ -57,6 +88,7 @@ export function createGameFromSetup(setup: PreGameSetup): GameModel {
             density: setup.density,
             distances: setup.distances,
             playerCount: setup.playerCount,
+            specials: setup.specials,
         },
         systems: stars,
         trades: [],
@@ -135,6 +167,7 @@ export function createNewGame(playerCount = 4): GameModel {
             playerCount: 4,
             density: "MEDIUM",
             distances: "MEDIUM",
+            specials: "AVERAGE",
         },
         name: randomGameName(),
         factions: factions,

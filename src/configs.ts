@@ -27,7 +27,7 @@ const FACTION_NAMES: string[][] = [
 
 
 const MAPSizes: number[] = [66, 99, 132];
-const MAPDensities: number[] = [10, 18, 24];
+const MAPDensities: number[] = [15, 25, 35];
 
 const SYSTEMBONUS: SystemKeyword[] = [SystemKeyword.MINERALRICH, SystemKeyword.MINERALRICH, SystemKeyword.MINERALPOOR, SystemKeyword.MINERALRARE, SystemKeyword.GAIA, SystemKeyword.ARTIFACTS, SystemKeyword.HOSTILE, SystemKeyword.NATIVES, SystemKeyword.NATIVES];
 
