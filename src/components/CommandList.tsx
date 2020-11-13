@@ -339,7 +339,6 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
     const pointsGenerated = researchPointGenerationCalculator(game, faction);
 
     const cmdsShown = commands.slice(cmdIndex, cmdIndex + COMMANDPAGINATIONLIMIT);
-    console.log("COMMANDS", commands, cmdsShown);
     return (
         <div className={classes.commands}>
             <header>

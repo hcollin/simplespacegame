@@ -1,6 +1,6 @@
-import { makeStyles, Theme, createStyles } from "@material-ui/core";
+import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import { KonvaEventObject } from "konva/types/Node";
-import React, { FC, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { Circle, Group, Image, Layer, Line, Ring, Stage, Star, Text } from "react-konva";
 import useSelectedSystem from "../../hooks/useSelectedSystem";
 import useWindowSize from "../../hooks/useWIndowResize";
@@ -19,17 +19,27 @@ import { ShipUnit } from "../../models/Units";
 
 import starfieldJpeg from '../../images/starfield2.jpg';
 import { getShipSpeed } from "../../utils/unitUtils";
+import Konva from "konva";
 
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             position: "fixed",
-            top: "80px",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             zIndex: 0,
             backgroundImage: `url(${starfieldJpeg})`,
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
+            "& >button.reset": {
+                position: "absolute",
+                top: "1rem",
+                right: "20rem",
+                zIndex: 1000,
+            }
         },
         map: {
             // backgroundColor: "#000",
@@ -44,6 +54,8 @@ interface LargeMapProps {
 
 const LargeMap: FC<LargeMapProps> = (props) => {
 
+    const mapRef = useRef<Konva.Stage>(null);
+
     const classes = useStyles();
     const [selectedSystem, setSelectedSystem] = useSelectedSystem();
     const windowSize = useWindowSize();
@@ -57,6 +69,8 @@ const LargeMap: FC<LargeMapProps> = (props) => {
     const [zoomLevel, setZoomLevel] = useState<number>(1);
     const [game] = useService<GameModel>("GameService");
 
+    const [mapAdj, setMapAdj] = useState<[number, number]>([0,0])
+
     if (!game) return null;
 
     function select(star: SystemModel) {
@@ -66,14 +80,35 @@ const LargeMap: FC<LargeMapProps> = (props) => {
         setSelectedSystem(null);
     }
 
+    function calcNewZoom(curZoom: number, dir: number): number {
+        if (curZoom <= 0.5 && dir > 0) return 0.5;
+        if (curZoom >= 3 && dir < 0) return 3;
+        const zoomSpeed = dir > 0 ? 100 : -100;
+        return curZoom + ((zoomSpeed / 1000) * -1);
+    }
+
     function wheelEvent(e: KonvaEventObject<WheelEvent>) {
         if(e.evt.deltaY === 0) return;
-        setZoomLevel((prev: number) => {
-            if (prev <= 0.5 && e.evt.deltaY > 0) return prev;
-            if (prev > 3 && e.evt.deltaY < 0) return prev;
-            const zoomSpeed = e.evt.deltaY > 0 ? 100 : -100;
-            return prev + ((zoomSpeed / 1000) * -1);
-        })
+        const newZoom = calcNewZoom(zoomLevel, e.evt.deltaY);
+        
+        if(mapRef.current !== null) {
+            const curX = mapRef.current.getAttr("x");
+            const curY = mapRef.current.getAttr("y");
+            const curWidth = mapRef.current.getAttr("width");
+            const curHeight = mapRef.current.getAttr("height");
+            const dif = Math.round((curHeight * newZoom) - (curHeight * zoomLevel));
+            
+            const mousePosX = e.evt.x / (curWidth);
+            const mousePosY = e.evt.y / (curHeight);
+
+            const mouseAdjX = (mousePosX * dif) - dif/2;
+            const mouseAdjY = (mousePosY * dif) - dif/2;
+
+            mapRef.current.setAttr("x", curX - dif/2 - mouseAdjX)
+            mapRef.current.setAttr("y", curY - dif/2 - mouseAdjY)
+        }
+
+        setZoomLevel(newZoom)
     }
 
     function selectUnitGroup(ums: ShipUnit[]) {
@@ -85,7 +120,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
     }
 
     const w = windowSize.width;
-    const h = windowSize.height - 80;
+    const h = windowSize.height;
 
     const showMoveLine = fleet.length > 0 && selectedSystem && !inSameLocation(selectedSystem.location, fleet[0].location);
 
@@ -105,13 +140,32 @@ const LargeMap: FC<LargeMapProps> = (props) => {
     });
     
 
+    function reset() {
+        
+
+        if(mapRef.current) {
+            
+            setMapAdj([0,0]);
+
+            setZoomLevel((prev) => prev === 1? 1.0001 : 1);
+            
+            mapRef.current.setAttr("x", 0);
+            mapRef.current.setAttr("y", 0);
+            
+
+        }
+    }
+
     const unitGroups = Array.from(unitGroupsMap.values());
     // console.log("Selected System", selectedSystem);
+    
+    const showReset = mapRef.current !== null && (Math.abs(mapAdj[0]) > mapRef.current.getAttr("width")/2 || Math.abs(mapAdj[1]) > mapRef.current.getAttr("height")/2 )
+    
     return (<div className={classes.root}>
-
+        {showReset && <Button variant="contained" onClick={reset} className="reset" color="secondary">RESET MAP</Button>}
         <div className={classes.map}>
 
-            <Stage width={w} height={h} draggable={true} onWheel={wheelEvent}>
+            <Stage width={w} height={h} draggable={true} onWheel={wheelEvent} ref={mapRef} onDragEnd={(e: KonvaEventObject<DragEvent>) => setMapAdj([e.currentTarget.getAttr("x"), e.currentTarget.getAttr("y")]) }>
                 <Layer>
                     {unitGroups.map((umGroup: ShipUnit[]) => {
                         const um = umGroup[0];
