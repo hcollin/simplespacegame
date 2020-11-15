@@ -106,6 +106,7 @@ export interface SystemModel extends GameObject {
     reports: Report[];
 
     buildings: Building[];
+    description?: string;
 
 }
 

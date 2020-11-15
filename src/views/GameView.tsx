@@ -24,6 +24,7 @@ import HelpView from "./subviews/HelpView"
 import ScienceView from "./subviews/ScienceView"
 import DiplomacyView from "./subviews/DiplomacyView"
 import FleetView from "../components/FleetView"
+import SystemView from "../components/SystemView"
 
 
 
@@ -161,8 +162,9 @@ const GameView: FC = () => {
             
             {view === "map" && <>
                 <LargeMap systems={game.systems} factions={game.factions} units={game.units} />
-                <SystemInfo />
+                {/* <SystemInfo /> */}
                 <FleetView />
+                <SystemView />
             </>}
             {view === "economy" && <EconomySheet />}
             {view === "science" && <ScienceView />}

@@ -28,7 +28,7 @@ import { useService } from "jokits-react";
 import { DATABUILDINGS } from "../data/dataBuildings";
 import { BuildingDesign } from "../models/Buildings";
 import BuildingDesignSlot from "./BuildingDesignSlot";
-import { db } from "../api/firebaseDb";
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

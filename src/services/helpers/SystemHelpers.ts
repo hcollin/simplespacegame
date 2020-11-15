@@ -1,4 +1,5 @@
 
+import { System } from "typescript";
 import { SYSTEMBONUS } from "../../configs";
 import { greekAlphabet, romanNumbers, starName } from "../../data/dataWords";
 import { Coordinates, GameModel, SystemKeyword, SystemModel } from "../../models/Models";
@@ -52,6 +53,12 @@ export function createNewSystem(ax = 1, ay = 1, as = 99, special = "AVERAGE"): S
     if (star.keywords.includes(SystemKeyword.MINERALPOOR)) { fillC = "#A33"; }
 
     star.color = fillC;
+
+
+    star.description = systemDescriptionGenerator(star);
+
+    
+
 
     return star;
 }
@@ -146,4 +153,13 @@ export function getSystemById(game: GameModel, systemId: string): SystemModel | 
 export function getSystemByCoordinates(game: GameModel, coords: Coordinates): SystemModel | undefined {
     // const game = joki.service.getState("GameService") as GameModel;
     return game.systems.find((sm: SystemModel) => inSameLocation(sm.location, coords));
+}
+
+
+export function systemDescriptionGenerator(star: SystemModel): string{
+
+    const planetCount = rnd(1,12);
+    const starClass = arnd(["O", "B", "A", "F", "G", "K", "M"]);
+
+    return `${star.name} is ${starClass} class star with  ${planetCount} planets circling it.`;    
 }
