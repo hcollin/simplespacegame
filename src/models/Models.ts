@@ -57,24 +57,6 @@ export interface Fleet {
 
 }
 
-export interface OldShip extends GameObject{
-    name: string;
-    weapons: number;
-    hull: number;
-    speed: number;
-
-    cost: number;
-    minIndustry: number;
-
-    description?: string;
-}
-
-export interface OldUnitModel extends OldShip {
-    location: Coordinates;
-    damage: number;
-    factionId: string;
-}
-
 export interface Coordinates {
     x: number;
     y: number;

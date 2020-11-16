@@ -112,7 +112,7 @@ export function doRemoveCommand(commandId: string) {
     });
 }
 
-export function buildUnit(ship: ShipDesign, targetCoords: Coordinates) {
+export function doBuildUnit(ship: ShipDesign, targetCoords: Coordinates) {
     const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemBuildUnit);
 
     if (!rootCommand) {

@@ -6,7 +6,7 @@ import {
     plusWelfare,
     plusIndustry,
     plusDefense,
-    buildUnit,
+    doBuildUnit,
     doRemoveCommand,
 } from "../services/commands/SystemCommands";
 
@@ -539,7 +539,7 @@ const SystemInfo: FC = () => {
 
                             return (
                                 <div key={ship.name}>
-                                    <ShipInfo ship={ship} onClick={(s: ShipDesign) => buildUnit(s, star.location)} />
+                                    <ShipInfo ship={ship} onClick={(s: ShipDesign) => doBuildUnit(s, star.location)} />
                                 </div>
                             );
                         })}

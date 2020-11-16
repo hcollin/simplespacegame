@@ -1,47 +1,5 @@
-import { OldShip } from "../models/Models";
 import { SHIPCLASS, ShipDesign, ShipWeapon, WEAPONTYPE } from "../models/Units";
 import { arnd } from "../utils/randUtils";
-
-const DATAOLDSHIPS: OldShip[] = [
-    {
-        id: "",
-        cost: 3,
-        minIndustry: 2,
-        hull: 3,
-        weapons: 1,
-        name: "Corvette",
-        speed: 5,
-        description: "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires.",
-    },
-    {
-        id: "",
-        cost: 5,
-        minIndustry: 4,
-        hull: 5,
-        weapons: 1,
-        name: "Frigate",
-        speed: 7,
-    },
-    {
-        id: "",
-        cost: 8,
-        minIndustry: 7,
-        hull: 10,
-        weapons: 3,
-        name: "Cruiser",
-        speed: 5,
-    },
-    {
-        id: "",
-        cost: 12,
-        minIndustry: 10,
-        hull: 16,
-        weapons: 6,
-        name: "Battleship",
-        speed: 4,
-    },
-
-];
 
 const DATASHIPWEAPONS: ShipWeapon[] = [
     {
@@ -103,6 +61,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         type: SHIPCLASS.CORVETTE,
         name: "Corvette",
         cost: 3,
+        buildTime: 2,
         minIndustry: 2,
         techReq: [],
         troops: 1,
@@ -124,6 +83,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         type: SHIPCLASS.FRIGATE,
         name: "Frigate",
         cost: 6,
+        buildTime: 4,
         minIndustry: 3,
         techReq: [],
         troops: 3,
@@ -146,6 +106,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         type: SHIPCLASS.DESTROYER,
         name: "Destroyer",
         cost: 12,
+        buildTime: 4,
         minIndustry: 5,
         techReq: [],
         troops: 5,
@@ -182,4 +143,4 @@ export function shipNameGenerator(shipClass: SHIPCLASS): string {
 
 }
 
-export {DATANEWSHIPS, DATAOLDSHIPS};
+export {DATANEWSHIPS};
