@@ -187,8 +187,7 @@ function runTurnProcessor(gameId) {
                     // console.log("new turn: ", newGame.turn, GameState[newGame.state]);
                     // console.log("commands done now", comms);
                     comms.forEach(function (cmd) {
-                        if (cmd.completed) {
-                            console.log("STORE!", cmd);
+                        if (cmd.completed || cmd.save === true) {
                             db.collection("Commands").doc(cmd.id).set(__assign({}, cmd));
                         }
                     });

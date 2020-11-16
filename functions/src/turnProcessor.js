@@ -54,11 +54,11 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-exports.damagePotential = exports.getHitChance = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatMain = exports.processTurn = void 0;
 var fDataTechnology_1 = require("./data/fDataTechnology");
 var functionConfigs_1 = require("./functionConfigs");
 var fCommands_1 = require("./models/fCommands");
 var fModels_1 = require("./models/fModels");
+var fBuildingUtils_1 = require("./utils/fBuildingUtils");
 var fFactionUtils_1 = require("./utils/fFactionUtils");
 var fLocationUtils_1 = require("./utils/fLocationUtils");
 var fMathUtils_1 = require("./utils/fMathUtils");
@@ -102,35 +102,14 @@ function processTurn(origGame, commands) {
             game.state = fModels_1.GameState.TURN;
             // await saveGame();
             // sendUpdate();
-            return [2 /*return*/, [__assign({}, game), __spreadArrays(commands || [])]];
+            return [2 /*return*/, [__assign({}, game), __spreadArrays((commands || []))]];
         });
     });
 }
 exports.processTurn = processTurn;
 function processWinConditions(game) {
     var winners = [];
-    // If any player controls half or more of the ringWorlds
-    var factionControlsRingworlds = new Map();
-    var totalRingWorlds = 0;
-    game.systems.forEach(function (sm) {
-        if (sm.ringWorld === true) {
-            totalRingWorlds++;
-            if (sm.ownerFactionId !== "") {
-                if (!factionControlsRingworlds.has(sm.ownerFactionId)) {
-                    factionControlsRingworlds.set(sm.ownerFactionId, 0);
-                }
-                var owns = factionControlsRingworlds.get(sm.ownerFactionId);
-                if (owns) {
-                    factionControlsRingworlds.set(sm.ownerFactionId, owns + 1);
-                }
-            }
-        }
-    });
-    factionControlsRingworlds.forEach(function (owned, owner) {
-        if (owned / totalRingWorlds >= 0.5) {
-            winners.push(owner);
-        }
-    });
+    // Score based winning to be done
     // If there is a winner(s) mark them down and end the game.
     if (winners.length > 0) {
         game.factions = game.factions.map(function (fm) {
@@ -224,8 +203,11 @@ function processSystemCommands(commands, oldGame) {
         if (cmd.type === fCommands_1.CommandType.SystemIndustry) {
             game = processSystemIndustryCommand(cmd, game);
         }
-        if (cmd.type === fCommands_1.CommandType.SystemBuild) {
+        if (cmd.type === fCommands_1.CommandType.SystemBuildUnit) {
             game = processSystemBuildUnitCommand(cmd, game);
+        }
+        if (cmd.type === fCommands_1.CommandType.SystemBuildingBuild) {
+            game = processSystemBuildBuildingCommand(cmd, game);
         }
     });
     return game;
@@ -311,6 +293,43 @@ function processSystemBuildUnitCommand(command, game) {
     markCommandDone(command);
     return __assign({}, game);
 }
+function processSystemBuildBuildingCommand(command, game) {
+    var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, command.factionId);
+    if (faction) {
+        var bdesign = fBuildingUtils_1.getBuildingDesignByType(command.buildingType);
+        if (command.turn === game.turn) {
+            // If faction can afford the building pay the cost and start building;
+            if (faction.money >= bdesign.cost) {
+                faction.money = faction.money - bdesign.cost;
+                command.turnsLeft--;
+                if (command.turnsLeft === 0) {
+                    markCommandDone(command);
+                    var system = getSystemFromGame(game, command.targetSystem);
+                    system.buildings.push(fBuildingUtils_1.createBuildingFromDesign(bdesign));
+                    return updateFactionInGame(updateSystemInGame(game, system), faction);
+                }
+                command.save = true;
+                return updateFactionInGame(game, faction);
+            }
+            // If the cannot build the building just do not execute this command
+            //TODO: Add info to turn report about this. When turn reports exist...
+        }
+        else {
+            command.turnsLeft--;
+            // Finish building
+            if (command.turnsLeft === 0) {
+                var system = getSystemFromGame(game, command.targetSystem);
+                system.buildings.push(fBuildingUtils_1.createBuildingFromDesign(bdesign));
+                markCommandDone(command);
+                return updateSystemInGame(game, system);
+            }
+            else {
+                command.save = true;
+            }
+        }
+    }
+    return __assign({}, game);
+}
 function processSysteDefenseCommand(command, game) {
     var system = getSystemFromGame(game, command.targetSystem);
     system.defense++;
@@ -360,13 +379,15 @@ function resolveCombat(game, origCombat) {
         return fids;
     }, new Set());
     var combat = spaceCombatMain(game, origCombat.units, origCombat.system);
-    var destroyedUnits = origCombat.units.filter(function (ou) {
+    var destroyedUnits = origCombat.units
+        .filter(function (ou) {
         var isAlive = combat.units.find(function (au) { return au.id === ou.id; });
         if (!isAlive) {
             return true;
         }
         return false;
-    }).map(function (u) { return u.id; });
+    })
+        .map(function (u) { return u.id; });
     game.units = game.units.reduce(function (units, unit) {
         if (destroyedUnits.includes(unit.id))
             return units;
@@ -522,7 +543,9 @@ function spaceCombatAttackShoot(game, combat, attacker, weapon, target) {
     if (hitRoll <= hitChance) {
         var targetFactionUnit = fUnitUtils_1.getFactionAdjustedUnit(targetFaction, target);
         var factionWeapon = fUnitUtils_1.getFactionAdjustedWeapon(weapon, attackFaction);
-        var dmg = (Array.isArray(factionWeapon.damage) ? fRandUtils_1.rnd(factionWeapon.damage[0], factionWeapon.damage[1]) : factionWeapon.damage) - targetFactionUnit.armor;
+        var dmg = (Array.isArray(factionWeapon.damage)
+            ? fRandUtils_1.rnd(factionWeapon.damage[0], factionWeapon.damage[1])
+            : factionWeapon.damage) - targetFactionUnit.armor;
         if (target.shields > 0) {
             if (target.shields >= dmg) {
                 target.shields -= dmg;

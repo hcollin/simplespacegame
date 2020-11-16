@@ -4,90 +4,96 @@ import { DATATECHNOLOGY, TECHIDS } from "../data/dataTechnology";
 import { BuildingDesign } from "../models/Buildings";
 import { Technology } from "../models/Models";
 import { getTechById } from "../utils/techUtils";
-import { IconCredit, IconDuration, IconEconomy, IconIndustry, IconScore, IconUnderConstruction, IconWelfare } from "./Icons";
+import {
+    IconCredit,
+    IconDuration,
+    IconEconomy,
+    IconIndustry,
+    IconScore,
+    IconUnderConstruction,
+    IconWelfare,
+} from "./Icons";
 
 const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		root: {
-			border: "ridge 3px #FFF8",
-			width: "15rem",
-			position: "relative",
-			minHeight: "12rem",
-						
-			borderRadius: "0.75rem",
-			overflow: "hidden",
-			background: "linear-gradient(-45deg, #000C 0, #123D 20%, #234F 50%, #123D 80%, #000C 100%)",
+    createStyles({
+        root: {
+            border: "ridge 3px #FFF8",
+            width: "15rem",
+            position: "relative",
+            minHeight: "12rem",
 
+            borderRadius: "0.75rem",
+            overflow: "hidden",
+            background: "linear-gradient(-45deg, #000C 0, #123D 20%, #234F 50%, #123D 80%, #000C 100%)",
 
             // margin: "1rem",
 
-
-			"& > h1": {
-				position: "relative",
-				// top: 0,
+            "& > h1": {
+                position: "relative",
+                // top: 0,
                 // left: 0,
                 width: "10.5rem",
-				// right: "4.5rem",
-				minHeight: "2.5rem",
-				fontSize: "1.4rem",
-				color: "#FFFD",
-				margin: 0,
-				padding: "0.25rem 0.5rem",
-				background: "#0006",
-				borderBottomRightRadius: "5rem 0.5rem",
+                // right: "4.5rem",
+                minHeight: "2.5rem",
+                fontSize: "1.4rem",
+                color: "#FFFD",
+                margin: 0,
+                padding: "0.25rem 0.5rem",
+                background: "#0006",
+                borderBottomRightRadius: "5rem 0.5rem",
                 borderBottom: "solid 2px #FFF8",
                 textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
-			},
+            },
 
-			"& > p": {
-				padding: "0.25rem 0.5rem",
-				width: "10.5rem",
+            "& > p": {
+                padding: "0.25rem 0.5rem",
+                width: "10.5rem",
                 fontSize: "0.9rem",
                 margin: 0,
-			},
+            },
 
-			"& > div.techPreq": {
-				position: "absolute",
-				bottom: 0,
-				left: 0,
+            "& > div.techPreq": {
+                position: "absolute",
+                bottom: 0,
+                left: 0,
 
-				fontSize: "0.5rem",
-				textTransform: "uppercase",
-				padding: "0.25rem 1rem 0.25rem 0.5rem",
-				fontStyle: "italic",
-				background: "#123",
-				fontWeight: "bold",
-				borderTopRightRadius: "1rem",
-				borderTop: "solid 2px #FFF8",
+                fontSize: "0.5rem",
+                textTransform: "uppercase",
+                padding: "0.25rem 1rem 0.25rem 0.5rem",
+                fontStyle: "italic",
+                background: "#123",
+                fontWeight: "bold",
+                borderTopRightRadius: "1rem",
+                borderTop: "solid 2px #FFF8",
                 borderRight: "solid 1px #FFF8",
                 zIndex: 20,
-			},
+            },
 
-			"& > div.costs": {
-				display: "flex",
-				alignItems: "center",
-				flexDirection: "column",
-				justifyContent: "center",
-				background: "linear-gradient(90deg, #000A 0, #0008 1.8rem, #444A 2rem, #444D 100%)",
-				position: "absolute",
-				top: "0",
-				right: "0",
-				width: "4.5rem",
-				bottom: "0",
-				borderLeft: "ridge 3px #8888",
-				fontWeight: "bold",
+            "& > div.costs": {
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+                justifyContent: "center",
+                background: "linear-gradient(90deg, #000A 0, #0008 1.8rem, #444A 2rem, #444D 100%)",
+                position: "absolute",
+                top: "0",
+                right: "0",
+                width: "4.5rem",
+                bottom: "0",
+                borderLeft: "ridge 3px #8888",
+                fontWeight: "bold",
 
-				"& > div": {
-					flex: "1 1 auto",
-					width: "100%",
-					display: "flex",
-					alignItems: "center",
-					padding: "0 0.5rem",
-					justifyContent: "space-between",
-					// boxShadow: "inset 0 0 1rem 3px #000A",
+                "& > div": {
+                    flex: "1 1 auto",
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "0 0.5rem",
+                    justifyContent: "space-between",
+                    // boxShadow: "inset 0 0 1rem 3px #000A",
                     fontWeight: "bold",
                     textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
-				},
+                },
             },
             "& > div.score": {
                 position: "absolute",
@@ -112,32 +118,30 @@ const useStyles = makeStyles((theme: Theme) =>
                     marginRight: "0.5rem",
                     marginBottom: "3px",
                     opacity: 0.5,
-
-                }
-                
-                
+                },
             },
-			"&:hover": {
-				cursor: "pointer",
-				border: "ridge 3px #8F88",
-				"& > div.costs": {
-					borderLeft: "ridge 3px #4848",
-				},
-			},
-			"&.disabled": {
-				filter: "grayscale(0.8)",
-				opacity: 0.5,
-			},
-			"&.underConstruction": {
-				"& > .construction": {
-					position: "absolute",
-					top: 0,
-					left: 0,
-					right: 0,
-					bottom: 0,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+            "&.clickable:hover": {
+                cursor: "pointer",
+                border: "ridge 3px #8F88",
+                "& > div.costs": {
+                    borderLeft: "ridge 3px #4848",
+                },
+            },
+
+            "&.disabled": {
+                filter: "grayscale(0.8)",
+                opacity: 0.5,
+            },
+            "&.underConstruction": {
+                "& > .construction": {
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     boxShadow: "inset 0 0 2rem 3rem #000C",
                     "& > span": {
                         border: "ridge 3px #FFF8",
@@ -146,7 +150,7 @@ const useStyles = makeStyles((theme: Theme) =>
                         borderTopRightRadius: "25% 50%",
                         borderBottomRightRadius: "25% 50%",
                         backgroundColor: "#468A",
-                        
+
                         display: "flex",
                         flexDirection: "row",
                         alignItems: "center",
@@ -157,102 +161,103 @@ const useStyles = makeStyles((theme: Theme) =>
                         color: "#DDD",
                         textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
 
-
                         "& img": {
                             height: "7rem",
                             width: "7rem",
                             margin: "-0.5rem",
-                            
-                            
-                            
                         },
                     },
-					
-				},
-				"&:hover": {
-					cursor: "pointer",
-					border: "ridge 3px #F228",
-					"& > .construction": {
-						"& > span": {
+                },
+                "&.clickable:hover": {
+                    cursor: "pointer",
+                    border: "ridge 3px #F228",
+                    "& > .construction": {
+                        "& > span": {
                             background: "#822A",
                             border: "ridge 3px #F228",
-						},
-					},
-				},
-			},
-		},
-	}),
+                        },
+                    },
+                },
+            },
+        },
+    })
 );
 
 interface Props {
-	building: BuildingDesign;
-	onClick?: (building: BuildingDesign) => void;
-	disabled?: boolean;
-	underConstruction?: number;
-	className?: string;
+    building: BuildingDesign;
+    onClick?: (building: BuildingDesign) => void;
+    disabled?: boolean;
+    underConstruction?: number;
+    className?: string;
 }
 
 const BuildingDesignSlot: FC<Props> = (props) => {
-	const classes = useStyles();
+    const classes = useStyles();
 
-	function click() {
-		if (props.onClick) {
-			props.onClick(props.building);
-		}
-	}
+    function click() {
+        if (props.onClick) {
+            props.onClick(props.building);
+        }
+    }
 
-	const techs = props.building.techPreqs.map((tid: TECHIDS) => getTechById(tid));
+    const techs = props.building.techPreqs.map((tid: TECHIDS) => getTechById(tid));
 
-	const turnsLeft = props.underConstruction !== undefined ? props.underConstruction : 0;
+    const turnsLeft = props.underConstruction !== undefined ? props.underConstruction : 0;
 
-	return (
-		<div
-			onClick={click}
-			className={`${classes.root}${props.disabled ? " disabled" : ""}${turnsLeft > 0 ? " underConstruction" : ""} ${props.className || ""}`}
-		>
-			<h1>{props.building.name}</h1>
+    return (
+        <div
+            onClick={click}
+            className={`${classes.root}${props.disabled ? " disabled" : ""}${
+                turnsLeft > 0 ? " underConstruction" : ""
+            }${props.onClick !== undefined ? " clickable" : ""} ${props.className || ""}`}
+        >
+            <h1>{props.building.name}</h1>
 
-			<p>{props.building.description}</p>
+            <p>{props.building.description}</p>
 
-			{techs.length > 0 && <div className="techPreq">
-				{techs.map((t: Technology) => (
-					<span key={t.id}>{t.name}</span>
-				))}
-			</div>}
+            {techs.length > 0 && (
+                <div className="techPreq">
+                    {techs.map((t: Technology) => (
+                        <span key={t.id}>{t.name}</span>
+                    ))}
+                </div>
+            )}
 
-			<div className="costs">
-				<div>
-					<IconCredit /> {props.building.cost}
-				</div>
-				<div>
-					<IconIndustry /> {props.building.minIndustry}
-				</div>
-				<div>
-					<IconWelfare /> {props.building.minWelfare}
-				</div>
-				<div>
-					<IconEconomy /> {props.building.minEconomy}
-				</div>
-				<div>
-					<IconDuration /> {props.building.buildTime}
-				</div>
-			</div>
+            <div className="costs">
+                <div>
+                    <IconCredit /> {props.building.cost}
+                </div>
+                <div>
+                    <IconIndustry /> {props.building.minIndustry}
+                </div>
+                <div>
+                    <IconWelfare /> {props.building.minWelfare}
+                </div>
+                <div>
+                    <IconEconomy /> {props.building.minEconomy}
+                </div>
+                <div>
+                    <IconDuration /> {props.building.buildTime}
+                </div>
+            </div>
 
-            {props.building.score > 0 && <div className="score">
-                <IconScore size="lg" />
-                {props.building.score}
-            </div>}
+            {props.building.score > 0 && (
+                <div className="score">
+                    <IconScore size="lg" />
+                    {props.building.score}
+                </div>
+            )}
 
-			{turnsLeft > 0 && (
-				<div className="construction">
+            {turnsLeft > 0 && (
+                <div className="construction">
                     <span>
                         {turnsLeft}
-					<IconUnderConstruction size="xxl" />
+                        <IconUnderConstruction size="xxl" />
                     </span>
-				</div>
-			)}
-		</div>
-	);
+                </div>
+            )}
+        </div>
+    );
 };
 
 export default BuildingDesignSlot;

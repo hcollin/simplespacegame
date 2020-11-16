@@ -1,17 +1,21 @@
+import { BUILDINGTYPE } from "../data/dataBuildings";
 import { Coordinates, GameObject } from "./Models";
 
 export enum CommandType {
-    SystemBuild = "SystemBuild",
+    SystemBuildUnit = "SystemBuildUnit",
+    
+    SystemBuildingBuild = "SystemBuildingBuild",
+    SystemBuildingRemove = "SystemBuildingRemove",
+
     SystemIndustry = "SystemIndustry",
     SystemEconomy = "SystemEconomy",
     SystemWelfare = "SystemWelfare",
     SystemDefense = "SystemDefense",
+    
     FleetMove = "FleetMove",
-    FleetInvade = "FleetInvade",
-    FleetColonize = "FleetColonize",
-    FleetDefend = "FleetDefend",
-    GeneralClaimObjective = "GeneralClaimObjective",
+        
     TechnologyResearch = "Research",
+
 }
 
 export interface Command extends GameObject {
@@ -34,6 +38,17 @@ export interface FleetCommand extends Command {
 export interface BuildUnitCommand extends Command {
     shipName: string;
     target: Coordinates;
+}
+
+export interface BuildBuildingCommand extends Command {
+    targetSystem: string;
+    buildingType: BUILDINGTYPE;
+    turnsLeft: number;
+}
+
+export interface RemoveBuildingCommand extends Command {
+    targetSystem: string;
+    buildingId: string;
 }
 
 

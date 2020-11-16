@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.DATAOLDSHIPS = exports.DATANEWSHIPS = exports.shipNameGenerator = void 0;
 var fUnits_1 = require("../models/fUnits");
 var fRandUtils_1 = require("../utils/fRandUtils");
 var DATAOLDSHIPS = [

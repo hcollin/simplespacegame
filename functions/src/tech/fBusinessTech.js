@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.techHigherEducation = exports.techDecisionEngine = exports.techMarketing = void 0;
 var fDataTechnology_1 = require("../data/fDataTechnology");
 var fTechTools_1 = require("./fTechTools");
 function techMarketing(faction, game) {

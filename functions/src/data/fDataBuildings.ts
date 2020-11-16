@@ -1,5 +1,5 @@
-import { BuildingDesign } from "../models/Buildings";
-import { TECHIDS } from "./dataTechnology";
+import { BuildingDesign } from "../models/fBuildings";
+import { TECHIDS } from "./fDataTechnology";
 
 
 export enum BUILDINGTYPE {

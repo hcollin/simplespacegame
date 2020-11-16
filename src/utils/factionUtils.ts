@@ -1,4 +1,5 @@
 
+import { Building } from "../models/Buildings";
 import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/Models";
 import { ShipUnit } from "../models/Units";
@@ -81,6 +82,8 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
 
     values.maxCommands = commandCountCalculator(game, factionId);
 
+    
+
     return values;
 }
 
@@ -103,7 +106,7 @@ export function expensesCalculator(game: GameModel, factionId: string): number {
 
     game.systems.forEach((star: SystemModel) => {
         if (star.ownerFactionId === factionId) {
-            expenses = systemExpenses(star);
+            expenses += systemExpenses(star);
         }
     });
 
@@ -148,7 +151,8 @@ export function systemExpenses(sm: SystemModel): number {
     const indExp = sm.industry < 3 ? 0 : Math.floor(sm.industry / 2);
     const welExp = sm.welfare < 3 ? 0 : Math.floor(sm.welfare / 2);
     const defExp = sm.defense;
-    return indExp + welExp + defExp + 1;
+    const buildingExpenses = sm.buildings.reduce((tot: number, b: Building) => tot + b.maintenanceCost, 0);
+    return indExp + welExp + defExp + buildingExpenses + 1;
 }
 
 export function researchPointGenerationCalculator(game: GameModel, faction: FactionModel): number {
@@ -220,6 +224,11 @@ export function getFactionScore(game: GameModel, factionId: string): number {
         if (sm.ownerFactionId === factionId) {
             score += 3;
             score += Math.round((sm.industry + sm.economy + sm.defense + sm.welfare) / 4);
+            const bScore = sm.buildings.reduce((tot: number, b: Building) => {
+                return tot + b.score;
+            }, 0);
+
+            score += bScore;
         }
     });
 

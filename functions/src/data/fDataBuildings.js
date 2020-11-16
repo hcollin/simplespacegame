@@ -1,21 +1,16 @@
-import { BuildingDesign } from "../models/Buildings";
-import { TECHIDS } from "./dataTechnology";
-
-
-export enum BUILDINGTYPE {
-    UNIVERSITY = "University",
-    AUTOSTARDOCK ="AutoStarDock",
-    CMDCENTER = "Command Center",
-    REPAIRSTATION = "Repair Station",
-    ARCOLOGY = "Arcology",
-
-    BIODOME = "Biodome",
-
-}
-
-
-
-const DATABUILDINGS: BuildingDesign[] = [
+"use strict";
+exports.__esModule = true;
+var fDataTechnology_1 = require("./fDataTechnology");
+var BUILDINGTYPE;
+(function (BUILDINGTYPE) {
+    BUILDINGTYPE["UNIVERSITY"] = "University";
+    BUILDINGTYPE["AUTOSTARDOCK"] = "AutoStarDock";
+    BUILDINGTYPE["CMDCENTER"] = "Command Center";
+    BUILDINGTYPE["REPAIRSTATION"] = "Repair Station";
+    BUILDINGTYPE["ARCOLOGY"] = "Arcology";
+    BUILDINGTYPE["BIODOME"] = "Biodome";
+})(BUILDINGTYPE = exports.BUILDINGTYPE || (exports.BUILDINGTYPE = {}));
+var DATABUILDINGS = [
     {
         name: "Bio Dome",
         type: BUILDINGTYPE.BIODOME,
@@ -28,7 +23,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         minWelfare: 1,
         techPreqs: [],
         maintenanceCost: 1,
-        score: 1,
+        score: 1
     },
     {
         name: "University",
@@ -40,9 +35,9 @@ const DATABUILDINGS: BuildingDesign[] = [
         minEconomy: 3,
         minIndustry: 1,
         minWelfare: 2,
-        techPreqs: [TECHIDS.HigherEdu],
+        techPreqs: [fDataTechnology_1.TECHIDS.HigherEdu],
         maintenanceCost: 1,
-        score: 2,
+        score: 2
     },
     {
         name: "Robot Workers",
@@ -56,7 +51,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         minWelfare: 0,
         techPreqs: [],
         maintenanceCost: 0,
-        score: 2,
+        score: 2
     },
     {
         name: "Command Center",
@@ -70,7 +65,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         minWelfare: 1,
         techPreqs: [],
         maintenanceCost: 1,
-        score: 3,
+        score: 3
     },
     {
         name: "Repair Station",
@@ -84,7 +79,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         minWelfare: 0,
         techPreqs: [],
         maintenanceCost: 2,
-        score: 3,
+        score: 3
     },
     {
         name: "Arcology",
@@ -96,11 +91,9 @@ const DATABUILDINGS: BuildingDesign[] = [
         minEconomy: 3,
         minIndustry: 4,
         minWelfare: 4,
-        techPreqs: [TECHIDS.Arcology],
+        techPreqs: [fDataTechnology_1.TECHIDS.Arcology],
         maintenanceCost: 2,
-        score: 10,
+        score: 10
     }
 ];
-
-
-export { DATABUILDINGS };
+exports.DATABUILDINGS = DATABUILDINGS;

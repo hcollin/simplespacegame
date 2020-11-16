@@ -133,8 +133,8 @@ async function runTurnProcessor(gameId: string) {
 
         comms.forEach((cmd: Command) => {
             
-            if(cmd.completed) {
-                console.log("STORE!", cmd);
+            if(cmd.completed || cmd.save === true) {
+
                 db.collection("Commands").doc(cmd.id).set({ ...cmd });    
             } 
         });

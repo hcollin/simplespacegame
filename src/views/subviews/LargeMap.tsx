@@ -1,7 +1,7 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import { KonvaEventObject } from "konva/types/Node";
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Circle, Group, Image, Layer, Line, Ring, Stage, Star, Text } from "react-konva";
+import { Arc, Circle, Group, Image, Layer, Line, Ring, Stage, Star, Text } from "react-konva";
 import useSelectedSystem from "../../hooks/useSelectedSystem";
 import useWindowSize from "../../hooks/useWIndowResize";
 import { SystemModel, FactionModel, Coordinates, GameModel, Report, ReportType } from "../../models/Models";
@@ -20,6 +20,8 @@ import { ShipUnit } from "../../models/Units";
 import starfieldJpeg from '../../images/starfield2.jpg';
 import { getShipSpeed } from "../../utils/unitUtils";
 import Konva from "konva";
+import { Building } from "../../models/Buildings";
+import { rnd } from "../../utils/randUtils";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -225,7 +227,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 
                         const hasTargetedCommand = commands.find((cmd: Command) => {
                             switch (cmd.type) {
-                                case CommandType.SystemBuild:
+                                case CommandType.SystemBuildUnit:
                                     const cb = cmd as BuildUnitCommand;
                                     return inSameLocation(cb.target, star.location);
                                 case CommandType.FleetMove:
@@ -269,6 +271,22 @@ const LargeMap: FC<LargeMapProps> = (props) => {
                                     fillRadialGradientEndRadius={size}
                                     fillRadialGradientColorStops={[0, 'white', 0.8, `${color}`, 1, 'black']}
                                 />}
+
+                                {zoomLevel > 1.3 && ownerFaction && star.buildings.map((b: Building, ind: number) => {
+
+                                    return (
+                                        <Arc 
+                                            key={b.id}
+                                            fill="white"
+                                            innerRadius={size*1.3}
+                                            outerRadius={size*1.7}
+                                            strokeWidth={1}
+                                            stroke="#888"
+                                            angle={20}
+                                            rotationDeg={160 + (ind * 25)}
+                                        />
+                                    )
+                                })}
                                 {hasTargetedCommand && <Text text="!" fill="white" width={size} align="center" x={size * -0.5} y={-0.8 * size} fontSize={20 * zoomLevel} strokeWidth={1} stroke="black" />}
                                 {zoomLevel > 1.3 && <Text text={star.name} fill="#FFF" align="center" opacity={0.8} x={-70} y={10 * zoomLevel} width={140} />}
                             </Group>

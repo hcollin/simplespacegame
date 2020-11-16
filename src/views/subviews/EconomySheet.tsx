@@ -114,25 +114,32 @@ const EconomySheet: FC = () => {
             key: "income",
             header: "Income",
             size: 80,
-            className: "center",
+            className: "center greenText",
         },
+        
         {
             key: "industryExpenses",
             header: "Ind Cost",
             size: 80,
-            className: "center",
+            className: "center redText",
         },
         {
             key: "welfareExpenses",
             header: "Wlf Cost",
             size: 80,
-            className: "center",
+            className: "center redText",
         },
         {
             key: "defenseExpenses",
             header: "Def Cost",
             size: 80,
-            className: "center",
+            className: "center redText",
+        },
+        {
+            key: "buildingExpenses",
+            header: "Bld Cost",
+            size: 80,
+            className: "center redText",
         },
         {
             key: "profit",
@@ -185,6 +192,7 @@ const EconomySheet: FC = () => {
                 </div>
 
                 <h2>Systems</h2>
+                <p>Each system costs 1 credit to maintain as a base cost.</p>
 
                 <div>
                     <DataTable columns={columns} rows={mySystems} />

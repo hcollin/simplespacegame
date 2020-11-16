@@ -3,6 +3,7 @@ import { joki, useService } from "jokits-react";
 import React, { FC, useEffect, useState } from "react";
 import useMyCommands from "../hooks/useMyCommands";
 import {
+    BuildBuildingCommand,
     BuildUnitCommand,
     Command,
     CommandType,
@@ -11,7 +12,7 @@ import {
     SystemPlusCommand,
 } from "../models/Commands";
 import { FactionModel, GameModel, GameState } from "../models/Models";
-import { removeCommand } from "../services/commands/SystemCommands";
+import { doRemoveCommand } from "../services/commands/SystemCommands";
 import { getSystemByCoordinates, getSystemById } from "../services/helpers/SystemHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { getTechById } from "../utils/techUtils";
@@ -77,8 +78,12 @@ const useStyles = makeStyles((theme: Theme) =>
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-around",
+                flexWrap: "wrap",
+                boxShadow: "inset 0 0 1rem 0.7rem #FFF4",
+                background: "#9BF1",
                 "& > div": {
                     flex: "1 1 auto",
+                    width: "50%",
                     color: "#FFFD",
                     fontSize: "1.1rem",
                     fontWeight: "bold",
@@ -86,15 +91,27 @@ const useStyles = makeStyles((theme: Theme) =>
                     alignItems: "center",
                     justifyContent: "center",
                     borderRight: "solid 3px #0008",
+                    borderBottom: "solid 3px #0008",
                     padding: "0.5rem",
                     boxShadow: "inset 0 0 1rem 0.25rem #0124",
                     textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
                     "& > img": {
                         marginRight: "0.5rem",
                     },
-                    "&:last-child": {
+                    "&:nth-child(even)": {
                         borderRight: "none",
                     },
+                    "& > small": {
+                        fontSize: "0.7rem",
+                        marginLeft: "0.5rem",
+                        "&.green": {
+                            color: "#0B0D",
+                        },
+                        "&.red": {
+                            color: "#B00D",
+                        }
+                    }
+
                 },
             },
         },
@@ -170,6 +187,11 @@ const useStyles = makeStyles((theme: Theme) =>
                 margin: 0,
                 padding: 0,
                 zIndex: 5,
+                "& > small": {
+                    fontSize: "0.7rem",
+                    display: "block",
+                    marginTop: "-3px",
+                },
             },
 
             "& > .cancelButton": {
@@ -295,7 +317,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const isDev = process.env.NODE_ENV === "development";
 
-
 interface CommandListProps {}
 
 const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
@@ -308,23 +329,20 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
     const commands = useMyCommands();
     const faction = useCurrentFaction();
 
-    useEffect( () => {
-
-        if(cmdIndex >= commands.length) {
-            setCmdIndex((prev: number) => prev > COMMANDPAGINATIONLIMIT ? prev - COMMANDPAGINATIONLIMIT: 0);
+    useEffect(() => {
+        if (cmdIndex >= commands.length) {
+            setCmdIndex((prev: number) => (prev > COMMANDPAGINATIONLIMIT ? prev - COMMANDPAGINATIONLIMIT : 0));
         }
-
-    }, [commands, cmdIndex])
+    }, [commands, cmdIndex]);
 
     function loginFaction(fm: FactionModel) {
-        if(isDev) {
+        if (isDev) {
             joki.trigger({
                 to: "UserService",
                 action: "switch",
                 data: fm.playerId,
             });
         }
-        
     }
 
     function factionClickHandler(fm: FactionModel) {}
@@ -344,7 +362,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
             <header>
                 <div>
                     <IconCredit size="lg" />
-                    {faction.money}
+                    {faction.money} <small className={values.income < 0 ?  "red" : "green"}>{values.income >= 0 ? `+${values.income}` :values.income}</small>
                 </div>
                 <div>
                     <IconResearchPoint size="lg" />
@@ -371,8 +389,10 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                 switch (cm.type) {
                     case CommandType.FleetMove:
                         return <FleetMoveCommandItem command={cm} key={cm.id} game={game} isReady={isReady} />;
-                    case CommandType.SystemBuild:
+                    case CommandType.SystemBuildUnit:
                         return <SystemBuildCommandItem command={cm} key={cm.id} game={game} isReady={isReady} />;
+                    case CommandType.SystemBuildingBuild:
+                        return <SystemBuildBuildingItem command={cm} key={cm.id} game={game} isReady={isReady} />;
                     case CommandType.TechnologyResearch:
                         return <ResearchCommandItem command={cm} key={cm.id} game={game} isReady={isReady} />;
                     default:
@@ -381,13 +401,32 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
             })}
             {commands.length > COMMANDPAGINATIONLIMIT && (
                 <div className={classes.pagination}>
-                    <Button variant="contained" onClick={() =>  setCmdIndex((prev: number) => prev >= COMMANDPAGINATIONLIMIT ? prev - COMMANDPAGINATIONLIMIT: 0)} disabled={cmdIndex === 0}> Prev {COMMANDPAGINATIONLIMIT}</Button>
-                    <Button variant="contained" onClick={() =>  setCmdIndex((prev: number) => prev + COMMANDPAGINATIONLIMIT < commands.length ? prev + COMMANDPAGINATIONLIMIT: prev)} disabled={cmdIndex + COMMANDPAGINATIONLIMIT > commands.length}> Next {COMMANDPAGINATIONLIMIT}</Button>
+                    <Button
+                        variant="contained"
+                        onClick={() =>
+                            setCmdIndex((prev: number) =>
+                                prev >= COMMANDPAGINATIONLIMIT ? prev - COMMANDPAGINATIONLIMIT : 0
+                            )
+                        }
+                        disabled={cmdIndex === 0}
+                    >
+                        {" "}
+                        Prev {COMMANDPAGINATIONLIMIT}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={() =>
+                            setCmdIndex((prev: number) =>
+                                prev + COMMANDPAGINATIONLIMIT < commands.length ? prev + COMMANDPAGINATIONLIMIT : prev
+                            )
+                        }
+                        disabled={cmdIndex + COMMANDPAGINATIONLIMIT > commands.length}
+                    >
+                        {" "}
+                        Next {COMMANDPAGINATIONLIMIT}
+                    </Button>
                 </div>
             )}
-
-            
-
 
             <h1>Factions</h1>
             {game.factions.map((fm: FactionModel) => {
@@ -474,7 +513,7 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
                     variant="contained"
                     color="secondary"
                     className="cancelButton"
-                    onClick={() => removeCommand(cmd.id)}
+                    onClick={() => doRemoveCommand(cmd.id)}
                     disabled={props.game.turn !== cmd.turn}
                 >
                     <CancelIcon />
@@ -503,7 +542,7 @@ const FleetMoveCommandItem: FC<CommandProps> = (props) => {
                     variant="contained"
                     color="secondary"
                     className="cancelButton"
-                    onClick={() => removeCommand(cmd.id)}
+                    onClick={() => doRemoveCommand(cmd.id)}
                     disabled={props.game.turn !== cmd.turn}
                 >
                     <CancelIcon />
@@ -531,7 +570,40 @@ const SystemBuildCommandItem: FC<CommandProps> = (props) => {
                     variant="contained"
                     color="secondary"
                     className="cancelButton"
-                    onClick={() => removeCommand(cmd.id)}
+                    onClick={() => doRemoveCommand(cmd.id)}
+                    disabled={props.game.turn !== cmd.turn}
+                >
+                    <CancelIcon />
+                </Button>
+            )}
+        </div>
+    );
+};
+
+const SystemBuildBuildingItem: FC<CommandProps> = (props) => {
+    const classes = useStyles();
+    const cmd = props.command as BuildBuildingCommand;
+    const system = getSystemById(props.game, cmd.targetSystem);
+    const systemName = system ? system.name : cmd.targetSystem;
+
+    return (
+        <div className={`${classes.command} blue`}>
+            <img src={iconBuildSvg} className="commandIcon lg" alt="Build icon" />
+            <label>Build Building</label>
+            <h2>
+                {cmd.buildingType}
+                <br />
+                <small>
+                    {systemName} ({cmd.turnsLeft})
+                </small>
+            </h2>
+
+            {!props.isReady && (
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    className="cancelButton"
+                    onClick={() => doRemoveCommand(cmd.id)}
                     disabled={props.game.turn !== cmd.turn}
                 >
                     <CancelIcon />
@@ -557,7 +629,7 @@ const ResearchCommandItem: FC<CommandProps> = (props) => {
                     variant="contained"
                     color="secondary"
                     className="cancelButton"
-                    onClick={() => removeCommand(cmd.id)}
+                    onClick={() => doRemoveCommand(cmd.id)}
                     disabled={props.game.turn !== cmd.turn}
                 >
                     <CancelIcon />

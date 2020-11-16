@@ -1,5 +1,6 @@
-import { buildingArcology } from "../buildings/buildingRules";
-import { GameModel, SystemKeyword, SystemModel } from "../models/Models";
+import { buildingArcology, buildingBioDome } from "../buildings/buildingRules";
+import { Building } from "../models/Buildings";
+import { FactionModel, GameModel, SystemKeyword, SystemModel } from "../models/Models";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import { getSystemResearchPointGeneration } from "./factionUtils";
 
@@ -15,6 +16,8 @@ export interface SystemEconomy extends SystemModel {
     economyMax: number;
     defenseMax: number;
     welfareMax: number;
+    buildingSlots: number;
+    buildingExpenses: number;
 }
 
 export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEconomy {
@@ -33,13 +36,14 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
         economyMax: getStarEconomyMax(star, game),
         defenseMax: getStarDefenceMax(star, game),
         welfareMax: getStarWelfareMax(star, game),
+        buildingSlots: getSystemMaxBuildingSlots(star, game),
+        buildingExpenses: star.buildings.reduce((tot: number, b: Building) => tot + b.maintenanceCost, 0),
     };
 
-    eco.expenses = eco.industryExpenses + eco.defenseExpenses + eco.welfareExpenses;
+    eco.expenses = eco.industryExpenses + eco.defenseExpenses + eco.welfareExpenses + eco.buildingExpenses + 1;
     eco.profit = eco.income - eco.expenses - 1;
 
-
-    return buildingArcology(eco);
+    return buildingBioDome(buildingArcology(eco));
 
 }
 
@@ -78,4 +82,11 @@ export function getStarWelfareMax(star: SystemModel, game: GameModel): number {
     if(star.keywords.includes(SystemKeyword.GAIA)) def = 7;
     if(star.keywords.includes(SystemKeyword.HOSTILE)) def = 1;
     return def;
+}
+
+export function getSystemMaxBuildingSlots(star: SystemModel, game: GameModel): number {
+    if(star.industry < 2) return 1;
+    if(star.industry < 4) return 2;
+    if(star.industry > 5) return 4;
+    return 3;
 }

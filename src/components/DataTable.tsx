@@ -46,6 +46,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
                 fontSize: "1.4rem",
             },
 
+            "&.redText": {
+                color: "#F00",
+            },
+
+            "&.greenText": {
+                color: "#0A0",
+            }
+
         }
     }
 }));

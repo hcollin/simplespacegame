@@ -2,21 +2,23 @@ import { Technology, TechnologyField } from "../models/fModels";
 
 
 export enum TECHIDS {
-    IonEngines      = "T-P-001",
-    WarpEngines     = "T-P-002",
-    Marketing       = "T-B-001",
+    IonEngines      = "T-0001",
+    WarpEngines     = "T-0002",
+    Marketing       = "T-003",
 
-    TargetingComp1  = "T-W-001",
-    TargetingComp2  = "T-W-002",
-    TargetingComp3  = "T-W-003",
+    TargetingComp1  = "T-0004",
+    TargetingComp2  = "T-0005",
+    TargetingComp3  = "T-0006",
 
-    HeavyRounds = "T-W-004",
+    HeavyRounds     = "T-0007",
 
-    EvasionEngine   = "T-P-003",
-    PredEvasion     = "T-P-004",
+    EvasionEngine   = "T-0008",
+    PredEvasion     = "T-0009",
     
-    DeciAppr        = "t-S-001",
-    HigherEdu       = "T-S-002",
+    DeciAppr        = "T-0010",
+    HigherEdu       = "T-0011",
+
+    Arcology        = "T-0012",
 };
 
 
@@ -136,6 +138,18 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [],
         name: "Higher Education",
         description: "High Welfare affects research points less.",
+    },
+    {
+        id: TECHIDS.Arcology,
+        fieldreqs: [
+            [TechnologyField.SOCIOLOGY, 20],
+            [TechnologyField.BUSINESS, 20],
+            [TechnologyField.INFORMATION, 20],
+            
+        ],
+        techprereq: [],
+        name: "Arcology Construction",
+        description: "Allows you to build Arcologies.",
     },
     
 

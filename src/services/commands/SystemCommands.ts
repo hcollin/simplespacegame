@@ -1,9 +1,11 @@
 import { joki } from "jokits-react";
+import { BUILDINGTYPE } from "../../data/dataBuildings";
 
-import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../../models/Commands";
+import { BuildBuildingCommand, BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../../models/Commands";
 import { GameModel, Coordinates } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
 import { User } from "../../models/User";
+import { getBuildingTime } from "../../utils/buildingUtils";
 import { factionCanDoMoreCommands, getFactionByUserId } from "../helpers/FactionHelpers";
 import { SERVICEID } from "../services";
 
@@ -78,7 +80,31 @@ export function plusDefense(targetSystem: string) {
     });
 }
 
-export function removeCommand(commandId: string) {
+
+export function doBuildBuilding(systemId: string, buildingType: BUILDINGTYPE) {
+    
+    const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemBuildingBuild);
+
+    if (!rootCommand) {
+        console.log("Cannot do build a building ", buildingType, systemId);
+        return;
+    }
+
+    const command = { ...rootCommand, targetSystem: systemId, buildingType: buildingType, turnsLeft: getBuildingTime(buildingType) } as BuildBuildingCommand;
+
+    console.log("Build building", command);
+    joki.trigger({
+        to: SERVICEID.CommandService,
+        action: "addCommand",
+        data: command
+    });
+}
+
+export function doRemoveBuilding(systemId: string, buildingId: BUILDINGTYPE) {
+    console.log("Remove building", systemId, buildingId);
+}
+
+export function doRemoveCommand(commandId: string) {
     joki.trigger({
         to: "CommandService",
         action: "removeCommand",
@@ -87,7 +113,7 @@ export function removeCommand(commandId: string) {
 }
 
 export function buildUnit(ship: ShipDesign, targetCoords: Coordinates) {
-    const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemBuild);
+    const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemBuildUnit);
 
     if (!rootCommand) {
         console.log("Cannot do build unit for ", ship, targetCoords);

@@ -1,16 +1,46 @@
 import { DATATECHNOLOGY } from "./data/fDataTechnology";
 import { COMBAT_MAXROUNDS } from "./functionConfigs";
-import { Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand, BuildUnitCommand } from "./models/fCommands";
+import {
+    Command,
+    CommandType,
+    FleetCommand,
+    ResearchCommand,
+    SystemPlusCommand,
+    BuildUnitCommand,
+    BuildBuildingCommand,
+} from "./models/fCommands";
 import { Trade } from "./models/fCommunication";
-import { GameModel, GameState, SystemModel, FactionModel, FactionState, FactionTechSetting, Technology, ReportType, SpaceCombat, Coordinates } from "./models/fModels";
+import {
+    GameModel,
+    GameState,
+    SystemModel,
+    FactionModel,
+    FactionState,
+    FactionTechSetting,
+    Technology,
+    ReportType,
+    SpaceCombat,
+    Coordinates,
+} from "./models/fModels";
 import { ShipUnit, ShipWeapon } from "./models/fUnits";
-import { researchPointGenerationCalculator, researchPointDistribution, factionValues, getFactionFromArrayById } from "./utils/fFactionUtils";
+import { createBuildingFromDesign, getBuildingDesignByType } from "./utils/fBuildingUtils";
+import {
+    researchPointGenerationCalculator,
+    researchPointDistribution,
+    factionValues,
+    getFactionFromArrayById,
+} from "./utils/fFactionUtils";
 import { inSameLocation } from "./utils/fLocationUtils";
 import { travelingBetweenCoordinates } from "./utils/fMathUtils";
 import { rnd } from "./utils/fRandUtils";
 import { canAffordTech, factionPaysForTech } from "./utils/fTechUtils";
-import { getShipSpeed, getFactionAdjustedUnit, getFactionAdjustedWeapon, createShipFromDesign, getDesignByName } from "./utils/fUnitUtils";
-
+import {
+    getShipSpeed,
+    getFactionAdjustedUnit,
+    getFactionAdjustedWeapon,
+    createShipFromDesign,
+    getDesignByName,
+} from "./utils/fUnitUtils";
 
 export async function processTurn(origGame: GameModel, commands?: Command[]): Promise<[GameModel, Command[]]> {
     // if (origGame.state !== GameState.PROCESSING) return origGame;
@@ -21,7 +51,6 @@ export async function processTurn(origGame: GameModel, commands?: Command[]): Pr
         sm.reports = [];
         return sm;
     });
-
 
     console.log("START TURN PROCESSING!", game.name, game.turn);
     if (commands) {
@@ -63,36 +92,15 @@ export async function processTurn(origGame: GameModel, commands?: Command[]): Pr
     // await saveGame();
 
     // sendUpdate();
-    return [{ ...game }, [...commands || []]];
+    return [{ ...game }, [...(commands || [])]];
 }
 
 function processWinConditions(game: GameModel): GameModel {
     const winners: string[] = [];
 
-    // If any player controls half or more of the ringWorlds
-    const factionControlsRingworlds: Map<string, number> = new Map<string, number>();
-    let totalRingWorlds = 0;
-    game.systems.forEach((sm: SystemModel) => {
-        if (sm.ringWorld === true) {
-            totalRingWorlds++;
-            if (sm.ownerFactionId !== "") {
-                if (!factionControlsRingworlds.has(sm.ownerFactionId)) {
-                    factionControlsRingworlds.set(sm.ownerFactionId, 0);
-                }
-                const owns = factionControlsRingworlds.get(sm.ownerFactionId);
-                if (owns) {
-                    factionControlsRingworlds.set(sm.ownerFactionId, owns + 1);
-                }
-            }
-        }
-    });
-
-    factionControlsRingworlds.forEach((owned: number, owner: string) => {
-        if (owned / totalRingWorlds >= 0.5) {
-            winners.push(owner);
-        }
-    });
-
+    // Score based winning to be done
+    
+    
     // If there is a winner(s) mark them down and end the game.
     if (winners.length > 0) {
         game.factions = game.factions.map((fm: FactionModel) => {
@@ -139,26 +147,21 @@ function processResearch(oldGame: GameModel) {
     return game;
 }
 
-
 function processTrades(oldGame: GameModel): GameModel {
     let game = { ...oldGame };
 
     game.trades = game.trades.map((tr: Trade) => {
-
         let success = false;
 
         const fromFaction = getFactionFromArrayById(game.factions, tr.from);
         const toFaction = getFactionFromArrayById(game.factions, tr.to);
 
         if (fromFaction && toFaction) {
-
             if (fromFaction.money >= tr.money) {
                 fromFaction.money -= tr.money;
                 toFaction.money += tr.money;
                 success = true;
             }
-
-
         }
 
         if (success && fromFaction && toFaction) {
@@ -167,9 +170,8 @@ function processTrades(oldGame: GameModel): GameModel {
             game = updateFactionInGame(game, toFaction);
         }
 
-
         return { ...tr };
-    })
+    });
 
     return game;
 }
@@ -188,7 +190,6 @@ function processResearchCommands(commands: Command[], oldGame: GameModel): GameM
                     faction.technology.push(tech.id);
                     game = updateFactionInGame(game, faction);
                     markCommandDone(cmd);
-
                 }
             }
         }
@@ -213,8 +214,11 @@ function processSystemCommands(commands: Command[], oldGame: GameModel): GameMod
         if (cmd.type === CommandType.SystemIndustry) {
             game = processSystemIndustryCommand(cmd as SystemPlusCommand, game);
         }
-        if (cmd.type === CommandType.SystemBuild) {
+        if (cmd.type === CommandType.SystemBuildUnit) {
             game = processSystemBuildUnitCommand(cmd as BuildUnitCommand, game);
+        }
+        if (cmd.type === CommandType.SystemBuildingBuild) {
+            game = processSystemBuildBuildingCommand(cmd as BuildBuildingCommand, game);
         }
     });
 
@@ -242,7 +246,6 @@ function processInvasion(oldGame: GameModel): GameModel {
 }
 
 function processEconomy(game: GameModel): GameModel {
-
     game.factions = game.factions.map((fm: FactionModel) => {
         const values = factionValues(game, fm.id);
 
@@ -323,6 +326,46 @@ function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameMode
     return { ...game };
 }
 
+function processSystemBuildBuildingCommand(command: BuildBuildingCommand, game: GameModel): GameModel {
+    const faction = getFactionFromArrayById(game.factions, command.factionId);
+
+    if (faction) {
+        const bdesign = getBuildingDesignByType(command.buildingType);
+
+        if (command.turn === game.turn) {
+            // If faction can afford the building pay the cost and start building;
+            if (faction.money >= bdesign.cost) {
+                faction.money = faction.money - bdesign.cost;
+                command.turnsLeft--;
+                if (command.turnsLeft === 0) {
+                    markCommandDone(command);
+                    const system = getSystemFromGame(game, command.targetSystem);
+                    system.buildings.push(createBuildingFromDesign(bdesign));
+                    return updateFactionInGame(updateSystemInGame(game, system), faction);
+                }
+                command.save = true;
+                return updateFactionInGame(game, faction);
+            }
+            // If the cannot build the building just do not execute this command
+            //TODO: Add info to turn report about this. When turn reports exist...
+        } else {
+            command.turnsLeft--;
+
+            // Finish building
+            if (command.turnsLeft === 0) {
+                const system = getSystemFromGame(game, command.targetSystem);
+                system.buildings.push(createBuildingFromDesign(bdesign));
+                markCommandDone(command);
+                return updateSystemInGame(game, system);
+            } else {
+                command.save = true;
+            }
+        }
+    }
+
+    return { ...game };
+}
+
 function processSysteDefenseCommand(command: SystemPlusCommand, game: GameModel): GameModel {
     const system = getSystemFromGame(game, command.targetSystem);
     system.defense++;
@@ -371,27 +414,30 @@ function getUnitFromGame(game: GameModel, unitId: string): ShipUnit {
 }
 
 function resolveCombat(game: GameModel, origCombat: SpaceCombat): GameModel {
-
     if (origCombat.system === null) {
-        throw new Error(`Combat cannot happen outside of a system, the null is only used in testing needs to be removed`);
+        throw new Error(
+            `Combat cannot happen outside of a system, the null is only used in testing needs to be removed`
+        );
     }
 
     const factionIds = origCombat.units.reduce((fids: Set<string>, u: ShipUnit) => {
         if (!fids.has(u.factionId)) {
-            fids.add(u.factionId)
+            fids.add(u.factionId);
         }
         return fids;
     }, new Set<string>());
 
     const combat = spaceCombatMain(game, origCombat.units, origCombat.system);
 
-    const destroyedUnits = origCombat.units.filter((ou: ShipUnit) => {
-        const isAlive = combat.units.find((au: ShipUnit) => au.id === ou.id);
-        if (!isAlive) {
-            return true;
-        }
-        return false;
-    }).map((u: ShipUnit) => u.id);
+    const destroyedUnits = origCombat.units
+        .filter((ou: ShipUnit) => {
+            const isAlive = combat.units.find((au: ShipUnit) => au.id === ou.id);
+            if (!isAlive) {
+                return true;
+            }
+            return false;
+        })
+        .map((u: ShipUnit) => u.id);
 
     game.units = game.units.reduce((units: ShipUnit[], unit: ShipUnit) => {
         if (destroyedUnits.includes(unit.id)) return units;
@@ -404,7 +450,6 @@ function resolveCombat(game: GameModel, origCombat: SpaceCombat): GameModel {
 
         return units;
     }, []);
-
 
     return addReportToSystem(game, origCombat.system, ReportType.COMBAT, Array.from(factionIds), combat.log);
 
@@ -445,7 +490,6 @@ function updateFactionInGame(game: GameModel, faction: FactionModel): GameModel 
     return { ...game };
 }
 
-
 function addReportToSystem(
     game: GameModel,
     system: SystemModel,
@@ -467,22 +511,18 @@ function markCommandDone(command: Command) {
     command.completed = true;
 }
 
-
-
 export function spaceCombatMain(game: GameModel, units: ShipUnit[], system: SystemModel | null): SpaceCombat {
-
     let combat: SpaceCombat = {
         units: [...units],
         system: system,
         round: 0,
         log: [],
         done: false,
-    }
+    };
 
     combat.log.push(`Space combat starts`);
     // PRE COMBAT
     // TODO
-
 
     // COMBAT ROUNDS
     while (!combat.done) {
@@ -493,7 +533,6 @@ export function spaceCombatMain(game: GameModel, units: ShipUnit[], system: Syst
         combat = spaceCombatDamageResolve(game, combat);
         combat = spaceCombatMorale(game, combat);
 
-
         combat = spaceCombatRoundCleanUp(game, combat);
 
         // if(combat.round >= 10) {
@@ -501,21 +540,19 @@ export function spaceCombatMain(game: GameModel, units: ShipUnit[], system: Syst
         // }
     }
 
-
     // POST COMBAT
 
     combat.units = combat.units.map((su: ShipUnit) => {
         su.shields = su.shieldsMax;
         su.experience += combat.round;
         return su;
-    })
+    });
 
     combat.log.push(`Space combat ends`);
     return combat;
 }
 
 export function spaceCombatAttacks(game: GameModel, origCombat: SpaceCombat): SpaceCombat {
-
     const attackers = [...origCombat.units];
 
     let combat = { ...origCombat };
@@ -533,27 +570,30 @@ export function spaceCombatAttacks(game: GameModel, origCombat: SpaceCombat): Sp
                 }
             } else {
                 const faction = getFactionFromArrayById(game.factions, ship.factionId);
-                combat.log.push(`RELOADING: ${faction.name} ${ship.name} is reloading ${weapon.name}, ${weapon.cooldown + 1} round until ready to fire`);
+                combat.log.push(
+                    `RELOADING: ${faction.name} ${ship.name} is reloading ${weapon.name}, ${
+                        weapon.cooldown + 1
+                    } round until ready to fire`
+                );
             }
-
-
-
         });
         if (hit) {
             ship.experience++;
         }
     });
 
-
     return combat;
 }
 
-export function spaceCombatAttackChooseTarget(combat: SpaceCombat, attacker: ShipUnit, weapon: ShipWeapon): ShipUnit | null {
+export function spaceCombatAttackChooseTarget(
+    combat: SpaceCombat,
+    attacker: ShipUnit,
+    weapon: ShipWeapon
+): ShipUnit | null {
     const target = combat.units.find((su: ShipUnit) => {
         return su.factionId !== attacker.factionId;
     });
     if (target) {
-
         // const betterTarget = combat.units.reduce((t: ShipUnit, pos: ShipUnit) => {
         //     if(t.factionId !== attacker.factionId) {
         //         const oldHitChance = getHitChance(attacker.factionId, weapon, attacker, t);
@@ -578,8 +618,13 @@ export function spaceCombatAttackChooseTarget(combat: SpaceCombat, attacker: Shi
     return null;
 }
 
-export function spaceCombatAttackShoot(game: GameModel, combat: SpaceCombat, attacker: ShipUnit, weapon: ShipWeapon, target: ShipUnit): SpaceCombat {
-
+export function spaceCombatAttackShoot(
+    game: GameModel,
+    combat: SpaceCombat,
+    attacker: ShipUnit,
+    weapon: ShipWeapon,
+    target: ShipUnit
+): SpaceCombat {
     const attackFaction = getFactionFromArrayById(game.factions, attacker.factionId);
     const targetFaction = getFactionFromArrayById(game.factions, target.factionId);
 
@@ -591,10 +636,12 @@ export function spaceCombatAttackShoot(game: GameModel, combat: SpaceCombat, att
     if (hitRoll <= hitChance) {
         const targetFactionUnit = getFactionAdjustedUnit(targetFaction, target);
         const factionWeapon = getFactionAdjustedWeapon(weapon, attackFaction);
-        const dmg = (Array.isArray(factionWeapon.damage) ? rnd(factionWeapon.damage[0], factionWeapon.damage[1]) : factionWeapon.damage) - targetFactionUnit.armor;
+        const dmg =
+            (Array.isArray(factionWeapon.damage)
+                ? rnd(factionWeapon.damage[0], factionWeapon.damage[1])
+                : factionWeapon.damage) - targetFactionUnit.armor;
 
         if (target.shields > 0) {
-
             if (target.shields >= dmg) {
                 target.shields -= dmg;
             } else {
@@ -605,24 +652,25 @@ export function spaceCombatAttackShoot(game: GameModel, combat: SpaceCombat, att
             target.damage += dmg;
         }
 
-
-        combat.log.push(`HIT (${hitRoll} <= ${hitChance}): ${attackFaction.name} ${attacker.name} shoots ${target.name} of ${targetFaction.name} with ${weapon.name} causing ${dmg} points of hull damage.`);
+        combat.log.push(
+            `HIT (${hitRoll} <= ${hitChance}): ${attackFaction.name} ${attacker.name} shoots ${target.name} of ${targetFaction.name} with ${weapon.name} causing ${dmg} points of hull damage.`
+        );
         combat.units = combat.units.map((su: ShipUnit) => {
             if (su.id === target.id) {
                 return target;
             }
             return su;
-        })
+        });
     } else {
-        combat.log.push(`MISS (${hitRoll} > ${hitChance}): ${attackFaction.name} ${attacker.name} misses ${target.name} of ${targetFaction.name} with ${weapon.name}.`);
+        combat.log.push(
+            `MISS (${hitRoll} > ${hitChance}): ${attackFaction.name} ${attacker.name} misses ${target.name} of ${targetFaction.name} with ${weapon.name}.`
+        );
     }
-
 
     return { ...combat };
 }
 
 export function spaceCombatDamageResolve(game: GameModel, combat: SpaceCombat): SpaceCombat {
-
     combat.units = combat.units.filter((unit: ShipUnit) => {
         const faction = getFactionFromArrayById(game.factions, unit.factionId);
         if (!faction) throw new Error(`Invalid facion on unit ${unit.id} ${unit.factionId}`);
@@ -633,12 +681,12 @@ export function spaceCombatDamageResolve(game: GameModel, combat: SpaceCombat): 
             combat.log.push(`${unit.factionId} ${unit.name} is destroyed with ${unit.damage} / ${factionUnit.hull}!`);
             return false;
         } else {
-            combat.log.push(`${unit.factionId} ${unit.name} HULL DAMAGE: ${unit.damage} / ${factionUnit.hull} SHIELDS: ${unit.shields} / ${factionUnit.shieldsMax}`);
-
+            combat.log.push(
+                `${unit.factionId} ${unit.name} HULL DAMAGE: ${unit.damage} / ${factionUnit.hull} SHIELDS: ${unit.shields} / ${factionUnit.shieldsMax}`
+            );
         }
         return true;
     });
-
 
     return combat;
 }
@@ -647,9 +695,7 @@ export function spaceCombatMorale(game: GameModel, combat: SpaceCombat): SpaceCo
     return combat;
 }
 
-
 export function spaceCombatRoundCleanUp(game: GameModel, combat: SpaceCombat): SpaceCombat {
-
     combat.units = combat.units.map((su: ShipUnit) => {
         const faction = getFactionFromArrayById(game.factions, su.factionId);
         if (!faction) throw new Error(`Invalid facion on unit ${su.id} ${su.factionId}`);
@@ -665,7 +711,7 @@ export function spaceCombatRoundCleanUp(game: GameModel, combat: SpaceCombat): S
         }
 
         return su;
-    })
+    });
 
     if (combat.units.length === 0) combat.done = true;
     if (combat.round >= COMBAT_MAXROUNDS) {
@@ -673,8 +719,6 @@ export function spaceCombatRoundCleanUp(game: GameModel, combat: SpaceCombat): S
     }
     return { ...combat };
 }
-
-
 
 export function weaponCanFire(weapon: ShipWeapon): boolean {
     // No cool down

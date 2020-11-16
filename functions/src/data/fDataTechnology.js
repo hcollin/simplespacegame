@@ -1,20 +1,20 @@
 "use strict";
 exports.__esModule = true;
-exports.DATATECHNOLOGY = exports.TECHIDS = void 0;
 var fModels_1 = require("../models/fModels");
 var TECHIDS;
 (function (TECHIDS) {
-    TECHIDS["IonEngines"] = "T-P-001";
-    TECHIDS["WarpEngines"] = "T-P-002";
-    TECHIDS["Marketing"] = "T-B-001";
-    TECHIDS["TargetingComp1"] = "T-W-001";
-    TECHIDS["TargetingComp2"] = "T-W-002";
-    TECHIDS["TargetingComp3"] = "T-W-003";
-    TECHIDS["HeavyRounds"] = "T-W-004";
-    TECHIDS["EvasionEngine"] = "T-P-003";
-    TECHIDS["PredEvasion"] = "T-P-004";
-    TECHIDS["DeciAppr"] = "t-S-001";
-    TECHIDS["HigherEdu"] = "T-S-002";
+    TECHIDS["IonEngines"] = "T-0001";
+    TECHIDS["WarpEngines"] = "T-0002";
+    TECHIDS["Marketing"] = "T-003";
+    TECHIDS["TargetingComp1"] = "T-0004";
+    TECHIDS["TargetingComp2"] = "T-0005";
+    TECHIDS["TargetingComp3"] = "T-0006";
+    TECHIDS["HeavyRounds"] = "T-0007";
+    TECHIDS["EvasionEngine"] = "T-0008";
+    TECHIDS["PredEvasion"] = "T-0009";
+    TECHIDS["DeciAppr"] = "T-0010";
+    TECHIDS["HigherEdu"] = "T-0011";
+    TECHIDS["Arcology"] = "T-0012";
 })(TECHIDS = exports.TECHIDS || (exports.TECHIDS = {}));
 ;
 exports.DATATECHNOLOGY = [
@@ -127,5 +127,16 @@ exports.DATATECHNOLOGY = [
         techprereq: [],
         name: "Higher Education",
         description: "High Welfare affects research points less."
+    },
+    {
+        id: TECHIDS.Arcology,
+        fieldreqs: [
+            [fModels_1.TechnologyField.SOCIOLOGY, 20],
+            [fModels_1.TechnologyField.BUSINESS, 20],
+            [fModels_1.TechnologyField.INFORMATION, 20],
+        ],
+        techprereq: [],
+        name: "Arcology Construction",
+        description: "Allows you to build Arcologies."
     },
 ];

@@ -43,6 +43,13 @@ export function buildingArcology(star: SystemEconomy): SystemEconomy {
         star.welfareMax += 5;        
     }
     return {...star};
+}
 
 
+export function buildingBioDome(star: SystemEconomy): SystemEconomy {
+    if(starHasBuilding(star, BUILDINGTYPE.BIODOME)) {
+        star.economyMax += 1;
+        star.welfareMax += 1;        
+    }
+    return {...star};
 }

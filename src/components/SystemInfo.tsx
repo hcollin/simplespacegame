@@ -7,7 +7,7 @@ import {
     plusIndustry,
     plusDefense,
     buildUnit,
-    removeCommand,
+    doRemoveCommand,
 } from "../services/commands/SystemCommands";
 
 import useMyCommands from "../hooks/useMyCommands";
@@ -382,7 +382,7 @@ const SystemInfo: FC = () => {
     const isMine = faction && faction.id === star.ownerFactionId;
 
     const shipsUnderConstruction: ShipDesign[] = comms.reduce((ships: ShipDesign[], command: Command) => {
-        if (command.type === CommandType.SystemBuild) {
+        if (command.type === CommandType.SystemBuildUnit) {
             const cmd = command as BuildUnitCommand;
             if (inSameLocation(cmd.target, star.location)) {
                 const ship = DATASHIPS.find((s: ShipDesign) => s.name === cmd.shipName);
@@ -397,7 +397,7 @@ const SystemInfo: FC = () => {
 
     function cancelConstruction(ship: ShipDesign) {
         const cmd = comms.find((command: Command) => {
-            if (command.type === CommandType.SystemBuild && star) {
+            if (command.type === CommandType.SystemBuildUnit && star) {
                 const cmd = command as BuildUnitCommand;
                 if (inSameLocation(cmd.target, star.location) && cmd.shipName === ship.name) {
                     return true;
@@ -406,7 +406,7 @@ const SystemInfo: FC = () => {
             return false;
         });
         if (cmd) {
-            removeCommand(cmd.id);
+            doRemoveCommand(cmd.id);
         }
     }
 

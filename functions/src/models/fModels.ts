@@ -1,3 +1,4 @@
+import { Building } from "./fBuildings";
 import { Trade } from "./fCommunication";
 import { ShipUnit } from "./fUnits";
 
@@ -14,7 +15,6 @@ export enum GameState {
     "CLEANUP",
     "ENDED",
 }
-
 
 export interface GameSetup {
     playerCount: number;
@@ -100,10 +100,14 @@ export interface SystemModel extends GameObject {
     welfare: number;
     
     color: string;
-    ringWorld: boolean;
     keywords: (string|SystemKeyword)[];
     reports: Report[];
+
+    buildings: Building[];
+    description?: string;
+
 }
+
 
 export enum FactionState {
     "INIT",

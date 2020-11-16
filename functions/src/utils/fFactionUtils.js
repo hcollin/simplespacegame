@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.getFactionScore = exports.researchPointDistribution = exports.getSystemResearchPointGeneration = exports.researchPointGenerationCalculator = exports.systemExpenses = exports.unitExpenses = exports.getWelfareCommands = exports.commandCountCalculator = exports.expensesCalculator = exports.factionValues = exports.getFactionFromArrayById = void 0;
 var fBusinessTech_1 = require("../tech/fBusinessTech");
 function getFactionFromArrayById(factions, id) {
     return factions.find(function (fm) { return fm.id === id; });
@@ -78,7 +77,7 @@ function expensesCalculator(game, factionId) {
     });
     game.systems.forEach(function (star) {
         if (star.ownerFactionId === factionId) {
-            expenses = systemExpenses(star);
+            expenses += systemExpenses(star);
         }
     });
     return expenses;
@@ -120,7 +119,8 @@ function systemExpenses(sm) {
     var indExp = sm.industry < 3 ? 0 : Math.floor(sm.industry / 2);
     var welExp = sm.welfare < 3 ? 0 : Math.floor(sm.welfare / 2);
     var defExp = sm.defense;
-    return indExp + welExp + defExp + 1;
+    var buildingExpenses = sm.buildings.reduce(function (tot, b) { return tot + b.maintenanceCost; }, 0);
+    return indExp + welExp + defExp + buildingExpenses + 1;
 }
 exports.systemExpenses = systemExpenses;
 function researchPointGenerationCalculator(game, faction) {
@@ -176,13 +176,15 @@ exports.researchPointDistribution = researchPointDistribution;
  * @param factionId
  */
 function getFactionScore(game, factionId) {
-    // const game = joki.service.getState("GameService") as GameModel;
     var score = 0;
     game.systems.forEach(function (sm) {
         if (sm.ownerFactionId === factionId) {
             score += 3;
             score += Math.round((sm.industry + sm.economy + sm.defense + sm.welfare) / 4);
-            score += sm.ringWorld ? 10 : 0;
+            var bScore = sm.buildings.reduce(function (tot, b) {
+                return tot + b.score;
+            }, 0);
+            score += bScore;
         }
     });
     game.units.forEach(function (u) {

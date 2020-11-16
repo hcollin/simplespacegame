@@ -1,9 +1,8 @@
-import { BUILDINGTYPE } from "../data/dataBuildings";
-import { TECHIDS } from "../data/dataTechnology";
-
+import { BUILDINGTYPE } from "../data/fDataBuildings";
+import { TECHIDS } from "../data/fDataTechnology";
 
 export interface BuildingDesign {
-    type: BUILDINGTYPE;    
+    type: BUILDINGTYPE;
     name: string;
     description: string;
     image?: string;
