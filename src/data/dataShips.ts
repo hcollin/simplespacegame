@@ -137,8 +137,8 @@ export default DATASHIPS;
 
 
 export function shipNameGenerator(shipClass: SHIPCLASS): string {
-    const partA = ["New", "Old", "Millenium", "Angry", "SS", "MS", "Phantom", "Ghost", "Dark", "Light"];
-    const partB = ["Skipper", "Falcon", "Enterprise", "Terror", "Reign", "Memorial", "Ronan", "Samurai", "Ninja", "Knight", "Pride", "Spear", "Sword", "Hammer", "Shield"];
+    const partA = ["New", "Old", "Millenium", "Angry", "SS", "MS", "Phantom", "Ghost", "Dark", "Light", "Grand", "Second", "Third", "Fourth", "Shadow", "Altered", "Argent", "Annoited", "Holy", "Unholy", "Divine", "Triumphant"];
+    const partB = ["Skipper", "Falcon", "Enterprise", "Terror", "Reign", "Memorial", "Ronan", "Samurai", "Ninja", "Knight", "Pride", "Spear", "Sword", "Hammer", "Shield", "Avenger", "Ravager", "Terminator", "Templar", "Crusader", "Corroder", "Annihilator", "Bomber", "Badass", "Destiny", "Doom", "Force", "Faithful", "Finder", "Seeker", "Explorer", "Goliath", "Hero", "Hellbringer", "Hymn", "Illusion", "Inventor", "Invader", "Justicar", "Justice"];
     return `${arnd(partA)} ${arnd(partB)}`;
 
 }

@@ -382,9 +382,10 @@ const SystemInfo: FC = () => {
     const isMine = faction && faction.id === star.ownerFactionId;
 
     const shipsUnderConstruction: ShipDesign[] = comms.reduce((ships: ShipDesign[], command: Command) => {
+        
         if (command.type === CommandType.SystemBuildUnit) {
             const cmd = command as BuildUnitCommand;
-            if (inSameLocation(cmd.target, star.location)) {
+            if (cmd.targetSystem === star.id) {
                 const ship = DATASHIPS.find((s: ShipDesign) => s.name === cmd.shipName);
                 if (ship) {
                     ships.push(ship);
@@ -399,7 +400,7 @@ const SystemInfo: FC = () => {
         const cmd = comms.find((command: Command) => {
             if (command.type === CommandType.SystemBuildUnit && star) {
                 const cmd = command as BuildUnitCommand;
-                if (inSameLocation(cmd.target, star.location) && cmd.shipName === ship.name) {
+                if (cmd.targetSystem === star.id && cmd.shipName === ship.name) {
                     return true;
                 }
             }
@@ -539,7 +540,7 @@ const SystemInfo: FC = () => {
 
                             return (
                                 <div key={ship.name}>
-                                    <ShipInfo ship={ship} onClick={(s: ShipDesign) => doBuildUnit(s, star.location)} />
+                                    <ShipInfo ship={ship} onClick={(s: ShipDesign) => doBuildUnit(s, star.id)} />
                                 </div>
                             );
                         })}

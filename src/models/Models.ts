@@ -1,5 +1,6 @@
 import { Building } from "./Buildings";
 import { Trade } from "./Communication";
+import { CombatRoundReport } from "./Report";
 import { ShipUnit } from "./Units";
 
 export interface GameObject {
@@ -171,5 +172,7 @@ export interface SpaceCombat {
     system: SystemModel | null;
     round: number;
     log: string[];
+    roundLog: CombatRoundReport[];
+    currentRoundLog: CombatRoundReport;
     done: boolean;
 }

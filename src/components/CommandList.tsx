@@ -109,9 +109,8 @@ const useStyles = makeStyles((theme: Theme) =>
                         },
                         "&.red": {
                             color: "#B00D",
-                        }
-                    }
-
+                        },
+                    },
                 },
             },
         },
@@ -325,7 +324,6 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
     const [game] = useService<GameModel>("GameService");
 
     const [cmdIndex, setCmdIndex] = useState<number>(0);
-
     const commands = useMyCommands();
     const faction = useCurrentFaction();
 
@@ -345,7 +343,9 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
         }
     }
 
-    function factionClickHandler(fm: FactionModel) {}
+    function factionClickHandler(fm: FactionModel) {
+
+    }
 
     if (!commands || !game || !faction) return null;
 
@@ -357,12 +357,16 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
     const pointsGenerated = researchPointGenerationCalculator(game, faction);
 
     const cmdsShown = commands.slice(cmdIndex, cmdIndex + COMMANDPAGINATIONLIMIT);
+    
     return (
         <div className={classes.commands}>
             <header>
                 <div>
                     <IconCredit size="lg" />
-                    {faction.money} <small className={values.income < 0 ?  "red" : "green"}>{values.income >= 0 ? `+${values.income}` :values.income}</small>
+                    {faction.money}
+                    <small className={values.income < 0 ? "red" : "green"}>
+                        {values.income >= 0 ? `+${values.income}` : values.income}
+                    </small>
                 </div>
                 <div>
                     <IconResearchPoint size="lg" />
@@ -379,7 +383,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
             </header>
 
             <h1>
-                Commands{" "}
+                Commands
                 <small className={commandsFull ? "red" : ""}>
                     ({commands.length} / {values.maxCommands})
                 </small>
@@ -410,7 +414,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                         }
                         disabled={cmdIndex === 0}
                     >
-                        {" "}
+                        
                         Prev {COMMANDPAGINATIONLIMIT}
                     </Button>
                     <Button
@@ -555,14 +559,16 @@ const FleetMoveCommandItem: FC<CommandProps> = (props) => {
 const SystemBuildCommandItem: FC<CommandProps> = (props) => {
     const classes = useStyles();
     const cmd = props.command as BuildUnitCommand;
-    const system = getSystemByCoordinates(props.game, cmd.target);
-    const systemName = system ? system.name : `coordinates ${cmd.target.x}, ${cmd.target.y}`;
+    const system = getSystemById(props.game, cmd.targetSystem);
+    const systemName = system ? system.name : cmd.targetSystem;
+    // const system = getSystemByCoordinates(props.game, cmd.target);
+    // const systemName = system ? system.name : `coordinates ${cmd.target.x}, ${cmd.target.y}`;
     return (
         <div className={`${classes.command} red`}>
             <img src={iconBuildSvg} className="commandIcon lg" alt="Build icon" />
             <label>Build Unit</label>
             <h2>
-                {cmd.shipName} in {systemName}
+                {cmd.shipName}<br /><small>{systemName} ({cmd.turnsLeft})</small>
             </h2>
 
             {!props.isReady && (

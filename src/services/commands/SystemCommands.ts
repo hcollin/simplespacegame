@@ -112,18 +112,20 @@ export function doRemoveCommand(commandId: string) {
     });
 }
 
-export function doBuildUnit(ship: ShipDesign, targetCoords: Coordinates) {
+export function doBuildUnit(ship: ShipDesign, systemId: string) {
     const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemBuildUnit);
 
     if (!rootCommand) {
-        console.log("Cannot do build unit for ", ship, targetCoords);
+        console.log("Cannot do build unit for ", ship, systemId);
         return;
     }
+
 
     const command = {
         ...rootCommand,
         shipName: ship.name,
-        target: targetCoords,
+        targetSystem: systemId,
+        turnsLeft: ship.buildTime || 1,
     } as BuildUnitCommand;
 
     joki.trigger({

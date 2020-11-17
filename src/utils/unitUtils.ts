@@ -1,5 +1,5 @@
 import { TECHIDS } from "../data/dataTechnology";
-import { FactionModel } from "../models/Models";
+import { FactionModel, SystemModel } from "../models/Models";
 import { ShipDesign, ShipUnit, ShipWeapon } from "../models/Units";
 import { techEvasionEngine, techHeavyRounds, techIonEngines, techTargetingComputerOne, techTargetingComputerThree, techTargetingComputerTwo, techTimeslipPrediction, techWarpEngines } from "../tech/shipTech";
 // import { getFactionById } from "./factionJokiUtils";
@@ -130,6 +130,13 @@ export function getFactionAdjustedUnit(faction: FactionModel, origUnit: ShipUnit
     return ship;
 
 
+}
+
+
+export function shipCanBeBuiltOnSystemByFaction(ship: ShipDesign, faction: FactionModel, star: SystemModel): boolean {
+    if(ship.cost > faction.money) return false;
+    if(ship.minIndustry > star.industry) return false;
+    return true;
 }
 
 // export function getUnitSpeed(um: ShipUnit): number {

@@ -15,7 +15,6 @@ export enum CommandType {
     FleetMove = "FleetMove",
         
     TechnologyResearch = "Research",
-
 }
 
 export interface Command extends GameObject {
@@ -36,8 +35,9 @@ export interface FleetCommand extends Command {
 }
 
 export interface BuildUnitCommand extends Command {
+    targetSystem: string;
     shipName: string;
-    target: Coordinates;
+    turnsLeft: number;
 }
 
 export interface BuildBuildingCommand extends Command {

@@ -229,7 +229,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
                             switch (cmd.type) {
                                 case CommandType.SystemBuildUnit:
                                     const cb = cmd as BuildUnitCommand;
-                                    return inSameLocation(cb.target, star.location);
+                                    return cb.targetSystem === star.id;
                                 case CommandType.FleetMove:
                                     return false;
                                 default:

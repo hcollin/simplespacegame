@@ -42,6 +42,7 @@ export interface ShipWeapon {
 
 export interface ShipDesign extends GameObject {
     name: string;
+    
     type: SHIPCLASS;
     cost: number;
     minIndustry: number;
