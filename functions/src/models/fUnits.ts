@@ -56,6 +56,13 @@ export interface ShipDesign extends GameObject {
     agility: number;
     weapons: ShipWeapon[];
     description: string;
+    buildTime: number;
+}
+
+export interface ShipUnderConstruction extends ShipDesign {
+    cmdId: string;
+    timeLeft: number;
+    cancellable: boolean;
 }
 
 export interface ShipUnit extends ShipDesign {

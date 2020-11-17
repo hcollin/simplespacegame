@@ -2,46 +2,6 @@
 exports.__esModule = true;
 var fUnits_1 = require("../models/fUnits");
 var fRandUtils_1 = require("../utils/fRandUtils");
-var DATAOLDSHIPS = [
-    {
-        id: "",
-        cost: 3,
-        minIndustry: 2,
-        hull: 3,
-        weapons: 1,
-        name: "Corvette",
-        speed: 5,
-        description: "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires."
-    },
-    {
-        id: "",
-        cost: 5,
-        minIndustry: 4,
-        hull: 5,
-        weapons: 1,
-        name: "Frigate",
-        speed: 7
-    },
-    {
-        id: "",
-        cost: 8,
-        minIndustry: 7,
-        hull: 10,
-        weapons: 3,
-        name: "Cruiser",
-        speed: 5
-    },
-    {
-        id: "",
-        cost: 12,
-        minIndustry: 10,
-        hull: 16,
-        weapons: 6,
-        name: "Battleship",
-        speed: 4
-    },
-];
-exports.DATAOLDSHIPS = DATAOLDSHIPS;
 var DATASHIPWEAPONS = [
     {
         name: "Rapid Laser",
@@ -101,6 +61,7 @@ var DATANEWSHIPS = [
         type: fUnits_1.SHIPCLASS.CORVETTE,
         name: "Corvette",
         cost: 3,
+        buildTime: 2,
         minIndustry: 2,
         techReq: [],
         troops: 1,
@@ -121,6 +82,7 @@ var DATANEWSHIPS = [
         type: fUnits_1.SHIPCLASS.FRIGATE,
         name: "Frigate",
         cost: 6,
+        buildTime: 4,
         minIndustry: 3,
         techReq: [],
         troops: 3,
@@ -143,6 +105,7 @@ var DATANEWSHIPS = [
         type: fUnits_1.SHIPCLASS.DESTROYER,
         name: "Destroyer",
         cost: 12,
+        buildTime: 4,
         minIndustry: 5,
         techReq: [],
         troops: 5,
@@ -168,8 +131,8 @@ exports.DATANEWSHIPS = DATANEWSHIPS;
 var DATASHIPS = DATANEWSHIPS;
 exports["default"] = DATASHIPS;
 function shipNameGenerator(shipClass) {
-    var partA = ["New", "Old", "Millenium", "Angry", "SS", "MS", "Phantom", "Ghost", "Dark", "Light"];
-    var partB = ["Skipper", "Falcon", "Enterprise", "Terror", "Reign", "Memorial", "Ronan", "Samurai", "Ninja", "Knight", "Pride", "Spear", "Sword", "Hammer", "Shield"];
+    var partA = ["New", "Old", "Millenium", "Angry", "SS", "MS", "Phantom", "Ghost", "Dark", "Light", "Grand", "Second", "Third", "Fourth", "Shadow", "Altered", "Argent", "Annoited", "Holy", "Unholy", "Divine", "Triumphant"];
+    var partB = ["Skipper", "Falcon", "Enterprise", "Terror", "Reign", "Memorial", "Ronan", "Samurai", "Ninja", "Knight", "Pride", "Spear", "Sword", "Hammer", "Shield", "Avenger", "Ravager", "Terminator", "Templar", "Crusader", "Corroder", "Annihilator", "Bomber", "Badass", "Destiny", "Doom", "Force", "Faithful", "Finder", "Seeker", "Explorer", "Goliath", "Hero", "Hellbringer", "Hymn", "Illusion", "Inventor", "Invader", "Justicar", "Justice"];
     return fRandUtils_1.arnd(partA) + " " + fRandUtils_1.arnd(partB);
 }
 exports.shipNameGenerator = shipNameGenerator;

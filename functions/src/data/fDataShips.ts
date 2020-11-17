@@ -1,47 +1,7 @@
-import { OldShip } from "../models/fModels";
+
 import { SHIPCLASS, ShipDesign, ShipWeapon, WEAPONTYPE } from "../models/fUnits";
 import { arnd } from "../utils/fRandUtils";
 
-const DATAOLDSHIPS: OldShip[] = [
-    {
-        id: "",
-        cost: 3,
-        minIndustry: 2,
-        hull: 3,
-        weapons: 1,
-        name: "Corvette",
-        speed: 5,
-        description: "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires.",
-    },
-    {
-        id: "",
-        cost: 5,
-        minIndustry: 4,
-        hull: 5,
-        weapons: 1,
-        name: "Frigate",
-        speed: 7,
-    },
-    {
-        id: "",
-        cost: 8,
-        minIndustry: 7,
-        hull: 10,
-        weapons: 3,
-        name: "Cruiser",
-        speed: 5,
-    },
-    {
-        id: "",
-        cost: 12,
-        minIndustry: 10,
-        hull: 16,
-        weapons: 6,
-        name: "Battleship",
-        speed: 4,
-    },
-
-];
 
 const DATASHIPWEAPONS: ShipWeapon[] = [
     {
@@ -103,6 +63,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         type: SHIPCLASS.CORVETTE,
         name: "Corvette",
         cost: 3,
+        buildTime: 2,
         minIndustry: 2,
         techReq: [],
         troops: 1,
@@ -124,6 +85,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         type: SHIPCLASS.FRIGATE,
         name: "Frigate",
         cost: 6,
+        buildTime: 4,
         minIndustry: 3,
         techReq: [],
         troops: 3,
@@ -146,6 +108,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         type: SHIPCLASS.DESTROYER,
         name: "Destroyer",
         cost: 12,
+        buildTime: 4,
         minIndustry: 5,
         techReq: [],
         troops: 5,
@@ -170,16 +133,17 @@ const DATANEWSHIPS: ShipDesign[] = [
 
 
 
+
 const DATASHIPS = DATANEWSHIPS;
 
 export default DATASHIPS;
 
 
 export function shipNameGenerator(shipClass: SHIPCLASS): string {
-    const partA = ["New", "Old", "Millenium", "Angry", "SS", "MS", "Phantom", "Ghost", "Dark", "Light"];
-    const partB = ["Skipper", "Falcon", "Enterprise", "Terror", "Reign", "Memorial", "Ronan", "Samurai", "Ninja", "Knight", "Pride", "Spear", "Sword", "Hammer", "Shield"];
+    const partA = ["New", "Old", "Millenium", "Angry", "SS", "MS", "Phantom", "Ghost", "Dark", "Light", "Grand", "Second", "Third", "Fourth", "Shadow", "Altered", "Argent", "Annoited", "Holy", "Unholy", "Divine", "Triumphant"];
+    const partB = ["Skipper", "Falcon", "Enterprise", "Terror", "Reign", "Memorial", "Ronan", "Samurai", "Ninja", "Knight", "Pride", "Spear", "Sword", "Hammer", "Shield", "Avenger", "Ravager", "Terminator", "Templar", "Crusader", "Corroder", "Annihilator", "Bomber", "Badass", "Destiny", "Doom", "Force", "Faithful", "Finder", "Seeker", "Explorer", "Goliath", "Hero", "Hellbringer", "Hymn", "Illusion", "Inventor", "Invader", "Justicar", "Justice"];
     return `${arnd(partA)} ${arnd(partB)}`;
 
 }
 
-export {DATANEWSHIPS, DATAOLDSHIPS};
+export {DATANEWSHIPS};

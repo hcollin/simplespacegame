@@ -313,16 +313,37 @@ function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameMode
     const faction = getFactionFromArrayById(game.factions, command.factionId);
 
     if (faction) {
-        const unit = createShipFromDesign(getDesignByName(command.shipName), command.factionId, command.target);
-        if (faction.money >= unit.cost) {
-            game.units.push(unit);
-            faction.money = faction.money - unit.cost;
-            markCommandDone(command);
-            return updateFactionInGame(game, faction);
-        }
+        const shipDesign = getDesignByName(command.shipName);
+        const system = getSystemFromGame(game, command.targetSystem);
+
+
+        if(command.turn === game.turn) {
+            if (faction.money >= shipDesign.cost) {
+                faction.money = faction.money - shipDesign.cost;
+                command.turnsLeft--;
+                if(command.turnsLeft === 0) {
+                    markCommandDone(command);
+                    const unit = createShipFromDesign(shipDesign, command.factionId, system.location);
+                    game.units.push(unit); 
+                    return updateFactionInGame(game, faction);
+                }
+                command.save = true;
+                return updateFactionInGame(game, faction);
+
+            }
+        } else {
+            command.turnsLeft--;
+            if(command.turnsLeft === 0) {
+                markCommandDone(command);
+                const unit = createShipFromDesign(shipDesign, command.factionId, system.location);
+                game.units.push(unit); 
+                return updateFactionInGame(game, faction);
+            } else {
+                command.save = true;
+            }
+        }        
     }
 
-    markCommandDone(command);
     return { ...game };
 }
 
