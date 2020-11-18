@@ -1,6 +1,14 @@
 import { SHIPCLASS, ShipDesign, ShipWeapon, WEAPONTYPE } from "../models/Units";
 import { arnd, rnd, roll } from "../utils/randUtils";
 
+
+export enum SHIPWEAPONSPECIAL {
+    RAPIDFIRE = "Rapid Fire",
+    HAILOFFIRE = "Hail of Fire",
+    DOUBLESHOT = "Double Shot",
+    ARMOURPIERCE = "Armour piercing"
+}
+
 const DATASHIPWEAPONS: ShipWeapon[] = [
     {
         id: "",
@@ -9,8 +17,8 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         accuracy: 80,
         cooldown: 0,
         cooldownTime: 0,
-        damage: [10, 15],
-        special: [],
+        damage: [4, 10],
+        special: [SHIPWEAPONSPECIAL.RAPIDFIRE],
     },
     {
         id: "",
@@ -64,6 +72,8 @@ function getWeaponByName(name: string): ShipWeapon {
 const DATANEWSHIPS: ShipDesign[] = [
     {
         id: "",
+        typeClassName: "Corvette",
+        sizeIndicator: 3,
         type: SHIPCLASS.CORVETTE,
         name: "Corvette",
         cost: 3,
@@ -87,26 +97,8 @@ const DATANEWSHIPS: ShipDesign[] = [
     },
     {
         id: "",
-        type: SHIPCLASS.CORVETTE,
-        name: "Missile Boat",
-        cost: 4,
-        buildTime: 2,
-        minIndustry: 1,
-        techReq: [],
-        troops: 0,
-        speed: 3,
-        agility: 30,
-        armor: 1,
-        hull: 55,
-        shieldRegeneration: 0,
-        shieldsMax: 0,
-        keywords: [],
-        weapons: [getWeaponByName("Homing Missile"), getWeaponByName("Homing Missile")],
-        description:
-            "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires.",
-    },
-    {
-        id: "",
+        typeClassName: "Frigate",
+        sizeIndicator: 4,
         type: SHIPCLASS.FRIGATE,
         name: "Frigate",
         cost: 6,
@@ -126,6 +118,8 @@ const DATANEWSHIPS: ShipDesign[] = [
     },
     {
         id: "",
+        typeClassName: "Destroyer",
+        sizeIndicator: 4,
         type: SHIPCLASS.DESTROYER,
         name: "Destroyer",
         cost: 12,
@@ -152,23 +146,54 @@ const DATANEWSHIPS: ShipDesign[] = [
     },
     {
         id: "",
+        typeClassName: "Light Cruiser",
+        sizeIndicator: 5,
         type: SHIPCLASS.CRUISER,
-        name: "Cruiser",
-        cost: 16,
+        name: "Light Cruiser",
+        cost: 20,
         buildTime: 5,
         minIndustry: 3,
         techReq: [],
         troops: 4,
-        speed: 7,
+        speed: 5,
         agility: 40,
-        armor: 5,
-        hull: 120,
+        armor: 3,
+        hull: 180,
         shieldRegeneration: 8,
         shieldsMax: 40,
         keywords: [],
         weapons: [
             getWeaponByName("Rapid Laser"),
             getWeaponByName("Rapid Laser"),
+            getWeaponByName("Small Railgun"),
+            getWeaponByName("Homing Missile"),
+            getWeaponByName("Homing Missile"),
+        ],
+        description: "",
+    },
+    {
+        id: "",
+        typeClassName: "Heavy Cruiser",
+        sizeIndicator: 5,
+        type: SHIPCLASS.CRUISER,
+        name: "Heavy Cruiser",
+        cost: 28,
+        buildTime: 5,
+        minIndustry: 3,
+        techReq: [],
+        troops: 4,
+        speed: 5,
+        agility: 40,
+        armor: 5,
+        hull: 220,
+        shieldRegeneration: 8,
+        shieldsMax: 45,
+        keywords: [],
+        weapons: [
+            getWeaponByName("Laser Turret"),
+            getWeaponByName("Laser Turret"),
+            getWeaponByName("Rapid Laser"),
+            getWeaponByName("Small Railgun"),
             getWeaponByName("Small Railgun"),
             getWeaponByName("Homing Missile"),
             getWeaponByName("Homing Missile"),

@@ -1,3 +1,4 @@
+import { SHIPWEAPONSPECIAL } from "./data/fDataShips";
 import { DATATECHNOLOGY } from "./data/fDataTechnology";
 import { COMBAT_MAXROUNDS } from "./functionConfigs";
 import {
@@ -22,6 +23,7 @@ import {
     SpaceCombat,
     Coordinates,
 } from "./models/fModels";
+import { CombatRoundStatus } from "./models/fReport";
 import { ShipUnit, ShipWeapon } from "./models/fUnits";
 import { createBuildingFromDesign, getBuildingDesignByType } from "./utils/fBuildingUtils";
 import {
@@ -38,6 +40,7 @@ import {
     getShipSpeed,
     getFactionAdjustedUnit,
     getFactionAdjustedWeapon,
+    getMaxDamageForWeapon,
     createShipFromDesign,
     getDesignByName,
 } from "./utils/fUnitUtils";
@@ -275,6 +278,13 @@ function processCombats(game: GameModel): GameModel {
                     round: 0,
                     log: [],
                     done: false,
+                    roundLog: [],
+                    currentRoundLog: {
+                        attacks: [],
+                        messages: [],
+                        round: 0,
+                        status: []
+                    }
                 });
             }
         }
@@ -532,243 +542,344 @@ function markCommandDone(command: Command) {
     command.completed = true;
 }
 
+
+/***********************************************************************************************************
+ * SPACE COMBAT
+ */
+
 export function spaceCombatMain(game: GameModel, units: ShipUnit[], system: SystemModel | null): SpaceCombat {
-    let combat: SpaceCombat = {
-        units: [...units],
-        system: system,
-        round: 0,
-        log: [],
-        done: false,
-    };
+	let combat: SpaceCombat = {
+		units: [...units],
+		system: system,
+		round: 0,
+		log: [],
+		roundLog: [],
+		currentRoundLog: {
+			round: 0,
+			messages: [],
+			attacks: [],
+			status: [],
+		},
+		done: false,
+	};
 
-    combat.log.push(`Space combat starts`);
-    // PRE COMBAT
-    // TODO
+	combat.log.push(`Space combat starts`);
+	// PRE COMBAT
+	// TODO
 
-    // COMBAT ROUNDS
-    while (!combat.done) {
-        combat.round++;
-        combat.log.push(`ROUND ${combat.round}`);
+	// COMBAT ROUNDS
+	while (!combat.done) {
+		combat.round++;
+		combat.log.push(`ROUND ${combat.round}`);
 
-        combat = spaceCombatAttacks(game, combat);
-        combat = spaceCombatDamageResolve(game, combat);
-        combat = spaceCombatMorale(game, combat);
+		combat.currentRoundLog = {
+			round: combat.round,
+			messages: [],
+			attacks: [],
+			status: [],
+		};
 
-        combat = spaceCombatRoundCleanUp(game, combat);
+		combat = spaceCombatAttacks(game, combat);
+		combat = spaceCombatDamageResolve(game, combat);
+		combat = spaceCombatMorale(game, combat);
 
-        // if(combat.round >= 10) {
-        //     combat.done = true;
-        // }
-    }
+		combat = spaceCombatRoundCleanUp(game, combat);
 
-    // POST COMBAT
+		// if(combat.round >= 10) {
+		//     combat.done = true;
+		// }
 
-    combat.units = combat.units.map((su: ShipUnit) => {
-        su.shields = su.shieldsMax;
-        su.experience += combat.round;
-        return su;
-    });
+		combat.roundLog.push({ ...combat.currentRoundLog });
+	}
 
-    combat.log.push(`Space combat ends`);
-    return combat;
+	// POST COMBAT
+
+	combat.units = combat.units.map((su: ShipUnit) => {
+		su.shields = su.shieldsMax;
+		su.experience += combat.round;
+		return su;
+	});
+
+	combat.log.push(`Space combat ends`);
+	return combat;
 }
 
 export function spaceCombatAttacks(game: GameModel, origCombat: SpaceCombat): SpaceCombat {
-    const attackers = [...origCombat.units];
+	const attackers = [...origCombat.units];
 
-    let combat = { ...origCombat };
+	let combat = { ...origCombat };
 
-    attackers.forEach((ship: ShipUnit) => {
-        let hit = false;
-        ship.weapons.forEach((weapon: ShipWeapon) => {
-            if (weaponCanFire(weapon)) {
-                const target = spaceCombatAttackChooseTarget(combat, ship, weapon);
-                if (target) {
-                    const oldDmg = target.damage + target.shields;
-                    combat = spaceCombatAttackShoot(game, combat, ship, weapon, target);
-                    const newDmg = target.damage + target.shields;
-                    if (oldDmg < newDmg) hit = true;
-                }
-            } else {
-                const faction = getFactionFromArrayById(game.factions, ship.factionId);
-                combat.log.push(
-                    `RELOADING: ${faction.name} ${ship.name} is reloading ${weapon.name}, ${
-                        weapon.cooldown + 1
-                    } round until ready to fire`
-                );
-            }
-        });
-        if (hit) {
-            ship.experience++;
-        }
-    });
+	return attackers.reduce(
+		(combat: SpaceCombat, ship: ShipUnit) => {
+			let hit = false;
+			const nCombat = ship.weapons.reduce(
+				(c: SpaceCombat, weapon: ShipWeapon) => {
+					// if(weapon.cooldownTime > 0) console.log(c.round, ship.id, weapon);
+					if (weaponCanFire(weapon)) {
+						const target = spaceCombatAttackChooseTarget(c, ship, weapon, game);
+						if (target) {
+							const oldDmg = target.damage + target.shields;
 
-    return combat;
+							let rc = spaceCombatAttackShoot(game, c, ship, weapon, target);
+
+							const newDmg = target.damage + target.shields;
+
+							if (oldDmg < newDmg) hit = true;
+							return { ...rc };
+						}
+					} else {
+						const faction = getFactionFromArrayById(game.factions, ship.factionId);
+						const logText = `RELOADING: ${faction ? faction.name : "Uknown faction"} ${ship.name} is reloading ${weapon.name}, ${
+							weapon.cooldown + 1
+						} round until ready to fire`;
+						c.log.push(logText);
+						c.currentRoundLog.attacks.push({
+							attacker: ship.id,
+							weapon: weapon.name,
+							result: "RELOAD",
+							hitRoll: weapon.cooldown + 1,
+							damage: 0,
+							hitTarget: 0,
+							target: "",
+						});
+					}
+					return { ...c };
+				},
+				{ ...combat },
+			);
+
+			if (hit) {
+				ship.experience++;
+			}
+
+			return { ...nCombat };
+		},
+		{ ...origCombat },
+	);
 }
 
-export function spaceCombatAttackChooseTarget(
-    combat: SpaceCombat,
-    attacker: ShipUnit,
-    weapon: ShipWeapon
-): ShipUnit | null {
-    const target = combat.units.find((su: ShipUnit) => {
-        return su.factionId !== attacker.factionId;
-    });
-    if (target) {
-        // const betterTarget = combat.units.reduce((t: ShipUnit, pos: ShipUnit) => {
-        //     if(t.factionId !== attacker.factionId) {
-        //         const oldHitChance = getHitChance(attacker.factionId, weapon, attacker, t);
-        //         const newHitChance = getHitChance(attacker.factionId, weapon, attacker, pos);
-        //         const oldDmgPot = damagePotential(weapon, t);
-        //         const newDmgPot = damagePotential(weapon, pos);
+export function spaceCombatAttackChooseTarget(combat: SpaceCombat, attacker: ShipUnit, weapon: ShipWeapon, game: GameModel): ShipUnit | null {
+	const target = combat.units.find((su: ShipUnit) => {
+		return su.factionId !== attacker.factionId;
+	});
+	if (target) {
+        console.log(`${combat.round}: ${attacker.name} choosing target for ${weapon.name}:`);
+		const betterTarget = combat.units.reduce((t: ShipUnit, pos: ShipUnit) => {
+			if (pos.factionId !== attacker.factionId) {
+				const posHps = pos.hull + pos.shields - pos.damage;
+				const curHps = t.hull + t.shields - t.damage;
+                
+                if (pos.hull > 0 && posHps < curHps) {
+					return pos;
+				}
 
-        //         const valueO = oldHitChance + oldDmgPot;
-        //         const valueN = newHitChance + newDmgPot;
-        //         if(valueO > valueN) {
-        //             return t;
-        //         } else {
-        //             return pos;
-        //         }
-        //     }
-        //     return t;
-        // }, target);
+				if (t.hull + t.shields - t.damage <= 0) {
+					return pos;
+				}
 
-        return target;
-    }
-    combat.done = true;
-    return null;
+				const oldHitChance = getHitChance(weapon, attacker, t, game);
+				const newHitChance = getHitChance(weapon, attacker, pos, game);
+
+				// if (newHitChance > oldHitChance) return pos;
+
+				const oldDmgPot = damagePotential(weapon, attacker, t, game );
+				const newDmgPot = damagePotential(weapon, attacker, pos, game);
+
+				const valueO = oldHitChance + oldDmgPot;
+				const valueN = newHitChance + newDmgPot;
+
+                
+                if(valueO > valueN) {
+                    console.log(`\t KEEP: ${t.name} H%${oldHitChance} Dmg: ${oldDmgPot}`);
+                    return t;
+				} else {
+                    console.log(`\t NEW : ${pos.name} H%${newHitChance} Dmg: ${newDmgPot}`);
+				    return pos;
+				}
+			}
+			return t;
+		}, target);
+		if (betterTarget) return betterTarget;
+		return target;
+	}
+	combat.done = true;
+	return null;
 }
 
-export function spaceCombatAttackShoot(
-    game: GameModel,
-    combat: SpaceCombat,
-    attacker: ShipUnit,
-    weapon: ShipWeapon,
-    target: ShipUnit
-): SpaceCombat {
-    const attackFaction = getFactionFromArrayById(game.factions, attacker.factionId);
-    const targetFaction = getFactionFromArrayById(game.factions, target.factionId);
+export function spaceCombatAttackShoot(game: GameModel, combat: SpaceCombat, attacker: ShipUnit, weapon: ShipWeapon, target: ShipUnit): SpaceCombat {
+	const attackFaction = getFactionFromArrayById(game.factions, attacker.factionId);
+	const targetFaction = getFactionFromArrayById(game.factions, target.factionId);
 
-    if (!attackFaction || !targetFaction) return combat;
+	if (!attackFaction || !targetFaction) return combat;
 
-    const hitChance = getHitChance(attackFaction, weapon, attacker, target); //50 + weapon.accuracy - target.agility;
-    const hitRoll = rnd(1, 100);
+	const hitChance = getHitChance(weapon, attacker, target, game); //50 + weapon.accuracy - target.agility;
+	const hitRoll = rnd(1, 100);
 
-    if (hitRoll <= hitChance) {
-        const targetFactionUnit = getFactionAdjustedUnit(targetFaction, target);
-        const factionWeapon = getFactionAdjustedWeapon(weapon, attackFaction);
-        const dmg =
-            (Array.isArray(factionWeapon.damage)
-                ? rnd(factionWeapon.damage[0], factionWeapon.damage[1])
-                : factionWeapon.damage) - targetFactionUnit.armor;
+	if (hitRoll <= hitChance) {
+		const targetFactionUnit = getFactionAdjustedUnit(targetFaction, target);
+		const factionWeapon = getFactionAdjustedWeapon(weapon, attackFaction);
 
-        if (target.shields > 0) {
-            if (target.shields >= dmg) {
-                target.shields -= dmg;
-            } else {
-                target.damage += dmg - target.shields;
-                target.shields = 0;
-            }
-        } else {
-            target.damage += dmg;
+		const [nTarget, dmg] = spaceCombatInflictDamage(factionWeapon, target);
+
+		const logText = `HIT (${hitRoll} <= ${hitChance}): ${attackFaction.name} ${attacker.name} shoots ${target.name} of ${targetFaction.name} with ${weapon.name} causing ${dmg} points of hull damage.`;
+		combat.log.push(logText);
+		// combat.currentRoundLog.messages.push(logText);
+		combat.currentRoundLog.attacks.push({
+			attacker: attacker.id,
+			weapon: weapon.name,
+			result: "HIT",
+			hitRoll: hitRoll,
+			hitTarget: hitChance,
+			damage: dmg,
+			target: target.id,
+		});
+		combat.units = combat.units.map((su: ShipUnit) => {
+			if (su.id === nTarget.id) {
+				return { ...nTarget };
+			}
+			return su;
+		});
+	} else {
+		const logText = `MISS (${hitRoll} > ${hitChance}): ${attackFaction.name} ${attacker.name} misses ${target.name} of ${targetFaction.name} with ${weapon.name}.`;
+		combat.log.push(logText);
+		// combat.currentRoundLog.messages.push(logText);
+		combat.currentRoundLog.attacks.push({
+			attacker: attacker.id,
+			weapon: weapon.name,
+			result: "MISS",
+			hitRoll: hitRoll,
+			hitTarget: hitChance,
+			damage: 0,
+			target: target.id,
+		});
+	}
+
+	return { ...combat };
+}
+
+export function spaceCombatInflictDamage(weapon: ShipWeapon, targetUnit: ShipUnit): [ShipUnit, number] {
+	let loop = 1 + (weapon.special.includes(SHIPWEAPONSPECIAL.DOUBLESHOT) ? 1 : 0) + (weapon.special.includes(SHIPWEAPONSPECIAL.RAPIDFIRE) ? 2 : 0) + (weapon.special.includes(SHIPWEAPONSPECIAL.HAILOFFIRE) ? 4 : 0);
+
+    let totalDmg = 0;
+	for (let i = 0; i < loop; i++) {
+		const dmg = (Array.isArray(weapon.damage) ? rnd(weapon.damage[0], weapon.damage[1]) : weapon.damage) - targetUnit.armor;
+
+		if (targetUnit.shields > 0) {
+			if (targetUnit.shields >= dmg) {
+				targetUnit.shields -= dmg;
+			} else {
+				targetUnit.damage += dmg - targetUnit.shields;
+				targetUnit.shields = 0;
+			}
+		} else {
+			targetUnit.damage += dmg;
         }
+        totalDmg += dmg;
+	}
 
-        combat.log.push(
-            `HIT (${hitRoll} <= ${hitChance}): ${attackFaction.name} ${attacker.name} shoots ${target.name} of ${targetFaction.name} with ${weapon.name} causing ${dmg} points of hull damage.`
-        );
-        combat.units = combat.units.map((su: ShipUnit) => {
-            if (su.id === target.id) {
-                return target;
-            }
-            return su;
-        });
-    } else {
-        combat.log.push(
-            `MISS (${hitRoll} > ${hitChance}): ${attackFaction.name} ${attacker.name} misses ${target.name} of ${targetFaction.name} with ${weapon.name}.`
-        );
-    }
-
-    return { ...combat };
+	return [{ ...targetUnit }, totalDmg];
 }
 
 export function spaceCombatDamageResolve(game: GameModel, combat: SpaceCombat): SpaceCombat {
-    combat.units = combat.units.filter((unit: ShipUnit) => {
-        const faction = getFactionFromArrayById(game.factions, unit.factionId);
-        if (!faction) throw new Error(`Invalid facion on unit ${unit.id} ${unit.factionId}`);
-        const factionUnit = getFactionAdjustedUnit(faction, unit);
+	combat.units = combat.units.filter((unit: ShipUnit) => {
+		const faction = getFactionFromArrayById(game.factions, unit.factionId);
+		if (!faction) throw new Error(`Invalid facion on unit ${unit.id} ${unit.factionId}`);
+		const factionUnit = getFactionAdjustedUnit(faction, unit);
 
-        const destroyed = unit.damage >= factionUnit.hull;
-        if (destroyed) {
-            combat.log.push(`${unit.factionId} ${unit.name} is destroyed with ${unit.damage} / ${factionUnit.hull}!`);
-            return false;
-        } else {
-            combat.log.push(
-                `${unit.factionId} ${unit.name} HULL DAMAGE: ${unit.damage} / ${factionUnit.hull} SHIELDS: ${unit.shields} / ${factionUnit.shieldsMax}`
-            );
-        }
-        return true;
-    });
+		const destroyed = unit.damage >= factionUnit.hull;
 
-    return combat;
+		const status: CombatRoundStatus = {
+			unitId: unit.id,
+			damage: unit.damage,
+			shields: unit.shields,
+			hull: unit.hull,
+			morale: 100,
+			retreated: false,
+			destroyed: destroyed,
+		};
+
+		combat.currentRoundLog.status.push(status);
+
+		if (destroyed) {
+			const logText = `${unit.factionId} ${unit.name} is destroyed with ${unit.damage} / ${factionUnit.hull}!`;
+			combat.log.push(logText);
+			combat.currentRoundLog.messages.push(logText);
+			return false;
+		} else {
+			const logText = `${unit.factionId} ${unit.name} HULL DAMAGE: ${unit.damage} / ${factionUnit.hull} SHIELDS: ${unit.shields} / ${factionUnit.shieldsMax}`;
+			combat.log.push(logText);
+			combat.currentRoundLog.messages.push(logText);
+		}
+		return true;
+	});
+
+	return combat;
 }
 
 export function spaceCombatMorale(game: GameModel, combat: SpaceCombat): SpaceCombat {
-    return combat;
+	return combat;
 }
 
 export function spaceCombatRoundCleanUp(game: GameModel, combat: SpaceCombat): SpaceCombat {
-    combat.units = combat.units.map((su: ShipUnit) => {
-        const faction = getFactionFromArrayById(game.factions, su.factionId);
-        if (!faction) throw new Error(`Invalid facion on unit ${su.id} ${su.factionId}`);
-        const factionUnit = getFactionAdjustedUnit(faction, su);
-        // Shield Regeneration
-        if (factionUnit.shieldsMax > 0) {
-            if (su.shields < factionUnit.shieldsMax) {
-                su.shields += factionUnit.shieldRegeneration;
-                if (su.shields > factionUnit.shieldsMax) {
-                    su.shields = factionUnit.shieldsMax;
-                }
-            }
-        }
+	combat.units = combat.units.map((su: ShipUnit) => {
+		const faction = getFactionFromArrayById(game.factions, su.factionId);
+		if (!faction) throw new Error(`Invalid facion on unit ${su.id} ${su.factionId}`);
+		const factionUnit = getFactionAdjustedUnit(faction, su);
+		// Shield Regeneration
+		if (factionUnit.shieldsMax > 0) {
+			if (su.shields < factionUnit.shieldsMax) {
+				su.shields += factionUnit.shieldRegeneration;
+				if (su.shields > factionUnit.shieldsMax) {
+					su.shields = factionUnit.shieldsMax;
+				}
+			}
+		}
 
-        return su;
-    });
+		return su;
+	});
 
-    if (combat.units.length === 0) combat.done = true;
-    if (combat.round >= COMBAT_MAXROUNDS) {
-        combat.done = true;
-    }
-    return { ...combat };
+	if (combat.units.length === 0) combat.done = true;
+	if (combat.round >= COMBAT_MAXROUNDS) {
+		combat.done = true;
+	}
+	return { ...combat };
 }
 
 export function weaponCanFire(weapon: ShipWeapon): boolean {
-    // No cool down
-    if (weapon.cooldownTime === 0) {
-        return true;
-    }
+	// No cool down
+	if (weapon.cooldownTime === 0) {
+		return true;
+	}
 
-    // Weapon is reloading
-    if (weapon.cooldown > 0) {
-        weapon.cooldown--;
-        return false;
-    }
+	// Weapon is reloading
+	if (weapon.cooldown > 0) {
+		weapon.cooldown--;
+		return false;
+	}
 
-    // Fire!
-    weapon.cooldown = weapon.cooldownTime;
-    return true;
+	// Fire!
+	weapon.cooldown = weapon.cooldownTime;
+	return true;
 }
 
-export function getHitChance(faction: FactionModel, weapon: ShipWeapon, attacker: ShipUnit, target: ShipUnit): number {
-    const targetUnit = getFactionAdjustedUnit(faction, target);
-    const factionWeapon = getFactionAdjustedWeapon(weapon, faction);
+export function getHitChance(weapon: ShipWeapon, attacker: ShipUnit, target: ShipUnit, game: GameModel): number {
+	const attFaction = getFactionFromArrayById(game.factions, attacker.factionId);
+	const tarFaction = getFactionFromArrayById(game.factions, attacker.factionId);
+	if (!attFaction || !tarFaction) return 0;
+	const targetUnit = getFactionAdjustedUnit(tarFaction, target);
+	const factionWeapon = getFactionAdjustedWeapon(weapon, attFaction);
     let chance = 50 + factionWeapon.accuracy - targetUnit.agility;
-    return chance;
+    const sizeMod  = (target.sizeIndicator - attacker.sizeIndicator) * 5;
+	return chance + sizeMod;
 }
 
-export function damagePotential(weapon: ShipWeapon, target: ShipUnit, faction: FactionModel): number {
-    const targetUnit = getFactionAdjustedUnit(faction, target);
-    const factionWeapon = getFactionAdjustedWeapon(weapon, faction);
-    const maxDamage = Array.isArray(factionWeapon.damage) ? factionWeapon.damage[1] : factionWeapon.damage;
-    const hpleft = targetUnit.hull - target.damage + target.shields;
-    return Math.round((maxDamage / hpleft) * 100);
+export function damagePotential(weapon: ShipWeapon, attacker: ShipUnit, target: ShipUnit, game: GameModel): number {
+    const attFaction = getFactionFromArrayById(game.factions, attacker.factionId);
+	const tarFaction = getFactionFromArrayById(game.factions, attacker.factionId);
+	if (!attFaction || !tarFaction) return 0;
+	const targetUnit = getFactionAdjustedUnit(tarFaction, target);
+    const factionWeapon = getFactionAdjustedWeapon(weapon, attFaction);
+    const maxDamage = getMaxDamageForWeapon(factionWeapon, true, targetUnit.armor);
+	const hpleft = targetUnit.hull - target.damage + target.shields;
+	return Math.round(((maxDamage - targetUnit.armor) / hpleft) * 100);
 }

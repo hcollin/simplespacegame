@@ -12,6 +12,8 @@ import useCurrentUser from "../services/hooks/useCurrentUser";
 import ReplayIcon from '@material-ui/icons/Replay';
 import BuildingDesignSlot from "../components/BuildingDesignSlot";
 import { DATABUILDINGS } from "../data/dataBuildings";
+import { rnd } from "../utils/randUtils";
+import Dots from "../components/Dots";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

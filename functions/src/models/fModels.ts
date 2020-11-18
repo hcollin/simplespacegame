@@ -1,5 +1,6 @@
 import { Building } from "./fBuildings";
 import { Trade } from "./fCommunication";
+import { CombatRoundReport } from "./fReport";
 import { ShipUnit } from "./fUnits";
 
 export interface GameObject {
@@ -16,10 +17,12 @@ export enum GameState {
     "ENDED",
 }
 
+
 export interface GameSetup {
     playerCount: number;
     distances: string;
     density: string;
+    specials: string;
 }
 
 export interface PreGameSetup extends GameSetup {
@@ -53,24 +56,6 @@ export interface Fleet {
     units: ShipUnit[];
     target: Coordinates|null;
 
-}
-
-export interface OldShip extends GameObject{
-    name: string;
-    weapons: number;
-    hull: number;
-    speed: number;
-
-    cost: number;
-    minIndustry: number;
-
-    description?: string;
-}
-
-export interface OldUnitModel extends OldShip {
-    location: Coordinates;
-    damage: number;
-    factionId: string;
 }
 
 export interface Coordinates {
@@ -107,7 +92,6 @@ export interface SystemModel extends GameObject {
     description?: string;
 
 }
-
 
 export enum FactionState {
     "INIT",
@@ -188,5 +172,7 @@ export interface SpaceCombat {
     system: SystemModel | null;
     round: number;
     log: string[];
+    roundLog: CombatRoundReport[];
+    currentRoundLog: CombatRoundReport;
     done: boolean;
 }

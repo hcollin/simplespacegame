@@ -1,4 +1,4 @@
-import DATASHIPS, { shipNameGenerator } from "../data/fDataShips";
+import DATASHIPS, { shipNameGenerator, SHIPWEAPONSPECIAL } from "../data/fDataShips";
 import { TECHIDS } from "../data/fDataTechnology";
 import { FactionModel, Coordinates } from "../models/fModels";
 import { ShipDesign, ShipUnit, ShipWeapon } from "../models/fUnits";
@@ -145,7 +145,7 @@ export function createShipFromDesign(design: ShipDesign, factionId: string, loca
         location: location,
         factionId: factionId,
         experience: 0,
-        name: shipNameGenerator(design.type),
+        name: shipNameGenerator(),
     };
 
     return ship;
@@ -167,3 +167,18 @@ export function getDesignByName(name: string): ShipDesign {
 //     const faction = getFactionById(um.factionId);
 //     return getShipSpeed(um, faction);
 // }
+
+
+export function getMaxDamageForWeapon(weapon: ShipWeapon, faction: FactionModel|true, armorValue=0): number {
+    
+    const factionWeapon = faction !== true  ? getFactionAdjustedWeapon(weapon, faction) : weapon;
+    const fireRate = getWeaponFireRate(factionWeapon, true);
+    const maxDamage = Array.isArray(factionWeapon.damage) ? factionWeapon.damage[1] : factionWeapon.damage;
+    return (maxDamage - armorValue) * fireRate;
+}
+
+export function getWeaponFireRate(weapon: ShipWeapon, faction: FactionModel|true): number {
+    const factionWeapon = faction !== true  ? getFactionAdjustedWeapon(weapon, faction) : weapon;
+    
+    return 1 + (factionWeapon.special.includes(SHIPWEAPONSPECIAL.DOUBLESHOT) ? 1 : 0) + (factionWeapon.special.includes(SHIPWEAPONSPECIAL.RAPIDFIRE) ? 2 : 0) + (factionWeapon.special.includes(SHIPWEAPONSPECIAL.HAILOFFIRE) ? 4 : 0);
+}

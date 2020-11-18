@@ -6,6 +6,7 @@ import { CombatReport, CombatRoundAttackReport, CombatRoundStatus, DetailReport 
 import { ShipUnit } from "../models/Units";
 import { getSystemById } from "../services/helpers/SystemHelpers";
 import { SERVICEID } from "../services/services";
+import Dots from "./Dots";
 import { IconHull, IconShields } from "./Icons";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -35,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 borderBottom: "ridge 3px #FFF8",
                 flexDirection: "row",
                 justifyContent: "space-between",
+                userSelect: "none",
                 "& > * ": {
                     margin: 0,
                     padding: 0,
@@ -150,6 +152,12 @@ const useStyles = makeStyles((theme: Theme) =>
                         fontWeight: "normal",
                         textShadow: "1px 1px 1px #000A, -1px 1px 1px #000A, -1px -1px 1px #000A, 1px -1px 1px #000A",
                     },
+                    "& > div.fleetSize": {
+                        flex: "1 1 auto",
+                        textAlign: "right",
+                        fontSize: "2rem",
+                        fontWeight: "bold",
+                    }
                 },
 
                 "& > div.unit": {
@@ -557,8 +565,9 @@ const CombatViewer: FC<Props> = (props) => {
 
                     <div className={classes.factionsInSummary}>
                         {factions.map((fm: FactionModel) => {
-                            const units = props.combatReport.units.filter((u: ShipUnit) => u.factionId === fm.id);
 
+                            const units = props.combatReport.units.filter((u: ShipUnit) => u.factionId === fm.id);
+                            const totalFleetSize = units.reduce((tot: number, u: ShipUnit) => tot + u.sizeIndicator, 0);
                             return (
                                 <div key={fm.id} className="faction">
                                     <header>
@@ -566,6 +575,7 @@ const CombatViewer: FC<Props> = (props) => {
                                             <img src={require(`../images/symbols/${fm.iconFileName}`)} />
                                         </div>
                                         <h2 style={{ fontFamily: fm.style.fontFamily || "Arial" }}>{fm.name}</h2>
+                                        <div className="fleetSize">{totalFleetSize}</div>
                                     </header>
 
                                     {units.map((u: ShipUnit) => {
@@ -576,7 +586,7 @@ const CombatViewer: FC<Props> = (props) => {
                                         return (
                                             <div key={u.id} className="unit">
                                                 <div className="shipName">
-                                                    <h4>{u.type}</h4>
+                                                    <h4>{u.typeClassName}</h4>
                                                     <h3>{u.name}</h3>
                                                 </div>
 
@@ -601,6 +611,7 @@ const CombatViewer: FC<Props> = (props) => {
             )}
             {round > 0 && roundLog && (
                 <div className="main">
+
                     <div className={classes.roundStatus}>
                         {roundLog.status.map((status: CombatRoundStatus) => {
                             const unit = props.combatReport.units.find((u: ShipUnit) => u.id === status.unitId);
@@ -615,9 +626,12 @@ const CombatViewer: FC<Props> = (props) => {
                                     style={{ background: faction.color }}
                                 >
                                     <h4>
-                                        <small>{unit.type}</small>
+                                        <small>{unit.typeClassName}</small>
                                         {unit.name}
                                     </h4>
+
+                                    <Dots max={10} dots={unit.sizeIndicator} size="sm" style={{width: "8rem", position: "absolute", top: "0.25rem", right: "0.25rem"}}/>
+
                                     <p style={{ fontFamily: faction.style.fontFamily || "Arial" }}>{faction.name}</p>
                                     <div className="damage">
                                         <IconHull />
@@ -708,7 +722,7 @@ const AttackReport: FC<AttackProps> = (props) => {
         <div className={classes.attackReport}>
             <div className="attacker" style={{ background: attackFaction.color }}>
                 <h3>
-                    <small>{attacker.type}</small>
+                    <small>{attacker.typeClassName}</small>
                     {attacker.name}
                 </h3>
                 {/* <p style={{ fontFamily: attackFaction.style.fontFamily || "Arial" }}>{attackFaction.name}</p> */}
@@ -749,7 +763,7 @@ const MissReport: FC<AttackProps> = (props) => {
         <div className={classes.attackReport}>
             <div className="attacker" style={{ background: attackFaction.color }}>
                 <h3>
-                    <small>{attacker.type}</small>
+                    <small>{attacker.typeClassName}</small>
                     {attacker.name}
                 </h3>
                 {/* <p style={{ fontFamily: attackFaction.style.fontFamily || "Arial" }}>{attackFaction.name}</p> */}
@@ -790,7 +804,7 @@ const ReloadReport: FC<AttackProps> = (props) => {
         <div className={classes.attackReport}>
             <div className="attacker" style={{ background: attackFaction.color }}>
                 <h3>
-                    <small>{attacker.type}</small>
+                    <small>{attacker.typeClassName}</small>
                     {attacker.name}
                 </h3>
                 {/* <p style={{ fontFamily: attackFaction.style.fontFamily || "Arial" }}>{attackFaction.name}</p> */}

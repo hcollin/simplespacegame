@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.techTimeslipPrediction = exports.techEvasionEngine = exports.techHeavyRounds = exports.techTargetingComputerThree = exports.techTargetingComputerTwo = exports.techTargetingComputerOne = exports.techWarpEngines = exports.techIonEngines = void 0;
 var fDataTechnology_1 = require("../data/fDataTechnology");
 var fTechTools_1 = require("./fTechTools");
 /**

@@ -31,6 +31,7 @@ export enum SHIPKEYWORD {
 
 
 export interface ShipWeapon {
+    id: string;
     name: string;
     damage: number|[number, number];
     accuracy: number;
@@ -42,6 +43,8 @@ export interface ShipWeapon {
 
 export interface ShipDesign extends GameObject {
     name: string;
+    typeClassName: string;
+    sizeIndicator: number;              // 1 = one man fighter, 2 - freighter, 7  10 - Death Star
     type: SHIPCLASS;
     cost: number;
     minIndustry: number;
