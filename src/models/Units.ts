@@ -31,6 +31,7 @@ export enum SHIPKEYWORD {
 
 
 export interface ShipWeapon {
+    id: string;
     name: string;
     damage: number|[number, number];
     accuracy: number;

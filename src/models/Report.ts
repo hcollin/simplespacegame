@@ -36,8 +36,10 @@ export interface CombatRoundReport {
     round: number;
     messages: string[];
     attacks: CombatRoundAttackReport[];
-    
+    status: CombatRoundStatus[];
+
 }
+
 
 export interface CombatRoundAttackReport {
     attacker: string;
@@ -50,6 +52,15 @@ export interface CombatRoundAttackReport {
     
 }
 
+export interface CombatRoundStatus {
+    unitId: string;
+    hull: number;
+    damage: number;
+    shields: number;
+    morale: number;
+    destroyed: boolean;
+    retreated: boolean;
+}
 
 
 

@@ -24,7 +24,7 @@ import ScienceView from "./subviews/ScienceView";
 import DiplomacyView from "./subviews/DiplomacyView";
 import FleetView from "../components/FleetView";
 import SystemView from "../components/SystemView";
-import { CombatReport, CombatRoundAttackReport, CombatRoundReport, DetailReportType } from "../models/Report";
+import { CombatReport, CombatRoundAttackReport, CombatRoundReport, CombatRoundStatus, DetailReportType } from "../models/Report";
 import { SERVICEID } from "../services/services";
 import { arnd, arnds, rnd } from "../utils/randUtils";
 import CombatViewer from "../components/CombatViewer";
@@ -265,6 +265,7 @@ export function spaceCombatMain(game: GameModel, units: ShipUnit[], system: Syst
             round: 0,
             messages: [],
             attacks: [],
+            status: [],
         },
         done: false,
     };
@@ -282,6 +283,7 @@ export function spaceCombatMain(game: GameModel, units: ShipUnit[], system: Syst
             round: combat.round,
             messages: [],
             attacks: [],
+            status: [],
         };
 
         combat = spaceCombatAttacks(game, combat);
@@ -317,6 +319,7 @@ export function spaceCombatAttacks(game: GameModel, origCombat: SpaceCombat): Sp
     attackers.forEach((ship: ShipUnit) => {
         let hit = false;
         ship.weapons.forEach((weapon: ShipWeapon) => {
+            if(weapon.cooldownTime > 0) console.log(combat.round, ship.id, weapon);
             if (weaponCanFire(weapon)) {
                 const target = spaceCombatAttackChooseTarget(combat, ship, weapon);
                 if (target) {
@@ -362,10 +365,14 @@ export function spaceCombatAttackChooseTarget(
     if (target) {
         // const betterTarget = combat.units.reduce((t: ShipUnit, pos: ShipUnit) => {
         //     if(t.factionId !== attacker.factionId) {
-        //         const oldHitChance = getHitChance(attacker.factionId, weapon, attacker, t);
-        //         const newHitChance = getHitChance(attacker.factionId, weapon, attacker, pos);
-        //         const oldDmgPot = damagePotential(weapon, t);
-        //         const newDmgPot = damagePotential(weapon, pos);
+        //         const attackerFaction = getFactionFromArrayById(combat.factions, attacker.factionId);
+        //         if(!attackerFaction) {
+        //             throw new Error("WTF?!");
+        //         }
+        //         const oldHitChance = getHitChance(attackerFaction, weapon, attacker, t);
+        //         const newHitChance = getHitChance(attackerFaction, weapon, attacker, pos);
+        //         const oldDmgPot = damagePotential(weapon, t, attackerFaction);
+        //         const newDmgPot = damagePotential(weapon, pos, attackerFaction);
 
         //         const valueO = oldHitChance + oldDmgPot;
         //         const valueN = newHitChance + newDmgPot;
@@ -461,6 +468,19 @@ export function spaceCombatDamageResolve(game: GameModel, combat: SpaceCombat): 
         const factionUnit = getFactionAdjustedUnit(faction, unit);
 
         const destroyed = unit.damage >= factionUnit.hull;
+
+        const status: CombatRoundStatus = {
+            unitId: unit.id,
+            damage: unit.damage,
+            shields: unit.shields,
+            hull: unit.hull,
+            morale: 100,
+            retreated: false,
+            destroyed: destroyed,
+        };
+
+        combat.currentRoundLog.status.push(status);
+
         if (destroyed) {
             const logText = `${unit.factionId} ${unit.name} is destroyed with ${unit.damage} / ${factionUnit.hull}!`;
             combat.log.push(logText);

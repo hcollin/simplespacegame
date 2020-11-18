@@ -5,7 +5,7 @@ import { apiListGames, apiListMyGames, apiListOpenGames } from "../api/apiGame";
 import FactionBlock from "../components/FactionBlock";
 import MenuPageContainer from "../components/MenuPageContainer";
 import ShipInfo from "../components/ShipInfo";
-import DATASHIPS from "../data/dataShips";
+import DATASHIPS, { shipNameGenerator } from "../data/dataShips";
 import { FactionModel, GameModel, GameState } from "../models/Models";
 import { doCreateDraftGame, doCreateNewGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
@@ -151,6 +151,13 @@ const MenuPage: FC = () => {
         });
     }
 
+    // const rndNames: string[] =  [];
+    // for(let i = 0; i <100; i++) {
+    //     rndNames.push(shipNameGenerator());
+    // }
+
+    // rndNames.sort();
+
     const isDev = ENV === "development";
     return (
         <MenuPageContainer title="Frost Galaxy">
@@ -277,10 +284,9 @@ const MenuPage: FC = () => {
                 </>
             )}
 
-            {/* <h3>Test area</h3>
+            <h3>Test area</h3>
 
-            <BuildingDesignSlot building={DATABUILDINGS[0]} />
-            <BuildingDesignSlot building={DATABUILDINGS[1]} /> */}
+            {/* <div style={{display: "flex", flexWrap: "wrap"}}>{rndNames.map((n: string, i: number) => <p key={i} style={{width: "15rem", margin: "0.25rem 0", padding: 0}}>{n}</p>)}</div> */}
 
         </MenuPageContainer>
     );

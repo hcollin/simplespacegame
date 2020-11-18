@@ -3,7 +3,7 @@ import { v4 } from "uuid";
 import DATASHIPS, { shipNameGenerator } from "../../data/dataShips";
 import { Command, CommandType, FleetCommand } from "../../models/Commands";
 import { Coordinates } from "../../models/Models";
-import { ShipDesign, ShipUnit } from "../../models/Units";
+import { ShipDesign, ShipUnit, ShipWeapon } from "../../models/Units";
 
 
 export function unitIsMoving(commands: Command[], unit: ShipUnit): boolean {
@@ -36,8 +36,15 @@ export function createShipFromDesign(design: ShipDesign, factionId: string, loca
         location: location,
         factionId: factionId,
         experience: 0,
-        name: shipNameGenerator(design.type),
+        name: shipNameGenerator(),
     };
+    
+    ship.weapons = ship.weapons.map((w: ShipWeapon, ind: number) => {
+        w.id = `W-${ship.id}-${ind}`;
+        return {...w};
+    });
+
+    console.log("SHIP", ship);
 
     return ship;
 }
