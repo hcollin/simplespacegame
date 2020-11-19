@@ -2,8 +2,15 @@ import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import { useService } from "jokits-react";
 import React, { FC, useState } from "react";
 import { FactionModel, GameModel } from "../models/Models";
-import { CombatReport, CombatRoundAttackReport, CombatRoundStatus, DetailReport } from "../models/Report";
-import { ShipUnit } from "../models/Units";
+import {
+    CombatReport,
+    CombatRoundAttackReport,
+    CombatRoundReport,
+    CombatRoundStatus,
+    DetailReport,
+} from "../models/Report";
+import { ShipUnit, ShipWeapon } from "../models/Units";
+import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import { getSystemById } from "../services/helpers/SystemHelpers";
 import { SERVICEID } from "../services/services";
 import Dots from "./Dots";
@@ -157,7 +164,7 @@ const useStyles = makeStyles((theme: Theme) =>
                         textAlign: "right",
                         fontSize: "2rem",
                         fontWeight: "bold",
-                    }
+                    },
                 },
 
                 "& > div.unit": {
@@ -506,6 +513,70 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
             },
         },
+        combatStats: {
+            color: "#FFFA",
+            "& div.ship": {
+                width: "auto",
+                marginBottom: "0.5rem",
+                padding: "0.25rem",
+                borderTop: "solid 1px #0008",
+                "& div.total": {
+                    fontWeight: "bold",
+                    fontSize: "1.2rem",
+                    borderBottom: "solid 1px #0004",
+                    padding: "0.25rem 0",
+                },
+                "& div.header": {
+                    fontWeight: "bold",
+                    fontSize: "0.9rem",
+                    textTransform: "uppercase"
+
+                },
+                "& div.weapons": {
+                    fontWeigth: "bold",
+                    fontSize: "1rem",
+                    "& > div.weapon:nth-child(odd)": {
+                        background: "#0003",
+                    },
+                    "& > div.weapon:nth-child(even)": {
+                        background: "#FFF1",
+                    }
+                },
+                "& div.row": {
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+
+                    "& > div": {
+                        margin: "0 0.5rem",
+
+                        "&.name": {
+                            flex: "1 1 auto",
+                        },
+                        "&.dmg": {
+                            flex: "0 0 auto",
+                            width: "5rem",
+                        },
+                        "&.hits": {
+                            flex: "0 0 auto",
+                            width: "5rem",
+                        },
+                        "&.shots": {
+                            flex: "0 0 auto",
+                            width: "5rem",
+                        },
+                        "&.faction": {
+                            flex: "0 0 auto",
+                            width: "25rem",
+                        },
+                        "&.shipclass": {
+                            flex: "0 0 auto",
+                            width: "15rem",
+                        },
+                    },
+                },
+            },
+        },
     })
 );
 
@@ -530,6 +601,8 @@ const CombatViewer: FC<Props> = (props) => {
 
     const roundLog = props.combatReport.rounds[round - 1];
 
+    const showStats = round === props.combatReport.rounds.length + 1;
+
     const lastRoundStatus = props.combatReport.rounds[props.combatReport.rounds.length - 1].status;
 
     return (
@@ -550,11 +623,12 @@ const CombatViewer: FC<Props> = (props) => {
                     })}
                 </div>
                 <h2>
-                    {round > 0 && (
+                    {round > 0 && !showStats && (
                         <>
                             Round {round} / {props.combatReport.rounds.length}
                         </>
                     )}
+                    {showStats && <>Statistics</>}
                     {round === 0 && <>{props.combatReport.rounds.length} rounds</>}
                 </h2>
             </header>
@@ -565,8 +639,7 @@ const CombatViewer: FC<Props> = (props) => {
 
                     <div className={classes.factionsInSummary}>
                         {factions.map((fm: FactionModel) => {
-
-                            const units = props.combatReport.units.filter((u: ShipUnit) => u.factionId === fm.id);
+                            const units = props.combatReport.origUnits.filter((u: ShipUnit) => u.factionId === fm.id);
                             const totalFleetSize = units.reduce((tot: number, u: ShipUnit) => tot + u.sizeIndicator, 0);
                             return (
                                 <div key={fm.id} className="faction">
@@ -582,7 +655,7 @@ const CombatViewer: FC<Props> = (props) => {
                                         const status = lastRoundStatus.find(
                                             (st: CombatRoundStatus) => st.unitId === u.id
                                         );
-                                        const destroyed = status === undefined;
+                                        const destroyed = status === undefined || status.damage > u.hull;
                                         return (
                                             <div key={u.id} className="unit">
                                                 <div className="shipName">
@@ -590,7 +663,9 @@ const CombatViewer: FC<Props> = (props) => {
                                                     <h3>{u.name}</h3>
                                                 </div>
 
-                                                {status !== undefined && status.damage > 0 && (
+                                                <div>{u.sizeIndicator}</div>
+
+                                                {status !== undefined && status.damage > 0 && !destroyed && (
                                                     <div className="damage">
                                                         <span className="dmg">{status.damage}</span> /{" "}
                                                         <span className="hull">{status.hull}</span>
@@ -609,12 +684,11 @@ const CombatViewer: FC<Props> = (props) => {
                     </div>
                 </div>
             )}
-            {round > 0 && roundLog && (
+            {round > 0 && !showStats && roundLog && (
                 <div className="main">
-
                     <div className={classes.roundStatus}>
                         {roundLog.status.map((status: CombatRoundStatus) => {
-                            const unit = props.combatReport.units.find((u: ShipUnit) => u.id === status.unitId);
+                            const unit = props.combatReport.origUnits.find((u: ShipUnit) => u.id === status.unitId);
                             if (!unit) return null;
                             const faction = factions.find((f: FactionModel) => f.id === unit.factionId);
                             if (!faction) return null;
@@ -630,7 +704,17 @@ const CombatViewer: FC<Props> = (props) => {
                                         {unit.name}
                                     </h4>
 
-                                    <Dots max={10} dots={unit.sizeIndicator} size="sm" style={{width: "8rem", position: "absolute", top: "0.25rem", right: "0.25rem"}}/>
+                                    <Dots
+                                        max={10}
+                                        dots={unit.sizeIndicator}
+                                        size="sm"
+                                        style={{
+                                            width: "8rem",
+                                            position: "absolute",
+                                            top: "0.25rem",
+                                            right: "0.25rem",
+                                        }}
+                                    />
 
                                     <p style={{ fontFamily: faction.style.fontFamily || "Arial" }}>{faction.name}</p>
                                     <div className="damage">
@@ -684,6 +768,7 @@ const CombatViewer: FC<Props> = (props) => {
                     </div>
                 </div>
             )}
+            {showStats && <CombatStatistics game={game} factions={factions} report={props.combatReport} />}
 
             <footer>
                 <Button variant="contained" onClick={() => setRound((prev: number) => prev - 1)} disabled={round <= 0}>
@@ -692,9 +777,13 @@ const CombatViewer: FC<Props> = (props) => {
                 <Button
                     variant="contained"
                     onClick={() => setRound((prev: number) => prev + 1)}
-                    disabled={round >= props.combatReport.rounds.length}
+                    disabled={round > props.combatReport.rounds.length}
                 >
-                    {round === 0 ? "Show First round" : "Next Round"}
+                    {round === 0
+                        ? "Show First round"
+                        : round === props.combatReport.rounds.length
+                        ? "Statistics"
+                        : "Next Round"}
                 </Button>
             </footer>
         </div>
@@ -709,8 +798,8 @@ interface AttackProps {
 }
 const AttackReport: FC<AttackProps> = (props) => {
     const classes = useStyles();
-    const attacker = props.report.units.find((u: ShipUnit) => u.id === props.attack.attacker);
-    const target = props.report.units.find((u: ShipUnit) => u.id === props.attack.target);
+    const attacker = props.report.origUnits.find((u: ShipUnit) => u.id === props.attack.attacker);
+    const target = props.report.origUnits.find((u: ShipUnit) => u.id === props.attack.target);
     if (!attacker || !target) return null;
 
     const attackFaction = props.factions.find((fm: FactionModel) => fm.id === attacker.factionId);
@@ -750,8 +839,8 @@ const AttackReport: FC<AttackProps> = (props) => {
 
 const MissReport: FC<AttackProps> = (props) => {
     const classes = useStyles();
-    const attacker = props.report.units.find((u: ShipUnit) => u.id === props.attack.attacker);
-    const target = props.report.units.find((u: ShipUnit) => u.id === props.attack.target);
+    const attacker = props.report.origUnits.find((u: ShipUnit) => u.id === props.attack.attacker);
+    const target = props.report.origUnits.find((u: ShipUnit) => u.id === props.attack.target);
     if (!attacker || !target) return null;
 
     const attackFaction = props.factions.find((fm: FactionModel) => fm.id === attacker.factionId);
@@ -791,7 +880,7 @@ const MissReport: FC<AttackProps> = (props) => {
 
 const ReloadReport: FC<AttackProps> = (props) => {
     const classes = useStyles();
-    const attacker = props.report.units.find((u: ShipUnit) => u.id === props.attack.attacker);
+    const attacker = props.report.origUnits.find((u: ShipUnit) => u.id === props.attack.attacker);
     // const target = props.report.units.find((u: ShipUnit) => u.id === props.attack.target);
     if (!attacker) return null;
 
@@ -814,6 +903,104 @@ const ReloadReport: FC<AttackProps> = (props) => {
 
             <div className="reload">
                 RELOAD! {props.attack.hitRoll} turn{props.attack.hitRoll > 1 ? "s" : ""}
+            </div>
+        </div>
+    );
+};
+
+interface StatProps {
+    report: CombatReport;
+    game: GameModel;
+    factions: FactionModel[];
+}
+
+const CombatStatistics: FC<StatProps> = (props) => {
+    const classes = useStyles();
+
+    let shipDamage = new Map<string, number>();
+    let shipHits = new Map<string, number>();
+    let shipShots = new Map<string, number>();
+    let weaponDamage = new Map<string, number>();
+    let weaponShots = new Map<string, number>();
+    let weaponHits = new Map<string, number>();
+
+    function addValToMap(m: Map<string, number>, key: string, val: number): Map<string, number> {
+        if (!m.has(key)) {
+            m.set(key, 0);
+        }
+        const cur = m.get(key);
+        if (cur !== undefined) {
+            m.set(key, cur + val);
+        }
+        return new Map(m);
+    }
+
+    props.report.rounds.forEach((r: CombatRoundReport) => {
+        r.attacks.forEach((ra: CombatRoundAttackReport) => {
+            shipShots = addValToMap(shipShots, ra.attacker, 1);
+            weaponShots = addValToMap(weaponShots, ra.weaponId, 1);
+            if (ra.result === "HIT") {
+                shipDamage = addValToMap(shipDamage, ra.attacker, ra.damage);
+                shipHits = addValToMap(shipHits, ra.attacker, 1);
+                weaponDamage = addValToMap(weaponDamage, ra.weaponId, ra.damage);
+                weaponHits = addValToMap(weaponHits, ra.weaponId, 1);
+            }
+        });
+    });
+
+    // const dataSet
+
+    return (
+        <div className="main">
+            <div className={classes.combatStats}>
+                <h2>Statistics</h2>
+
+                <div className="ship">
+                    <div className="header row">
+                        <div className="name">Name</div>
+                        <div className="shipclass">Class</div>
+                        <div className="faction">Faction</div>
+                        <div className="dmg">Damage</div>
+                        <div className="shots">Shots</div>
+                        <div className="hits">Hits</div>
+                    </div>
+                </div>
+
+                {props.report.origUnits.map((ship: ShipUnit) => {
+                    const dmg = shipDamage.get(ship.id) || 0;
+                    const shots = shipShots.get(ship.id) || 0;
+                    const hits = shipHits.get(ship.id) || 0;
+                    const faction = getFactionFromArrayById(props.factions, ship.factionId);
+                    if (!faction) return null;
+                    return (
+                        <div key={ship.id} className="ship">
+                            <div className="total row" style={{background: faction.color}}>
+                                <div className="name">{ship.name}</div>
+                                <div className="shipclass">{ship.typeClassName}</div>
+                                <div className="faction" style={{fontFamily: faction.style.fontFamily}}>{faction.name}</div>
+                                <div className="dmg">{dmg}</div>
+                                <div className="shots">{shots}</div>
+                                <div className="hits">{hits}</div>
+                            </div>
+                            <div className="weapons ">
+                                {ship.weapons.map((w: ShipWeapon) => {
+                                    const wdmg = weaponDamage.get(w.id) || 0;
+                                    const whits = weaponHits.get(w.id) || 0;
+                                    const wshots = weaponShots.get(w.id) || 0;
+
+                                    return (
+                                        <div className="weapon row">
+                                            <div className="name">{w.name}</div>
+                                            <div className="dmg">{wdmg}</div>
+                                            <div className="shots">{wshots}</div>
+                                            <div className="hits">{whits}</div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

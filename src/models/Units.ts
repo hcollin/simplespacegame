@@ -30,6 +30,7 @@ export enum SHIPKEYWORD {
 };
 
 
+
 export interface ShipWeapon {
     id: string;
     name: string;
@@ -50,6 +51,8 @@ export interface ShipDesign extends GameObject {
     minIndustry: number;
     techReq: TECHIDS[];
     troops: number;
+    fighters: number;
+    fightersMax: number;
     speed: number;
     keywords: string[];
     hull: number;

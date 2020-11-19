@@ -44,8 +44,6 @@ export function createShipFromDesign(design: ShipDesign, factionId: string, loca
         return {...w};
     });
 
-    console.log("SHIP", ship);
-
     return ship;
 }
 
