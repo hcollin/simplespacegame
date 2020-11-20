@@ -4,13 +4,47 @@ import { arnd, rnd, roll } from "../utils/fRandUtils";
 
 
 export enum SHIPWEAPONSPECIAL {
-    RAPIDFIRE = "Rapid Fire",
-    HAILOFFIRE = "Hail of Fire",
-    DOUBLESHOT = "Double Shot",
-    ARMOURPIERCE = "Armour piercing"
+    DOUBLESHOT = "Double Shot (x2)", // Roll for damage twice when hit
+    RAPIDFIRE = "Rapid Fire (x3)", // Roll for damage three times when hit
+    HAILOFFIRE = "Hail of Fire (x4)", // Roll for damage four times when hit
+    ARMOURPIERCE = "Armour piercing", // Ignore armor on Kinetic weapons
+    BURN = "Burning", //TODO: Cause burn effect that causes damage
+    EMP = "EMP Strike", //TODO: Disable shields for turn or two
+    ANTIFIGHTER = "Antifighter weapon", // Increase accuracy against smaller ships, less for higher
+    AITARGETING = "AI Targeting", //TODO: Decrese the targets agility
 }
 
 const DATASHIPWEAPONS: ShipWeapon[] = [
+    {
+        id: "",
+        name: "Point Defense Gun",
+        type: WEAPONTYPE.KINETIC,
+        accuracy: 0, // Accuracy is calculated by the AntiFighter Skill
+        cooldown: 0,
+        cooldownTime: 0,
+        damage: [4, 6],
+        special: [SHIPWEAPONSPECIAL.ANTIFIGHTER],
+    },
+    {
+        id: "",
+        name: "Anti-Fighter Laser",
+        type: WEAPONTYPE.ENERGY,
+        accuracy: 10,
+        cooldown: 0,
+        cooldownTime: 0,
+        damage: [2, 8],
+        special: [SHIPWEAPONSPECIAL.ANTIFIGHTER],
+    },
+    {
+        id: "",
+        name: "Small Laser",
+        type: WEAPONTYPE.ENERGY,
+        accuracy: 90,
+        cooldown: 0,
+        cooldownTime: 0,
+        damage: [2, 6],
+        special: [SHIPWEAPONSPECIAL.DOUBLESHOT],
+    },
     {
         id: "",
         name: "Rapid Laser",
@@ -33,9 +67,49 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
     },
     {
         id: "",
-        name: "Small Railgun",
+        name: "Large Laser",
+        type: WEAPONTYPE.ENERGY,
+        accuracy: 70,
+        cooldown: 0,
+        cooldownTime: 0,
+        damage: [20, 30],
+        special: [],
+    },
+    {
+        id: "",
+        name: "Turbo Laser",
+        type: WEAPONTYPE.ENERGY,
+        accuracy: 70,
+        cooldown: 0,
+        cooldownTime: 0,
+        damage: [7, 14],
+        special: [SHIPWEAPONSPECIAL.HAILOFFIRE],
+    },
+    {
+        id: "",
+        name: "Machinegun",
         type: WEAPONTYPE.KINETIC,
         accuracy: 50,
+        cooldown: 0,
+        cooldownTime: 0,
+        damage: [2, 5],
+        special: [SHIPWEAPONSPECIAL.HAILOFFIRE],
+    },
+    {
+        id: "",
+        name: "Small Railgun",
+        type: WEAPONTYPE.KINETIC,
+        accuracy: 55,
+        cooldown: 0,
+        cooldownTime: 0,
+        damage: [10, 15],
+        special: [],
+    },
+    {
+        id: "",
+        name: "Large Railgun",
+        type: WEAPONTYPE.KINETIC,
+        accuracy: 45,
         cooldown: 0,
         cooldownTime: 0,
         damage: [20, 30],
@@ -53,14 +127,44 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
     },
     {
         id: "",
+        name: "Mega Cannon",
+        type: WEAPONTYPE.KINETIC,
+        accuracy: 50,
+        cooldown: 0,
+        cooldownTime: 2,
+        damage: [70, 80],
+        special: [],
+    },
+    {
+        id: "",
         name: "Homing Missile",
         type: WEAPONTYPE.MISSILE,
         accuracy: 90,
         cooldown: 0,
         cooldownTime: 3,
-        damage: [60, 70],
+        damage: [30, 40],
         special: [],
     },
+    {
+        id: "",
+        name: "Rockets",
+        type: WEAPONTYPE.MISSILE,
+        accuracy: 60,
+        cooldown: 0,
+        cooldownTime: 1,
+        damage: [20, 25],
+        special: [],
+    },
+    {
+        id: "",
+        name: "Fighter Missile",
+        type: WEAPONTYPE.MISSILE,
+        accuracy: 80,
+        cooldown: 2,
+        cooldownTime: 10,
+        damage: [30, 40],
+        special: [],
+    }
 ];
 
 function getWeaponByName(name: string): ShipWeapon {
@@ -73,6 +177,52 @@ function getWeaponByName(name: string): ShipWeapon {
 const DATANEWSHIPS: ShipDesign[] = [
     {
         id: "",
+        typeClassName: "Fighter",
+        sizeIndicator: 1,
+        type: SHIPCLASS.FIGHTER,
+        name: "Fighter",
+        cost: 1,
+        buildTime: 1,
+        minIndustry: 1,
+        techReq: [],
+        fighters: 0,
+        fightersMax: 0,
+        troops: 0,
+        speed: 0,
+        agility: 80,
+        armor: 0,
+        hull: 15,
+        shieldRegeneration: 0,
+        shieldsMax: 0,
+        keywords: [],
+        weapons: [getWeaponByName("Small Laser"), getWeaponByName("Fighter Missile")],
+        description: "One man fighter craft that does not have warp capability in itself.",
+    },
+    {
+        id: "",
+        typeClassName: "Patrol Boat",
+        sizeIndicator: 1,
+        type: SHIPCLASS.PATROL,
+        name: "Patrol Boat",
+        cost: 2,
+        buildTime: 1,
+        minIndustry: 1,
+        techReq: [],
+        fighters: 0,
+        fightersMax: 0,
+        troops: 0,
+        speed: 5,
+        agility: 70,
+        armor: 0,
+        hull: 40,
+        shieldRegeneration: 0,
+        shieldsMax: 0,
+        keywords: [],
+        weapons: [getWeaponByName("Small Laser"), getWeaponByName("Machinegun")],
+        description: "One man fighter craft that does not have warp capability in itself.",
+    },
+    {
+        id: "",
         typeClassName: "Corvette",
         sizeIndicator: 3,
         type: SHIPCLASS.CORVETTE,
@@ -81,11 +231,13 @@ const DATANEWSHIPS: ShipDesign[] = [
         buildTime: 2,
         minIndustry: 1,
         techReq: [],
+        fighters: 0,
+        fightersMax: 0,
         troops: 1,
         speed: 6,
         agility: 50,
         armor: 1,
-        hull: 50,
+        hull: 75,
         shieldRegeneration: 0,
         shieldsMax: 0,
         keywords: [],
@@ -106,11 +258,13 @@ const DATANEWSHIPS: ShipDesign[] = [
         buildTime: 4,
         minIndustry: 2,
         techReq: [],
+        fighters: 0,
+        fightersMax: 0,
         troops: 3,
         speed: 5,
         agility: 40,
         armor: 3,
-        hull: 90,
+        hull: 110,
         shieldRegeneration: 3,
         shieldsMax: 10,
         keywords: [],
@@ -127,21 +281,22 @@ const DATANEWSHIPS: ShipDesign[] = [
         buildTime: 4,
         minIndustry: 3,
         techReq: [],
+        fighters: 0,
+        fightersMax: 0,
         troops: 5,
         speed: 5,
         agility: 35,
         armor: 4,
-        hull: 140,
+        hull: 130,
         shieldRegeneration: 5,
         shieldsMax: 20,
         keywords: [],
         weapons: [
+            getWeaponByName("Anti-Fighter Laser"),
+            getWeaponByName("Anti-Fighter Laser"),
             getWeaponByName("Laser Turret"),
             getWeaponByName("Laser Turret"),
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Mass Cannon"),
+            getWeaponByName("Large Railgun"),
         ],
         description: "",
     },
@@ -155,20 +310,48 @@ const DATANEWSHIPS: ShipDesign[] = [
         buildTime: 5,
         minIndustry: 3,
         techReq: [],
+        fighters: 0,
+        fightersMax: 0,
         troops: 4,
         speed: 5,
         agility: 40,
         armor: 3,
+        hull: 160,
+        shieldRegeneration: 8,
+        shieldsMax: 40,
+        keywords: [],
+        weapons: [
+            getWeaponByName("Point Defense Gun"),
+            getWeaponByName("Laser Turret"),
+            getWeaponByName("Laser Turret"),
+            getWeaponByName("Mass Cannon"),
+            getWeaponByName("Homing Missile"),
+        ],
+        description: "",
+    },
+    {
+        id: "",
+        typeClassName: "Small Carrier",
+        sizeIndicator: 5,
+        type: SHIPCLASS.CARRIER,
+        name: "Small Carrier",
+        cost: 24,
+        buildTime: 5,
+        minIndustry: 2,
+        techReq: [],
+        fighters: 4,
+        fightersMax: 4,
+        troops: 0,
+        speed: 5,
+        agility: 30,
+        armor: 2,
         hull: 180,
         shieldRegeneration: 8,
         shieldsMax: 40,
         keywords: [],
         weapons: [
-            getWeaponByName("Rapid Laser"),
-            getWeaponByName("Rapid Laser"),
-            getWeaponByName("Small Railgun"),
-            getWeaponByName("Homing Missile"),
-            getWeaponByName("Homing Missile"),
+            getWeaponByName("Laser Turret"),
+            getWeaponByName("Laser Turret"),
         ],
         description: "",
     },
@@ -182,22 +365,54 @@ const DATANEWSHIPS: ShipDesign[] = [
         buildTime: 5,
         minIndustry: 3,
         techReq: [],
+        fighters: 0,
+        fightersMax: 0,
         troops: 4,
         speed: 5,
         agility: 40,
         armor: 5,
-        hull: 220,
+        hull: 190,
         shieldRegeneration: 8,
         shieldsMax: 45,
         keywords: [],
         weapons: [
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Rapid Laser"),
-            getWeaponByName("Small Railgun"),
+            getWeaponByName("Point Defense Gun"),
+            getWeaponByName("Large Laser"),
+            getWeaponByName("Large Laser"),
             getWeaponByName("Small Railgun"),
             getWeaponByName("Homing Missile"),
             getWeaponByName("Homing Missile"),
+        ],
+        description: "",
+    },
+    {
+        id: "",
+        typeClassName: "Battle Cruiser",
+        sizeIndicator: 6,
+        type: SHIPCLASS.CRUISER,
+        name: "Battle Cruiser",
+        cost: 35,
+        buildTime: 6,
+        minIndustry: 5,
+        techReq: [],
+        fighters: 2,
+        fightersMax: 2,
+        troops: 4,
+        speed: 5,
+        agility: 35,
+        armor: 8,
+        hull: 230,
+        shieldRegeneration: 10,
+        shieldsMax: 60,
+        keywords: [],
+        weapons: [
+            getWeaponByName("Point Defense Gun"),
+            getWeaponByName("Point Defense Gun"),
+            getWeaponByName("Point Defense Gun"),
+            getWeaponByName("Laser Turret"),
+            getWeaponByName("Laser Turret"),
+            getWeaponByName("Homing Missile"),
+            getWeaponByName("Mega Cannon"),
         ],
         description: "",
     },
@@ -491,35 +706,3 @@ export function shipNameGenerator(): string {
 }
 
 export { DATANEWSHIPS };
-
-/*
-Name types
-
-{adj} {doer}
-
-{doer} of {event}
-
-{adj} {concept} {doer}
-
-{concept} {event}
-
-
-
-Dark Justicar
-Last Victory
-
-Doomed
-
-Redeemer of Victory
-Speaker of Dream
-
-{adj} {doer}
-{doer} of {event}
-
-{adj} {concept}
-{adj} {concept}
-
-
-
-
-*/

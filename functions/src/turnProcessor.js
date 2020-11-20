@@ -54,19 +54,22 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-exports.damagePotential = exports.getHitChance = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatInflictDamage = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatMain = exports.processTurn = void 0;
+exports.damagePotential = exports.getHitChance = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatInflictDamage = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatPostCombat = exports.spaceCombatPreCombat = exports.spaceCombatMain = exports.processTurn = void 0;
 var fDataShips_1 = require("./data/fDataShips");
 var fDataTechnology_1 = require("./data/fDataTechnology");
 var functionConfigs_1 = require("./functionConfigs");
 var fCommands_1 = require("./models/fCommands");
 var fModels_1 = require("./models/fModels");
+var fUnits_1 = require("./models/fUnits");
 var fBuildingUtils_1 = require("./utils/fBuildingUtils");
 var fFactionUtils_1 = require("./utils/fFactionUtils");
+var fGeneralUtils_1 = require("./utils/fGeneralUtils");
 var fLocationUtils_1 = require("./utils/fLocationUtils");
 var fMathUtils_1 = require("./utils/fMathUtils");
 var fRandUtils_1 = require("./utils/fRandUtils");
 var fTechUtils_1 = require("./utils/fTechUtils");
 var fUnitUtils_1 = require("./utils/fUnitUtils");
+var fWeaponUtils_1 = require("./utils/fWeaponUtils");
 function processTurn(origGame, commands) {
     return __awaiter(this, void 0, void 0, function () {
         var game;
@@ -249,9 +252,9 @@ function processCombats(game) {
             if (factions.size > 1) {
                 combats.push({
                     units: unitsInSystem,
+                    origUnits: [],
                     system: star,
                     round: 0,
-                    log: [],
                     done: false,
                     roundLog: [],
                     currentRoundLog: {
@@ -429,7 +432,7 @@ function resolveCombat(game, origCombat) {
         }
         return units;
     }, []);
-    return addReportToSystem(game, origCombat.system, fModels_1.ReportType.COMBAT, Array.from(factionIds), combat.log);
+    return addReportToSystem(game, origCombat.system, fModels_1.ReportType.COMBAT, Array.from(factionIds), ["Combat occured"]);
     // return updateSystemInGame(game, system);
 }
 function updateSystemInGame(game, updatedSystem) {
@@ -480,9 +483,9 @@ function markCommandDone(command) {
 function spaceCombatMain(game, units, system) {
     var combat = {
         units: __spreadArrays(units),
+        origUnits: __spreadArrays(units),
         system: system,
         round: 0,
-        log: [],
         roundLog: [],
         currentRoundLog: {
             round: 0,
@@ -492,13 +495,12 @@ function spaceCombatMain(game, units, system) {
         },
         done: false
     };
-    combat.log.push("Space combat starts");
     // PRE COMBAT
+    combat = spaceCombatPreCombat(game, combat, system);
     // TODO
     // COMBAT ROUNDS
     while (!combat.done) {
         combat.round++;
-        combat.log.push("ROUND " + combat.round);
         combat.currentRoundLog = {
             round: combat.round,
             messages: [],
@@ -515,15 +517,58 @@ function spaceCombatMain(game, units, system) {
         combat.roundLog.push(__assign({}, combat.currentRoundLog));
     }
     // POST COMBAT
+    return spaceCombatPostCombat(combat);
+}
+exports.spaceCombatMain = spaceCombatMain;
+function spaceCombatPreCombat(game, origCombat, system) {
+    var combat = __assign({}, origCombat);
+    // Deploy Fighters
+    var designations = fRandUtils_1.shuffle(["Alpha", "Beta", "Gamma", "Delta", "Phi", "Tau", "Red", "Blue", "Green", "Gold", "Yellow", "Brown", "Tan"]);
+    var fighters = combat.units.reduce(function (fighters, unit) {
+        if (unit.fighters > 0) {
+            var des = designations.pop();
+            for (var i = 0; i < unit.fighters; i++) {
+                var fighter = fUnitUtils_1.createShipFromDesign(fDataShips_1["default"][0], unit.factionId, { x: 0, y: 0 });
+                fighter.name = des + " squadron " + i;
+                fighters.push(fighter);
+            }
+        }
+        return fighters;
+    }, []);
+    combat.units = __spreadArrays(combat.units, fighters);
+    combat.origUnits = __spreadArrays(combat.units);
+    return __assign({}, combat);
+}
+exports.spaceCombatPreCombat = spaceCombatPreCombat;
+function spaceCombatPostCombat(combat) {
+    // Fighters returning to their ships if possible
+    var fightersPerFaction = new Map();
+    combat.units.forEach(function (s) {
+        if (s.type === fUnits_1.SHIPCLASS.FIGHTER) {
+            fGeneralUtils_1.mapAdd(fightersPerFaction, s.factionId, 1);
+        }
+    });
     combat.units = combat.units.map(function (su) {
         su.shields = su.shieldsMax;
         su.experience += combat.round;
+        if (su.fightersMax > 0) {
+            var fightersLeft = fightersPerFaction.get(su.factionId);
+            if (fightersLeft) {
+                if (su.fightersMax > fightersLeft) {
+                    su.fighters = fightersLeft;
+                    fightersPerFaction.set(su.factionId, 0);
+                }
+                else {
+                    su.fighters = su.fightersMax;
+                    fightersPerFaction.set(su.factionId, fightersLeft - su.fightersMax);
+                }
+            }
+        }
         return su;
-    });
-    combat.log.push("Space combat ends");
-    return combat;
+    }).filter(function (s) { return s.type !== fUnits_1.SHIPCLASS.FIGHTER; });
+    return __assign({}, combat);
 }
-exports.spaceCombatMain = spaceCombatMain;
+exports.spaceCombatPostCombat = spaceCombatPostCombat;
 function spaceCombatAttacks(game, origCombat) {
     var attackers = __spreadArrays(origCombat.units);
     var combat = __assign({}, origCombat);
@@ -544,11 +589,10 @@ function spaceCombatAttacks(game, origCombat) {
             }
             else {
                 var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, ship.factionId);
-                var logText = "RELOADING: " + (faction ? faction.name : "Uknown faction") + " " + ship.name + " is reloading " + weapon.name + ", " + (weapon.cooldown + 1) + " round until ready to fire";
-                c.log.push(logText);
                 c.currentRoundLog.attacks.push({
                     attacker: ship.id,
                     weapon: weapon.name,
+                    weaponId: weapon.id,
                     result: "RELOAD",
                     hitRoll: weapon.cooldown + 1,
                     damage: 0,
@@ -567,38 +611,51 @@ function spaceCombatAttacks(game, origCombat) {
 exports.spaceCombatAttacks = spaceCombatAttacks;
 function spaceCombatAttackChooseTarget(combat, attacker, weapon, game) {
     var target = combat.units.find(function (su) {
-        return su.factionId !== attacker.factionId;
+        return su.factionId !== attacker.factionId && su.damage < su.hull;
     });
     if (target) {
-        console.log(combat.round + ": " + attacker.name + " choosing target for " + weapon.name + ":");
+        // console.log(`${combat.round}: ${attacker.name} choosing target for ${weapon.name}:`);
+        // console.log(`\tInitial target: ${target.name}`);
         var betterTarget = combat.units.reduce(function (t, pos) {
             if (pos.factionId !== attacker.factionId) {
                 var posHps = pos.hull + pos.shields - pos.damage;
                 var curHps = t.hull + t.shields - t.damage;
-                if (pos.hull > 0 && posHps < curHps) {
-                    return pos;
+                if (pos.damage >= pos.hull || pos.hull === 0) {
+                    return t;
                 }
-                if (t.hull + t.shields - t.damage <= 0) {
-                    return pos;
-                }
+                var points = 0;
+                // Hit chance
                 var oldHitChance = getHitChance(weapon, attacker, t, game);
                 var newHitChance = getHitChance(weapon, attacker, pos, game);
-                // if (newHitChance > oldHitChance) return pos;
+                if (newHitChance < 0) {
+                    return t;
+                }
+                var hitChanceValue = Math.round((newHitChance - oldHitChance) / 10);
+                points += hitChanceValue > 10 ? 10 : hitChanceValue < -10 ? -10 : hitChanceValue;
+                // Damage potential
                 var oldDmgPot = damagePotential(weapon, attacker, t, game);
                 var newDmgPot = damagePotential(weapon, attacker, pos, game);
-                var valueO = oldHitChance + oldDmgPot;
-                var valueN = newHitChance + newDmgPot;
-                if (valueO > valueN) {
-                    console.log("\t KEEP: " + t.name + " H%" + oldHitChance + " Dmg: " + oldDmgPot);
+                if (newDmgPot < 0) {
+                    return t;
+                }
+                var dmgPotValue = newDmgPot > 150 ? -1 : Math.round((newDmgPot) / 10);
+                var oldDmgPotValue = oldDmgPot > 150 ? -1 : Math.round((oldDmgPot) / 10);
+                points += dmgPotValue > oldDmgPotValue ? 1 : 0;
+                // console.log("\t", pos.typeClassName, pos.name, hitChanceValue, dmgPotValue, points);
+                var valueO = oldHitChance / 10 + oldDmgPot;
+                var valueN = newHitChance / 10 + newDmgPot;
+                if (points <= 0) {
+                    // console.log(`\t KEEP: ${t.name} H%${oldHitChance} Dmg: ${oldDmgPot}`);
                     return t;
                 }
                 else {
-                    console.log("\t NEW : " + pos.name + " H%" + newHitChance + " Dmg: " + newDmgPot);
+                    // console.log(`\t NEW : ${pos.name} H%:${newHitChance/10}  Dmg:${newDmgPot} Val:${valueN}`);
                     return pos;
                 }
             }
             return t;
         }, target);
+        // console.log(`\tselected: ${betterTarget.name}`);
         if (betterTarget)
             return betterTarget;
         return target;
@@ -618,12 +675,10 @@ function spaceCombatAttackShoot(game, combat, attacker, weapon, target) {
         var targetFactionUnit = fUnitUtils_1.getFactionAdjustedUnit(targetFaction, target);
         var factionWeapon = fUnitUtils_1.getFactionAdjustedWeapon(weapon, attackFaction);
         var _a = spaceCombatInflictDamage(factionWeapon, target), nTarget_1 = _a[0], dmg = _a[1];
-        var logText = "HIT (" + hitRoll + " <= " + hitChance + "): " + attackFaction.name + " " + attacker.name + " shoots " + target.name + " of " + targetFaction.name + " with " + weapon.name + " causing " + dmg + " points of hull damage.";
-        combat.log.push(logText);
-        // combat.currentRoundLog.messages.push(logText);
         combat.currentRoundLog.attacks.push({
             attacker: attacker.id,
             weapon: weapon.name,
+            weaponId: weapon.id,
             result: "HIT",
             hitRoll: hitRoll,
             hitTarget: hitChance,
@@ -638,12 +693,10 @@ function spaceCombatAttackShoot(game, combat, attacker, weapon, target) {
         });
     }
     else {
-        var logText = "MISS (" + hitRoll + " > " + hitChance + "): " + attackFaction.name + " " + attacker.name + " misses " + target.name + " of " + targetFaction.name + " with " + weapon.name + ".";
-        combat.log.push(logText);
-        // combat.currentRoundLog.messages.push(logText);
         combat.currentRoundLog.attacks.push({
             attacker: attacker.id,
             weapon: weapon.name,
+            weaponId: weapon.id,
             result: "MISS",
             hitRoll: hitRoll,
             hitTarget: hitChance,
@@ -655,27 +708,89 @@ function spaceCombatAttackShoot(game, combat, attacker, weapon, target) {
 }
 exports.spaceCombatAttackShoot = spaceCombatAttackShoot;
 function spaceCombatInflictDamage(weapon, targetUnit) {
-    var loop = 1 + (weapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.DOUBLESHOT) ? 1 : 0) + (weapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.RAPIDFIRE) ? 2 : 0) + (weapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.HAILOFFIRE) ? 4 : 0);
+    var _a, _b, _c;
+    var loop = 1 +
+        (weapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.DOUBLESHOT) ? 1 : 0) +
+        (weapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.RAPIDFIRE) ? 2 : 0) +
+        (weapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.HAILOFFIRE) ? 4 : 0);
     var totalDmg = 0;
     for (var i = 0; i < loop; i++) {
-        var dmg = (Array.isArray(weapon.damage) ? fRandUtils_1.rnd(weapon.damage[0], weapon.damage[1]) : weapon.damage) - targetUnit.armor;
-        if (targetUnit.shields > 0) {
-            if (targetUnit.shields >= dmg) {
-                targetUnit.shields -= dmg;
-            }
-            else {
-                targetUnit.damage += dmg - targetUnit.shields;
-                targetUnit.shields = 0;
-            }
+        var dmg = Array.isArray(weapon.damage) ? fRandUtils_1.rnd(weapon.damage[0], weapon.damage[1]) : weapon.damage;
+        var newDmg = 0;
+        switch (weapon.type) {
+            case fUnits_1.WEAPONTYPE.KINETIC:
+                _a = spaceCombatKineticDamage(dmg, weapon, targetUnit), targetUnit = _a[0], newDmg = _a[1];
+                break;
+            case fUnits_1.WEAPONTYPE.MISSILE:
+                _b = spaceCombatMissileDamage(dmg, weapon, targetUnit), targetUnit = _b[0], newDmg = _b[1];
+                break;
+            default:
+                _c = spaceCombatDefaultDamage(dmg, weapon, targetUnit), targetUnit = _c[0], newDmg = _c[1];
+                break;
         }
-        else {
-            targetUnit.damage += dmg;
-        }
-        totalDmg += dmg;
+        totalDmg += newDmg;
+        // if (targetUnit.shields  > 0) {
+        // 	if (targetUnit.shields >= dmg) {
+        // 		targetUnit.shields -= dmg;
+        // 	} else {
+        //         const dmgThrough = dmg - targetUnit.shields;
+        // 		targetUnit.damage += dmgThrough - targetUnit.armor;
+        // 		targetUnit.shields = 0;
+        // 	}
+        // } else {
+        // 	targetUnit.damage += dmg - targetUnit.armor;
+        // }
     }
     return [__assign({}, targetUnit), totalDmg];
 }
 exports.spaceCombatInflictDamage = spaceCombatInflictDamage;
+// Kinetic weapons ignore shields but are more heavily affected by armor
+function spaceCombatKineticDamage(damage, weapon, target) {
+    var dmg = damage - getArmorValue(weapon, target);
+    target.damage += Math.round(dmg > 0 ? dmg : 0);
+    return [__assign({}, target), Math.round(dmg > 0 ? dmg : 0)];
+}
+// Energy weapons are baseline weapons
+function spaceCombatDefaultDamage(damage, weapon, target) {
+    var damageLeft = damage;
+    if (target.shields > 0) {
+        if (target.shields > damageLeft) {
+            target.shields -= damageLeft;
+            damageLeft = 0;
+        }
+        else {
+            damageLeft -= target.shields;
+            target.shields = 0;
+        }
+    }
+    var dmgPreCheck = damageLeft - getArmorValue(weapon, target);
+    var totDmg = dmgPreCheck >= 0 ? dmgPreCheck : 0;
+    target.damage += totDmg;
+    return [__assign({}, target), totDmg];
+}
+// Missle weapons cause double damage to shields
+function spaceCombatMissileDamage(damage, weapon, target) {
+    var damageLeft = damage;
+    if (target.shields > 0) {
+        if (target.shields > damageLeft * 2) {
+            target.shields -= damageLeft * 2;
+            damageLeft = 0;
+        }
+        else {
+            damageLeft -= Math.ceil(target.shields / 2);
+            target.shields = 0;
+        }
+    }
+    var dmgPreCheck = damageLeft - getArmorValue(weapon, target);
+    var totDmg = dmgPreCheck >= 0 ? dmgPreCheck : 0;
+    // const totDmg = Math.round(damageLeft >= 0 ? damageLeft : 0);
+    target.damage += totDmg;
+    return [__assign({}, target), totDmg];
+}
+function getArmorValue(weapon, target) {
+    var mult = weapon.type === fUnits_1.WEAPONTYPE.KINETIC ? 1.25 : 1;
+    return weapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.ARMOURPIERCE) ? 0 : target.armor * mult;
+}
 function spaceCombatDamageResolve(game, combat) {
     combat.units = combat.units.filter(function (unit) {
         var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, unit.factionId);
@@ -695,13 +810,11 @@ function spaceCombatDamageResolve(game, combat) {
         combat.currentRoundLog.status.push(status);
         if (destroyed) {
             var logText = unit.factionId + " " + unit.name + " is destroyed with " + unit.damage + " / " + factionUnit.hull + "!";
-            combat.log.push(logText);
             combat.currentRoundLog.messages.push(logText);
             return false;
         }
         else {
             var logText = unit.factionId + " " + unit.name + " HULL DAMAGE: " + unit.damage + " / " + factionUnit.hull + " SHIELDS: " + unit.shields + " / " + factionUnit.shieldsMax;
-            combat.log.push(logText);
             combat.currentRoundLog.messages.push(logText);
         }
         return true;
@@ -760,8 +873,8 @@ function getHitChance(weapon, attacker, target, game) {
         return 0;
     var targetUnit = fUnitUtils_1.getFactionAdjustedUnit(tarFaction, target);
     var factionWeapon = fUnitUtils_1.getFactionAdjustedWeapon(weapon, attFaction);
-    var chance = 50 + factionWeapon.accuracy - targetUnit.agility;
-    var sizeMod = (target.sizeIndicator - attacker.sizeIndicator) * 5;
+    var chance = 50 + factionWeapon.accuracy - targetUnit.agility + fWeaponUtils_1.specialAntiFighter(weapon, attacker, targetUnit);
+    var sizeMod = (target.sizeIndicator - attacker.sizeIndicator) * 2;
     return chance + sizeMod;
 }
 exports.getHitChance = getHitChance;

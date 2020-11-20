@@ -29,6 +29,7 @@ export interface CombatReport extends DetailReport {
     units: ShipUnit[];
     systemId: string;
     rounds: CombatRoundReport[];
+    origUnits: ShipUnit[];
     
 }
 
@@ -44,6 +45,7 @@ export interface CombatRoundReport {
 export interface CombatRoundAttackReport {
     attacker: string;
     weapon: string;
+    weaponId: string;
     target: string;
     result: "HIT"|"MISS"|"RELOAD"|"SPECIAL";
     hitRoll: number;
@@ -61,7 +63,6 @@ export interface CombatRoundStatus {
     destroyed: boolean;
     retreated: boolean;
 }
-
 
 
 

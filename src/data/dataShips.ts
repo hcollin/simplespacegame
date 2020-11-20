@@ -153,6 +153,16 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         damage: [20, 25],
         special: [],
     },
+    {
+        id: "",
+        name: "Fighter Missile",
+        type: WEAPONTYPE.MISSILE,
+        accuracy: 80,
+        cooldown: 2,
+        cooldownTime: 10,
+        damage: [30, 40],
+        special: [],
+    }
 ];
 
 function getWeaponByName(name: string): ShipWeapon {
@@ -183,7 +193,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 0,
         shieldsMax: 0,
         keywords: [],
-        weapons: [getWeaponByName("Small Laser")],
+        weapons: [getWeaponByName("Small Laser"), getWeaponByName("Fighter Missile")],
         description: "One man fighter craft that does not have warp capability in itself.",
     },
     {
@@ -327,8 +337,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         buildTime: 5,
         minIndustry: 2,
         techReq: [],
-        fighters: 3,
-        fightersMax: 3,
+        fighters: 4,
+        fightersMax: 4,
         troops: 0,
         speed: 5,
         agility: 30,
@@ -383,8 +393,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         buildTime: 6,
         minIndustry: 5,
         techReq: [],
-        fighters: 0,
-        fightersMax: 0,
+        fighters: 2,
+        fightersMax: 2,
         troops: 4,
         speed: 5,
         agility: 35,

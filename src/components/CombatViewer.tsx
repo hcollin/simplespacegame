@@ -655,7 +655,7 @@ const CombatViewer: FC<Props> = (props) => {
                                         const status = lastRoundStatus.find(
                                             (st: CombatRoundStatus) => st.unitId === u.id
                                         );
-                                        const destroyed = status === undefined || status.damage > u.hull;
+                                        const destroyed = status === undefined || status.damage >= u.hull;
                                         return (
                                             <div key={u.id} className="unit">
                                                 <div className="shipName">

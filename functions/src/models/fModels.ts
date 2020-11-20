@@ -169,9 +169,9 @@ export interface Report {
 
 export interface SpaceCombat {
     units: ShipUnit[];
+    origUnits: ShipUnit[];
     system: SystemModel | null;
     round: number;
-    log: string[];
     roundLog: CombatRoundReport[];
     currentRoundLog: CombatRoundReport;
     done: boolean;
