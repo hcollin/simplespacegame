@@ -11,17 +11,16 @@ import {
     ResearchCommand,
     SystemPlusCommand,
 } from "../models/Commands";
-import { FactionModel, GameModel, GameState } from "../models/Models";
+import { FactionModel, GameModel } from "../models/Models";
 import { doRemoveCommand } from "../services/commands/SystemCommands";
 import { getSystemByCoordinates, getSystemById } from "../services/helpers/SystemHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { getTechById } from "../utils/techUtils";
-import CheatView from "./CheatView";
+
 
 import CancelIcon from "@material-ui/icons/Cancel";
 
 import iconBuildSvg from "../images/iconUnderConstruction.svg";
-import iconCommandSvg from "../images/iconCommand.svg";
 import iconScienceSvg from "../images/iconScience.svg";
 import iconFleetSvg from "../images/iconUnits.svg";
 import { IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconScore, IconWelfare } from "./Icons";
@@ -341,10 +340,6 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                 data: fm.playerId,
             });
         }
-    }
-
-    function factionClickHandler(fm: FactionModel) {
-
     }
 
     if (!commands || !game || !faction) return null;

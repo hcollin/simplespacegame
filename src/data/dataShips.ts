@@ -513,24 +513,24 @@ export function shipNameGenerator(): string {
         "Visitor",
     ];
 
-    const wordColor: string[] = ["Black", "White", "Gray", "Red", "Blue", "Green", "Yellow", "Purple", "Brown"];
+    // const wordColor: string[] = ["Black", "White", "Gray", "Red", "Blue", "Green", "Yellow", "Purple", "Brown"];
 
-    const wordTimeAdjective: string[] = ["Ancient", "First", "Last", "New", "Old", "Young"];
+    // const wordTimeAdjective: string[] = ["Ancient", "First", "Last", "New", "Old", "Young"];
 
-    const wordDescriptive: string[] = [
-        "Ancient",
-        "Death",
-        "Dread",
-        "Dark",
-        "Fury",
-        "Ghost",
-        "Life",
-        "Necro",
-        "Phantom",
-        "Spectre",
-        "Umbra",
-        "True",
-    ];
+    // const wordDescriptive: string[] = [
+    //     "Ancient",
+    //     "Death",
+    //     "Dread",
+    //     "Dark",
+    //     "Fury",
+    //     "Ghost",
+    //     "Life",
+    //     "Necro",
+    //     "Phantom",
+    //     "Spectre",
+    //     "Umbra",
+    //     "True",
+    // ];
 
     const wordThing: string[] = [
         "Antihero",
@@ -664,27 +664,27 @@ export function shipNameGenerator(): string {
         "War",
     ];
 
-    const concepts: string[] = [
-        "Death",
+    // const concepts: string[] = [
+    //     "Death",
 
-        "Fury",
-        "Force",
+    //     "Fury",
+    //     "Force",
 
-        "Fantasy",
-        "Hymn",
-        "History",
-        "Liturgy",
-        "Life",
-        "Myth",
+    //     "Fantasy",
+    //     "Hymn",
+    //     "History",
+    //     "Liturgy",
+    //     "Life",
+    //     "Myth",
 
-        "Memorial",
-        "Paradise",
+    //     "Memorial",
+    //     "Paradise",
 
-        "Pride",
-        "Reign",
-        "Supernova",
-        "Song",
-    ];
+    //     "Pride",
+    //     "Reign",
+    //     "Supernova",
+    //     "Song",
+    // ];
 
     const partB = [...wordThing, ...wordDoer, ...wordObject];
 

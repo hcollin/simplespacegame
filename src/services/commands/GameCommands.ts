@@ -2,7 +2,6 @@ import { joki } from "jokits-react";
 import { v4 } from "uuid";
 import { Trade } from "../../models/Communication";
 import { FactionSetup, GameModel, PreGameSetup } from "../../models/Models";
-import { NewGameOptions } from "../GameService";
 import { SERVICEID } from "../services";
 
 export function doProcessTurn() {

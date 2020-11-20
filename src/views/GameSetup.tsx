@@ -2,7 +2,6 @@ import {
     makeStyles,
     Theme,
     createStyles,
-    Container,
     Button,
     TextField,
     ButtonGroup,
@@ -14,17 +13,17 @@ import {
 import { useService } from "jokits-react";
 import React, { FC, useEffect, useState } from "react";
 import FactionSetupView from "../components/FactionSetup";
-import { FactionSetup, GameModel, GameState, SystemModel } from "../models/Models";
+import { FactionSetup, GameModel, SystemModel } from "../models/Models";
 import { doCloseCurrentGame, doCreateNewGame } from "../services/commands/GameCommands";
 import { SERVICEID } from "../services/services";
 
 import starfieldJpeg from "../images/starfield2.jpg";
 import MenuPageContainer from "../components/MenuPageContainer";
-import { getDensityMultiplier, getDistanceMultiplier, getStarCount } from "../services/helpers/GameHelpers";
+import { getDistanceMultiplier, getStarCount } from "../services/helpers/GameHelpers";
 import { createRandomMap } from "../services/helpers/SystemHelpers";
 import MiniMap from "../components/MiniMap";
 import { PLAYERCOUNTS } from "../configs";
-import { copyFile } from "fs";
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -157,7 +156,7 @@ const GameSetup: FC = () => {
     useEffect(() => {
         console.log("Example map")
         if (distances !== "" && starDensity !== "" && plCount > 0) {
-            const densityMultiplier = getDensityMultiplier(starDensity);
+            // const densityMultiplier = getDensityMultiplier(starDensity);
             const sizeCounter = getDistanceMultiplier(distances);
             const starCount = getStarCount(starDensity, distances, plCount);
             console.log("StarCount", starCount);
@@ -167,16 +166,6 @@ const GameSetup: FC = () => {
     }, [distances, starDensity, plCount, specials]);
 
     if (!game) return null;
-
-    function newRandomGame() {
-        // doCreateNewGame({
-        //     autoJoin: autoJoin,
-        //     name: name,
-        //     density: starDensity,
-        //     distances: distances,
-        //     playerCount: plCount,
-        // });
-    }
 
     function createGame() {
         doCreateNewGame({
@@ -198,7 +187,7 @@ const GameSetup: FC = () => {
         setName(event.target.value);
     };
 
-    const denM = getDensityMultiplier(starDensity);
+    // const denM = getDensityMultiplier(starDensity);
     const distM = getDistanceMultiplier(distances);
 
     return (

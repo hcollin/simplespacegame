@@ -14,7 +14,6 @@ export default function createCommandService(serviceId: string, api: JokiService
 
     let unsub: null | (() => void) = null;
     let currentTurn: number = -1;
-    let gameId: string = "";
     
 
     function eventHandler(event: JokiEvent) {
@@ -98,7 +97,7 @@ export default function createCommandService(serviceId: string, api: JokiService
     }
 
     async function gameLoad(gameId: string) {
-        gameId = gameId;
+        
         gameUnload();
         // await loadCommands();
         const game = api.api.getServiceState(SERVICEID.GameService) as GameModel;
@@ -175,10 +174,10 @@ export default function createCommandService(serviceId: string, api: JokiService
         }
     }
 
-    function clearAllCommands() {
-        commands = [];
-        sendUpdate();
-    }
+    // function clearAllCommands() {
+    //     commands = [];
+    //     sendUpdate();
+    // }
 
     function _getMyFaction(): FactionModel {
         const game = api.api.getServiceState("GameService") as GameModel;

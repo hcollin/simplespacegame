@@ -1,9 +1,7 @@
 import { BUILDINGTYPE } from "../data/dataBuildings";
-import { TECHIDS } from "../data/dataTechnology";
+
 import { Building } from "../models/Buildings";
-import { GameModel, SystemModel } from "../models/Models";
-import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
-import { factionHasTechnology } from "../tech/techTools";
+import { SystemModel } from "../models/Models";
 import { SystemEconomy } from "../utils/systemUtils";
 
 

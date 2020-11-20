@@ -7,11 +7,9 @@ import useSelectedSystem from "../hooks/useSelectedSystem";
 import { GameModel, SystemModel } from "../models/Models";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
-import useCurrentUser from "../services/hooks/useCurrentUser";
-import useUserIsReady from "../services/hooks/useUserIsReady";
 import { SERVICEID } from "../services/services";
 import { getSystemEconomy } from "../utils/systemUtils";
-import { IconDefense, IconEconomy, IconIndustry, IconUnderConstruction, IconWelfare } from "./Icons";
+import { IconDefense, IconEconomy, IconIndustry, IconWelfare } from "./Icons";
 import {
     doBuildBuilding,
     doBuildUnit,
@@ -21,17 +19,16 @@ import {
     plusIndustry,
     plusWelfare,
 } from "../services/commands/SystemCommands";
-import { BuildBuildingCommand, BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
-import { Building, BuildingDesign, BuildingUnderConstruction } from "../models/Buildings";
+import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
+import { Building, BuildingDesign } from "../models/Buildings";
 import BuildingDesignSlot from "./BuildingDesignSlot";
-import { BUILDINGTYPE, DATABUILDINGS } from "../data/dataBuildings";
+import { DATABUILDINGS } from "../data/dataBuildings";
 import { buildingCanBeBuiltOnSystem, getBuildingUnderConstruction } from "../utils/buildingUtils";
 
 import SpaceStationJpeg from "../images/art/SpaceStation.jpg";
 import DATASHIPS from "../data/dataShips";
 import { ShipDesign, ShipUnderConstruction } from "../models/Units";
 import ShipInfo from "./ShipInfo";
-import { inSameLocation } from "../utils/locationUtils";
 import { shipCanBeBuiltOnSystemByFaction } from "../utils/unitUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -320,7 +317,7 @@ const SystemView: FC = () => {
         }
     }
 
-    function cancelBuildBuildingCommand(building: BuildingUnderConstruction) {}
+    // function cancelBuildBuildingCommand(building: BuildingUnderConstruction) {}
 
     function buildUnit(shipD: ShipDesign, system: SystemModel) {
         doBuildUnit(shipD, system.id);

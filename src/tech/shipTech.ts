@@ -1,6 +1,5 @@
 import { TECHIDS } from "../data/dataTechnology";
 import { FactionModel } from "../models/Models";
-import { ShipWeapon } from "../models/Units";
 
 import { factionHasTechnology } from "./techTools";
 

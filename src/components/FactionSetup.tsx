@@ -1,11 +1,10 @@
-import { makeStyles, Theme, createStyles, TextField, Select, MenuItem, Button, Box, Grid } from "@material-ui/core";
+import { makeStyles, Theme, createStyles, TextField, Select, MenuItem, Button, Grid } from "@material-ui/core";
 import InputLabel from "@material-ui/core/InputLabel/InputLabel";
 import React, { FC, useEffect, useState } from "react";
 import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../configs";
 import { FactionModel, FactionSetup } from "../models/Models";
 import { randomFactionName } from "../services/helpers/FactionHelpers";
 import { arnd, rnd } from "../utils/randUtils";
-import CasinoIcon from "@material-ui/icons/Casino";
 import RandomizeButton from "./RandomizeButton";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 
@@ -163,7 +162,7 @@ const FactionSetupView: FC<Props> = (props) => {
         }
     );
 
-    const [valid, setValid] = useState<boolean>(true);
+    const [valid] = useState<boolean>(true);
 
     const [iconIndex, setIconIndex] = useState<number>(1);
     const [user] = useCurrentUser();
@@ -183,7 +182,7 @@ const FactionSetupView: FC<Props> = (props) => {
         if (valid) {
             props.onChange(setup);
         }
-    }, [setup, valid, props.factions]);
+    }, [setup, valid, props]);
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const valid = props.factions.find((fm: FactionModel) => fm.name === event.target.value) === undefined;

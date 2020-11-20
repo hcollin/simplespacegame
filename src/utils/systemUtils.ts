@@ -1,6 +1,6 @@
 import { buildingArcology, buildingBioDome } from "../buildings/buildingRules";
 import { Building } from "../models/Buildings";
-import { FactionModel, GameModel, SystemKeyword, SystemModel } from "../models/Models";
+import { GameModel, SystemKeyword, SystemModel } from "../models/Models";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import { getSystemResearchPointGeneration } from "./factionUtils";
 

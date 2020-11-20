@@ -1,6 +1,6 @@
 import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import React, { FC } from "react";
-import { DATATECHNOLOGY, TECHIDS } from "../data/dataTechnology";
+import { TECHIDS } from "../data/dataTechnology";
 import { BuildingDesign } from "../models/Buildings";
 import { Technology } from "../models/Models";
 import { getTechById } from "../utils/techUtils";

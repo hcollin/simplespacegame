@@ -1,5 +1,4 @@
 import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
-import { joki } from "jokits-react";
 import { fnPlayerReady, fnProcessTurn } from "../api/apiFunctions";
 import { apiLoadGame, apiNewGame, apiSubscribeToGame, apiUpdateGame } from "../api/apiGame";
 

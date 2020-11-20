@@ -1,7 +1,7 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import { KonvaEventObject } from "konva/types/Node";
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Arc, Circle, Group, Image, Layer, Line, Ring, Stage, Star, Text } from "react-konva";
+import { Arc, Circle, Group, Image, Layer, Line, Stage, Star, Text } from "react-konva";
 import useSelectedSystem from "../../hooks/useSelectedSystem";
 import useWindowSize from "../../hooks/useWIndowResize";
 import { SystemModel, FactionModel, Coordinates, GameModel, Report, ReportType } from "../../models/Models";
@@ -21,7 +21,6 @@ import starfieldJpeg from '../../images/starfield2.jpg';
 import { getShipSpeed } from "../../utils/unitUtils";
 import Konva from "konva";
 import { Building } from "../../models/Buildings";
-import { rnd } from "../../utils/randUtils";
 
 
 const useStyles = makeStyles((theme: Theme) =>

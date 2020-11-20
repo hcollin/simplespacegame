@@ -1,13 +1,8 @@
-import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
+import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import React, { FC } from "react";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
-import useMyCommands from "../hooks/useMyCommands";
 import { useService } from "jokits-react";
 import { GameModel } from "../models/Models";
-import { factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
-import { doPlayerDone } from "../services/commands/GameCommands";
-import { IconCommand, IconCredit, IconResearchPoint, IconScore } from "./Icons";
-import { Command } from "../models/Commands";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -161,20 +156,12 @@ const FactionHeader: FC = () => {
 
     const [game] = useService<GameModel>("GameService");
     const faction = useCurrentFaction();
-    const commands = useMyCommands();
 
     if (!faction || !game) return null;
-
-    const values = factionValues(game, faction.id);
-    const pointsGenerated = researchPointGenerationCalculator(game, faction);
-
-    const isReady = game.factionsReady.includes(faction.id);
 
     const factionTitleStyle = {
         fontFamily: faction.style.fontFamily ? faction.style.fontFamily : "Arial",
     };
-
-    const uncompletedCommands = commands.filter((cmd: Command) => cmd.completed === false);
 
     return (
         <div
@@ -189,35 +176,7 @@ const FactionHeader: FC = () => {
             <div className="title" style={{ borderBottom: `ridge 3px ${faction.color}` }}>
                 <h1 style={factionTitleStyle}>{faction.name}</h1>
             </div>
-            {/* <div>
-                <div className="singleView">
-                    <IconCredit size="xl" wrapper="light" />
-                    <b>{faction.money}</b> <span>( {values.income} )</span>
-                </div>
-            </div>
-            <div>
-                <div className="singleView">
-                    <IconCommand size="xl" wrapper="light" /> <b>{uncompletedCommands.length}</b>{" "}
-                    <span>/ {values.maxCommands}</span>
-                </div>
-            </div>
-            <div>
-                <div className="singleView">
-                    <IconResearchPoint size="xl" wrapper="light" /> <b>{pointsGenerated}</b>
-                </div>
-            </div>
-            <div>
-                <div className="singleView">
-                    <IconScore size="xl" wrapper="light" /> <b>{getFactionScore(game, faction.id)}</b>
-                </div>
-            </div>
-            <div>
-                {!isReady && (
-                    <Button variant="contained" color="primary" onClick={() => doPlayerDone(faction.id)}>
-                        READY
-                    </Button>
-                )}
-            </div> */}
+
             <div className="rest" style={{background: faction.color}}></div>
         </div>
     );

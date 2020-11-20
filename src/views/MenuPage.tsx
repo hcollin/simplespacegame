@@ -1,19 +1,13 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import React, { FC, useEffect, useState } from "react";
-import { fnProcessTurn } from "../api/apiFunctions";
-import { apiListGames, apiListMyGames, apiListOpenGames } from "../api/apiGame";
+
+import { apiListMyGames, apiListOpenGames } from "../api/apiGame";
 import FactionBlock from "../components/FactionBlock";
 import MenuPageContainer from "../components/MenuPageContainer";
-import ShipInfo from "../components/ShipInfo";
-import DATASHIPS, { shipNameGenerator } from "../data/dataShips";
 import { FactionModel, GameModel, GameState } from "../models/Models";
-import { doCreateDraftGame, doCreateNewGame, doLoadGame } from "../services/commands/GameCommands";
+import { doCreateDraftGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import ReplayIcon from '@material-ui/icons/Replay';
-import BuildingDesignSlot from "../components/BuildingDesignSlot";
-import { DATABUILDINGS } from "../data/dataBuildings";
-import { rnd } from "../utils/randUtils";
-import Dots from "../components/Dots";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -85,7 +79,6 @@ const ENV = process.env.NODE_ENV;
 const MenuPage: FC = () => {
     const classes = useStyles();
 
-    const [playerCount] = useState<number>(4);
     const [user, send] = useCurrentUser();
 
     const [myGames, setMyGames] = useState<GameModel[]>([]);
@@ -137,9 +130,6 @@ const MenuPage: FC = () => {
         doLoadGame(gid);
     }
 
-    function processTurn(gid: string) {
-        fnProcessTurn(gid);
-    }
 
     async function refreshList() {
         if (user) {

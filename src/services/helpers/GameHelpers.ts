@@ -7,7 +7,6 @@ import {
     FactionSetup,
     FactionState,
     GameModel,
-    GameSetup,
     GameState,
     PreGameSetup,
     SystemModel,
@@ -71,7 +70,7 @@ export function getStarCount(density: string, distance: string, playerCount: num
 
 
 export function createGameFromSetup(setup: PreGameSetup): GameModel {
-    const densityMultiplier = getDensityMultiplier(setup.density);
+    // const densityMultiplier = getDensityMultiplier(setup.density);
     const sizeCounter = getDistanceMultiplier(setup.distances);
     const starCount = getStarCount(setup.density, setup.distances, setup.playerCount);
     
@@ -196,7 +195,7 @@ export function startGame(game: GameModel): GameModel {
 
     const homeSystems: SystemModel[] = [];
     const units: ShipUnit[] = [];
-    const densityMultiplier = getDensityMultiplier(game.setup.density);
+    // const densityMultiplier = getDensityMultiplier(game.setup.density);
     const sizeCounter = getDistanceMultiplier(game.setup.distances);
     const starLocs = game.systems.map((s: SystemModel) => s.location);
     

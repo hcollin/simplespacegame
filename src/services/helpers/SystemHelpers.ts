@@ -1,5 +1,5 @@
 
-import { System } from "typescript";
+
 import { SYSTEMBONUS } from "../../configs";
 import { greekAlphabet, romanNumbers, starName } from "../../data/dataWords";
 import { Coordinates, GameModel, SystemKeyword, SystemModel } from "../../models/Models";
