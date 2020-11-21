@@ -4,7 +4,7 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import { Arc, Circle, Group, Image, Layer, Line, Stage, Star, Text } from "react-konva";
 import useSelectedSystem from "../../hooks/useSelectedSystem";
 import useWindowSize from "../../hooks/useWIndowResize";
-import { SystemModel, FactionModel, Coordinates, GameModel, Report, ReportType } from "../../models/Models";
+import { SystemModel, FactionModel, Coordinates, GameModel, Report } from "../../models/Models";
 import { getFactionFromArrayById } from "../../services/helpers/FactionHelpers";
 import useImage from "use-image";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
@@ -21,6 +21,7 @@ import starfieldJpeg from '../../images/starfield2.jpg';
 import { getShipSpeed } from "../../utils/unitUtils";
 import Konva from "konva";
 import { Building } from "../../models/Buildings";
+import { DetailReportType } from "../../models/Report";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -222,7 +223,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
                         const x = h * (star.location.x / 100) * zoomLevel;
                         const y = h * (star.location.y / 100) * zoomLevel;
 
-                        const hasReport = star.reports.filter((r: Report) => r.type === ReportType.COMBAT).length > 0;
+                        const hasReport = star.reports.filter((r: Report) => r.type === DetailReportType.Combat).length > 0;
 
                         const hasTargetedCommand = commands.find((cmd: Command) => {
                             switch (cmd.type) {

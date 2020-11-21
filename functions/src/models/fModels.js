@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.ReportType = exports.TechnologyField = exports.FactionState = exports.SystemKeyword = exports.GameState = void 0;
+exports.TechnologyField = exports.FactionState = exports.SystemKeyword = exports.GameState = void 0;
 var GameState;
 (function (GameState) {
     GameState[GameState["NONE"] = 0] = "NONE";
@@ -40,9 +40,3 @@ var TechnologyField;
     TechnologyField["SOCIOLOGY"] = "Social";
     TechnologyField["INFORMATION"] = "Information";
 })(TechnologyField = exports.TechnologyField || (exports.TechnologyField = {}));
-var ReportType;
-(function (ReportType) {
-    ReportType["COMBAT"] = "COMBAT";
-    ReportType["COMMAND"] = "COMMAND";
-    ReportType["EVENT"] = "EVENT";
-})(ReportType = exports.ReportType || (exports.ReportType = {}));

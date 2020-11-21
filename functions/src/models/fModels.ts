@@ -1,6 +1,6 @@
 import { Building } from "./fBuildings";
 import { Trade } from "./fCommunication";
-import { CombatRoundReport } from "./fReport";
+import { CombatRoundReport, DetailReportType } from "./fReport";
 import { ShipUnit } from "./fUnits";
 
 export interface GameObject {
@@ -154,17 +154,11 @@ export interface CombatEvent {
     resolved: boolean;
 }
 
-export enum ReportType {
-    COMBAT = "COMBAT",
-    COMMAND = "COMMAND",
-    EVENT = "EVENT",
-}
-
 export interface Report {
     factions: string[];
     turn: number;
-    type: ReportType;
-    text: string[];
+    type: DetailReportType;
+    reportId: string;
 }
 
 export interface SpaceCombat {

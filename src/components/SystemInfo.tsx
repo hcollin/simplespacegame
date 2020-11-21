@@ -28,6 +28,7 @@ import { useService } from "jokits-react";
 import { DATABUILDINGS } from "../data/dataBuildings";
 import { BuildingDesign } from "../models/Buildings";
 import BuildingDesignSlot from "./BuildingDesignSlot";
+import { report } from "process";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -563,9 +564,8 @@ const SystemInfo: FC = () => {
                         <div key={`${star.id}-rep-${ind}`} className={classes.report}>
                             <h3>{r.type}</h3>
 
-                            {r.text.map((s: string, i: number) => {
-                                return <p key={`${star.id}-${ind}-s-${i}`}>{s}</p>;
-                            })}
+                            <p>{r.reportId}</p>
+                            
                         </div>
                     );
                 })}

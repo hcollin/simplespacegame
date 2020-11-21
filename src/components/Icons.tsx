@@ -20,6 +20,7 @@ import iconDefenseSvg from '../images/iconDefense.svg';
 import iconUnderConstructionSvg from '../images/iconUnderConstruction.svg';
 import IconEconomySvg from '../images/iconEconomy.svg';
 import IconDurationSvg from '../images/iconDuration.svg';
+import IconReportSvg from '../images/iconReport.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -151,6 +152,10 @@ const IconDuration: FC<IconProps> = (props) => {
     return <GeneralIcon {...props} tooltip="Duration" iconSvg={IconDurationSvg} />
 }
 
+const IconReport: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Report" iconSvg={IconReportSvg} />
+}
+
 
 export {
     IconCredit,
@@ -171,6 +176,7 @@ export {
     IconUnderConstruction,
     IconEconomy,
     IconDuration,
+    IconReport
 };
 
 interface GeneralIcon extends IconProps {

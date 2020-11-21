@@ -107,6 +107,7 @@ const useStyles = makeStyles((theme: Theme) =>
                     borderTop: "solid 1px #0008",
                     textTransform: "uppercase",
                     padding: "3px 0.25rem",
+                    paddingRight: "5rem",
 
                 },
 
@@ -254,10 +255,10 @@ const ShipInfo: FC<ShipInfoProps> = (props) => {
 
                 <Button variant="contained" color="default" onClick={(e: React.MouseEvent) => {e.stopPropagation(); setContentOpen((prev: boolean) => !prev);}}>{contentOpen ? "HIDE" : "SHOW"}</Button>
 
-
-
                 <header>
                     <span>Weapons ({props.ship.weapons.length})</span>
+                    {props.ship.troops > 0 && <span>Troops: {props.ship.troops}</span>}
+                    {props.ship.fightersMax > 0 && <span>Fighters: {props.ship.fighters}) / {props.ship.fighters}</span>}
                 </header>
 
                 <div className={`weapons`}>
@@ -282,6 +283,7 @@ const ShipInfo: FC<ShipInfoProps> = (props) => {
                 {props.ship.description && <div className="description">
                     {props.ship.description}
                 </div>}
+
 
             </div>
 

@@ -5,6 +5,7 @@ export enum DetailReportType {
     Generic = "Generic report",
     Combat = "Combat report",
     Event = "Event report",
+    System = "System Report",
 }
 
 export interface DetailReport extends GameObject {
@@ -20,6 +21,11 @@ export interface GenericReport extends DetailReport {
     text: string[];
 }
 
+export interface SystemReport extends DetailReport {
+    systemId: string;
+    text: string;
+}
+
 export interface EventReport extends DetailReport {
     eventCode: string;
     message: string;    
@@ -29,8 +35,7 @@ export interface CombatReport extends DetailReport {
     units: ShipUnit[];
     systemId: string;
     rounds: CombatRoundReport[];
-    origUnits: ShipUnit[];
-    
+    origUnits: ShipUnit[];   
 }
 
 export interface CombatRoundReport {

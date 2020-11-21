@@ -126,7 +126,7 @@ async function runTurnProcessor(gameId: string) {
     });
     console.log(`${turnCommands.length} commands to be processed!`);
     try {
-        const [newGame, comms] = await processTurn(game, turnCommands);
+        const [newGame, comms] = await processTurn(game, turnCommands, db);
 
         // console.log("new turn: ", newGame.turn, GameState[newGame.state]);
         // console.log("commands done now", comms);

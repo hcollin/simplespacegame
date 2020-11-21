@@ -60,6 +60,7 @@ var fDataTechnology_1 = require("./data/fDataTechnology");
 var functionConfigs_1 = require("./functionConfigs");
 var fCommands_1 = require("./models/fCommands");
 var fModels_1 = require("./models/fModels");
+var fReport_1 = require("./models/fReport");
 var fUnits_1 = require("./models/fUnits");
 var fBuildingUtils_1 = require("./utils/fBuildingUtils");
 var fFactionUtils_1 = require("./utils/fFactionUtils");
@@ -70,44 +71,54 @@ var fRandUtils_1 = require("./utils/fRandUtils");
 var fTechUtils_1 = require("./utils/fTechUtils");
 var fUnitUtils_1 = require("./utils/fUnitUtils");
 var fWeaponUtils_1 = require("./utils/fWeaponUtils");
-function processTurn(origGame, commands) {
+function processTurn(origGame, commands, firestore) {
     return __awaiter(this, void 0, void 0, function () {
         var game;
         return __generator(this, function (_a) {
-            game = __assign({}, origGame);
-            game.systems = game.systems.map(function (sm) {
-                sm.reports = [];
-                return sm;
-            });
-            console.log("START TURN PROCESSING!", game.name, game.turn);
-            if (commands) {
-                game = processSystemCommands(commands, game);
-                game = processMovementCommands(commands, game);
-                // Process trades
-                game = processTrades(game);
-                game = processResearchCommands(commands, game);
-                game = processCombats(game);
-                game = processInvasion(game);
+            switch (_a.label) {
+                case 0:
+                    game = __assign({}, origGame);
+                    game.systems = game.systems.map(function (sm) {
+                        sm.reports = [];
+                        return sm;
+                    });
+                    console.log("START TURN PROCESSING!", game.name, game.turn);
+                    if (!commands) return [3 /*break*/, 4];
+                    return [4 /*yield*/, processSystemCommands(commands, game, firestore)];
+                case 1:
+                    game = _a.sent();
+                    game = processMovementCommands(commands, game);
+                    // Process trades
+                    game = processTrades(game);
+                    game = processResearchCommands(commands, game);
+                    return [4 /*yield*/, processCombats(game, firestore)];
+                case 2:
+                    game = _a.sent();
+                    return [4 /*yield*/, processInvasion(game, firestore)];
+                case 3:
+                    game = _a.sent();
+                    _a.label = 4;
+                case 4:
+                    // Process economy
+                    game = processEconomy(game);
+                    // Process Research
+                    game = processResearch(game);
+                    // Win Conditions
+                    game = processWinConditions(game);
+                    // Increase turn counter
+                    game.turn++;
+                    // Clear ready states
+                    game.factionsReady = [];
+                    // // Clear Commands
+                    // api.api.trigger({
+                    //     from: serviceId,
+                    //     action: "nextTurn",
+                    // });
+                    game.state = fModels_1.GameState.TURN;
+                    // await saveGame();
+                    // sendUpdate();
+                    return [2 /*return*/, [__assign({}, game), __spreadArrays((commands || []))]];
             }
-            // Process economy
-            game = processEconomy(game);
-            // Process Research
-            game = processResearch(game);
-            // Win Conditions
-            game = processWinConditions(game);
-            // Increase turn counter
-            game.turn++;
-            // Clear ready states
-            game.factionsReady = [];
-            // // Clear Commands
-            // api.api.trigger({
-            //     from: serviceId,
-            //     action: "nextTurn",
-            // });
-            game.state = fModels_1.GameState.TURN;
-            // await saveGame();
-            // sendUpdate();
-            return [2 /*return*/, [__assign({}, game), __spreadArrays((commands || []))]];
         });
     });
 }
@@ -193,44 +204,152 @@ function processResearchCommands(commands, oldGame) {
     });
     return game;
 }
-function processSystemCommands(commands, oldGame) {
-    var game = __assign({}, oldGame);
-    commands.forEach(function (cmd) {
-        if (cmd.type === fCommands_1.CommandType.SystemEconomy) {
-            game = processSystemEconomyCommand(cmd, game);
-        }
-        if (cmd.type === fCommands_1.CommandType.SystemWelfare) {
-            game = processSystemWelfareCommand(cmd, game);
-        }
-        if (cmd.type === fCommands_1.CommandType.SystemDefense) {
-            game = processSysteDefenseCommand(cmd, game);
-        }
-        if (cmd.type === fCommands_1.CommandType.SystemIndustry) {
-            game = processSystemIndustryCommand(cmd, game);
-        }
-        if (cmd.type === fCommands_1.CommandType.SystemBuildUnit) {
-            game = processSystemBuildUnitCommand(cmd, game);
-        }
-        if (cmd.type === fCommands_1.CommandType.SystemBuildingBuild) {
-            game = processSystemBuildBuildingCommand(cmd, game);
-        }
+function processSystemCommands(commands, oldGame, firestore) {
+    return __awaiter(this, void 0, void 0, function () {
+        var game, i, cmd;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    game = __assign({}, oldGame);
+                    i = 0;
+                    _a.label = 1;
+                case 1:
+                    if (!(i < commands.length)) return [3 /*break*/, 4];
+                    cmd = commands[i];
+                    if (cmd.type === fCommands_1.CommandType.SystemEconomy) {
+                        game = processSystemEconomyCommand(cmd, game);
+                    }
+                    if (cmd.type === fCommands_1.CommandType.SystemWelfare) {
+                        game = processSystemWelfareCommand(cmd, game);
+                    }
+                    if (cmd.type === fCommands_1.CommandType.SystemDefense) {
+                        game = processSysteDefenseCommand(cmd, game);
+                    }
+                    if (cmd.type === fCommands_1.CommandType.SystemIndustry) {
+                        game = processSystemIndustryCommand(cmd, game);
+                    }
+                    if (cmd.type === fCommands_1.CommandType.SystemBuildUnit) {
+                        game = processSystemBuildUnitCommand(cmd, game);
+                    }
+                    if (!(cmd.type === fCommands_1.CommandType.SystemBuildingBuild)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, processSystemBuildBuildingCommand(cmd, game, firestore)];
+                case 2:
+                    game = _a.sent();
+                    _a.label = 3;
+                case 3:
+                    i++;
+                    return [3 /*break*/, 1];
+                case 4: return [2 /*return*/, game];
+            }
+        });
     });
-    return game;
 }
-function processInvasion(oldGame) {
-    var game = __assign({}, oldGame);
-    var invadedSystems = [];
-    oldGame.units.forEach(function (um) {
-        var star = game.systems.find(function (s) { return fLocationUtils_1.inSameLocation(s.location, um.location); });
-        if (star && star.ownerFactionId !== um.factionId) {
-            star.ownerFactionId = um.factionId;
-            invadedSystems.push(star);
-        }
+function processInvasion(oldGame, firestore) {
+    return __awaiter(this, void 0, void 0, function () {
+        var game, invadedSystems, _a;
+        var _this = this;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    game = __assign({}, oldGame);
+                    invadedSystems = [];
+                    _a = oldGame;
+                    return [4 /*yield*/, fGeneralUtils_1.asyncArrayMap(oldGame.systems, function (sm) { return __awaiter(_this, void 0, void 0, function () {
+                            var factionTroopCount;
+                            var _this = this;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        factionTroopCount = new Map();
+                                        oldGame.units.forEach(function (um) {
+                                            if (fLocationUtils_1.inSameLocation(sm.location, um.location) && sm.ownerFactionId !== um.factionId) {
+                                                fGeneralUtils_1.mapAdd(factionTroopCount, um.factionId, um.troops);
+                                            }
+                                        });
+                                        if (!(factionTroopCount.size > 0)) return [3 /*break*/, 2];
+                                        return [4 /*yield*/, fGeneralUtils_1.asyncMapForeach(factionTroopCount, function (troops, factionId) { return __awaiter(_this, void 0, void 0, function () {
+                                                var report;
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0:
+                                                            if (!(troops > sm.defense)) return [3 /*break*/, 2];
+                                                            sm.ownerFactionId = factionId;
+                                                            invadedSystems.push(sm);
+                                                            return [4 /*yield*/, createNewReport({
+                                                                    id: "",
+                                                                    factionIds: [sm.ownerFactionId],
+                                                                    gameId: game.id,
+                                                                    systemId: sm.id,
+                                                                    text: sm.name + " has been invaded.",
+                                                                    title: sm.name + " has been invaded.",
+                                                                    turn: game.turn,
+                                                                    type: fReport_1.DetailReportType.System
+                                                                }, firestore)];
+                                                        case 1:
+                                                            report = _a.sent();
+                                                            game = addReportToSystem(game, sm, fReport_1.DetailReportType.System, [sm.ownerFactionId], report.id);
+                                                            _a.label = 2;
+                                                        case 2: return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); })];
+                                    case 1:
+                                        _a.sent();
+                                        _a.label = 2;
+                                    case 2: return [2 /*return*/, sm];
+                                }
+                            });
+                        }); })];
+                case 1:
+                    _a.systems = _b.sent();
+                    // oldGame.systems =  oldGame.systems.map((sm: SystemModel) => {
+                    // oldGame.systems = oldGame.systems.map((sm: SystemModel) => {
+                    // 	const factionTroopCount = new Map<string, number>();
+                    // 	oldGame.units.forEach((um: ShipUnit) => {
+                    // 		if (inSameLocation(sm.location, um.location) && sm.ownerFactionId !== um.factionId) {
+                    // 			mapAdd(factionTroopCount, um.factionId, um.troops);
+                    // 		}
+                    // 	});
+                    // 	if (factionTroopCount.size > 0) {
+                    // 		// await asyncMapForeach(factionTroopCount, (troops: number, factionId: string) => {
+                    // 		// });
+                    // 		factionTroopCount.forEach((troops: number, faction: string) => {
+                    // 			if (troops > sm.defense) {
+                    // 				sm.ownerFactionId = faction;
+                    // 				invadedSystems.push(sm);
+                    // 				const report = createNewReport(
+                    // 					{
+                    // 						id: "",
+                    // 						factionIds: [sm.ownerFactionId],
+                    // 						gameId: game.id,
+                    // 						systemId: sm.id,
+                    // 						text: `${sm.name} has been invaded.`,
+                    // 						title: `${sm.name} has been invaded.`,
+                    // 						turn: game.turn,
+                    // 						type: DetailReportType.System,
+                    // 					},
+                    // 					firestore,
+                    // 				);
+                    // 				addReportToSystem(game, sm, DetailReportType.System, [sm.ownerFactionId], report.id);
+                    // 			}
+                    // 		});
+                    // 	}
+                    // 	return sm;
+                    // });
+                    // oldGame.units.forEach((um: ShipUnit) => {
+                    //     const star = game.systems.find((s: SystemModel) => inSameLocation(s.location, um.location));
+                    //     if (star && star.ownerFactionId !== um.factionId) {
+                    //         star.ownerFactionId = um.factionId;
+                    //         invadedSystems.push(star);
+                    //     }
+                    // });
+                    // invadedSystems.forEach((sm: SystemModel) => {
+                    // 	// game = addReportToSystem(game, sm, ReportType.EVENT, [sm.ownerFactionId], [`System Conquered`]);
+                    // });
+                    return [2 /*return*/, game];
+            }
+        });
     });
-    invadedSystems.forEach(function (sm) {
-        game = addReportToSystem(game, sm, fModels_1.ReportType.EVENT, [sm.ownerFactionId], ["System Conquered"]);
-    });
-    return game;
 }
 function processEconomy(game) {
     game.factions = game.factions.map(function (fm) {
@@ -240,38 +359,58 @@ function processEconomy(game) {
     });
     return __assign({}, game);
 }
-function processCombats(game) {
-    var combats = [];
-    game.systems.forEach(function (star) {
-        var unitsInSystem = game.units.filter(function (unit) { return fLocationUtils_1.inSameLocation(star.location, unit.location); });
-        if (unitsInSystem.length > 0) {
-            var factions = unitsInSystem.reduce(function (factions, unit) {
-                factions.add(unit.factionId);
-                return factions;
-            }, new Set());
-            if (factions.size > 1) {
-                combats.push({
-                    units: unitsInSystem,
-                    origUnits: [],
-                    system: star,
-                    round: 0,
-                    done: false,
-                    roundLog: [],
-                    currentRoundLog: {
-                        attacks: [],
-                        messages: [],
-                        round: 0,
-                        status: []
-                    }
-                });
+function processCombats(game, firestore) {
+    return __awaiter(this, void 0, void 0, function () {
+        var combats, i, combat;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    combats = [];
+                    game.systems.forEach(function (star) {
+                        var unitsInSystem = game.units.filter(function (unit) { return fLocationUtils_1.inSameLocation(star.location, unit.location); });
+                        if (unitsInSystem.length > 0) {
+                            var factions = unitsInSystem.reduce(function (factions, unit) {
+                                factions.add(unit.factionId);
+                                return factions;
+                            }, new Set());
+                            if (factions.size > 1) {
+                                combats.push({
+                                    units: unitsInSystem,
+                                    origUnits: [],
+                                    system: star,
+                                    round: 0,
+                                    done: false,
+                                    roundLog: [],
+                                    currentRoundLog: {
+                                        attacks: [],
+                                        messages: [],
+                                        round: 0,
+                                        status: []
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    combats.length > 0 && console.log("COMBATS", combats);
+                    i = 0;
+                    _a.label = 1;
+                case 1:
+                    if (!(i < combats.length)) return [3 /*break*/, 4];
+                    combat = combats[i];
+                    if (!combat) return [3 /*break*/, 3];
+                    return [4 /*yield*/, resolveCombat(game, combat, firestore)];
+                case 2:
+                    game = _a.sent();
+                    _a.label = 3;
+                case 3:
+                    i++;
+                    return [3 /*break*/, 1];
+                case 4:
+                    combats.forEach(function (combat) { });
+                    return [2 /*return*/, __assign({}, game)];
             }
-        }
+        });
     });
-    combats.length > 0 && console.log("COMBATS", combats);
-    combats.forEach(function (combat) {
-        game = resolveCombat(game, combat);
-    });
-    return __assign({}, game);
 }
 function processSystemEconomyCommand(command, game) {
     var system = getSystemFromGame(game, command.targetSystem);
@@ -325,42 +464,58 @@ function processSystemBuildUnitCommand(command, game) {
     }
     return __assign({}, game);
 }
-function processSystemBuildBuildingCommand(command, game) {
-    var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, command.factionId);
-    if (faction) {
-        var bdesign = fBuildingUtils_1.getBuildingDesignByType(command.buildingType);
-        if (command.turn === game.turn) {
-            // If faction can afford the building pay the cost and start building;
-            if (faction.money >= bdesign.cost) {
-                faction.money = faction.money - bdesign.cost;
-                command.turnsLeft--;
-                if (command.turnsLeft === 0) {
+function processSystemBuildBuildingCommand(command, game, firestore) {
+    return __awaiter(this, void 0, void 0, function () {
+        var faction, bdesign, system, report, system;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    faction = fFactionUtils_1.getFactionFromArrayById(game.factions, command.factionId);
+                    if (!faction) return [3 /*break*/, 5];
+                    bdesign = fBuildingUtils_1.getBuildingDesignByType(command.buildingType);
+                    if (!(command.turn === game.turn)) return [3 /*break*/, 4];
+                    if (!(faction.money >= bdesign.cost)) return [3 /*break*/, 3];
+                    faction.money = faction.money - bdesign.cost;
+                    command.turnsLeft--;
+                    if (!(command.turnsLeft === 0)) return [3 /*break*/, 2];
                     markCommandDone(command);
-                    var system = getSystemFromGame(game, command.targetSystem);
+                    system = getSystemFromGame(game, command.targetSystem);
                     system.buildings.push(fBuildingUtils_1.createBuildingFromDesign(bdesign));
-                    return updateFactionInGame(updateSystemInGame(game, system), faction);
-                }
-                command.save = true;
-                return updateFactionInGame(game, faction);
+                    return [4 /*yield*/, createNewReport({
+                            id: "",
+                            factionIds: [system.ownerFactionId],
+                            gameId: game.id,
+                            systemId: system.id,
+                            text: bdesign.name + " built in " + system.name,
+                            title: bdesign.name + " built in " + system.name,
+                            turn: game.turn,
+                            type: fReport_1.DetailReportType.System
+                        }, firestore)];
+                case 1:
+                    report = _a.sent();
+                    addReportToSystem(game, system, fReport_1.DetailReportType.System, [system.ownerFactionId], report.id);
+                    return [2 /*return*/, updateFactionInGame(updateSystemInGame(game, system), faction)];
+                case 2:
+                    command.save = true;
+                    return [2 /*return*/, updateFactionInGame(game, faction)];
+                case 3: return [3 /*break*/, 5];
+                case 4:
+                    command.turnsLeft--;
+                    // Finish building
+                    if (command.turnsLeft === 0) {
+                        system = getSystemFromGame(game, command.targetSystem);
+                        system.buildings.push(fBuildingUtils_1.createBuildingFromDesign(bdesign));
+                        markCommandDone(command);
+                        return [2 /*return*/, updateSystemInGame(game, system)];
+                    }
+                    else {
+                        command.save = true;
+                    }
+                    _a.label = 5;
+                case 5: return [2 /*return*/, __assign({}, game)];
             }
-            // If the cannot build the building just do not execute this command
-            //TODO: Add info to turn report about this. When turn reports exist...
-        }
-        else {
-            command.turnsLeft--;
-            // Finish building
-            if (command.turnsLeft === 0) {
-                var system = getSystemFromGame(game, command.targetSystem);
-                system.buildings.push(fBuildingUtils_1.createBuildingFromDesign(bdesign));
-                markCommandDone(command);
-                return updateSystemInGame(game, system);
-            }
-            else {
-                command.save = true;
-            }
-        }
-    }
-    return __assign({}, game);
+        });
+    });
 }
 function processSysteDefenseCommand(command, game) {
     var system = getSystemFromGame(game, command.targetSystem);
@@ -400,40 +555,93 @@ function getUnitFromGame(game, unitId) {
     }
     return unit;
 }
-function resolveCombat(game, origCombat) {
-    if (origCombat.system === null) {
-        throw new Error("Combat cannot happen outside of a system, the null is only used in testing needs to be removed");
-    }
-    var factionIds = origCombat.units.reduce(function (fids, u) {
-        if (!fids.has(u.factionId)) {
-            fids.add(u.factionId);
-        }
-        return fids;
-    }, new Set());
-    var combat = spaceCombatMain(game, origCombat.units, origCombat.system);
-    var destroyedUnits = origCombat.units
-        .filter(function (ou) {
-        var isAlive = combat.units.find(function (au) { return au.id === ou.id; });
-        if (!isAlive) {
-            return true;
-        }
-        return false;
-    })
-        .map(function (u) { return u.id; });
-    game.units = game.units.reduce(function (units, unit) {
-        if (destroyedUnits.includes(unit.id))
-            return units;
-        var cunit = combat.units.find(function (au) { return au.id === unit.id; });
-        if (cunit) {
-            units.push(cunit);
-        }
-        else {
-            units.push(unit);
-        }
-        return units;
-    }, []);
-    return addReportToSystem(game, origCombat.system, fModels_1.ReportType.COMBAT, Array.from(factionIds), ["Combat occured"]);
-    // return updateSystemInGame(game, system);
+function createNewReport(report, firestore) {
+    return __awaiter(this, void 0, void 0, function () {
+        var docRef;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, firestore.collection("Reports").add(report)];
+                case 1:
+                    docRef = _a.sent();
+                    report.id = docRef.id;
+                    return [4 /*yield*/, firestore
+                            .collection("Reports")
+                            .doc(report.id)
+                            .set(__assign({}, report))];
+                case 2:
+                    _a.sent();
+                    return [2 /*return*/, report];
+            }
+        });
+    });
+}
+function resolveCombat(game, origCombat, firestore) {
+    return __awaiter(this, void 0, void 0, function () {
+        var factionIds, combat, destroyedUnits, report, docRef;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (origCombat.system === null) {
+                        throw new Error("Combat cannot happen outside of a system, the null is only used in testing needs to be removed");
+                    }
+                    factionIds = origCombat.units.reduce(function (fids, u) {
+                        if (!fids.has(u.factionId)) {
+                            fids.add(u.factionId);
+                        }
+                        return fids;
+                    }, new Set());
+                    combat = spaceCombatMain(game, origCombat.units, origCombat.system);
+                    destroyedUnits = origCombat.units
+                        .filter(function (ou) {
+                        var isAlive = combat.units.find(function (au) { return au.id === ou.id; });
+                        if (!isAlive) {
+                            return true;
+                        }
+                        return false;
+                    })
+                        .map(function (u) { return u.id; });
+                    game.units = game.units.reduce(function (units, unit) {
+                        if (destroyedUnits.includes(unit.id))
+                            return units;
+                        var cunit = combat.units.find(function (au) { return au.id === unit.id; });
+                        if (cunit) {
+                            units.push(cunit);
+                        }
+                        else {
+                            units.push(unit);
+                        }
+                        return units;
+                    }, []);
+                    report = convertSpaceCombatToCombatReport(game, origCombat, combat);
+                    return [4 /*yield*/, firestore.collection("Reports").add(report)];
+                case 1:
+                    docRef = _a.sent();
+                    report.id = docRef.id;
+                    return [4 /*yield*/, firestore
+                            .collection("Reports")
+                            .doc(report.id)
+                            .set(__assign({}, report))];
+                case 2:
+                    _a.sent();
+                    return [2 /*return*/, addReportToSystem(game, origCombat.system, fReport_1.DetailReportType.Combat, Array.from(factionIds), report.id)];
+            }
+        });
+    });
+}
+function convertSpaceCombatToCombatReport(game, origCombat, combat) {
+    var report = {
+        id: "",
+        gameId: game.id,
+        systemId: origCombat.system.id,
+        title: "Combat Report!",
+        turn: game.turn,
+        type: fReport_1.DetailReportType.Combat,
+        factionIds: game.factions.map(function (fm) { return fm.id; }),
+        rounds: combat.roundLog,
+        units: combat.units,
+        origUnits: origCombat.units
+    };
+    return report;
 }
 function updateSystemInGame(game, updatedSystem) {
     game.systems = game.systems.reduce(function (systems, sys) {
@@ -465,12 +673,12 @@ function updateFactionInGame(game, faction) {
     });
     return __assign({}, game);
 }
-function addReportToSystem(game, system, type, factionIds, texts) {
+function addReportToSystem(game, system, type, factionIds, reportId) {
     system.reports.push({
         factions: factionIds,
         turn: game.turn,
         type: type,
-        text: texts
+        reportId: reportId
     });
     return updateSystemInGame(game, system);
 }
@@ -548,7 +756,8 @@ function spaceCombatPostCombat(combat) {
             fGeneralUtils_1.mapAdd(fightersPerFaction, s.factionId, 1);
         }
     });
-    combat.units = combat.units.map(function (su) {
+    combat.units = combat.units
+        .map(function (su) {
         su.shields = su.shieldsMax;
         su.experience += combat.round;
         if (su.fightersMax > 0) {
@@ -565,7 +774,8 @@ function spaceCombatPostCombat(combat) {
             }
         }
         return su;
-    }).filter(function (s) { return s.type !== fUnits_1.SHIPCLASS.FIGHTER; });
+    })
+        .filter(function (s) { return s.type !== fUnits_1.SHIPCLASS.FIGHTER; });
     return __assign({}, combat);
 }
 exports.spaceCombatPostCombat = spaceCombatPostCombat;
@@ -638,8 +848,8 @@ function spaceCombatAttackChooseTarget(combat, attacker, weapon, game) {
                 if (newDmgPot < 0) {
                     return t;
                 }
-                var dmgPotValue = newDmgPot > 150 ? -1 : Math.round((newDmgPot) / 10);
-                var oldDmgPotValue = oldDmgPot > 150 ? -1 : Math.round((oldDmgPot) / 10);
+                var dmgPotValue = newDmgPot > 150 ? -1 : Math.round(newDmgPot / 10);
+                var oldDmgPotValue = oldDmgPot > 150 ? -1 : Math.round(oldDmgPot / 10);
                 points += dmgPotValue > oldDmgPotValue ? 1 : 0;
                 // console.log("\t", pos.typeClassName, pos.name, hitChanceValue, dmgPotValue, points);
                 var valueO = oldHitChance / 10 + oldDmgPot;

@@ -243,6 +243,7 @@ const GameView: FC = () => {
 //     return <CombatViewer combatReport={report} />;
 // };
 
+
 export default GameView;
 
 // function generateFleetForTargetSize(location: Coordinates, factionId: string, size: number): ShipUnit[] {

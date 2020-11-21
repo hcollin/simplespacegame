@@ -181,7 +181,7 @@ function runTurnProcessor(gameId) {
                     _b.label = 7;
                 case 7:
                     _b.trys.push([7, 10, , 11]);
-                    return [4 /*yield*/, turnProcessor_1.processTurn(game, turnCommands)];
+                    return [4 /*yield*/, turnProcessor_1.processTurn(game, turnCommands, db)];
                 case 8:
                     _a = _b.sent(), newGame = _a[0], comms = _a[1];
                     // console.log("new turn: ", newGame.turn, GameState[newGame.state]);

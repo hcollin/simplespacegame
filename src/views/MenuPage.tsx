@@ -8,6 +8,7 @@ import { FactionModel, GameModel, GameState } from "../models/Models";
 import { doCreateDraftGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import ReplayIcon from '@material-ui/icons/Replay';
+// import { asyncMapForeach } from "../utils/generalUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -150,6 +151,8 @@ const MenuPage: FC = () => {
 
     // rndNames.sort();
 
+
+
     const isDev = ENV === "development";
     return (
         <MenuPageContainer title="Frost Galaxy">
@@ -277,6 +280,8 @@ const MenuPage: FC = () => {
             )}
 
             <h3>Test area</h3>
+
+
 
             {/* <div style={{display: "flex", flexWrap: "wrap"}}>{rndNames.map((n: string, i: number) => <p key={i} style={{width: "15rem", margin: "0.25rem 0", padding: 0}}>{n}</p>)}</div> */}
 

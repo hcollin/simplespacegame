@@ -304,7 +304,12 @@ const SystemView: FC = () => {
     }
 
     function close() {
-        setStar(null);
+        if(buildingView === "") {
+            setStar(null);
+        } else {
+            setBuildingView("");
+        }
+        
     }
 
     function buildBuilding(buildingDesign: BuildingDesign) {
