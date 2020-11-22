@@ -152,7 +152,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         buildTime: 3,
         cost: 20,
         description: "Provides +3 research point per turn",
-        keywords: [TECHIDS.EfficientBur],
+        keywords: [],
         minEconomy: 4,
         minIndustry: 0,
         minWelfare: 2,
@@ -283,11 +283,6 @@ const DATABUILDINGS: BuildingDesign[] = [
         maintenanceCost: 10,
         score: 0,
     },
-    
-    
-    
-   
 ];
-
 
 export { DATABUILDINGS };

@@ -2,6 +2,7 @@ import { buildingArcology, buildingBioDome, buildingBunkers, buildingCoreMine, b
 import { Building } from "../models/Buildings";
 import { Coordinates, GameModel, SystemKeyword, SystemModel } from "../models/Models";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
+import { techAlternativePros, techMineralPros } from "../tech/businessTech";
 import { getSystemResearchPointGeneration } from "./factionUtils";
 import { inSameLocation } from "./locationUtils";
 
@@ -48,14 +49,17 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
 }
 
 export function getStarIndustryMax(star: SystemModel, game: GameModel): number {
-	// const faction = getFactionFromArrayById(game.factions, star.ownerFactionId);
+	const faction = getFactionFromArrayById(game.factions, star.ownerFactionId);
 	let def = 5;
 	if (star.keywords.includes(SystemKeyword.HOSTILE)) def = 7;
 	if (star.keywords.includes(SystemKeyword.MINERALRICH)) def = 6;
 	if (star.keywords.includes(SystemKeyword.MINERALRARE)) def = 6;
 	if (star.keywords.includes(SystemKeyword.GAIA)) def = 4;
 	if (star.keywords.includes(SystemKeyword.MINERALPOOR)) def = 3;
-
+	if(faction){
+		def += techMineralPros(faction, star);
+		def += techAlternativePros(faction, star);
+	}
 	return def;
 }
 
@@ -77,11 +81,14 @@ export function getStarDefenceMax(star: SystemModel, game: GameModel): number {
 }
 
 export function getStarWelfareMax(star: SystemModel, game: GameModel): number {
-	// const faction = getFactionFromArrayById(game.factions, star.ownerFactionId);
+	const faction = getFactionFromArrayById(game.factions, star.ownerFactionId);
 	let def = 5;
 	if (star.keywords.includes(SystemKeyword.NATIVES)) def = 6;
 	if (star.keywords.includes(SystemKeyword.GAIA)) def = 7;
 	if (star.keywords.includes(SystemKeyword.HOSTILE)) def = 1;
+	if(faction){
+		def += techAlternativePros(faction, star);
+	}
 	return def;
 }
 

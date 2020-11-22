@@ -57,14 +57,14 @@ export enum TECHIDS {
     HypTheory = "T-B02",
     GeneEngine = "T-B03",
     AntimatterCon = "T-B04",
-}
+};
 
 export const DATATECHNOLOGY: Technology[] = [
 
     {
 		id: TECHIDS.AdvRobotics,
 		fieldreqs: [
-            [TechnologyField.INFORMATION, 80],
+            [TechnologyField.BUSINESS, 80],
             [TechnologyField.INFORMATION, 80],
 		],
 		techprereq: [],
@@ -101,7 +101,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		description: "Worth 5 Victory points",
     },
 
-	{
+	{//DONE
 		id: TECHIDS.IonEngines,
 		fieldreqs: [
 			[TechnologyField.CHEMISTRY, 5],
@@ -111,7 +111,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Ion Engines",
 		description: "Gain +1 speed to all units",
 	},
-	{
+	{//DONE
 		id: TECHIDS.WarpEngines,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 20],
@@ -125,7 +125,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		description: "Gain +3 speed to all units",
 	},
 
-	{
+	{//DONE
 		id: TECHIDS.ManouveringJets1,
 		fieldreqs: [
 			[TechnologyField.INFORMATION, 10],
@@ -135,7 +135,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Manouvering Jets 1",
 		description: "The agility of each ship is increased by 5%",
 	},
-	{
+	{//DONE
 		id: TECHIDS.ManouveringJets2,
 		fieldreqs: [
 			[TechnologyField.CHEMISTRY, 40],
@@ -145,7 +145,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Manouvering Jets 2",
 		description: "The agility of each ship is increased by 15%",
 	},
-	{
+	{//DONE
 		id: TECHIDS.ManouveringJets3,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 40],
@@ -156,14 +156,14 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Manouvering Jets 3",
 		description: "The agility of each ship is increased by 25%",
 	},
-	{
+	{//DONE
 		id: TECHIDS.TargetingComp1,
 		fieldreqs: [[TechnologyField.INFORMATION, 20]],
 		techprereq: [],
 		name: "Targeting computers I",
 		description: "Gain +5 for base attack accuracy",
 	},
-	{
+	{//DONE
 		id: TECHIDS.TargetingComp2,
 		fieldreqs: [
 			[TechnologyField.INFORMATION, 80],
@@ -173,7 +173,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Targeting computers II",
 		description: "Gain additional 5 for base attack accuracy",
 	},
-	{
+	{//DONE
 		id: TECHIDS.TargetingComp3,
 		fieldreqs: [
 			[TechnologyField.INFORMATION, 160],
@@ -183,7 +183,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Targeting computers III",
 		description: "Gain additional +10 for base attack accuracy",
 	},
-	{
+	{//DONE
 		id: TECHIDS.HeavyRounds1,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 10],
@@ -193,7 +193,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Heavy Rounds",
 		description: "The damage output of all Kinetic Weapons is increased by 5%",
 	},
-	{
+	{//DONE
 		id: TECHIDS.HeavyRounds2,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 40],
@@ -204,7 +204,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Heavy Rounds II",
 		description: "The damage output of all Kinetic Weapons is increased by 10% more",
 	},
-	{
+	{//DONE
 		id: TECHIDS.HeavyRounds3,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 80],
@@ -215,7 +215,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Heavy Rounds III",
 		description: "The damage output of all Kinetic Weapons is increased by 10% more",
 	},
-	{
+	{//DONE
 		id: TECHIDS.FocusBeam1,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 5],
@@ -226,7 +226,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Focus Beam",
 		description: "The damage output of Energy weapons is increased by 5%",
 	},
-	{
+	{//DONE
 		id: TECHIDS.FocusBeam2,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 5],
@@ -238,7 +238,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Focus Beam",
 		description: "The damage output of Energy weapons is increased by 10% more",
 	},
-	{
+	{//DONE
 		id: TECHIDS.FocusBeam3,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 5],
@@ -250,7 +250,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Focus Beam",
 		description: "The damage output of Energy weapons is increased by 10% more",
 	},
-	{
+	{// DONEish
 		id: TECHIDS.PowerShields,
 		fieldreqs: [
 			[TechnologyField.INFORMATION, 40],
@@ -260,7 +260,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Power Shields",
 		description: "Shield regeneration increased by 25%",
 	},
-	{
+	{// FN DONE
 		id: TECHIDS.AutoRepBots1,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 20],
@@ -271,7 +271,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Auto Repair Bots",
 		description: "Ship will automatically repair their damage by 10% of their hull value each turn.",
 	},
-	{
+	{// FN DONE
 		id: TECHIDS.AutoRepBots2,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 80],
@@ -280,9 +280,9 @@ export const DATATECHNOLOGY: Technology[] = [
 		],
 		techprereq: [TECHIDS.AutoRepBots1, TECHIDS.AdvRobotics],
 		name: "Auto Repair Bots II",
-		description: "Ships repair 3 points worth of damage at the end of each combat round",
+		description: "Ships repairs damage between combat rounds. The amount depends on the ship size.",
     },
-    {
+    {//DONE
 		id: TECHIDS.Marketing,
 		fieldreqs: [
 			[TechnologyField.BUSINESS, 160],
@@ -292,7 +292,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Hyper Space Marketing",
 		description: "Gain 1 Money per 5 total economy",
 	},
-	{
+	{ // FN DONE
 		id: TECHIDS.InitEcoBoost,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 10],
@@ -303,7 +303,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Initial Economy Boost",
 		description: "Each planet will automatically generate +1 money each turn",
 	},
-	{
+	{ 
 		id: TECHIDS.MerchGuilds,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 20],
@@ -312,7 +312,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		],
 		techprereq: [],
 		name: "Merchant Guilds",
-		description: "Each trade aggreement will gain you +2 money per turn, even if you are the one paying.",
+		description: "Each trade agreement will gain you +2 money per turn, even if you are the one paying.",
 	},
 	{
 		id: TECHIDS.MineralPros,

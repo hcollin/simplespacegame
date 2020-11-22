@@ -1,3 +1,4 @@
+import { TECHIDS } from "../data/dataTechnology";
 import { Building } from "./Buildings";
 import { Trade } from "./Communication";
 import { CombatRoundReport, DetailReportType } from "./Report";
@@ -125,21 +126,20 @@ export interface FactionStyle {
 }
 
 export enum TechnologyField {
-    
     CHEMISTRY = "Chemistry",
     PHYSICS = "Physics",
     BIOLOGY = "Biology",
-    
-    BUSINESS = "Business",
+    BUSINESS = "Economy",
     MATERIAL = "Material",
     INFORMATION = "Information",
 }
 
 
+
 export interface Technology {
-    id: string;
+    id: TECHIDS;
     fieldreqs: [TechnologyField, number][];
-    techprereq: string[];
+    techprereq: TECHIDS[];
     name: string;
     description: string;
 }
