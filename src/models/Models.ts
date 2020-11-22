@@ -131,7 +131,7 @@ export enum TechnologyField {
     BIOLOGY = "Biology",
     
     BUSINESS = "Business",
-    SOCIOLOGY = "Social",
+    MATERIAL = "Material",
     INFORMATION = "Information",
 }
 

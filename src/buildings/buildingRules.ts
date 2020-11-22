@@ -21,7 +21,7 @@ export function buildingUniversity(star: SystemModel): number {
 
 
 export function buildingRobotWorkers(star: SystemModel): number {
-    if(starHasBuilding(star, BUILDINGTYPE.AUTOSTARDOCK)) {
+    if(starHasBuilding(star, BUILDINGTYPE.ROBOTWORKERS)) {
         return 1.25;
     }
     return 1;
@@ -35,7 +35,7 @@ export function buildingCommandCenter(star: SystemModel): number {
 }
 
 export function buildingArcology(star: SystemEconomy): SystemEconomy {
-    if(starHasBuilding(star, BUILDINGTYPE.AUTOSTARDOCK)) {
+    if(starHasBuilding(star, BUILDINGTYPE.ROBOTWORKERS)) {
         star.economyMax += 5;
         star.industryMax += 5;
         star.welfareMax += 5;        

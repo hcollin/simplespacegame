@@ -2,6 +2,7 @@ import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import React, { FC } from "react";
 import { DATATECHNOLOGY } from "../data/dataTechnology";
 import { FactionModel, Technology, TechnologyField } from "../models/Models";
+import { missingResearchPoints } from "../utils/techUtils";
 import { TechFieldIcon } from "../views/subviews/ScienceView";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -17,12 +18,31 @@ const useStyles = makeStyles((theme: Theme) =>
             background: "#333D",
             userSelect: "none",
 
+            "&.size-1": {
+                minHeight: "8rem",
+            },
+            "&.size-2": {
+                minHeight: "8rem",
+            },
+            "&.size-3": {
+                minHeight: "8rem",
+            },
+            "&.size-4": {
+                minHeight: "10rem",
+            },
+            "&.size-5": {
+                minHeight: "12rem",
+            },
+            "&.size-6": {
+                minHeight: "14rem",
+            },
+
             "& > h1": {
                 fontSize: "1rem",
                 position: "relative",
                 padding: "0.25rem 0.5rem",
                 margin: 0,
-                width: "calc(100% - 5rem)",
+                width: "calc(100% - 5.5rem)",
                 background: "#CDF2",
                 borderBottom: "solid 2px #0006",
             },
@@ -52,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
             "& > div.fieldreqs": {
                 top: "0",
                 right: "0",
-                width: "5rem",
+                width: "5.5rem",
                 display: "flex",
                 position: "absolute",
                 alignItems: "flex-end",
@@ -65,12 +85,22 @@ const useStyles = makeStyles((theme: Theme) =>
 
                 "& > div": {
                     marginBottom: "0.25rem",
-                    padding: "0 0.25rem 0 0",
+                    padding: "0 0.25rem",
                     fontWeight: "bold",
                     fontSize: "1.5rem",
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    
                     "& > img": {
                         height: "1.5rem",
                     },
+
+                    "&.missing": {
+                        color: "#F44A",
+                    }
                 },
             },
         },
@@ -82,6 +112,7 @@ interface TechCardProps {
     faction: FactionModel;
     className?: string;
     onClick?: (tech: Technology) => void;
+    highlightMissing?: boolean;
 }
 
 const TechCard: FC<TechCardProps> = (props) => {
@@ -102,15 +133,19 @@ const TechCard: FC<TechCardProps> = (props) => {
         }
     }
 
+    const missing = props.highlightMissing ? missingResearchPoints(props.tech, props.faction) : new Map<TechnologyField, number>();
+    
+
     return (
-        <div className={`${classes.root} ${props.className || ""}`} onClick={click}>
+        <div className={`${classes.root} size-${props.tech.fieldreqs.length} ${props.className || ""}`} onClick={click}>
             <h1>{props.tech.name}</h1>
             <p>{props.tech.description}</p>
             {prereqtechNames.length > 0 && <div className="prereqtech">{prereqtechNames.join(", ")}</div>}
             <div className="fieldreqs">
                 {props.tech.fieldreqs.map((req: [TechnologyField, number]) => {
+                    const isMissing = missing.has(req[0]);
                     return (
-                        <div>
+                        <div className={`${missing ? "missing": ""}`}>
                             <TechFieldIcon key={req[0]} field={req[0]} /> {req[1]}
                         </div>
                     );

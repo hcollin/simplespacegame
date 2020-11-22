@@ -51,7 +51,7 @@ export function createNewFaction(): FactionModel {
         money: 3,
         technologyFields: [
             {field: TechnologyField.BIOLOGY, points: 0, priority: 0},
-            {field: TechnologyField.SOCIOLOGY, points: 0, priority: 0},
+            {field: TechnologyField.MATERIAL, points: 0, priority: 0},
             {field: TechnologyField.BUSINESS, points: 0, priority: 0},
             {field: TechnologyField.INFORMATION, points: 0, priority: 0},
             {field: TechnologyField.CHEMISTRY, points: 0, priority: 0},

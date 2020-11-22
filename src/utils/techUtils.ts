@@ -5,32 +5,41 @@ import { Technology, FactionModel, TechnologyField, FactionTechSetting } from ".
 
 export function canAffordTech(tech: Technology, faction: FactionModel): boolean {
 
-    let canAfford: boolean = true;
+    const missingTech = missingResearchPoints(tech, faction);
+    const allTechReqs = techPrerequisitesFulfilled(tech, faction);
+
+    return missingTech.size === 0 && allTechReqs === true;
+}
+
+export function missingResearchPoints(tech: Technology, faction: FactionModel): Map<TechnologyField, number> {
+
+    const missing = new Map<TechnologyField, number>();
 
     tech.fieldreqs.forEach((val: [TechnologyField, number]) => {
-
         const field = faction.technologyFields.find((f: FactionTechSetting) => f.field === val[0]);
+        
         if(!field) {
             throw new Error(`Unknown technology requirement field ${val[0]}`);
         }
-        
+
         if(field.points < val[1]) {
-            canAfford = false;
+            missing.set(field.field, field.points - val[1]);
         }
-        console.log(tech.name, field.field, field.points, val[1], canAfford);
-        
     });
 
-    if(tech.techprereq.length > 0 && canAfford) {
+    return missing;
+}
+
+export function techPrerequisitesFulfilled(tech: Technology, faction: FactionModel): boolean {
+    let hasAllTech = true;
+    if(tech.techprereq.length > 0 ) {
         tech.techprereq.forEach((tid: string) => {
             if(!faction.technology.includes(tid)) {
-                canAfford = false;
+                hasAllTech = false;
             }
         })
     }
-
-    return canAfford;
-
+    return hasAllTech;
 }
 
 export function factionPaysForTech(fields: FactionTechSetting[], tech: Technology): FactionTechSetting[] {
