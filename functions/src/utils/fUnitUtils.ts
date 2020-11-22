@@ -2,7 +2,7 @@ import DATASHIPS, { shipNameGenerator, SHIPWEAPONSPECIAL } from "../data/fDataSh
 import { TECHIDS } from "../data/fDataTechnology";
 import { FactionModel, Coordinates } from "../models/fModels";
 import { ShipDesign, ShipUnit, ShipWeapon } from "../models/fUnits";
-import { techEvasionEngine, techHeavyRounds, techIonEngines, techTargetingComputerOne, techTargetingComputerThree, techTargetingComputerTwo, techTimeslipPrediction, techWarpEngines } from "../tech/fShipTech";
+import { techHeavyRounds, techIonEngines, techTargetingComputerOne, techTargetingComputerThree, techTargetingComputerTwo, techWarpEngines } from "../tech/fShipTech";
 import { rndId } from "./fRandUtils";
 // import { getFactionById } from "./factionJokiUtils";
 
@@ -77,7 +77,7 @@ export function getShipShieldsReg(ship: ShipDesign, faction?: FactionModel): num
 
 export function getShipAgility(ship: ShipDesign, faction?: FactionModel): number {
     if (!faction) return ship.agility;
-    return techTimeslipPrediction(faction, techEvasionEngine(faction, ship.agility));
+    return ship.agility;
 }
 
 

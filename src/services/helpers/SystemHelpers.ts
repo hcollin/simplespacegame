@@ -150,11 +150,6 @@ export function getSystemById(game: GameModel, systemId: string): SystemModel | 
     return game.systems.find((sm: SystemModel) => sm.id === systemId);
 }
 
-export function getSystemByCoordinates(game: GameModel, coords: Coordinates): SystemModel | undefined {
-    // const game = joki.service.getState("GameService") as GameModel;
-    return game.systems.find((sm: SystemModel) => inSameLocation(sm.location, coords));
-}
-
 
 export function systemDescriptionGenerator(star: SystemModel): string{
 

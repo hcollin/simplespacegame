@@ -1,6 +1,8 @@
+import { v4 } from "uuid";
+import { buildBuildingRules } from "../buildings/buildingRules";
 import { BUILDINGTYPE, DATABUILDINGS } from "../data/dataBuildings";
 import { TECHIDS } from "../data/dataTechnology";
-import { BuildingDesign, BuildingUnderConstruction } from "../models/Buildings";
+import { Building, BuildingDesign, BuildingUnderConstruction } from "../models/Buildings";
 import { BuildBuildingCommand, Command, CommandType } from "../models/Commands";
 import { FactionModel, GameModel, SystemModel } from "../models/Models";
 
@@ -18,8 +20,7 @@ export function buildingCanBeBuiltOnSystem(building: BuildingDesign, star: Syste
         }
     });
 
-
-    return true;
+    return buildBuildingRules(star, building.type);
 }
 
 export function getBuildingTime(buildingType: BUILDINGTYPE): number {
@@ -54,4 +55,14 @@ export function getBuildingUnderConstruction(commands: Command[], star: SystemMo
     }
 
     return {...design, turnsLeft: bCmd.turnsLeft, cmdId: bCmd.id, cancellable: bCmd.turn === game.turn };
+}
+
+
+export function createBuildingFromDesign(bdesign: BuildingDesign): Building {
+    return {...bdesign, id: v4()}
+}
+
+
+export function systemHasBuilding(star: SystemModel, bt: BUILDINGTYPE): boolean {
+    return star.buildings.find((b: Building) => b.type === bt) !== undefined;
 }

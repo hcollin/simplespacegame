@@ -1,7 +1,7 @@
 import { SHIPWEAPONSPECIAL } from "../data/dataShips";
 import { TECHIDS } from "../data/dataTechnology";
 import { FactionModel, SystemModel } from "../models/Models";
-import { ShipDesign, ShipUnit, ShipWeapon } from "../models/Units";
+import { SHIPCLASS, ShipDesign, ShipUnit, ShipWeapon } from "../models/Units";
 import { techEvasionEngine, techHeavyRounds, techIonEngines, techTargetingComputerOne, techTargetingComputerThree, techTargetingComputerTwo, techTimeslipPrediction, techWarpEngines } from "../tech/shipTech";
 // import { getFactionById } from "./factionJokiUtils";
 
@@ -137,6 +137,7 @@ export function getFactionAdjustedUnit(faction: FactionModel, origUnit: ShipUnit
 export function shipCanBeBuiltOnSystemByFaction(ship: ShipDesign, faction: FactionModel, star: SystemModel): boolean {
     if(ship.cost > faction.money) return false;
     if(ship.minIndustry > star.industry) return false;
+    if(ship.type === SHIPCLASS.FIGHTER) return false;
     return true;
 }
 

@@ -55,6 +55,8 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 };
 exports.__esModule = true;
 exports.damagePotential = exports.getHitChance = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatInflictDamage = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatPostCombat = exports.spaceCombatPreCombat = exports.spaceCombatMain = exports.processTurn = void 0;
+var fBuildingRules_1 = require("./buildings/fBuildingRules");
+var fDataBuildings_1 = require("./data/fDataBuildings");
 var fDataShips_1 = require("./data/fDataShips");
 var fDataTechnology_1 = require("./data/fDataTechnology");
 var functionConfigs_1 = require("./functionConfigs");
@@ -68,6 +70,7 @@ var fGeneralUtils_1 = require("./utils/fGeneralUtils");
 var fLocationUtils_1 = require("./utils/fLocationUtils");
 var fMathUtils_1 = require("./utils/fMathUtils");
 var fRandUtils_1 = require("./utils/fRandUtils");
+var fSystemUtils_1 = require("./utils/fSystemUtils");
 var fTechUtils_1 = require("./utils/fTechUtils");
 var fUnitUtils_1 = require("./utils/fUnitUtils");
 var fWeaponUtils_1 = require("./utils/fWeaponUtils");
@@ -101,6 +104,8 @@ function processTurn(origGame, commands, firestore) {
                 case 4:
                     // Process economy
                     game = processEconomy(game);
+                    // Process Repairs
+                    game = processRepairs(game);
                     // Process Research
                     game = processResearch(game);
                     // Win Conditions
@@ -255,41 +260,66 @@ function processInvasion(oldGame, firestore) {
                     invadedSystems = [];
                     _a = oldGame;
                     return [4 /*yield*/, fGeneralUtils_1.asyncArrayMap(oldGame.systems, function (sm) { return __awaiter(_this, void 0, void 0, function () {
-                            var factionTroopCount;
+                            var factionTroopCount, invasionTexts;
                             var _this = this;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         factionTroopCount = new Map();
+                                        invasionTexts = [];
                                         oldGame.units.forEach(function (um) {
                                             if (fLocationUtils_1.inSameLocation(sm.location, um.location) && sm.ownerFactionId !== um.factionId) {
-                                                fGeneralUtils_1.mapAdd(factionTroopCount, um.factionId, um.troops);
+                                                var attackingFaction = fFactionUtils_1.getFactionFromArrayById(game.factions, um.factionId);
+                                                if (fBuildingUtils_1.systemHasBuilding(sm, fDataBuildings_1.BUILDINGTYPE.ORBCANNONS)) {
+                                                    var afterOrbitalCannon = fBuildingRules_1.buildingOrbitalCannon(sm, um.troops);
+                                                    invasionTexts.push("Orbital cannons shot down " + (um.troops - afterOrbitalCannon) + " " + attackingFaction.name + " troops while they were landing.");
+                                                    invasionTexts.push(afterOrbitalCannon + " " + attackingFaction.name + "  troops started the invasion");
+                                                    if (afterOrbitalCannon <= 0) {
+                                                        invasionTexts.push("Orbital cannon shot down all " + attackingFaction.name + " troops");
+                                                    }
+                                                    fGeneralUtils_1.mapAdd(factionTroopCount, um.factionId, afterOrbitalCannon);
+                                                }
+                                                else {
+                                                    invasionTexts.push(um.troops + " " + attackingFaction.name + "  troops started the invasion");
+                                                    fGeneralUtils_1.mapAdd(factionTroopCount, um.factionId, um.troops);
+                                                }
                                             }
                                         });
                                         if (!(factionTroopCount.size > 0)) return [3 /*break*/, 2];
                                         return [4 /*yield*/, fGeneralUtils_1.asyncMapForeach(factionTroopCount, function (troops, factionId) { return __awaiter(_this, void 0, void 0, function () {
-                                                var report;
+                                                var defenses, attackingFaction, ownerFaction, ownerName, report;
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
-                                                            if (!(troops > sm.defense)) return [3 /*break*/, 2];
-                                                            sm.ownerFactionId = factionId;
-                                                            invadedSystems.push(sm);
+                                                            defenses = fSystemUtils_1.getSystemDefence(sm);
+                                                            attackingFaction = fFactionUtils_1.getFactionFromArrayById(game.factions, factionId);
+                                                            ownerFaction = fFactionUtils_1.getFactionFromArrayById(game.factions, sm.ownerFactionId);
+                                                            ownerName = ownerFaction ? ownerFaction.name : "Neutral faction";
+                                                            invasionTexts.push(ownerName + " is defending with " + defenses + " defense value.");
+                                                            if (troops > defenses) {
+                                                                sm.ownerFactionId = factionId;
+                                                                invadedSystems.push(sm);
+                                                                invasionTexts.push(attackingFaction.name + " succesfully invades " + sm.name + " from " + ownerName);
+                                                            }
+                                                            else {
+                                                                invasionTexts.push("Invasion of " + sm.name + " by " + attackingFaction.name + " from " + ownerName + " has failed!");
+                                                            }
                                                             return [4 /*yield*/, createNewReport({
                                                                     id: "",
-                                                                    factionIds: [sm.ownerFactionId],
+                                                                    factionIds: [sm.ownerFactionId, factionId],
                                                                     gameId: game.id,
                                                                     systemId: sm.id,
-                                                                    text: sm.name + " has been invaded.",
-                                                                    title: sm.name + " has been invaded.",
+                                                                    invaders: troops,
+                                                                    defenders: defenses,
+                                                                    texts: invasionTexts,
+                                                                    title: "Invasion of " + sm.name,
                                                                     turn: game.turn,
-                                                                    type: fReport_1.DetailReportType.System
+                                                                    type: fReport_1.DetailReportType.Invasion
                                                                 }, firestore)];
                                                         case 1:
                                                             report = _a.sent();
                                                             game = addReportToSystem(game, sm, fReport_1.DetailReportType.System, [sm.ownerFactionId], report.id);
-                                                            _a.label = 2;
-                                                        case 2: return [2 /*return*/];
+                                                            return [2 /*return*/];
                                                     }
                                                 });
                                             }); })];
@@ -358,6 +388,26 @@ function processEconomy(game) {
         return __assign({}, fm);
     });
     return __assign({}, game);
+}
+function processRepairs(oldGame) {
+    var game = __assign({}, oldGame);
+    // Repairing units and fighters
+    game.units = game.units.map(function (unit) {
+        var star = fSystemUtils_1.getSystemByCoordinates(game, unit.location);
+        if (star) {
+            if (star.ownerFactionId === unit.factionId) {
+                if (unit.damage > 0) {
+                    var repairValue = star.industry * unit.sizeIndicator * fBuildingRules_1.buildingRepairStation(star);
+                    unit.damage = repairValue > unit.damage ? 0 : unit.damage - repairValue;
+                }
+                if (unit.fighters < unit.fightersMax) {
+                    unit.fighters = unit.fighters + 1 * fBuildingRules_1.buildingRepairStation(star);
+                }
+            }
+        }
+        return __assign({}, unit);
+    });
+    return game;
 }
 function processCombats(game, firestore) {
     return __awaiter(this, void 0, void 0, function () {
@@ -436,9 +486,13 @@ function processSystemBuildUnitCommand(command, game) {
         var shipDesign = fUnitUtils_1.getDesignByName(command.shipName);
         var system = getSystemFromGame(game, command.targetSystem);
         if (command.turn === game.turn) {
-            if (faction.money >= shipDesign.cost) {
-                faction.money = faction.money - shipDesign.cost;
+            var cost = shipDesign.cost * fBuildingRules_1.buildingRobotWorkers(system);
+            if (faction.money >= cost) {
+                faction.money = faction.money - cost;
                 command.turnsLeft--;
+                if (fBuildingRules_1.buildingDysonSphere(system)) {
+                    command.turnsLeft = 0;
+                }
                 if (command.turnsLeft === 0) {
                     markCommandDone(command);
                     var unit = fUnitUtils_1.createShipFromDesign(shipDesign, command.factionId, system.location);
@@ -451,6 +505,9 @@ function processSystemBuildUnitCommand(command, game) {
         }
         else {
             command.turnsLeft--;
+            if (fBuildingRules_1.buildingDysonSphere(system)) {
+                command.turnsLeft = 0;
+            }
             if (command.turnsLeft === 0) {
                 markCommandDone(command);
                 var unit = fUnitUtils_1.createShipFromDesign(shipDesign, command.factionId, system.location);
@@ -466,47 +523,55 @@ function processSystemBuildUnitCommand(command, game) {
 }
 function processSystemBuildBuildingCommand(command, game, firestore) {
     return __awaiter(this, void 0, void 0, function () {
-        var faction, bdesign, system, report, system;
+        var faction, bdesign, system, cost, system_1, report, system_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     faction = fFactionUtils_1.getFactionFromArrayById(game.factions, command.factionId);
                     if (!faction) return [3 /*break*/, 5];
                     bdesign = fBuildingUtils_1.getBuildingDesignByType(command.buildingType);
+                    system = getSystemFromGame(game, command.targetSystem);
                     if (!(command.turn === game.turn)) return [3 /*break*/, 4];
-                    if (!(faction.money >= bdesign.cost)) return [3 /*break*/, 3];
-                    faction.money = faction.money - bdesign.cost;
+                    cost = bdesign.cost * fBuildingRules_1.buildingRobotWorkers(system);
+                    if (!(faction.money >= cost)) return [3 /*break*/, 3];
+                    faction.money = faction.money - cost;
                     command.turnsLeft--;
+                    if (fBuildingRules_1.buildingDysonSphere(system)) {
+                        command.turnsLeft = 0;
+                    }
                     if (!(command.turnsLeft === 0)) return [3 /*break*/, 2];
                     markCommandDone(command);
-                    system = getSystemFromGame(game, command.targetSystem);
-                    system.buildings.push(fBuildingUtils_1.createBuildingFromDesign(bdesign));
+                    system_1 = getSystemFromGame(game, command.targetSystem);
+                    system_1.buildings.push(fBuildingUtils_1.createBuildingFromDesign(bdesign));
                     return [4 /*yield*/, createNewReport({
                             id: "",
-                            factionIds: [system.ownerFactionId],
+                            factionIds: [system_1.ownerFactionId],
                             gameId: game.id,
-                            systemId: system.id,
-                            text: bdesign.name + " built in " + system.name,
-                            title: bdesign.name + " built in " + system.name,
+                            systemId: system_1.id,
+                            text: bdesign.name + " built in " + system_1.name,
+                            title: bdesign.name + " built in " + system_1.name,
                             turn: game.turn,
                             type: fReport_1.DetailReportType.System
                         }, firestore)];
                 case 1:
                     report = _a.sent();
-                    addReportToSystem(game, system, fReport_1.DetailReportType.System, [system.ownerFactionId], report.id);
-                    return [2 /*return*/, updateFactionInGame(updateSystemInGame(game, system), faction)];
+                    addReportToSystem(game, system_1, fReport_1.DetailReportType.System, [system_1.ownerFactionId], report.id);
+                    return [2 /*return*/, updateFactionInGame(updateSystemInGame(game, system_1), faction)];
                 case 2:
                     command.save = true;
                     return [2 /*return*/, updateFactionInGame(game, faction)];
                 case 3: return [3 /*break*/, 5];
                 case 4:
                     command.turnsLeft--;
+                    if (fBuildingRules_1.buildingDysonSphere(system)) {
+                        command.turnsLeft = 0;
+                    }
                     // Finish building
                     if (command.turnsLeft === 0) {
-                        system = getSystemFromGame(game, command.targetSystem);
-                        system.buildings.push(fBuildingUtils_1.createBuildingFromDesign(bdesign));
+                        system_2 = getSystemFromGame(game, command.targetSystem);
+                        system_2.buildings.push(fBuildingUtils_1.createBuildingFromDesign(bdesign));
                         markCommandDone(command);
-                        return [2 /*return*/, updateSystemInGame(game, system)];
+                        return [2 /*return*/, updateSystemInGame(game, system_2)];
                     }
                     else {
                         command.save = true;
@@ -526,6 +591,15 @@ function processSysteDefenseCommand(command, game) {
 function processFleetMoveCommand(command, game) {
     var newPoint = null;
     var nGame = __assign({}, game);
+    // Warpgate building!
+    if (command.turn === game.turn) {
+        var unit = getUnitFromGame(game, command.unitIds[0]);
+        var startStar = fSystemUtils_1.getSystemByCoordinates(game, unit.location);
+        var endStar = fSystemUtils_1.getSystemByCoordinates(game, command.target);
+        if (fBuildingRules_1.buildingGateway(startStar, endStar, unit.factionId)) {
+            newPoint = endStar.location;
+        }
+    }
     command.unitIds.forEach(function (uid) {
         var unit = getUnitFromGame(game, uid);
         var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, unit.factionId);

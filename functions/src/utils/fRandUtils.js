@@ -15,7 +15,7 @@ exports.rndId = exports.shuffle = exports.reps = exports.grnd = exports.roll = e
  * @param max number
  */
 function rnd(min, max) {
-    return Math.floor(Math.random() * ((max + 1) - min)) + min;
+    return Math.floor(Math.random() * (max + 1 - min)) + min;
 }
 exports.rnd = rnd;
 /**

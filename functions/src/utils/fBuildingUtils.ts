@@ -70,3 +70,8 @@ export function getBuildingUnderConstruction(commands: Command[], star: SystemMo
 export function createBuildingFromDesign(bdesign: BuildingDesign): Building {
     return {...bdesign, id: rndId()}
 }
+
+
+export function systemHasBuilding(star: SystemModel, bt: BUILDINGTYPE): boolean {
+    return star.buildings.find((b: Building) => b.type === bt) !== undefined;
+}

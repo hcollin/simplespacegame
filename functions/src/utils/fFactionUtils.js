@@ -1,6 +1,7 @@
 "use strict";
 exports.__esModule = true;
 exports.getFactionScore = exports.researchPointDistribution = exports.getSystemResearchPointGeneration = exports.researchPointGenerationCalculator = exports.systemExpenses = exports.unitExpenses = exports.getWelfareCommands = exports.commandCountCalculator = exports.expensesCalculator = exports.factionValues = exports.getFactionFromArrayById = void 0;
+var fBuildingRules_1 = require("../buildings/fBuildingRules");
 var fBusinessTech_1 = require("../tech/fBusinessTech");
 function getFactionFromArrayById(factions, id) {
     return factions.find(function (fm) { return fm.id === id; });
@@ -100,11 +101,13 @@ function commandCountCalculator(game, factionId) {
             totalWelfare += star.welfare;
             // 1 bonus command per 5 welfare in this system
             bonusCommands += Math.floor(star.welfare / 5);
+            bonusCommands += fBuildingRules_1.buildingCGaiaProject(star, "COMMAND");
+            bonusCommands += fBuildingRules_1.buildingCommandCenter(star);
         }
     });
     var f = getFactionFromArrayById(game.factions, factionId);
     if (!f)
-        throw new Error("INvalid factionId" + factionId);
+        throw new Error("Invalid factionId" + factionId);
     return getWelfareCommands(f, totalWelfare) + bonusCommands;
 }
 exports.commandCountCalculator = commandCountCalculator;
@@ -141,6 +144,7 @@ function getSystemResearchPointGeneration(sm, faction) {
     sum += Math.floor((sm.industry + sm.defense) / 3);
     sum += Math.floor(sm.economy / 4);
     sum += sm.welfare < welfareCurve.length ? welfareCurve[sm.welfare] : -5;
+    sum += fBuildingRules_1.buildingCGaiaProject(sm, "RESEARCH") + fBuildingRules_1.buildingUniversity(sm);
     return sum;
 }
 exports.getSystemResearchPointGeneration = getSystemResearchPointGeneration;
@@ -197,6 +201,8 @@ function getFactionScore(game, factionId) {
     if (!faction)
         throw new Error("Invalid faction id " + factionId);
     score += faction.technology.length * 2;
+    score += fBuildingRules_1.buildingGalacticSenate(game, faction);
+    // Add technology scores from base research techs
     return score;
 }
 exports.getFactionScore = getFactionScore;

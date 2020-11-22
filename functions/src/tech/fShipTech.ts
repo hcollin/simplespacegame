@@ -38,19 +38,9 @@ export function techTargetingComputerThree(faction: FactionModel): number {
 }
 
 export function techHeavyRounds(faction: FactionModel, damage: number|[number, number]): number|[number, number] {
-    if(!factionHasTechnology(faction, TECHIDS.HeavyRounds)) return damage;
+    if(!factionHasTechnology(faction, TECHIDS.HeavyRounds1)) return damage;
     if(Array.isArray(damage)) {
         return [Math.round(damage[0] * 1.1), Math.round(damage[1] * 1.1)];
     }
     return Math.round(damage * 1.1);
-}
-
-export function techEvasionEngine(faction: FactionModel, agility: number): number {
-    if(!factionHasTechnology(faction, TECHIDS.EvasionEngine)) return agility;
-    return Math.round(agility * 1.1);
-}
-
-export function techTimeslipPrediction(faction: FactionModel, agility: number): number {
-    if(!factionHasTechnology(faction, TECHIDS.PredEvasion)) return agility;
-    return Math.round(agility + 10);
 }

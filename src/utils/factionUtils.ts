@@ -1,4 +1,5 @@
 
+import { buildingCGaiaProject, buildingCommandCenter, buildingGalacticSenate, buildingUniversity } from "../buildings/buildingRules";
 import { Building } from "../models/Buildings";
 import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/Models";
@@ -131,10 +132,13 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
 
             // 1 bonus command per 5 welfare in this system
             bonusCommands += Math.floor(star.welfare / 5);
+
+            bonusCommands += buildingCGaiaProject(star, "COMMAND");
+            bonusCommands += buildingCommandCenter(star);
         }
     });
     const f = getFactionFromArrayById(game.factions, factionId);
-    if (!f) throw new Error(`INvalid factionId${factionId}`);
+    if (!f) throw new Error(`Invalid factionId${factionId}`);
     return getWelfareCommands(f, totalWelfare) + bonusCommands;
 }
 
@@ -175,7 +179,10 @@ export function getSystemResearchPointGeneration(sm: SystemModel, faction: Facti
     sum += Math.floor((sm.industry + sm.defense) / 3);
     sum += Math.floor(sm.economy / 4);
     sum += sm.welfare < welfareCurve.length ? welfareCurve[sm.welfare] : -5;
+    sum += buildingCGaiaProject(sm, "RESEARCH") + buildingUniversity(sm);
+    
     return sum;
+
 }
 
 export function researchPointDistribution(totalPoints: number, faction: FactionModel): number[] {
@@ -241,6 +248,11 @@ export function getFactionScore(game: GameModel, factionId: string): number {
     const faction = getFactionFromArrayById(game.factions, factionId);
     if (!faction) throw new Error(`Invalid faction id ${factionId}`);
     score += faction.technology.length * 2;
+
+    score += buildingGalacticSenate(game, faction);
+
+    // Add technology scores from base research techs
+
 
     return score;
 }

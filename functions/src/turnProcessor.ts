@@ -1,3 +1,12 @@
+import {
+	buildingBunkers,
+	buildingDysonSphere,
+	buildingGateway,
+	buildingOrbitalCannon,
+	buildingRepairStation,
+	buildingRobotWorkers,
+} from "./buildings/fBuildingRules";
+import { BUILDINGTYPE } from "./data/fDataBuildings";
 import DATASHIPS, { SHIPWEAPONSPECIAL } from "./data/fDataShips";
 import { DATATECHNOLOGY } from "./data/fDataTechnology";
 import { COMBAT_MAXROUNDS } from "./functionConfigs";
@@ -15,14 +24,15 @@ import {
 	Coordinates,
 	Report,
 } from "./models/fModels";
-import { CombatReport, CombatRoundStatus, DetailReport, DetailReportType, SystemReport } from "./models/fReport";
+import { CombatReport, CombatRoundStatus, DetailReport, DetailReportType, InvasionReport, SystemReport } from "./models/fReport";
 import { SHIPCLASS, ShipUnit, ShipWeapon, WEAPONTYPE } from "./models/fUnits";
-import { createBuildingFromDesign, getBuildingDesignByType } from "./utils/fBuildingUtils";
+import { createBuildingFromDesign, getBuildingDesignByType, systemHasBuilding } from "./utils/fBuildingUtils";
 import { researchPointGenerationCalculator, researchPointDistribution, factionValues, getFactionFromArrayById } from "./utils/fFactionUtils";
 import { asyncArrayMap, asyncMapForeach, mapAdd } from "./utils/fGeneralUtils";
 import { inSameLocation } from "./utils/fLocationUtils";
 import { travelingBetweenCoordinates } from "./utils/fMathUtils";
 import { rnd, shuffle } from "./utils/fRandUtils";
+import { getSystemByCoordinates, getSystemDefence } from "./utils/fSystemUtils";
 import { canAffordTech, factionPaysForTech } from "./utils/fTechUtils";
 import {
 	getShipSpeed,
@@ -60,6 +70,9 @@ export async function processTurn(origGame: GameModel, commands: Command[], fire
 
 	// Process economy
 	game = processEconomy(game);
+
+	// Process Repairs
+	game = processRepairs(game);
 
 	// Process Research
 	game = processResearch(game);
@@ -225,37 +238,60 @@ async function processInvasion(oldGame: GameModel, firestore: any): Promise<Game
 	oldGame.systems = await asyncArrayMap<SystemModel>(oldGame.systems, async (sm: SystemModel) => {
 		const factionTroopCount = new Map<string, number>();
 
+		const invasionTexts: string[] = [];
 		oldGame.units.forEach((um: ShipUnit) => {
 			if (inSameLocation(sm.location, um.location) && sm.ownerFactionId !== um.factionId) {
-				mapAdd(factionTroopCount, um.factionId, um.troops);
+				const attackingFaction = getFactionFromArrayById(game.factions, um.factionId);
+				if (systemHasBuilding(sm, BUILDINGTYPE.ORBCANNONS)) {
+					const afterOrbitalCannon = buildingOrbitalCannon(sm, um.troops);
+					invasionTexts.push(`Orbital cannons shot down ${um.troops - afterOrbitalCannon} ${attackingFaction.name} troops while they were landing.`);
+					invasionTexts.push(`${afterOrbitalCannon} ${attackingFaction.name}  troops started the invasion`);
+					if (afterOrbitalCannon <= 0) {
+						invasionTexts.push(`Orbital cannon shot down all ${attackingFaction.name} troops`);
+					}
+					mapAdd(factionTroopCount, um.factionId, afterOrbitalCannon);
+				} else {
+					invasionTexts.push(`${um.troops} ${attackingFaction.name}  troops started the invasion`);
+					mapAdd(factionTroopCount, um.factionId, um.troops);
+				}
 			}
 		});
 
 		if (factionTroopCount.size > 0) {
 			await asyncMapForeach(factionTroopCount, async (troops: number, factionId: string) => {
-                if (troops > sm.defense) {
+				const defenses = getSystemDefence(sm);
+				const attackingFaction = getFactionFromArrayById(game.factions, factionId);
+				const ownerFaction = getFactionFromArrayById(game.factions, sm.ownerFactionId);
+				const ownerName = ownerFaction ? ownerFaction.name : "Neutral faction";
+
+				invasionTexts.push(`${ownerName} is defending with ${defenses} defense value.`);
+
+				if (troops > defenses) {
 					sm.ownerFactionId = factionId;
 					invadedSystems.push(sm);
-
-					const report = await createNewReport(
-						{
-							id: "",
-							factionIds: [sm.ownerFactionId],
-							gameId: game.id,
-							systemId: sm.id,
-							text: `${sm.name} has been invaded.`,
-							title: `${sm.name} has been invaded.`,
-							turn: game.turn,
-							type: DetailReportType.System,
-						},
-						firestore,
-					);
-
-					game = addReportToSystem(game, sm, DetailReportType.System, [sm.ownerFactionId], report.id);
+					invasionTexts.push(`${attackingFaction.name} succesfully invades ${sm.name} from ${ownerName}`);
+				} else {
+					invasionTexts.push(`Invasion of ${sm.name} by ${attackingFaction.name} from ${ownerName} has failed!`);
 				}
+				const report = await createNewReport(
+					{
+						id: "",
+						factionIds: [sm.ownerFactionId, factionId],
+						gameId: game.id,
+						systemId: sm.id,
+						invaders: troops,
+						defenders: defenses,
+						texts: invasionTexts,
+						title: `Invasion of ${sm.name}`,
+						turn: game.turn,
+						type: DetailReportType.Invasion,
+					} as InvasionReport,
+					firestore,
+				);
+
+				game = addReportToSystem(game, sm, DetailReportType.System, [sm.ownerFactionId], report.id);
 			});
 		}
-
 		return sm;
 	});
 	// oldGame.systems =  oldGame.systems.map((sm: SystemModel) => {
@@ -323,6 +359,30 @@ function processEconomy(game: GameModel): GameModel {
 	});
 
 	return { ...game };
+}
+
+function processRepairs(oldGame: GameModel): GameModel {
+	const game = { ...oldGame };
+
+	// Repairing units and fighters
+	game.units = game.units.map((unit: ShipUnit) => {
+		const star = getSystemByCoordinates(game, unit.location);
+		if (star) {
+			if (star.ownerFactionId === unit.factionId) {
+				if (unit.damage > 0) {
+					let repairValue = star.industry * unit.sizeIndicator * buildingRepairStation(star);
+					unit.damage = repairValue > unit.damage ? 0 : unit.damage - repairValue;
+				}
+				if (unit.fighters < unit.fightersMax) {
+					unit.fighters = unit.fighters + 1 * buildingRepairStation(star);
+				}
+			}
+		}
+
+		return { ...unit };
+	});
+
+	return game;
 }
 
 async function processCombats(game: GameModel, firestore: any): Promise<GameModel> {
@@ -397,9 +457,13 @@ function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameMode
 		const system = getSystemFromGame(game, command.targetSystem);
 
 		if (command.turn === game.turn) {
-			if (faction.money >= shipDesign.cost) {
-				faction.money = faction.money - shipDesign.cost;
+			const cost = shipDesign.cost * buildingRobotWorkers(system);
+			if (faction.money >= cost) {
+				faction.money = faction.money - cost;
 				command.turnsLeft--;
+				if (buildingDysonSphere(system)) {
+					command.turnsLeft = 0;
+				}
 				if (command.turnsLeft === 0) {
 					markCommandDone(command);
 					const unit = createShipFromDesign(shipDesign, command.factionId, system.location);
@@ -411,6 +475,9 @@ function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameMode
 			}
 		} else {
 			command.turnsLeft--;
+			if (buildingDysonSphere(system)) {
+				command.turnsLeft = 0;
+			}
 			if (command.turnsLeft === 0) {
 				markCommandDone(command);
 				const unit = createShipFromDesign(shipDesign, command.factionId, system.location);
@@ -430,12 +497,16 @@ async function processSystemBuildBuildingCommand(command: BuildBuildingCommand, 
 
 	if (faction) {
 		const bdesign = getBuildingDesignByType(command.buildingType);
-
+		const system = getSystemFromGame(game, command.targetSystem);
 		if (command.turn === game.turn) {
 			// If faction can afford the building pay the cost and start building;
-			if (faction.money >= bdesign.cost) {
-				faction.money = faction.money - bdesign.cost;
+			const cost = bdesign.cost * buildingRobotWorkers(system);
+			if (faction.money >= cost) {
+				faction.money = faction.money - cost;
 				command.turnsLeft--;
+				if (buildingDysonSphere(system)) {
+					command.turnsLeft = 0;
+				}
 				if (command.turnsLeft === 0) {
 					markCommandDone(command);
 					const system = getSystemFromGame(game, command.targetSystem);
@@ -466,7 +537,9 @@ async function processSystemBuildBuildingCommand(command: BuildBuildingCommand, 
 			//TODO: Add info to turn report about this. When turn reports exist...
 		} else {
 			command.turnsLeft--;
-
+			if (buildingDysonSphere(system)) {
+				command.turnsLeft = 0;
+			}
 			// Finish building
 			if (command.turnsLeft === 0) {
 				const system = getSystemFromGame(game, command.targetSystem);
@@ -493,6 +566,16 @@ function processFleetMoveCommand(command: FleetCommand, game: GameModel): GameMo
 	let newPoint: Coordinates | null = null;
 
 	let nGame = { ...game };
+
+	// Warpgate building!
+	if (command.turn === game.turn) {
+		const unit = getUnitFromGame(game, command.unitIds[0]);
+		const startStar = getSystemByCoordinates(game, unit.location);
+		const endStar = getSystemByCoordinates(game, command.target);
+		if (buildingGateway(startStar, endStar, unit.factionId)) {
+			newPoint = endStar.location;
+		}
+	}
 
 	command.unitIds.forEach((uid: string) => {
 		const unit = getUnitFromGame(game, uid);

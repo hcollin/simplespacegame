@@ -628,7 +628,8 @@ const SystemView: FC = () => {
                         <Grid lg={12} className={classes.contentArea}>
                             <div className={classes.rows}>
                                 {DATASHIPS.map((ship: ShipDesign) => {
-									const buildable = shipCanBeBuiltOnSystemByFaction(ship, faction, star);
+                                    const buildable = shipCanBeBuiltOnSystemByFaction(ship, faction, star);
+                                    
 									if(!buildable) {
 										return (
 											<div key={ship.type}>

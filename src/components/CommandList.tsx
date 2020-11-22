@@ -13,7 +13,7 @@ import {
 } from "../models/Commands";
 import { FactionModel, GameModel } from "../models/Models";
 import { doRemoveCommand } from "../services/commands/SystemCommands";
-import { getSystemByCoordinates, getSystemById } from "../services/helpers/SystemHelpers";
+import { getSystemById } from "../services/helpers/SystemHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { getTechById } from "../utils/techUtils";
 
@@ -27,6 +27,7 @@ import { IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconScore, Ic
 import { factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
 import { doPlayerDone } from "../services/commands/GameCommands";
 import { COMMANDPAGINATIONLIMIT } from "../configs";
+import { getSystemByCoordinates } from "../utils/systemUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

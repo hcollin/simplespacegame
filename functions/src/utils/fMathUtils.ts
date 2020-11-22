@@ -1,7 +1,5 @@
 import { Coordinates } from "../models/fModels";
 
-
-
 export function distanceBetweenCoordinates(a: Coordinates, b: Coordinates): number {
     return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y),2));
 }

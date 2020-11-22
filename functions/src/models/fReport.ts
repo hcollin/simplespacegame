@@ -6,6 +6,7 @@ export enum DetailReportType {
     Combat = "Combat report",
     Event = "Event report",
     System = "System Report",
+    Invasion = "Invasion Report",
 }
 
 export interface DetailReport extends GameObject {
@@ -44,6 +45,13 @@ export interface CombatRoundReport {
     attacks: CombatRoundAttackReport[];
     status: CombatRoundStatus[];
 
+}
+
+export interface InvasionReport extends DetailReport {
+    systemId: string;
+    invaders: number;
+    defenders: number;
+    texts: string[];
 }
 
 

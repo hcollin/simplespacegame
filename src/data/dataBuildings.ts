@@ -118,7 +118,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         techPreqs: [],
         maintenanceCost: 2,
         score: 1,
-    },{
+    },{//TODO
         name: "Repair Station",
         type: BUILDINGTYPE.REPAIRSTATION,
         buildTime: 3,
@@ -132,7 +132,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         maintenanceCost: 2,
         score: 0,
     },
-    {
+    {//TODO
         name: "Orbital Cannons",
         type: BUILDINGTYPE.ORBCANNONS,
         buildTime: 3,
@@ -159,7 +159,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         techPreqs: [TECHIDS.HigherEdu],
         maintenanceCost: 2,
         score: 1,
-    },{
+    },{ //TODO
         name: "Robot Workers",
         type: BUILDINGTYPE.ROBOTWORKERS,
         buildTime: 2,
@@ -213,7 +213,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         maintenanceCost: 3,
         score: 3,
     },
-    {
+    {//TODO
         name: "Gateway",
         type: BUILDINGTYPE.GATEWAY,
         buildTime: 10,
@@ -241,7 +241,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         maintenanceCost: 5,
         score: 5,
     },
-    {
+    {//TODO
         name: "Dyson Sphere",
         type: BUILDINGTYPE.DYSONSP,
         buildTime: 15,
@@ -269,7 +269,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         maintenanceCost: 4,
         score: 5,
     },
-    {
+    {//TODO
         name: "Galactic Senate",
         type: BUILDINGTYPE.SENATE,
         buildTime: 20,

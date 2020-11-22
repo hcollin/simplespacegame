@@ -1,12 +1,10 @@
-import { BUILDINGTYPE } from "../data/dataBuildings";
-
-import { Building } from "../models/Buildings";
-import { FactionModel, GameModel, SystemKeyword, SystemModel } from "../models/Models";
-import { factionValues } from "../utils/factionUtils";
-import { distanceBetweenCoordinates } from "../utils/MathUtils";
-import { roll } from "../utils/randUtils";
-import { SystemEconomy } from "../utils/systemUtils";
-
+import { BUILDINGTYPE } from "../data/fDataBuildings";
+import { Building } from "../models/fBuildings";
+import { SystemModel, SystemKeyword, GameModel, FactionModel } from "../models/fModels";
+import { factionValues } from "../utils/fFactionUtils";
+import { distanceBetweenCoordinates } from "../utils/fMathUtils";
+import { roll } from "../utils/fRandUtils";
+import { SystemEconomy } from "../utils/fSystemUtils";
 
 function starHasBuilding(star: SystemModel, bt: BUILDINGTYPE): boolean {
     return star.buildings.find((b: Building) => b.type === bt) !== undefined;
@@ -76,7 +74,7 @@ export function buildingFactoryAutomation(star: SystemEconomy): SystemEconomy {
     
 }
 
-export function buildingRepairStation(star: SystemEconomy): number {
+export function buildingRepairStation(star: SystemModel): number {
     if(starHasBuilding(star, BUILDINGTYPE.REPAIRSTATION)) {
         return 3;
     }
@@ -96,7 +94,6 @@ export function buildingOrbitalCannon(star: SystemModel, invadingTroops: number)
     return invadingTroops;
 }
 
-
 export function buildingUniversity(star: SystemModel): number {
     // const faction = getFactionFromArrayById(game.factions, star.ownerFactionId);
     if(starHasBuilding(star, BUILDINGTYPE.UNIVERSITY)) {
@@ -107,7 +104,7 @@ export function buildingUniversity(star: SystemModel): number {
 
 export function buildingRobotWorkers(star: SystemModel): number {
     if(starHasBuilding(star, BUILDINGTYPE.ROBOTWORKERS)) {
-        return 1.25;
+        return 0.75;
     }
     return 1;
 }
@@ -154,11 +151,9 @@ export function buildingRingWorld(star: SystemEconomy): SystemEconomy {
     return {...star};
 }
 
-
 export function buildingDysonSphere(star: SystemModel): boolean {
     return starHasBuilding(star, BUILDINGTYPE.DYSONSP);
 }
-
 
 export function buildingArcology(star: SystemEconomy): SystemEconomy {
     if(starHasBuilding(star, BUILDINGTYPE.ROBOTWORKERS)) {

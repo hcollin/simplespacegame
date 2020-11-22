@@ -37,6 +37,6 @@ var TechnologyField;
     TechnologyField["PHYSICS"] = "Physics";
     TechnologyField["BIOLOGY"] = "Biology";
     TechnologyField["BUSINESS"] = "Business";
-    TechnologyField["SOCIOLOGY"] = "Social";
+    TechnologyField["MATERIAL"] = "Material";
     TechnologyField["INFORMATION"] = "Information";
 })(TechnologyField = exports.TechnologyField || (exports.TechnologyField = {}));

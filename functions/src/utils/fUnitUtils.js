@@ -93,7 +93,7 @@ exports.getShipShieldsReg = getShipShieldsReg;
 function getShipAgility(ship, faction) {
     if (!faction)
         return ship.agility;
-    return fShipTech_1.techTimeslipPrediction(faction, fShipTech_1.techEvasionEngine(faction, ship.agility));
+    return ship.agility;
 }
 exports.getShipAgility = getShipAgility;
 // WEAPON VALUES

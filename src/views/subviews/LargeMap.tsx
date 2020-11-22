@@ -11,7 +11,7 @@ import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 import useMyCommands from "../../hooks/useMyCommands";
 import { unitIsInFleet } from "../../utils/commandUtils";
 import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../../models/Commands";
-import { inSameLocation } from "../../utils/locationUtils";
+import { inSameLocation, warpGateBetweenSystems } from "../../utils/locationUtils";
 import useUnitSelection from "../../hooks/useUnitSelection";
 import { useService } from "jokits-react";
 
@@ -191,10 +191,11 @@ const LargeMap: FC<LargeMapProps> = (props) => {
                         const y = h * (um.location.y / 100) * zoomLevel - (onSystem ? (inCommand === null ? size : 0) : size / 2);
 
                         const speed = getShipSpeed(um, getFactionFromArrayById(game.factions, um.factionId));
+                                            
 
                         return (
                             <Group key={um.id} onClick={() => selectUnitGroup(umGroup)}>
-                                {inCommand !== null && isMyShip && <CoordinateLine from={um.location} to={inCommand.target} color={faction ? faction.color : "white"} zoom={zoomLevel} dash={[5, 5]} speed={speed} adjust={0} />}
+                                {inCommand !== null && isMyShip && <CoordinateLine game={game} from={um.location} to={inCommand.target} color={faction ? faction.color : "white"} zoom={zoomLevel} dash={[5, 5]} speed={speed} adjust={0} />}
                                 <Image
                                     image={spaceShip}
                                     x={x}
@@ -211,7 +212,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 
 
                 {showMoveLine && selectedSystem && fleet[0].location && <Layer>
-                    <CoordinateLine from={fleet[0].location} to={selectedSystem.location} color="#FFF" zoom={zoomLevel} dash={[5, 5]} showDist={true} />
+                    <CoordinateLine game={game} from={fleet[0].location} to={selectedSystem.location} color="#FFF" zoom={zoomLevel} dash={[5, 5]} showDist={true} />
                 </Layer>}
 
                 <Layer>
@@ -313,6 +314,7 @@ interface CoordinateLineProps {
     dash?: number[];
     showDist?: boolean;
     speed?: number;
+    game: GameModel;
 
 }
 
@@ -335,7 +337,11 @@ const CoordinateLine: FC<CoordinateLineProps> = (props) => {
 
     const dist = Math.ceil(Math.sqrt((Math.pow(props.to.x - props.from.x, 2) + Math.pow(props.to.y - props.from.y, 2))))
     const turns = props.speed ? Math.ceil(dist / props.speed) : 0;
-    const helpText = `${props.speed ? turns : `${dist} ly`}`;
+    let helpText = `${props.speed ? turns : `${dist} ly`}`;
+
+    if(warpGateBetweenSystems(props.game, props.from, props.to)) {
+        helpText = `Gateway (${dist}ly)`;
+    }
 
     return (
         <>

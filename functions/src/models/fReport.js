@@ -7,4 +7,5 @@ var DetailReportType;
     DetailReportType["Combat"] = "Combat report";
     DetailReportType["Event"] = "Event report";
     DetailReportType["System"] = "System Report";
+    DetailReportType["Invasion"] = "Invasion Report";
 })(DetailReportType = exports.DetailReportType || (exports.DetailReportType = {}));
