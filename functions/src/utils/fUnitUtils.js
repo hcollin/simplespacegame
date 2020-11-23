@@ -11,8 +11,8 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.getWeaponFireRate = exports.getMaxDamageForWeapon = exports.getDesignByName = exports.createShipFromDesign = exports.getFactionAdjustedUnit = exports.getFactionAdjustedWeapon = exports.getWeaponCooldownTime = exports.getWeaponAccuracy = exports.getWeaponDamage = exports.getShipAgility = exports.getShipShieldsReg = exports.getShipShieldsMax = exports.getShipArmor = exports.getShipHull = exports.getShipTroops = exports.getShipCost = exports.getShipTechReq = exports.getShipIndustry = exports.getShipSpeed = exports.getAdjustedShip = void 0;
 var fDataShips_1 = require("../data/fDataShips");
+var fUnits_1 = require("../models/fUnits");
 var fShipTech_1 = require("../tech/fShipTech");
 var fRandUtils_1 = require("./fRandUtils");
 // import { getFactionById } from "./factionJokiUtils";
@@ -87,26 +87,36 @@ exports.getShipShieldsMax = getShipShieldsMax;
 function getShipShieldsReg(ship, faction) {
     if (!faction)
         return ship.shieldRegeneration;
-    return ship.shieldRegeneration;
+    return fShipTech_1.techPowerShields(faction, ship);
 }
 exports.getShipShieldsReg = getShipShieldsReg;
 function getShipAgility(ship, faction) {
     if (!faction)
         return ship.agility;
-    return ship.agility;
+    return fShipTech_1.techManouveringJets(faction, ship.agility);
 }
 exports.getShipAgility = getShipAgility;
 // WEAPON VALUES
 function getWeaponDamage(weapon, faction) {
     if (!faction)
         return weapon.damage;
-    return fShipTech_1.techHeavyRounds(faction, weapon.damage);
+    switch (weapon.type) {
+        case fUnits_1.WEAPONTYPE.KINETIC:
+            return fShipTech_1.techHeavyRounds(faction, weapon.damage);
+        case fUnits_1.WEAPONTYPE.ENERGY:
+            return fShipTech_1.techFocusBeam(faction, weapon.damage);
+        default:
+            return weapon.damage;
+    }
 }
 exports.getWeaponDamage = getWeaponDamage;
 function getWeaponAccuracy(weapon, faction) {
     if (!faction)
         return weapon.accuracy;
-    return weapon.accuracy + fShipTech_1.techTargetingComputerOne(faction) + fShipTech_1.techTargetingComputerTwo(faction) + fShipTech_1.techTargetingComputerThree(faction);
+    return (weapon.accuracy +
+        fShipTech_1.techTargetingComputerOne(faction) +
+        fShipTech_1.techTargetingComputerTwo(faction) +
+        fShipTech_1.techTargetingComputerThree(faction));
 }
 exports.getWeaponAccuracy = getWeaponAccuracy;
 function getWeaponCooldownTime(weapon, faction) {
@@ -142,6 +152,32 @@ function getFactionAdjustedUnit(faction, origUnit) {
     return ship;
 }
 exports.getFactionAdjustedUnit = getFactionAdjustedUnit;
+function shipCanBeBuiltOnSystemByFaction(ship, faction, star) {
+    if (ship.cost > faction.money)
+        return false;
+    if (ship.minIndustry > star.industry)
+        return false;
+    if (ship.type === fUnits_1.SHIPCLASS.FIGHTER)
+        return false;
+    return true;
+}
+exports.shipCanBeBuiltOnSystemByFaction = shipCanBeBuiltOnSystemByFaction;
+function getMaxDamageForWeapon(weapon, faction, armorValue) {
+    if (armorValue === void 0) { armorValue = 0; }
+    var factionWeapon = faction !== true ? getFactionAdjustedWeapon(weapon, faction) : weapon;
+    var fireRate = getWeaponFireRate(factionWeapon, true);
+    var maxDamage = Array.isArray(factionWeapon.damage) ? factionWeapon.damage[1] : factionWeapon.damage;
+    return (maxDamage - armorValue) * fireRate;
+}
+exports.getMaxDamageForWeapon = getMaxDamageForWeapon;
+function getWeaponFireRate(weapon, faction) {
+    var factionWeapon = faction !== true ? getFactionAdjustedWeapon(weapon, faction) : weapon;
+    return (1 +
+        (factionWeapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.DOUBLESHOT) ? 1 : 0) +
+        (factionWeapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.RAPIDFIRE) ? 2 : 0) +
+        (factionWeapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.HAILOFFIRE) ? 4 : 0));
+}
+exports.getWeaponFireRate = getWeaponFireRate;
 /// FROM HELPERS
 function createShipFromDesign(design, factionId, location) {
     var ship = __assign(__assign({}, design), { id: fRandUtils_1.rndId(), damage: 0, morale: 100, shields: design.shieldsMax, location: location, factionId: factionId, experience: 0, name: fDataShips_1.shipNameGenerator() });
@@ -156,21 +192,3 @@ function getDesignByName(name) {
     return sd;
 }
 exports.getDesignByName = getDesignByName;
-// export function getUnitSpeed(um: ShipUnit): number {
-//     if (um.speed === 0) return 0;
-//     const faction = getFactionById(um.factionId);
-//     return getShipSpeed(um, faction);
-// }
-function getMaxDamageForWeapon(weapon, faction, armorValue) {
-    if (armorValue === void 0) { armorValue = 0; }
-    var factionWeapon = faction !== true ? getFactionAdjustedWeapon(weapon, faction) : weapon;
-    var fireRate = getWeaponFireRate(factionWeapon, true);
-    var maxDamage = Array.isArray(factionWeapon.damage) ? factionWeapon.damage[1] : factionWeapon.damage;
-    return (maxDamage - armorValue) * fireRate;
-}
-exports.getMaxDamageForWeapon = getMaxDamageForWeapon;
-function getWeaponFireRate(weapon, faction) {
-    var factionWeapon = faction !== true ? getFactionAdjustedWeapon(weapon, faction) : weapon;
-    return 1 + (factionWeapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.DOUBLESHOT) ? 1 : 0) + (factionWeapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.RAPIDFIRE) ? 2 : 0) + (factionWeapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.HAILOFFIRE) ? 4 : 0);
-}
-exports.getWeaponFireRate = getWeaponFireRate;

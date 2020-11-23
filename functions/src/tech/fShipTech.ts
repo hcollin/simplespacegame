@@ -1,9 +1,7 @@
 import { TECHIDS } from "../data/fDataTechnology";
 import { FactionModel } from "../models/fModels";
-import { ShipWeapon } from "../models/fUnits";
-
+import { ShipDesign } from "../models/fUnits";
 import { factionHasTechnology } from "./fTechTools";
-
 
 /**
  * Technology function for IonEngines
@@ -38,9 +36,68 @@ export function techTargetingComputerThree(faction: FactionModel): number {
 }
 
 export function techHeavyRounds(faction: FactionModel, damage: number|[number, number]): number|[number, number] {
-    if(!factionHasTechnology(faction, TECHIDS.HeavyRounds1)) return damage;
-    if(Array.isArray(damage)) {
-        return [Math.round(damage[0] * 1.1), Math.round(damage[1] * 1.1)];
+    
+    function dmgMultiplier(techId: TECHIDS, mult: number, dmg: number|[number, number]): number|[number, number] {
+        if(!factionHasTechnology(faction, techId)) {
+            return dmg;
+        }
+            
+        if(Array.isArray(dmg)) {
+            return [Math.round(dmg[0] * mult), Math.round(dmg[1] * mult)];
+        }
+        return Math.round(dmg * mult);
     }
-    return Math.round(damage * 1.1);
+
+    return dmgMultiplier(TECHIDS.HeavyRounds3, 1.1, dmgMultiplier(TECHIDS.HeavyRounds2, 1.1, dmgMultiplier(TECHIDS.HeavyRounds1, 1.05, damage)));
 }
+
+export function techManouveringJets(faction: FactionModel, agility: number): number {
+
+    if(factionHasTechnology(faction, TECHIDS.ManouveringJets3)){
+        return Math.round(agility * 1.25);
+    }
+
+    if(factionHasTechnology(faction, TECHIDS.ManouveringJets2)){
+        return Math.round(agility * 1.15);
+    }
+
+    if(factionHasTechnology(faction, TECHIDS.ManouveringJets1)){
+        return Math.round(agility * 1.05);
+    }
+
+    return agility;
+}
+
+
+export function techFocusBeam(faction: FactionModel, damage: number|[number, number]): number|[number, number] {
+    
+    function dmgMultiplier(techId: TECHIDS, mult: number, dmg: number|[number, number]): number|[number, number] {
+        if(!factionHasTechnology(faction, techId)) {
+            return dmg;
+        }
+            
+        if(Array.isArray(dmg)) {
+            return [Math.round(dmg[0] * mult), Math.round(dmg[1] * mult)];
+        }
+        return Math.round(dmg * mult);
+    }
+
+    return dmgMultiplier(TECHIDS.FocusBeam3, 1.1, dmgMultiplier(TECHIDS.FocusBeam2, 1.1, dmgMultiplier(TECHIDS.FocusBeam1, 1.05, damage)));
+}
+
+export function techPowerShields(faction: FactionModel, ship: ShipDesign): number {
+    if(!factionHasTechnology(faction, TECHIDS.PowerShields)) return 0;
+    if(ship.shieldRegeneration === 0) return 0;
+    return Math.round(ship.shieldRegeneration * 1.25);
+}
+
+export function techAutoRepairBots(faction: FactionModel, ship: ShipDesign): number {
+    if(!factionHasTechnology(faction, TECHIDS.AutoRepBots1)) return 0;
+    return Math.round(ship.hull/10);
+}
+
+export function techAutoRepairBots2(faction: FactionModel, ship: ShipDesign): number {
+    if(!factionHasTechnology(faction, TECHIDS.AutoRepBots2)) return 0;
+    return Math.round(ship.sizeIndicator*3);
+}
+

@@ -18,7 +18,6 @@ export enum GameState {
     "ENDED",
 }
 
-
 export interface GameSetup {
     playerCount: number;
     distances: string;
@@ -55,8 +54,7 @@ export interface GameModel extends GameObject {
 
 export interface Fleet {
     units: ShipUnit[];
-    target: Coordinates|null;
-
+    target: Coordinates | null;
 }
 
 export interface Coordinates {
@@ -72,8 +70,8 @@ export enum SystemKeyword {
     HOSTILE = "Hostile Environment",
     GAIA = "Gaia world",
     NATIVES = "Natives",
-    ARTIFACTS = "Alien Artifacts"
-};
+    ARTIFACTS = "Alien Artifacts",
+}
 
 export interface SystemModel extends GameObject {
     name: string;
@@ -84,14 +82,13 @@ export interface SystemModel extends GameObject {
     economy: number;
     defense: number;
     welfare: number;
-    
+
     color: string;
-    keywords: (string|SystemKeyword)[];
+    keywords: (string | SystemKeyword)[];
     reports: Report[];
 
     buildings: Building[];
     description?: string;
-
 }
 
 export enum FactionState {
@@ -111,7 +108,7 @@ export interface FactionTechSetting {
 export interface FactionModel extends GameObject {
     name: string;
     money: number;
-    technologyFields: FactionTechSetting[];  // What field, total points, priority of techs
+    technologyFields: FactionTechSetting[]; // What field, total points, priority of techs
     state: FactionState;
     color: string;
     iconFileName: string;
@@ -134,8 +131,6 @@ export enum TechnologyField {
     INFORMATION = "Information",
 }
 
-
-
 export interface Technology {
     id: TECHIDS;
     fieldreqs: [TechnologyField, number][];
@@ -143,8 +138,6 @@ export interface Technology {
     name: string;
     description: string;
 }
-
-
 
 export interface CombatEvent {
     units: ShipUnit[];

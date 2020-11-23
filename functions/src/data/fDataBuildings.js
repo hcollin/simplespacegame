@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.DATABUILDINGS = exports.BUILDINGTYPE = void 0;
 var fDataTechnology_1 = require("./fDataTechnology");
 var BUILDINGTYPE;
 (function (BUILDINGTYPE) {
@@ -153,7 +152,7 @@ var DATABUILDINGS = [
         buildTime: 3,
         cost: 20,
         description: "Provides +3 research point per turn",
-        keywords: [fDataTechnology_1.TECHIDS.EfficientBur],
+        keywords: [],
         minEconomy: 4,
         minIndustry: 0,
         minWelfare: 2,

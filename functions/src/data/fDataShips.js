@@ -18,7 +18,6 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-exports.DATANEWSHIPS = exports.shipNameGenerator = exports.SHIPWEAPONSPECIAL = void 0;
 var fUnits_1 = require("../models/fUnits");
 var fRandUtils_1 = require("../utils/fRandUtils");
 var SHIPWEAPONSPECIAL;
@@ -197,9 +196,9 @@ var DATANEWSHIPS = [
         sizeIndicator: 1,
         type: fUnits_1.SHIPCLASS.FIGHTER,
         name: "Fighter",
-        cost: 1,
-        buildTime: 1,
-        minIndustry: 1,
+        cost: 0,
+        buildTime: 0,
+        minIndustry: 0,
         techReq: [],
         fighters: 0,
         fightersMax: 0,
@@ -212,7 +211,7 @@ var DATANEWSHIPS = [
         shieldsMax: 0,
         keywords: [],
         weapons: [getWeaponByName("Small Laser"), getWeaponByName("Fighter Missile")],
-        description: "One man fighter craft that does not have warp capability in itself."
+        description: "One man fighter craft that does not have warp capability in itself. Fighters cannot be built on systems they are automatically deployed during combet and new fighters are built on friendly systems autamatically during repairs."
     },
     {
         id: "",
@@ -235,7 +234,7 @@ var DATANEWSHIPS = [
         shieldsMax: 0,
         keywords: [],
         weapons: [getWeaponByName("Small Laser"), getWeaponByName("Machinegun")],
-        description: "One man fighter craft that does not have warp capability in itself."
+        description: "Small patrol boat used mainly used for bulking up the defenses against fighters or for really cash stripped empires."
     },
     {
         id: "",
@@ -525,22 +524,22 @@ function shipNameGenerator() {
         "Vindicator",
         "Visitor",
     ];
-    var wordColor = ["Black", "White", "Gray", "Red", "Blue", "Green", "Yellow", "Purple", "Brown"];
-    var wordTimeAdjective = ["Ancient", "First", "Last", "New", "Old", "Young"];
-    var wordDescriptive = [
-        "Ancient",
-        "Death",
-        "Dread",
-        "Dark",
-        "Fury",
-        "Ghost",
-        "Life",
-        "Necro",
-        "Phantom",
-        "Spectre",
-        "Umbra",
-        "True",
-    ];
+    // const wordColor: string[] = ["Black", "White", "Gray", "Red", "Blue", "Green", "Yellow", "Purple", "Brown"];
+    // const wordTimeAdjective: string[] = ["Ancient", "First", "Last", "New", "Old", "Young"];
+    // const wordDescriptive: string[] = [
+    //     "Ancient",
+    //     "Death",
+    //     "Dread",
+    //     "Dark",
+    //     "Fury",
+    //     "Ghost",
+    //     "Life",
+    //     "Necro",
+    //     "Phantom",
+    //     "Spectre",
+    //     "Umbra",
+    //     "True",
+    // ];
     var wordThing = [
         "Antihero",
         "Armor",
@@ -671,23 +670,23 @@ function shipNameGenerator() {
         "Whisper",
         "War",
     ];
-    var concepts = [
-        "Death",
-        "Fury",
-        "Force",
-        "Fantasy",
-        "Hymn",
-        "History",
-        "Liturgy",
-        "Life",
-        "Myth",
-        "Memorial",
-        "Paradise",
-        "Pride",
-        "Reign",
-        "Supernova",
-        "Song",
-    ];
+    // const concepts: string[] = [
+    //     "Death",
+    //     "Fury",
+    //     "Force",
+    //     "Fantasy",
+    //     "Hymn",
+    //     "History",
+    //     "Liturgy",
+    //     "Life",
+    //     "Myth",
+    //     "Memorial",
+    //     "Paradise",
+    //     "Pride",
+    //     "Reign",
+    //     "Supernova",
+    //     "Song",
+    // ];
     var partB = __spreadArrays(wordThing, wordDoer, wordObject);
     if (fRandUtils_1.roll(33)) {
         return fRandUtils_1.arnd(wordDoer) + " of " + fRandUtils_1.arnd(wordObject);

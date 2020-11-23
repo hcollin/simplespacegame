@@ -1,8 +1,6 @@
 import { BuildingDesign } from "../models/fBuildings";
 import { TECHIDS } from "./fDataTechnology";
 
-
-
 export enum BUILDINGTYPE {
     BIODOME = "Biodome",
     TRADEPOST = "Trade Post",
@@ -119,7 +117,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         techPreqs: [],
         maintenanceCost: 2,
         score: 1,
-    },{
+    },{//TODO
         name: "Repair Station",
         type: BUILDINGTYPE.REPAIRSTATION,
         buildTime: 3,
@@ -133,7 +131,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         maintenanceCost: 2,
         score: 0,
     },
-    {
+    {//TODO
         name: "Orbital Cannons",
         type: BUILDINGTYPE.ORBCANNONS,
         buildTime: 3,
@@ -153,7 +151,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         buildTime: 3,
         cost: 20,
         description: "Provides +3 research point per turn",
-        keywords: [TECHIDS.EfficientBur],
+        keywords: [],
         minEconomy: 4,
         minIndustry: 0,
         minWelfare: 2,
@@ -214,7 +212,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         maintenanceCost: 3,
         score: 3,
     },
-    {
+    {//TODO
         name: "Gateway",
         type: BUILDINGTYPE.GATEWAY,
         buildTime: 10,
@@ -242,7 +240,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         maintenanceCost: 5,
         score: 5,
     },
-    {//TODO: Done to turnprocessor 
+    {//TODO
         name: "Dyson Sphere",
         type: BUILDINGTYPE.DYSONSP,
         buildTime: 15,
@@ -270,7 +268,7 @@ const DATABUILDINGS: BuildingDesign[] = [
         maintenanceCost: 4,
         score: 5,
     },
-    {
+    {//TODO
         name: "Galactic Senate",
         type: BUILDINGTYPE.SENATE,
         buildTime: 20,
@@ -284,11 +282,6 @@ const DATABUILDINGS: BuildingDesign[] = [
         maintenanceCost: 10,
         score: 0,
     },
-    
-    
-    
-   
 ];
-
 
 export { DATABUILDINGS };

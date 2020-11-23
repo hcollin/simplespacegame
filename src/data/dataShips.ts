@@ -704,35 +704,3 @@ export function shipNameGenerator(): string {
 }
 
 export { DATANEWSHIPS };
-
-/*
-Name types
-
-{adj} {doer}
-
-{doer} of {event}
-
-{adj} {concept} {doer}
-
-{concept} {event}
-
-
-
-Dark Justicar
-Last Victory
-
-Doomed
-
-Redeemer of Victory
-Speaker of Dream
-
-{adj} {doer}
-{doer} of {event}
-
-{adj} {concept}
-{adj} {concept}
-
-
-
-
-*/

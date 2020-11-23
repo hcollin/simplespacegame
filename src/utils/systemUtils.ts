@@ -74,9 +74,9 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
         eco.welfareExpenses = techEfficientBureaucracy(faction, eco.welfareExpenses);
         eco.buildingSlots += techUndergroundConstruction(faction) + techLevitationBuildings(faction);
         eco.shipyards = techSpaceDock(faction, eco);
-	}
-	
-	console.log(eco.name, eco.shipyards, eco.industry);
+    }
+
+    console.log(eco.name, eco.shipyards, eco.industry);
 
     return buildingBioDome(buildingArcology(buildingIndustrySector(buildingFactoryAutomation(buildingRingWorld(eco)))));
 }

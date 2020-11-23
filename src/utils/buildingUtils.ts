@@ -6,7 +6,6 @@ import { Building, BuildingDesign, BuildingUnderConstruction } from "../models/B
 import { BuildBuildingCommand, Command, CommandType } from "../models/Commands";
 import { FactionModel, GameModel, SystemModel } from "../models/Models";
 
-
 export function buildingCanBeBuiltOnSystem(building: BuildingDesign, star: SystemModel, faction: FactionModel): boolean {
 
     if(building.minEconomy > star.economy) return false;

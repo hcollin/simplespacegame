@@ -1,9 +1,7 @@
 import { TECHIDS } from "../data/dataTechnology";
 import { FactionModel } from "../models/Models";
-import { ShipDesign, ShipUnit } from "../models/Units";
-
-import { factionHasTechnology, techMultiplier } from "./techTools";
-
+import { ShipDesign } from "../models/Units";
+import { factionHasTechnology } from "./techTools";
 
 /**
  * Technology function for IonEngines

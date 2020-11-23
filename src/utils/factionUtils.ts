@@ -1,11 +1,22 @@
-
-import { buildingCGaiaProject, buildingCommandCenter, buildingGalacticSenate, buildingUniversity } from "../buildings/buildingRules";
+import {
+    buildingCGaiaProject,
+    buildingCommandCenter,
+    buildingGalacticSenate,
+    buildingUniversity,
+} from "../buildings/buildingRules";
 import { Building } from "../models/Buildings";
 import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/Models";
 import { ShipUnit } from "../models/Units";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
-import { techCapitalist, techDecisionEngine, techExpansionist, techHigherEducation, techMarketing, techScientist } from "../tech/businessTech";
+import {
+    techCapitalist,
+    techDecisionEngine,
+    techExpansionist,
+    techHigherEducation,
+    techMarketing,
+    techScientist,
+} from "../tech/businessTech";
 
 interface FactionValues {
     maxCommands: number;
@@ -18,7 +29,7 @@ interface FactionValues {
     unitCount: number;
     systemExpenses: number;
     systemCount: number;
-    systemIncome: number,
+    systemIncome: number;
     trade: number;
 }
 
@@ -37,7 +48,7 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         systemIncome: 0,
         trade: 0,
     };
-    const faction = getFactionFromArrayById(game.factions, factionId)
+    const faction = getFactionFromArrayById(game.factions, factionId);
     if (!faction) {
         throw new Error("Invalid Faction");
     }
@@ -66,7 +77,6 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
             sum += systemExpenses(sm);
         }
         return sum;
-
     }, 0);
 
     values.trade = game.trades.reduce((sum: number, t: Trade) => {
@@ -77,13 +87,16 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
             return sum - t.money;
         }
         return sum;
-    }, 0)
+    }, 0);
 
-    values.income = values.totalEconomy + values.trade - values.expenses + techMarketing(faction, game) + techCapitalist(faction, game.systems);
+    values.income =
+        values.totalEconomy +
+        values.trade -
+        values.expenses +
+        techMarketing(faction, game) +
+        techCapitalist(faction, game.systems);
 
     values.maxCommands = commandCountCalculator(game, factionId);
-
-    
 
     return values;
 }
@@ -145,7 +158,6 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
 }
 
 export function getWelfareCommands(faction: FactionModel, welfarePointTotal: number): number {
-
     return 3 + Math.floor(welfarePointTotal / techDecisionEngine(faction));
 }
 
@@ -162,7 +174,6 @@ export function systemExpenses(sm: SystemModel): number {
 }
 
 export function researchPointGenerationCalculator(game: GameModel, faction: FactionModel): number {
-
     // const game = joki.service.getState("GameService") as GameModel;
 
     const points = game.systems.reduce((sum: number, sm: SystemModel) => {
@@ -175,29 +186,28 @@ export function researchPointGenerationCalculator(game: GameModel, faction: Fact
 }
 
 export function getSystemResearchPointGeneration(sm: SystemModel, faction: FactionModel): number {
-
     const welfareCurve = techHigherEducation(faction);
     let sum = 0;
     sum += Math.floor((sm.industry + sm.defense) / 3);
     sum += Math.floor(sm.economy / 4);
     sum += sm.welfare < welfareCurve.length ? welfareCurve[sm.welfare] : -5;
     sum += buildingCGaiaProject(sm, "RESEARCH") + buildingUniversity(sm);
-    
-    return sum;
 
+    return sum;
 }
 
 export function researchPointDistribution(totalPoints: number, faction: FactionModel): number[] {
-
-    let points: number[] = []
-    const totalFocusPoints = faction.technologyFields.reduce((tot: number, tech: FactionTechSetting) => tot + tech.priority, 0);
+    let points: number[] = [];
+    const totalFocusPoints = faction.technologyFields.reduce(
+        (tot: number, tech: FactionTechSetting) => tot + tech.priority,
+        0
+    );
 
     const partPoint = totalFocusPoints > 0 ? totalPoints / totalFocusPoints : 0;
     // const techDistribution = [0.50, 0.50, 0., 0.10, 0];
     let highestFieldIndex = -1;
     let highestFieldValue = -1;
     faction.technologyFields.forEach((tech: FactionTechSetting, index: number) => {
-
         const curSum = points.reduce((tot: number, cur: number) => tot + cur, 0);
         const remaining = totalPoints - curSum;
         let newVal = Math.round(partPoint * tech.priority);
@@ -213,23 +223,21 @@ export function researchPointDistribution(totalPoints: number, faction: FactionM
 
     const curSum = points.reduce((tot: number, cur: number) => tot + cur, 0);
     if (curSum < totalPoints) {
-        points[highestFieldIndex] += (totalPoints - curSum);
+        points[highestFieldIndex] += totalPoints - curSum;
     }
 
     return points;
 }
 
-
 /**
  * Calculate the score for faction
- * 
- * @param factionId 
+ *
+ * @param factionId
  */
 export function getFactionScore(game: GameModel, factionId: string): number {
     let score = 0;
 
     game.systems.forEach((sm: SystemModel) => {
-
         if (sm.ownerFactionId === factionId) {
             score += 3;
             score += Math.round((sm.industry + sm.economy + sm.defense + sm.welfare) / 4);
@@ -254,7 +262,6 @@ export function getFactionScore(game: GameModel, factionId: string): number {
     score += buildingGalacticSenate(game, faction);
 
     // Add technology scores from base research techs
-
 
     return score;
 }

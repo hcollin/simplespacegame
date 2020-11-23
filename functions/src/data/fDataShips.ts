@@ -2,7 +2,6 @@
 import { SHIPCLASS, ShipDesign, ShipWeapon, WEAPONTYPE } from "../models/fUnits";
 import { arnd, rnd, roll } from "../utils/fRandUtils";
 
-
 export enum SHIPWEAPONSPECIAL {
     DOUBLESHOT = "Double Shot (x2)", // Roll for damage twice when hit
     RAPIDFIRE = "Rapid Fire (x3)", // Roll for damage three times when hit
@@ -181,9 +180,9 @@ const DATANEWSHIPS: ShipDesign[] = [
         sizeIndicator: 1,
         type: SHIPCLASS.FIGHTER,
         name: "Fighter",
-        cost: 1,
-        buildTime: 1,
-        minIndustry: 1,
+        cost: 0,
+        buildTime: 0,
+        minIndustry: 0,
         techReq: [],
         fighters: 0,
         fightersMax: 0,
@@ -196,7 +195,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldsMax: 0,
         keywords: [],
         weapons: [getWeaponByName("Small Laser"), getWeaponByName("Fighter Missile")],
-        description: "One man fighter craft that does not have warp capability in itself.",
+        description: "One man fighter craft that does not have warp capability in itself. Fighters cannot be built on systems they are automatically deployed during combet and new fighters are built on friendly systems autamatically during repairs.",
     },
     {
         id: "",
@@ -219,7 +218,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldsMax: 0,
         keywords: [],
         weapons: [getWeaponByName("Small Laser"), getWeaponByName("Machinegun")],
-        description: "One man fighter craft that does not have warp capability in itself.",
+        description: "Small patrol boat used mainly used for bulking up the defenses against fighters or for really cash stripped empires.",
     },
     {
         id: "",
@@ -515,24 +514,24 @@ export function shipNameGenerator(): string {
         "Visitor",
     ];
 
-    const wordColor: string[] = ["Black", "White", "Gray", "Red", "Blue", "Green", "Yellow", "Purple", "Brown"];
+    // const wordColor: string[] = ["Black", "White", "Gray", "Red", "Blue", "Green", "Yellow", "Purple", "Brown"];
 
-    const wordTimeAdjective: string[] = ["Ancient", "First", "Last", "New", "Old", "Young"];
+    // const wordTimeAdjective: string[] = ["Ancient", "First", "Last", "New", "Old", "Young"];
 
-    const wordDescriptive: string[] = [
-        "Ancient",
-        "Death",
-        "Dread",
-        "Dark",
-        "Fury",
-        "Ghost",
-        "Life",
-        "Necro",
-        "Phantom",
-        "Spectre",
-        "Umbra",
-        "True",
-    ];
+    // const wordDescriptive: string[] = [
+    //     "Ancient",
+    //     "Death",
+    //     "Dread",
+    //     "Dark",
+    //     "Fury",
+    //     "Ghost",
+    //     "Life",
+    //     "Necro",
+    //     "Phantom",
+    //     "Spectre",
+    //     "Umbra",
+    //     "True",
+    // ];
 
     const wordThing: string[] = [
         "Antihero",
@@ -666,27 +665,27 @@ export function shipNameGenerator(): string {
         "War",
     ];
 
-    const concepts: string[] = [
-        "Death",
+    // const concepts: string[] = [
+    //     "Death",
 
-        "Fury",
-        "Force",
+    //     "Fury",
+    //     "Force",
 
-        "Fantasy",
-        "Hymn",
-        "History",
-        "Liturgy",
-        "Life",
-        "Myth",
+    //     "Fantasy",
+    //     "Hymn",
+    //     "History",
+    //     "Liturgy",
+    //     "Life",
+    //     "Myth",
 
-        "Memorial",
-        "Paradise",
+    //     "Memorial",
+    //     "Paradise",
 
-        "Pride",
-        "Reign",
-        "Supernova",
-        "Song",
-    ];
+    //     "Pride",
+    //     "Reign",
+    //     "Supernova",
+    //     "Song",
+    // ];
 
     const partB = [...wordThing, ...wordDoer, ...wordObject];
 

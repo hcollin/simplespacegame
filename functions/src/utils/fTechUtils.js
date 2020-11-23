@@ -11,30 +11,39 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.getTechById = exports.factionPaysForTech = exports.canAffordTech = void 0;
 var fDataTechnology_1 = require("../data/fDataTechnology");
 function canAffordTech(tech, faction) {
-    var canAfford = true;
+    var missingTech = missingResearchPoints(tech, faction);
+    var allTechReqs = techPrerequisitesFulfilled(tech, faction);
+    return missingTech.size === 0 && allTechReqs === true;
+}
+exports.canAffordTech = canAffordTech;
+function missingResearchPoints(tech, faction) {
+    var missing = new Map();
     tech.fieldreqs.forEach(function (val) {
         var field = faction.technologyFields.find(function (f) { return f.field === val[0]; });
         if (!field) {
             throw new Error("Unknown technology requirement field " + val[0]);
         }
         if (field.points < val[1]) {
-            canAfford = false;
+            missing.set(field.field, field.points - val[1]);
         }
-        console.log(tech.name, field.field, field.points, val[1], canAfford);
     });
-    if (tech.techprereq.length > 0 && canAfford) {
+    return missing;
+}
+exports.missingResearchPoints = missingResearchPoints;
+function techPrerequisitesFulfilled(tech, faction) {
+    var hasAllTech = true;
+    if (tech.techprereq.length > 0) {
         tech.techprereq.forEach(function (tid) {
             if (!faction.technology.includes(tid)) {
-                canAfford = false;
+                hasAllTech = false;
             }
         });
     }
-    return canAfford;
+    return hasAllTech;
 }
-exports.canAffordTech = canAffordTech;
+exports.techPrerequisitesFulfilled = techPrerequisitesFulfilled;
 function factionPaysForTech(fields, tech) {
     return fields.map(function (tf) {
         var cost = tech.fieldreqs.find(function (tr) { return tr[0] === tf.field; });
@@ -53,3 +62,15 @@ function getTechById(techId) {
     return tech;
 }
 exports.getTechById = getTechById;
+/**
+ * Total value (as in cost) for the provided technology. This useful in sorting for example.
+ *
+ * @param tech
+ */
+function getTechValue(tech) {
+    var reqSum = tech.fieldreqs.reduce(function (tot, req) {
+        return tot + req[1];
+    }, 0);
+    return reqSum + tech.techprereq.length * 5;
+}
+exports.getTechValue = getTechValue;

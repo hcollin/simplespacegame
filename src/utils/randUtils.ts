@@ -5,8 +5,7 @@
  * @param max number
  */
 export function rnd(min: number, max: number): number {
-    
-    return Math.floor(Math.random() * ((max+1) - min)) + min;
+    return Math.floor(Math.random() * (max + 1 - min)) + min;
 }
 
 /**
@@ -83,27 +82,25 @@ export function roll(chance: number) {
     return false;
 }
 
-export function grnd(mid: number, steps: number, depth: number, minCut?: number, maxCut?:number): number {
-    
+export function grnd(mid: number, steps: number, depth: number, minCut?: number, maxCut?: number): number {
     function insideCut(val: number) {
-        if(typeof minCut === "number" && val < minCut) return false;
-        if(typeof maxCut === "number" && val > maxCut) return false;
+        if (typeof minCut === "number" && val < minCut) return false;
+        if (typeof maxCut === "number" && val > maxCut) return false;
         return true;
     }
 
     let res = mid;
-    
-    
+
     const maxDepth = depth * 2;
-    const mods: Array<number|string> = [];
+    const mods: Array<number | string> = [];
     for (let i = 0; i < steps; i++) {
         const mod = rnd(0, maxDepth) - depth;
         mods.push(mod);
-        
-        if(insideCut(res + mod)) {
+
+        if (insideCut(res + mod)) {
             res += mod;
         }
-        
+
         // if(typeof maxCut === "number" && res > maxCut) {
         //     // res -= mod;
         //     res = Number(mods[mods.length -1])
@@ -124,7 +121,7 @@ export function grnd(mid: number, steps: number, depth: number, minCut?: number,
     //     // res = maxCut;
     // }
 
-    if(typeof minCut === "number" && res < minCut) console.log(mods);
+    if (typeof minCut === "number" && res < minCut) console.log(mods);
     return res;
 }
 
@@ -134,18 +131,25 @@ export function reps(times: number, fn: () => void): void {
     }
 }
 
-
-export function shuffle<T>(arr: T[]):T[] {
-    
+export function shuffle<T>(arr: T[]): T[] {
     // const maxLen = arr.length;
     const copyArr = [...arr];
     const newArr: T[] = [];
-    
-    while(copyArr.length > 0) {
+
+    while (copyArr.length > 0) {
         const ind = rnd(0, copyArr.length - 1);
 
         newArr.push(copyArr.splice(ind, 1)[0]);
     }
 
     return newArr;
+}
+
+const Characters: string[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890".split("");
+
+export function rndId(): string {
+    const ts = Date.now();
+    return `${arnd(Characters)}${arnd(Characters)}${arnd(Characters)}${arnd(Characters)}${arnd(
+        Characters
+    )}-${ts}-${arnd(Characters)}${arnd(Characters)}${arnd(Characters)}${arnd(Characters)}`;
 }

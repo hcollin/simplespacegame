@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.DATATECHNOLOGY = exports.TECHIDS = void 0;
 var fModels_1 = require("../models/fModels");
 var TECHIDS;
 (function (TECHIDS) {
@@ -51,11 +50,12 @@ var TECHIDS;
     TECHIDS["GeneEngine"] = "T-B03";
     TECHIDS["AntimatterCon"] = "T-B04";
 })(TECHIDS = exports.TECHIDS || (exports.TECHIDS = {}));
+;
 exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.AdvRobotics,
         fieldreqs: [
-            [fModels_1.TechnologyField.INFORMATION, 80],
+            [fModels_1.TechnologyField.BUSINESS, 80],
             [fModels_1.TechnologyField.INFORMATION, 80],
         ],
         techprereq: [],
@@ -223,7 +223,7 @@ exports.DATATECHNOLOGY = [
             [fModels_1.TechnologyField.PHYSICS, 80],
         ],
         techprereq: [TECHIDS.FocusBeam1],
-        name: "Focus Beam",
+        name: "Focus Beam II",
         description: "The damage output of Energy weapons is increased by 10% more"
     },
     {
@@ -235,7 +235,7 @@ exports.DATATECHNOLOGY = [
             [fModels_1.TechnologyField.PHYSICS, 160],
         ],
         techprereq: [TECHIDS.FocusBeam2, TECHIDS.HypTheory],
-        name: "Focus Beam",
+        name: "Focus Beam III",
         description: "The damage output of Energy weapons is increased by 10% more"
     },
     {
@@ -268,7 +268,7 @@ exports.DATATECHNOLOGY = [
         ],
         techprereq: [TECHIDS.AutoRepBots1, TECHIDS.AdvRobotics],
         name: "Auto Repair Bots II",
-        description: "Ships repair 3 points worth of damage at the end of each combat round"
+        description: "Ships repairs damage between combat rounds. The amount depends on the ship size."
     },
     {
         id: TECHIDS.Marketing,
@@ -300,7 +300,7 @@ exports.DATATECHNOLOGY = [
         ],
         techprereq: [],
         name: "Merchant Guilds",
-        description: "Each trade aggreement will gain you +2 money per turn, even if you are the one paying."
+        description: "Each trade agreement will gain you +2 money per turn, even if you are the one paying."
     },
     {
         id: TECHIDS.MineralPros,

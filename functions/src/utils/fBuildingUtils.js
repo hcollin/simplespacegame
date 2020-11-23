@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.systemHasBuilding = exports.createBuildingFromDesign = exports.getBuildingUnderConstruction = exports.getBuildingTime = exports.buildingCanBeBuiltOnSystem = exports.getBuildingDesignByType = void 0;
+var fBuildingRules_1 = require("../buildings/fBuildingRules");
 var fDataBuildings_1 = require("../data/fDataBuildings");
 var fCommands_1 = require("../models/fCommands");
 var fRandUtils_1 = require("./fRandUtils");
@@ -37,7 +37,7 @@ function buildingCanBeBuiltOnSystem(building, star, faction) {
             return false;
         }
     });
-    return true;
+    return fBuildingRules_1.buildBuildingRules(star, building.type);
 }
 exports.buildingCanBeBuiltOnSystem = buildingCanBeBuiltOnSystem;
 function getBuildingTime(buildingType) {

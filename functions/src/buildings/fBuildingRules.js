@@ -11,7 +11,6 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.buildingGalacticSenate = exports.buildingArcology = exports.buildingDysonSphere = exports.buildingRingWorld = exports.buildingGateway = exports.buildingGalacticExchange = exports.buildingSpacePort = exports.buildingCommandCenter = exports.buildingRobotWorkers = exports.buildingUniversity = exports.buildingOrbitalCannon = exports.buildingRepairStation = exports.buildingFactoryAutomation = exports.buildingCGaiaProject = exports.buildingCoreMine = exports.buildingBunkers = exports.buildingIndustrySector = exports.buildingTradePost = exports.buildingBioDome = exports.buildBuildingRules = void 0;
 var fDataBuildings_1 = require("../data/fDataBuildings");
 var fModels_1 = require("../models/fModels");
 var fFactionUtils_1 = require("../utils/fFactionUtils");
@@ -23,9 +22,11 @@ function starHasBuilding(star, bt) {
 function buildBuildingRules(star, bt) {
     switch (bt) {
         case fDataBuildings_1.BUILDINGTYPE.COREMINE:
-            return star.keywords.includes(fModels_1.SystemKeyword.MINERALRARE) || star.keywords.includes(fModels_1.SystemKeyword.MINERALRICH);
+            return (star.keywords.includes(fModels_1.SystemKeyword.MINERALRARE) || star.keywords.includes(fModels_1.SystemKeyword.MINERALRICH));
         case fDataBuildings_1.BUILDINGTYPE.GAIAPROJECT:
             return star.keywords.includes(fModels_1.SystemKeyword.GAIA);
+        case fDataBuildings_1.BUILDINGTYPE.TRADEPOST:
+            return star.keywords.includes(fModels_1.SystemKeyword.NATIVES);
         default:
             return true;
     }
@@ -113,7 +114,7 @@ function buildingUniversity(star) {
 exports.buildingUniversity = buildingUniversity;
 function buildingRobotWorkers(star) {
     if (starHasBuilding(star, fDataBuildings_1.BUILDINGTYPE.ROBOTWORKERS)) {
-        return 0.75;
+        return 1.25;
     }
     return 1;
 }
@@ -147,7 +148,10 @@ function buildingGalacticExchange(star, stars) {
 }
 exports.buildingGalacticExchange = buildingGalacticExchange;
 function buildingGateway(star, target, factionId) {
-    return (star.ownerFactionId === factionId && target.ownerFactionId === factionId && starHasBuilding(star, fDataBuildings_1.BUILDINGTYPE.GATEWAY) && starHasBuilding(target, fDataBuildings_1.BUILDINGTYPE.GATEWAY));
+    return (star.ownerFactionId === factionId &&
+        target.ownerFactionId === factionId &&
+        starHasBuilding(star, fDataBuildings_1.BUILDINGTYPE.GATEWAY) &&
+        starHasBuilding(target, fDataBuildings_1.BUILDINGTYPE.GATEWAY));
 }
 exports.buildingGateway = buildingGateway;
 function buildingRingWorld(star) {

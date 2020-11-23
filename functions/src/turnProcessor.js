@@ -54,7 +54,6 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-exports.damagePotential = exports.getHitChance = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatInflictDamage = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatPostCombat = exports.spaceCombatPreCombat = exports.spaceCombatMain = exports.processTurn = void 0;
 var fBuildingRules_1 = require("./buildings/fBuildingRules");
 var fDataBuildings_1 = require("./data/fDataBuildings");
 var fDataShips_1 = require("./data/fDataShips");
@@ -291,7 +290,7 @@ function processInvasion(oldGame, firestore) {
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
-                                                            defenses = fSystemUtils_1.getSystemDefence(sm);
+                                                            defenses = fSystemUtils_1.getSystemDefence(game, sm);
                                                             attackingFaction = fFactionUtils_1.getFactionFromArrayById(game.factions, factionId);
                                                             ownerFaction = fFactionUtils_1.getFactionFromArrayById(game.factions, sm.ownerFactionId);
                                                             ownerName = ownerFaction ? ownerFaction.name : "Neutral faction";
@@ -332,50 +331,6 @@ function processInvasion(oldGame, firestore) {
                         }); })];
                 case 1:
                     _a.systems = _b.sent();
-                    // oldGame.systems =  oldGame.systems.map((sm: SystemModel) => {
-                    // oldGame.systems = oldGame.systems.map((sm: SystemModel) => {
-                    // 	const factionTroopCount = new Map<string, number>();
-                    // 	oldGame.units.forEach((um: ShipUnit) => {
-                    // 		if (inSameLocation(sm.location, um.location) && sm.ownerFactionId !== um.factionId) {
-                    // 			mapAdd(factionTroopCount, um.factionId, um.troops);
-                    // 		}
-                    // 	});
-                    // 	if (factionTroopCount.size > 0) {
-                    // 		// await asyncMapForeach(factionTroopCount, (troops: number, factionId: string) => {
-                    // 		// });
-                    // 		factionTroopCount.forEach((troops: number, faction: string) => {
-                    // 			if (troops > sm.defense) {
-                    // 				sm.ownerFactionId = faction;
-                    // 				invadedSystems.push(sm);
-                    // 				const report = createNewReport(
-                    // 					{
-                    // 						id: "",
-                    // 						factionIds: [sm.ownerFactionId],
-                    // 						gameId: game.id,
-                    // 						systemId: sm.id,
-                    // 						text: `${sm.name} has been invaded.`,
-                    // 						title: `${sm.name} has been invaded.`,
-                    // 						turn: game.turn,
-                    // 						type: DetailReportType.System,
-                    // 					},
-                    // 					firestore,
-                    // 				);
-                    // 				addReportToSystem(game, sm, DetailReportType.System, [sm.ownerFactionId], report.id);
-                    // 			}
-                    // 		});
-                    // 	}
-                    // 	return sm;
-                    // });
-                    // oldGame.units.forEach((um: ShipUnit) => {
-                    //     const star = game.systems.find((s: SystemModel) => inSameLocation(s.location, um.location));
-                    //     if (star && star.ownerFactionId !== um.factionId) {
-                    //         star.ownerFactionId = um.factionId;
-                    //         invadedSystems.push(star);
-                    //     }
-                    // });
-                    // invadedSystems.forEach((sm: SystemModel) => {
-                    // 	// game = addReportToSystem(game, sm, ReportType.EVENT, [sm.ownerFactionId], [`System Conquered`]);
-                    // });
                     return [2 /*return*/, game];
             }
         });

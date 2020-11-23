@@ -36,7 +36,14 @@ export interface CombatReport extends DetailReport {
     units: ShipUnit[];
     systemId: string;
     rounds: CombatRoundReport[];
-    origUnits: ShipUnit[];   
+    origUnits: ShipUnit[];
+}
+
+export interface InvasionReport extends DetailReport {
+    systemId: string;
+    invaders: number;
+    defenders: number;
+    texts: string[];
 }
 
 export interface CombatRoundReport {
@@ -45,13 +52,6 @@ export interface CombatRoundReport {
     attacks: CombatRoundAttackReport[];
     status: CombatRoundStatus[];
 
-}
-
-export interface InvasionReport extends DetailReport {
-    systemId: string;
-    invaders: number;
-    defenders: number;
-    texts: string[];
 }
 
 
@@ -76,6 +76,7 @@ export interface CombatRoundStatus {
     destroyed: boolean;
     retreated: boolean;
 }
+
 
 
 

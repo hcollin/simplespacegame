@@ -3,22 +3,15 @@ import { Coordinates, GameObject } from "./fModels";
 
 export enum CommandType {
     SystemBuildUnit = "SystemBuildUnit",
-    
     SystemBuildingBuild = "SystemBuildingBuild",
     SystemBuildingRemove = "SystemBuildingRemove",
-
     SystemIndustry = "SystemIndustry",
     SystemEconomy = "SystemEconomy",
     SystemWelfare = "SystemWelfare",
     SystemDefense = "SystemDefense",
-    
     FleetMove = "FleetMove",
-        
     TechnologyResearch = "Research",
-
 }
-
-
 export interface Command extends GameObject {
     gameId: string;
     turn: number;
@@ -53,7 +46,6 @@ export interface RemoveBuildingCommand extends Command {
     targetSystem: string;
     buildingId: string;
 }
-
 
 export interface ResearchCommand extends Command {
     techId: string;

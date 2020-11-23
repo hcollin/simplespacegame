@@ -1,7 +1,5 @@
-import { SYSTEMBONUS } from "../configs";
 import { TECHIDS } from "../data/dataTechnology";
 import { FactionModel, GameModel, SystemKeyword, SystemModel } from "../models/Models";
-import { SystemEconomy } from "../utils/systemUtils";
 import { factionHasTechnology } from "./techTools";
 
 export function techMarketing(faction: FactionModel, game: GameModel): number {

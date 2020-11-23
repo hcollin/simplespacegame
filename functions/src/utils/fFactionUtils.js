@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.getFactionScore = exports.researchPointDistribution = exports.getSystemResearchPointGeneration = exports.researchPointGenerationCalculator = exports.systemExpenses = exports.unitExpenses = exports.getWelfareCommands = exports.commandCountCalculator = exports.expensesCalculator = exports.factionValues = exports.getFactionFromArrayById = void 0;
 var fBuildingRules_1 = require("../buildings/fBuildingRules");
 var fBusinessTech_1 = require("../tech/fBusinessTech");
 function getFactionFromArrayById(factions, id) {
@@ -57,7 +56,12 @@ function factionValues(game, factionId) {
         }
         return sum;
     }, 0);
-    values.income = values.totalEconomy + values.trade - values.expenses + fBusinessTech_1.techMarketing(faction, game);
+    values.income =
+        values.totalEconomy +
+            values.trade -
+            values.expenses +
+            fBusinessTech_1.techMarketing(faction, game) +
+            fBusinessTech_1.techCapitalist(faction, game.systems);
     values.maxCommands = commandCountCalculator(game, factionId);
     return values;
 }
@@ -108,6 +112,7 @@ function commandCountCalculator(game, factionId) {
     var f = getFactionFromArrayById(game.factions, factionId);
     if (!f)
         throw new Error("Invalid factionId" + factionId);
+    bonusCommands += fBusinessTech_1.techExpansionist(f, game.systems);
     return getWelfareCommands(f, totalWelfare) + bonusCommands;
 }
 exports.commandCountCalculator = commandCountCalculator;
@@ -135,7 +140,7 @@ function researchPointGenerationCalculator(game, faction) {
         }
         return sum;
     }, 0);
-    return points;
+    return points + fBusinessTech_1.techScientist(faction, game.systems);
 }
 exports.researchPointGenerationCalculator = researchPointGenerationCalculator;
 function getSystemResearchPointGeneration(sm, faction) {
@@ -170,7 +175,7 @@ function researchPointDistribution(totalPoints, faction) {
     });
     var curSum = points.reduce(function (tot, cur) { return tot + cur; }, 0);
     if (curSum < totalPoints) {
-        points[highestFieldIndex] += (totalPoints - curSum);
+        points[highestFieldIndex] += totalPoints - curSum;
     }
     return points;
 }

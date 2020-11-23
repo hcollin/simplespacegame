@@ -259,7 +259,7 @@ async function processInvasion(oldGame: GameModel, firestore: any): Promise<Game
 
 		if (factionTroopCount.size > 0) {
 			await asyncMapForeach(factionTroopCount, async (troops: number, factionId: string) => {
-				const defenses = getSystemDefence(sm);
+				const defenses = getSystemDefence(game, sm);
 				const attackingFaction = getFactionFromArrayById(game.factions, factionId);
 				const ownerFaction = getFactionFromArrayById(game.factions, sm.ownerFactionId);
 				const ownerName = ownerFaction ? ownerFaction.name : "Neutral faction";
@@ -293,59 +293,7 @@ async function processInvasion(oldGame: GameModel, firestore: any): Promise<Game
 			});
 		}
 		return sm;
-	});
-	// oldGame.systems =  oldGame.systems.map((sm: SystemModel) => {
-	// oldGame.systems = oldGame.systems.map((sm: SystemModel) => {
-	// 	const factionTroopCount = new Map<string, number>();
-
-	// 	oldGame.units.forEach((um: ShipUnit) => {
-	// 		if (inSameLocation(sm.location, um.location) && sm.ownerFactionId !== um.factionId) {
-	// 			mapAdd(factionTroopCount, um.factionId, um.troops);
-	// 		}
-	// 	});
-
-	// 	if (factionTroopCount.size > 0) {
-	// 		// await asyncMapForeach(factionTroopCount, (troops: number, factionId: string) => {
-
-	// 		// });
-	// 		factionTroopCount.forEach((troops: number, faction: string) => {
-	// 			if (troops > sm.defense) {
-	// 				sm.ownerFactionId = faction;
-	// 				invadedSystems.push(sm);
-
-	// 				const report = createNewReport(
-	// 					{
-	// 						id: "",
-	// 						factionIds: [sm.ownerFactionId],
-	// 						gameId: game.id,
-	// 						systemId: sm.id,
-	// 						text: `${sm.name} has been invaded.`,
-	// 						title: `${sm.name} has been invaded.`,
-	// 						turn: game.turn,
-	// 						type: DetailReportType.System,
-	// 					},
-	// 					firestore,
-	// 				);
-
-	// 				addReportToSystem(game, sm, DetailReportType.System, [sm.ownerFactionId], report.id);
-	// 			}
-	// 		});
-	// 	}
-
-	// 	return sm;
-	// });
-
-	// oldGame.units.forEach((um: ShipUnit) => {
-	//     const star = game.systems.find((s: SystemModel) => inSameLocation(s.location, um.location));
-	//     if (star && star.ownerFactionId !== um.factionId) {
-	//         star.ownerFactionId = um.factionId;
-	//         invadedSystems.push(star);
-	//     }
-	// });
-
-	// invadedSystems.forEach((sm: SystemModel) => {
-	// 	// game = addReportToSystem(game, sm, ReportType.EVENT, [sm.ownerFactionId], [`System Conquered`]);
-	// });
+	});	
 
 	return game;
 }

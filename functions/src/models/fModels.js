@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.TechnologyField = exports.FactionState = exports.SystemKeyword = exports.GameState = void 0;
 var GameState;
 (function (GameState) {
     GameState[GameState["NONE"] = 0] = "NONE";
@@ -22,7 +21,6 @@ var SystemKeyword;
     SystemKeyword["NATIVES"] = "Natives";
     SystemKeyword["ARTIFACTS"] = "Alien Artifacts";
 })(SystemKeyword = exports.SystemKeyword || (exports.SystemKeyword = {}));
-;
 var FactionState;
 (function (FactionState) {
     FactionState[FactionState["INIT"] = 0] = "INIT";
@@ -36,7 +34,7 @@ var TechnologyField;
     TechnologyField["CHEMISTRY"] = "Chemistry";
     TechnologyField["PHYSICS"] = "Physics";
     TechnologyField["BIOLOGY"] = "Biology";
-    TechnologyField["BUSINESS"] = "Business";
+    TechnologyField["BUSINESS"] = "Economy";
     TechnologyField["MATERIAL"] = "Material";
     TechnologyField["INFORMATION"] = "Information";
 })(TechnologyField = exports.TechnologyField || (exports.TechnologyField = {}));

@@ -582,6 +582,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
     combatReport: CombatReport;
+    close: () => void;
 }
 
 const CombatViewer: FC<Props> = (props) => {

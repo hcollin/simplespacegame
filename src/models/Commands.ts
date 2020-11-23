@@ -3,17 +3,13 @@ import { Coordinates, GameObject } from "./Models";
 
 export enum CommandType {
     SystemBuildUnit = "SystemBuildUnit",
-    
     SystemBuildingBuild = "SystemBuildingBuild",
     SystemBuildingRemove = "SystemBuildingRemove",
-
     SystemIndustry = "SystemIndustry",
     SystemEconomy = "SystemEconomy",
     SystemWelfare = "SystemWelfare",
     SystemDefense = "SystemDefense",
-    
     FleetMove = "FleetMove",
-        
     TechnologyResearch = "Research",
 }
 
@@ -23,6 +19,7 @@ export interface Command extends GameObject {
     completed: boolean;
     factionId: string;
     type: CommandType;
+    save?: boolean;
 }
 
 export interface SystemPlusCommand extends Command {
@@ -50,7 +47,6 @@ export interface RemoveBuildingCommand extends Command {
     targetSystem: string;
     buildingId: string;
 }
-
 
 export interface ResearchCommand extends Command {
     techId: string;

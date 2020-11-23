@@ -1,7 +1,6 @@
 import { BuildingDesign } from "../models/Buildings";
 import { TECHIDS } from "./dataTechnology";
 
-
 export enum BUILDINGTYPE {
     BIODOME = "Biodome",
     TRADEPOST = "Trade Post",
