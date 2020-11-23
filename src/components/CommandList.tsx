@@ -28,6 +28,7 @@ import { factionValues, getFactionScore, researchPointGenerationCalculator } fro
 import { doPlayerDone } from "../services/commands/GameCommands";
 import { COMMANDPAGINATIONLIMIT } from "../configs";
 import { getSystemByCoordinates } from "../utils/systemUtils";
+import CheatView from "./CheatView";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -447,7 +448,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                 );
             })}
 
-            {/* <CheatView /> */}
+            <CheatView />
 
             <div className={classes.turn}>
                 <div>

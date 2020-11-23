@@ -5,7 +5,7 @@ import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/Models";
 import { ShipUnit } from "../models/Units";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
-import { techDecisionEngine, techHigherEducation, techMarketing } from "../tech/businessTech";
+import { techCapitalist, techDecisionEngine, techExpansionist, techHigherEducation, techMarketing, techScientist } from "../tech/businessTech";
 
 interface FactionValues {
     maxCommands: number;
@@ -79,7 +79,7 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         return sum;
     }, 0)
 
-    values.income = values.totalEconomy + values.trade - values.expenses + techMarketing(faction, game);
+    values.income = values.totalEconomy + values.trade - values.expenses + techMarketing(faction, game) + techCapitalist(faction, game.systems);
 
     values.maxCommands = commandCountCalculator(game, factionId);
 
@@ -139,6 +139,8 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
     });
     const f = getFactionFromArrayById(game.factions, factionId);
     if (!f) throw new Error(`Invalid factionId${factionId}`);
+
+    bonusCommands += techExpansionist(f, game.systems);
     return getWelfareCommands(f, totalWelfare) + bonusCommands;
 }
 
@@ -169,7 +171,7 @@ export function researchPointGenerationCalculator(game: GameModel, faction: Fact
         }
         return sum;
     }, 0);
-    return points;
+    return points + techScientist(faction, game.systems);
 }
 
 export function getSystemResearchPointGeneration(sm: SystemModel, faction: FactionModel): number {

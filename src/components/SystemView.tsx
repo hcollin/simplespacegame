@@ -391,7 +391,6 @@ const SystemView: FC = () => {
                             cmdId: cmd.id,
                             cancellable: cmd.turn === game.turn,
 						};
-						console.log(shipUC);
                         ships.push(shipUC);
                     }
                 }
@@ -401,6 +400,8 @@ const SystemView: FC = () => {
         },
         []
     );
+
+    const freeShipYardSlots = sysEco.shipyards - shipsUnderConstruction.length;
 
     return (
         <div className={classes.root}>
@@ -436,7 +437,7 @@ const SystemView: FC = () => {
                                         // variant="contained"
                                         // color="primary"
                                         onClick={() => plusIndustry(star.id)}
-                                        disabled={star.industry >= sysEco.industryMax}
+                                        disabled={star.industry + comPlusInd>= sysEco.industryMax}
                                     >
                                         +
                                     </Button>
@@ -457,7 +458,7 @@ const SystemView: FC = () => {
                                         // variant="contained"
                                         // color="primary"
                                         onClick={() => plusEconomy(star.id)}
-                                        disabled={star.economy >= sysEco.economyMax}
+                                        disabled={star.economy + comPlusEco >= sysEco.economyMax}
                                     >
                                         +
                                     </Button>
@@ -478,7 +479,7 @@ const SystemView: FC = () => {
                                         // variant="contained"
                                         // color="primary"
                                         onClick={() => plusDefense(star.id)}
-                                        disabled={star.defense >= sysEco.defenseMax}
+                                        disabled={star.defense + comPlusDef >= sysEco.defenseMax}
                                     >
                                         +
                                     </Button>
@@ -499,7 +500,7 @@ const SystemView: FC = () => {
                                         // variant="outlined"
                                         // color="primary"
                                         onClick={() => plusWelfare(star.id)}
-                                        disabled={star.welfare >= sysEco.welfareMax}
+                                        disabled={star.welfare + comPlusWlf >= sysEco.welfareMax}
                                     >
                                         +
                                     </Button>
@@ -531,7 +532,14 @@ const SystemView: FC = () => {
                                     </div>
                                 );
                             })}
-                            {mySystem && shipsUnderConstruction.length === 0 && (
+                            {mySystem && freeShipYardSlots > 0 && (
+                                <div className={classes.shipDockSlot}>
+                                    <Button className="fullSizeButton" onClick={() => setBuildingView("ships")}>
+                                        +
+                                    </Button>
+                                </div>
+                            )}
+                            {mySystem && freeShipYardSlots > 1 && (
                                 <div className={classes.shipDockSlot}>
                                     <Button className="fullSizeButton" onClick={() => setBuildingView("ships")}>
                                         +
@@ -632,14 +640,14 @@ const SystemView: FC = () => {
                                     
 									if(!buildable) {
 										return (
-											<div key={ship.type}>
+											<div key={ship.typeClassName}>
 												<ShipInfo ship={ship} className="notBuildable" />
 											</div>
 										);
 									}
 									
                                     return (
-                                        <div key={ship.type}>
+                                        <div key={ship.typeClassName}>
                                             <ShipInfo ship={ship} onClick={(s: ShipDesign) => buildUnit(ship, star)}  />
                                         </div>
                                     );

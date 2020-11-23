@@ -217,7 +217,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldsMax: 0,
         keywords: [],
         weapons: [getWeaponByName("Small Laser"), getWeaponByName("Machinegun")],
-        description: "One man fighter craft that does not have warp capability in itself.",
+        description: "Small patrol boat used mainly used for bulking up the defenses against fighters or for really cash stripped empires.",
     },
     {
         id: "",

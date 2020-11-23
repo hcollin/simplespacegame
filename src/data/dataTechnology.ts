@@ -235,7 +235,7 @@ export const DATATECHNOLOGY: Technology[] = [
 			[TechnologyField.PHYSICS, 80],
 		],
 		techprereq: [TECHIDS.FocusBeam1],
-		name: "Focus Beam",
+		name: "Focus Beam II",
 		description: "The damage output of Energy weapons is increased by 10% more",
 	},
 	{//DONE
@@ -247,7 +247,7 @@ export const DATATECHNOLOGY: Technology[] = [
 			[TechnologyField.PHYSICS, 160],
 		],
 		techprereq: [TECHIDS.FocusBeam2, TECHIDS.HypTheory],
-		name: "Focus Beam",
+		name: "Focus Beam III",
 		description: "The damage output of Energy weapons is increased by 10% more",
 	},
 	{// DONEish
@@ -303,7 +303,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Initial Economy Boost",
 		description: "Each planet will automatically generate +1 money each turn",
 	},
-	{ 
+	{ // FN DONE
 		id: TECHIDS.MerchGuilds,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 20],
@@ -314,7 +314,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Merchant Guilds",
 		description: "Each trade agreement will gain you +2 money per turn, even if you are the one paying.",
 	},
-	{
+	{// FN DONE
 		id: TECHIDS.MineralPros,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 10],
@@ -324,7 +324,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Mineral Processing",
 		description: "Maximum industry in Mineral Rich and Rare mineral planets is increased by 1",
 	},
-	{
+	{// FN DONE
 		id: TECHIDS.AlterPros,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 20],
@@ -334,7 +334,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Alternative Processing",
 		description: "Minerally poor planets gain +1 industry maximum and +1 welfare maximum",
 	},
-	{
+	{ //FN DONE
 		id: TECHIDS.AutoDef1,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 10],
@@ -346,7 +346,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Automated Defences",
 		description: "Each system gains +1 defense during invasion",
     },
-    {
+    { //FN DONE
 		id: TECHIDS.AutoDef2,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 10],
@@ -359,7 +359,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Automated Defences II",
 		description: "Each system gains +3 defense during invasion",
     },
-    {
+    { // FN DONE
 		id: TECHIDS.AutoDef3,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 20],
@@ -372,7 +372,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Automated Defences III",
 		description: "Each system gains +5 defense during invasion",
 	},
-	{
+	{ // Done
 		id: TECHIDS.DriodDef,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 40],
@@ -384,7 +384,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Driod Defences",
 		description: "Each defence point is worth 2 points when defending against invasions.",
 	},
-	{
+	{ // FN Done
 		id: TECHIDS.SpaceMarine1,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 40],
@@ -394,7 +394,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Space Marine",
 		description: "Total troop value of invading forces is incresed by 1 per ship.",
     },
-    {
+    { // FN Done
 		id: TECHIDS.SpaceMarine2,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 80],
@@ -404,7 +404,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Space Marine",
 		description: "Total troop value of invading forces is incresed by 3 per ship.",
 	},
-	{
+	{ // FN Done
 		id: TECHIDS.TermiTroops,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 160],
@@ -416,7 +416,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Terminator Troops",
 		description: "The strength value of invading troops is multiplied by 1.5",
     },
-    {
+    { // Done
 		id: TECHIDS.HigherEdu,
 		fieldreqs: [
 			[TechnologyField.BUSINESS, 20],
@@ -426,7 +426,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Higher Education",
 		description: "High Welfare affects research points less.",
 	},
-    {
+    { // Done
 		id: TECHIDS.DeciAppr,
 		fieldreqs: [
             [TechnologyField.BIOLOGY, 40],
@@ -439,7 +439,7 @@ export const DATATECHNOLOGY: Technology[] = [
 	},
 
 	
-	{
+	{ // Done
 		id: TECHIDS.GalacticSen,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 20],
@@ -450,7 +450,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Galactic Senate",
 		description: "Welfare maximum is increased on each system by 1.",
 	},
-	{
+	{ // Done
 		id: TECHIDS.Adaptability,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 40],
@@ -460,7 +460,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Adaptability",
 		description: "Maximum welfare of hostile systems is increased to 3.",
 	},
-	{
+	{ // Done
 		id: TECHIDS.EfficientBur,
 		fieldreqs: [
 			[TechnologyField.BUSINESS, 40],
@@ -483,7 +483,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Space Dock",
 		description: "Systems with industry level 5 or higher can build two ships at the same time",
     },
-    {
+    { // Done
 		id: TECHIDS.Ugconstruc,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 40],
@@ -493,7 +493,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Underground Construction",
 		description: "Each system gains +1 building slot",
     },
-    {
+    { // Done
 		id: TECHIDS.LevitatBuild,
 		fieldreqs: [
 			

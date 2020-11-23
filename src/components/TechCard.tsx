@@ -4,6 +4,7 @@ import { DATATECHNOLOGY } from "../data/dataTechnology";
 import { FactionModel, Technology, TechnologyField } from "../models/Models";
 import { missingResearchPoints } from "../utils/techUtils";
 import { TechFieldIcon } from "../views/subviews/ScienceView";
+import { IconResearchPoint } from "./Icons";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -93,15 +94,30 @@ const useStyles = makeStyles((theme: Theme) =>
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    
+
                     "& > img": {
                         height: "1.5rem",
                     },
 
                     "&.missing": {
                         color: "#F44A",
-                    }
+                    },
                 },
+            },
+
+            "& > div.underResearch": {
+                background: "#0488",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 10,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "inset 0 0 2rem 1rem #222A",
+                
             },
         },
     })
@@ -113,6 +129,7 @@ interface TechCardProps {
     className?: string;
     onClick?: (tech: Technology) => void;
     highlightMissing?: boolean;
+    underResearch?: boolean;
 }
 
 const TechCard: FC<TechCardProps> = (props) => {
@@ -128,29 +145,41 @@ const TechCard: FC<TechCardProps> = (props) => {
     });
 
     function click() {
-        if(props.onClick !== undefined) {
+        if (props.onClick !== undefined) {
             props.onClick(props.tech);
         }
     }
 
-    const missing = props.highlightMissing ? missingResearchPoints(props.tech, props.faction) : new Map<TechnologyField, number>();
-    
+    const missing = props.highlightMissing
+        ? missingResearchPoints(props.tech, props.faction)
+        : new Map<TechnologyField, number>();
 
     return (
-        <div className={`${classes.root} size-${props.tech.fieldreqs.length} ${props.className || ""}`} onClick={click}>
+        <div
+            className={`${classes.root} size-${props.tech.fieldreqs.length}${
+                props.underResearch === true ? " researching" : ""
+            } ${props.className || ""}`}
+            onClick={click}
+        >
             <h1>{props.tech.name}</h1>
             <p>{props.tech.description}</p>
             {prereqtechNames.length > 0 && <div className="prereqtech">{prereqtechNames.join(", ")}</div>}
             <div className="fieldreqs">
                 {props.tech.fieldreqs.map((req: [TechnologyField, number]) => {
                     const isMissing = missing.has(req[0]);
+
                     return (
-                        <div className={`${missing ? "missing": ""}`}>
+                        <div className={`${isMissing ? "missing" : ""}`}>
                             <TechFieldIcon key={req[0]} field={req[0]} /> {req[1]}
                         </div>
                     );
                 })}
             </div>
+            {props.underResearch && (
+                <div className="underResearch">
+                    <IconResearchPoint size="xxl" wrapper="dark" />
+                </div>
+            )}
         </div>
     );
 };

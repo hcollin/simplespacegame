@@ -18,6 +18,8 @@ export function buildBuildingRules(star: SystemModel, bt: BUILDINGTYPE): boolean
             return star.keywords.includes(SystemKeyword.MINERALRARE) || star.keywords.includes(SystemKeyword.MINERALRICH);
         case BUILDINGTYPE.GAIAPROJECT:
             return star.keywords.includes(SystemKeyword.GAIA);
+        case BUILDINGTYPE.TRADEPOST:
+            return star.keywords.includes(SystemKeyword.NATIVES);
         default:
             return true;
     }

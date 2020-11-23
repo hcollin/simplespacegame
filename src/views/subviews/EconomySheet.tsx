@@ -142,6 +142,12 @@ const EconomySheet: FC = () => {
             className: "center redText",
         },
         {
+            key: "expenses",
+            header: "Expenses",
+            size: 80,
+            className: "center redText"
+        },
+        {
             key: "profit",
             header: "Profit",
             size: 80,
