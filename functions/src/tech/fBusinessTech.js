@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.techDysonSphere = exports.techScientist = exports.techCapitalist = exports.techExpansionist = exports.techLevitationBuildings = exports.techUndergroundConstruction = exports.techSpaceDock = exports.techEfficientBureaucracy = exports.techAdaptability = exports.techGalacticSenate = exports.techHigherEducation = exports.techDecisionEngine = exports.techAlternativePros = exports.techMineralPros = exports.techMerchantGuild = exports.techInitEcoBoost = exports.techMarketing = void 0;
 var fDataTechnology_1 = require("../data/fDataTechnology");
 var fModels_1 = require("../models/fModels");
 var fTechTools_1 = require("./fTechTools");
@@ -113,23 +114,23 @@ exports.techExpansionist = techExpansionist;
 function techCapitalist(faction, stars) {
     if (!fTechTools_1.factionHasTechnology(faction, fDataTechnology_1.TECHIDS.Expansionist))
         return 0;
-    return Math.floor(stars.reduce(function (tot, sm) {
+    return (Math.floor(stars.reduce(function (tot, sm) {
         if (sm.ownerFactionId === faction.id) {
             return tot + 1;
         }
         return tot;
-    }, 0) / 7) * 5;
+    }, 0) / 7) * 5);
 }
 exports.techCapitalist = techCapitalist;
 function techScientist(faction, stars) {
     if (!fTechTools_1.factionHasTechnology(faction, fDataTechnology_1.TECHIDS.Expansionist))
         return 0;
-    return Math.floor(stars.reduce(function (tot, sm) {
+    return (Math.floor(stars.reduce(function (tot, sm) {
         if (sm.ownerFactionId === faction.id) {
             return tot + 1;
         }
         return tot;
-    }, 0) / 7) * 3;
+    }, 0) / 7) * 3);
 }
 exports.techScientist = techScientist;
 function techDysonSphere(faction) {

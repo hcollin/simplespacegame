@@ -365,7 +365,6 @@ const FactionHeader: FC = () => {
         setActiveReportId("");
     }
 
-    console.log("show Active Report", activeReportId, report);
     return (
         <>
             <div

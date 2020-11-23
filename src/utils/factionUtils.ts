@@ -14,7 +14,9 @@ import {
     techDecisionEngine,
     techExpansionist,
     techHigherEducation,
+    techInitEcoBoost,
     techMarketing,
+    techMerchantGuild,
     techScientist,
 } from "../tech/businessTech";
 
@@ -74,7 +76,7 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
 
     values.systemExpenses = game.systems.reduce((sum: number, sm: SystemModel) => {
         if (sm.ownerFactionId === factionId) {
-            sum += systemExpenses(sm);
+            sum += systemExpenses(sm, faction);
         }
         return sum;
     }, 0);
@@ -86,7 +88,7 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         if (t.from === factionId) {
             return sum - t.money;
         }
-        return sum;
+        return sum + techMerchantGuild(faction);
     }, 0);
 
     values.income =
@@ -112,6 +114,8 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
 export function expensesCalculator(game: GameModel, factionId: string): number {
     let expenses = 0;
 
+    const faction = getFactionFromArrayById(game.factions, factionId);
+
     game.units.forEach((unit: ShipUnit) => {
         if (unit.factionId === factionId) {
             expenses += unitExpenses(unit);
@@ -120,7 +124,7 @@ export function expensesCalculator(game: GameModel, factionId: string): number {
 
     game.systems.forEach((star: SystemModel) => {
         if (star.ownerFactionId === factionId) {
-            expenses += systemExpenses(star);
+            expenses += systemExpenses(star, faction);
         }
     });
 
@@ -165,12 +169,13 @@ export function unitExpenses(um: ShipUnit): number {
     return um.cost >= 3 ? Math.floor(um.cost / 3) : 1;
 }
 
-export function systemExpenses(sm: SystemModel): number {
+export function systemExpenses(sm: SystemModel, faction?: FactionModel): number {
     const indExp = sm.industry < 3 ? 0 : Math.floor(sm.industry / 2);
     const welExp = sm.welfare < 3 ? 0 : Math.floor(sm.welfare / 2);
     const defExp = sm.defense;
     const buildingExpenses = sm.buildings.reduce((tot: number, b: Building) => tot + b.maintenanceCost, 0);
-    return indExp + welExp + defExp + buildingExpenses + 1;
+    const initBoost = faction ? techInitEcoBoost(faction) : 0;
+    return indExp + welExp + defExp + buildingExpenses + 1 + initBoost;
 }
 
 export function researchPointGenerationCalculator(game: GameModel, faction: FactionModel): number {
@@ -260,6 +265,8 @@ export function getFactionScore(game: GameModel, factionId: string): number {
     score += faction.technology.length * 2;
 
     score += buildingGalacticSenate(game, faction);
+
+    // score -= faction.debt * Math.ceil(faction.debt/20);
 
     // Add technology scores from base research techs
 

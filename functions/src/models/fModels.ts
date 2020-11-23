@@ -115,6 +115,7 @@ export interface FactionModel extends GameObject {
     playerId: string;
     style: FactionStyle;
     technology: string[];
+    debt: number;
 }
 
 export interface FactionStyle {

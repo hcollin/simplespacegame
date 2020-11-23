@@ -76,8 +76,6 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
         eco.shipyards = techSpaceDock(faction, eco);
     }
 
-    console.log(eco.name, eco.shipyards, eco.industry);
-
     return buildingBioDome(buildingArcology(buildingIndustrySector(buildingFactoryAutomation(buildingRingWorld(eco)))));
 }
 

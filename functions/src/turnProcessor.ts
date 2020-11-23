@@ -26,8 +26,15 @@ import {
 } from "./models/fModels";
 import { CombatReport, CombatRoundStatus, DetailReport, DetailReportType, InvasionReport, SystemReport } from "./models/fReport";
 import { SHIPCLASS, ShipUnit, ShipWeapon, WEAPONTYPE } from "./models/fUnits";
+import { techAutoRepairBots, techAutoRepairBots2 } from "./tech/fShipTech";
 import { createBuildingFromDesign, getBuildingDesignByType, systemHasBuilding } from "./utils/fBuildingUtils";
-import { researchPointGenerationCalculator, researchPointDistribution, factionValues, getFactionFromArrayById } from "./utils/fFactionUtils";
+import {
+	researchPointGenerationCalculator,
+	researchPointDistribution,
+	factionValues,
+	getFactionFromArrayById,
+	calculateFactionDebt,
+} from "./utils/fFactionUtils";
 import { asyncArrayMap, asyncMapForeach, mapAdd } from "./utils/fGeneralUtils";
 import { inSameLocation } from "./utils/fLocationUtils";
 import { travelingBetweenCoordinates } from "./utils/fMathUtils";
@@ -293,7 +300,7 @@ async function processInvasion(oldGame: GameModel, firestore: any): Promise<Game
 			});
 		}
 		return sm;
-	});	
+	});
 
 	return game;
 }
@@ -303,6 +310,11 @@ function processEconomy(game: GameModel): GameModel {
 		const values = factionValues(game, fm.id);
 
 		fm.money += values.income;
+
+		const [debt, payback] = calculateFactionDebt(game, fm);
+		fm.debt = debt;
+		fm.money -= payback;
+
 		return { ...fm };
 	});
 
@@ -325,6 +337,11 @@ function processRepairs(oldGame: GameModel): GameModel {
 					unit.fighters = unit.fighters + 1 * buildingRepairStation(star);
 				}
 			}
+		}
+		const unitOwnerFaction = getFactionFromArrayById(game.factions, unit.factionId);
+		unit.damage -= techAutoRepairBots(unitOwnerFaction, unit);
+		if (unit.damage < 0) {
+			unit.damage = 0;
 		}
 
 		return { ...unit };
@@ -364,7 +381,6 @@ async function processCombats(game: GameModel, firestore: any): Promise<GameMode
 		}
 	});
 
-	combats.length > 0 && console.log("COMBATS", combats);
 	for (let i = 0; i < combats.length; i++) {
 		const combat = combats[i];
 		if (combat) {
@@ -890,8 +906,8 @@ export function spaceCombatAttackChooseTarget(combat: SpaceCombat, attacker: Shi
 
 				// console.log("\t", pos.typeClassName, pos.name, hitChanceValue, dmgPotValue, points);
 
-				const valueO = oldHitChance / 10 + oldDmgPot;
-				const valueN = newHitChance / 10 + newDmgPot;
+				// const valueO = oldHitChance / 10 + oldDmgPot;
+				// const valueN = newHitChance / 10 + newDmgPot;
 
 				if (points <= 0) {
 					// console.log(`\t KEEP: ${t.name} H%${oldHitChance} Dmg: ${oldDmgPot}`);
@@ -1103,6 +1119,11 @@ export function spaceCombatRoundCleanUp(game: GameModel, combat: SpaceCombat): S
 					su.shields = factionUnit.shieldsMax;
 				}
 			}
+		}
+
+		su.damage -= techAutoRepairBots2(faction, su);
+		if (su.damage < 0) {
+			su.damage = 0;
 		}
 
 		return su;

@@ -50,56 +50,50 @@ export enum TECHIDS {
 	Capitalist = "T-0039",
 	Scientist = "T-0040",
 
-    Arcology = "T-0041",
-    DysonShpe = "T-0042",
-    
-    AdvRobotics = "T-B01",
-    HypTheory = "T-B02",
-    GeneEngine = "T-B03",
-    AntimatterCon = "T-B04",
-};
+	Arcology = "T-0041",
+	DysonShpe = "T-0042",
+
+	AdvRobotics = "T-B01",
+	HypTheory = "T-B02",
+	GeneEngine = "T-B03",
+	AntimatterCon = "T-B04",
+}
 
 export const DATATECHNOLOGY: Technology[] = [
-
-    {
+	{
 		id: TECHIDS.AdvRobotics,
 		fieldreqs: [
-            [TechnologyField.BUSINESS, 80],
-            [TechnologyField.INFORMATION, 80],
+			[TechnologyField.BUSINESS, 80],
+			[TechnologyField.INFORMATION, 80],
 		],
 		techprereq: [],
 		name: "Advanced Robotics",
 		description: "Worth 5 Victory points",
-    },
-    {
+	},
+	{
 		id: TECHIDS.HypTheory,
-		fieldreqs: [
-			[TechnologyField.PHYSICS, 160],
-		],
+		fieldreqs: [[TechnologyField.PHYSICS, 160]],
 		techprereq: [],
 		name: "Hyper Space Theory",
 		description: "Worth 5 Victory points",
-    },
-    {
+	},
+	{
 		id: TECHIDS.GeneEngine,
-		fieldreqs: [
-            [TechnologyField.BIOLOGY, 160],
-		],
+		fieldreqs: [[TechnologyField.BIOLOGY, 160]],
 		techprereq: [],
 		name: "Genetic Engineering",
 		description: "Worth 5 Victory points",
-    },
-    {
+	},
+	{
 		id: TECHIDS.AntimatterCon,
 		fieldreqs: [
-            
-            [TechnologyField.MATERIAL, 80],
-            [TechnologyField.CHEMISTRY, 80],
+			[TechnologyField.MATERIAL, 80],
+			[TechnologyField.CHEMISTRY, 80],
 		],
 		techprereq: [],
 		name: "Antimatter Construction",
 		description: "Worth 5 Victory points",
-    },
+	},
 
 	{
 		id: TECHIDS.IonEngines,
@@ -211,7 +205,7 @@ export const DATATECHNOLOGY: Technology[] = [
 			[TechnologyField.CHEMISTRY, 80],
 			[TechnologyField.PHYSICS, 40],
 		],
-		techprereq: [TECHIDS.HeavyRounds2,TECHIDS.AntimatterCon],
+		techprereq: [TECHIDS.HeavyRounds2, TECHIDS.AntimatterCon],
 		name: "Heavy Rounds III",
 		description: "The damage output of all Kinetic Weapons is increased by 10% more",
 	},
@@ -281,8 +275,8 @@ export const DATATECHNOLOGY: Technology[] = [
 		techprereq: [TECHIDS.AutoRepBots1, TECHIDS.AdvRobotics],
 		name: "Auto Repair Bots II",
 		description: "Ships repairs damage between combat rounds. The amount depends on the ship size.",
-    },
-    {
+	},
+	{
 		id: TECHIDS.Marketing,
 		fieldreqs: [
 			[TechnologyField.BUSINESS, 160],
@@ -292,7 +286,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Hyper Space Marketing",
 		description: "Gain 1 Money per 5 total economy",
 	},
-	{ 
+	{
 		id: TECHIDS.InitEcoBoost,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 10],
@@ -303,7 +297,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Initial Economy Boost",
 		description: "Each planet will automatically generate +1 money each turn",
 	},
-	{ 
+	{
 		id: TECHIDS.MerchGuilds,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 20],
@@ -334,7 +328,8 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Alternative Processing",
 		description: "Minerally poor planets gain +1 industry maximum and +1 welfare maximum",
 	},
-	{ //FN DONE
+	{
+		//FN DONE
 		id: TECHIDS.AutoDef1,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 10],
@@ -345,8 +340,9 @@ export const DATATECHNOLOGY: Technology[] = [
 		techprereq: [],
 		name: "Automated Defences",
 		description: "Each system gains +1 defense during invasion",
-    },
-    { //FN DONE
+	},
+	{
+		//FN DONE
 		id: TECHIDS.AutoDef2,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 10],
@@ -358,8 +354,8 @@ export const DATATECHNOLOGY: Technology[] = [
 		techprereq: [TECHIDS.AutoDef1],
 		name: "Automated Defences II",
 		description: "Each system gains +3 defense during invasion",
-    },
-    { 
+	},
+	{
 		id: TECHIDS.AutoDef3,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 20],
@@ -372,7 +368,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Automated Defences III",
 		description: "Each system gains +5 defense during invasion",
 	},
-	{ 
+	{
 		id: TECHIDS.DriodDef,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 40],
@@ -384,7 +380,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Driod Defences",
 		description: "Each defence point is worth 2 points when defending against invasions.",
 	},
-	{ 
+	{
 		id: TECHIDS.SpaceMarine1,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 40],
@@ -393,18 +389,18 @@ export const DATATECHNOLOGY: Technology[] = [
 		techprereq: [],
 		name: "Space Marine",
 		description: "Total troop value of invading forces is incresed by 1 per ship.",
-    },
-    { 
+	},
+	{
 		id: TECHIDS.SpaceMarine2,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 80],
 			[TechnologyField.CHEMISTRY, 20],
 		],
-		techprereq: [TECHIDS.SpaceMarine1,TECHIDS.GeneEngine],
+		techprereq: [TECHIDS.SpaceMarine1, TECHIDS.GeneEngine],
 		name: "Space Marine",
 		description: "Total troop value of invading forces is incresed by 3 per ship.",
 	},
-	{ 
+	{
 		id: TECHIDS.TermiTroops,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 160],
@@ -415,8 +411,8 @@ export const DATATECHNOLOGY: Technology[] = [
 		techprereq: [TECHIDS.GeneEngine, TECHIDS.AdvRobotics],
 		name: "Terminator Troops",
 		description: "The strength value of invading troops is multiplied by 1.5",
-    },
-    { 
+	},
+	{
 		id: TECHIDS.HigherEdu,
 		fieldreqs: [
 			[TechnologyField.BUSINESS, 20],
@@ -426,10 +422,10 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Higher Education",
 		description: "High Welfare affects research points less.",
 	},
-    { 
+	{
 		id: TECHIDS.DeciAppr,
 		fieldreqs: [
-            [TechnologyField.BIOLOGY, 40],
+			[TechnologyField.BIOLOGY, 40],
 			[TechnologyField.BUSINESS, 80],
 			[TechnologyField.INFORMATION, 80],
 		],
@@ -438,8 +434,7 @@ export const DATATECHNOLOGY: Technology[] = [
 		description: "Every 7th total welfare point will produce 1 command instead of every 10th.",
 	},
 
-	
-	{ 
+	{
 		id: TECHIDS.GalacticSen,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 20],
@@ -450,17 +445,17 @@ export const DATATECHNOLOGY: Technology[] = [
 		name: "Galactic Senate",
 		description: "Welfare maximum is increased on each system by 1.",
 	},
-	{ 
+	{
 		id: TECHIDS.Adaptability,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 40],
-			[TechnologyField.MATERIAL, 10],			
+			[TechnologyField.MATERIAL, 10],
 		],
 		techprereq: [TECHIDS.GeneEngine],
 		name: "Adaptability",
 		description: "Maximum welfare of hostile systems is increased to 3.",
 	},
-	{ 
+	{
 		id: TECHIDS.EfficientBur,
 		fieldreqs: [
 			[TechnologyField.BUSINESS, 40],
@@ -482,8 +477,8 @@ export const DATATECHNOLOGY: Technology[] = [
 		techprereq: [],
 		name: "Space Dock",
 		description: "Systems with industry level 5 or higher can build two ships at the same time",
-    },
-    { 
+	},
+	{
 		id: TECHIDS.Ugconstruc,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 40],
@@ -492,11 +487,10 @@ export const DATATECHNOLOGY: Technology[] = [
 		techprereq: [],
 		name: "Underground Construction",
 		description: "Each system gains +1 building slot",
-    },
-    { 
+	},
+	{
 		id: TECHIDS.LevitatBuild,
 		fieldreqs: [
-			
 			[TechnologyField.MATERIAL, 80],
 			[TechnologyField.CHEMISTRY, 10],
 			[TechnologyField.PHYSICS, 40],
@@ -504,8 +498,8 @@ export const DATATECHNOLOGY: Technology[] = [
 		techprereq: [TECHIDS.Ugconstruc, TECHIDS.HypTheory],
 		name: "Levitation Buildings",
 		description: "Each system gains +1 building slot",
-    },
-    {
+	},
+	{
 		id: TECHIDS.Expansionist,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 160],
@@ -514,17 +508,15 @@ export const DATATECHNOLOGY: Technology[] = [
 		techprereq: [TECHIDS.AdvRobotics, TECHIDS.GeneEngine],
 		name: "Agenda: Expansionism",
 		description: "Gain 1 command per 7 systems you control per turn.",
-    },
-    {
+	},
+	{
 		id: TECHIDS.Capitalist,
-		fieldreqs: [
-			[TechnologyField.BUSINESS, 320],
-		],
+		fieldreqs: [[TechnologyField.BUSINESS, 320]],
 		techprereq: [TECHIDS.AdvRobotics, TECHIDS.HypTheory],
 		name: "Agenda: Capitalism",
 		description: "Gain 5 money per turn per 7 systems you control per turn.",
-    },
-    {
+	},
+	{
 		id: TECHIDS.Scientist,
 		fieldreqs: [
 			[TechnologyField.BIOLOGY, 80],
@@ -539,27 +531,26 @@ export const DATATECHNOLOGY: Technology[] = [
 	{
 		id: TECHIDS.Arcology,
 		fieldreqs: [
-            [TechnologyField.BIOLOGY, 20],
+			[TechnologyField.BIOLOGY, 20],
 			[TechnologyField.MATERIAL, 80],
-            [TechnologyField.BUSINESS, 40],
-            [TechnologyField.INFORMATION, 20],
-            [TechnologyField.CHEMISTRY, 40],
-            [TechnologyField.PHYSICS, 20],
+			[TechnologyField.BUSINESS, 40],
+			[TechnologyField.INFORMATION, 20],
+			[TechnologyField.CHEMISTRY, 40],
+			[TechnologyField.PHYSICS, 20],
 		],
 		techprereq: [TECHIDS.AdvRobotics, TECHIDS.AntimatterCon],
 		name: "Arcologies",
 		description: "Allows you to build Arcologies.",
-    },
-    {
+	},
+	{
 		id: TECHIDS.DysonShpe,
 		fieldreqs: [
 			[TechnologyField.MATERIAL, 80],
-            [TechnologyField.CHEMISTRY, 80],
-            [TechnologyField.PHYSICS, 80],
+			[TechnologyField.CHEMISTRY, 80],
+			[TechnologyField.PHYSICS, 80],
 		],
 		techprereq: [TECHIDS.HypTheory, TECHIDS.AdvRobotics],
 		name: "Dyson Spheres",
 		description: "Allows you to build Dyson Sphere.",
 	},
-
 ];

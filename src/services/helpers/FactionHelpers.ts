@@ -66,7 +66,7 @@ export function createNewFaction(): FactionModel {
             fontFamily: ff || "Arial",
         },
         technology: [],
-
+        debt: 0,
     }
 
     return fm;
@@ -87,6 +87,7 @@ export function factionCanDoMoreCommands(game: GameModel, commands: Command[], f
     const values = factionValues(game, faction.id);
     // const commands = joki.service.getState("CommandService") as Command[];
     const myCurrentCommands = commands.filter((cm: Command) => cm.factionId === faction.id && cm.completed === false);
+    if(game.factionsReady.includes(faction.id)) return false;
     return myCurrentCommands.length < values.maxCommands;
 }
 

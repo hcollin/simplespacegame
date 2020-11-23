@@ -23,9 +23,10 @@ export function travelingBetweenCoordinates(from: Coordinates, to: Coordinates, 
 }
 
 
-export function angleBetweenCoordinates(a: Coordinates, b: Coordinates): number {
-
-    return 0;
+export function angleBetweenCoordinates(a: Coordinates, b: Coordinates, rads=true): number {
+    const inRads = Math.atan2(b.y - a.y, b.x -a.x);
+    if(rads) return inRads;
+    return (inRads * 180 / Math.PI) -90;
 }
 
 

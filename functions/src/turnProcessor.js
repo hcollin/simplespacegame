@@ -54,6 +54,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
+exports.damagePotential = exports.getHitChance = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatInflictDamage = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatPostCombat = exports.spaceCombatPreCombat = exports.spaceCombatMain = exports.processTurn = void 0;
 var fBuildingRules_1 = require("./buildings/fBuildingRules");
 var fDataBuildings_1 = require("./data/fDataBuildings");
 var fDataShips_1 = require("./data/fDataShips");
@@ -63,6 +64,7 @@ var fCommands_1 = require("./models/fCommands");
 var fModels_1 = require("./models/fModels");
 var fReport_1 = require("./models/fReport");
 var fUnits_1 = require("./models/fUnits");
+var fShipTech_1 = require("./tech/fShipTech");
 var fBuildingUtils_1 = require("./utils/fBuildingUtils");
 var fFactionUtils_1 = require("./utils/fFactionUtils");
 var fGeneralUtils_1 = require("./utils/fGeneralUtils");
@@ -340,6 +342,9 @@ function processEconomy(game) {
     game.factions = game.factions.map(function (fm) {
         var values = fFactionUtils_1.factionValues(game, fm.id);
         fm.money += values.income;
+        var _a = fFactionUtils_1.calculateFactionDebt(game, fm), debt = _a[0], payback = _a[1];
+        fm.debt = debt;
+        fm.money -= payback;
         return __assign({}, fm);
     });
     return __assign({}, game);
@@ -359,6 +364,11 @@ function processRepairs(oldGame) {
                     unit.fighters = unit.fighters + 1 * fBuildingRules_1.buildingRepairStation(star);
                 }
             }
+        }
+        var unitOwnerFaction = fFactionUtils_1.getFactionFromArrayById(game.factions, unit.factionId);
+        unit.damage -= fShipTech_1.techAutoRepairBots(unitOwnerFaction, unit);
+        if (unit.damage < 0) {
+            unit.damage = 0;
         }
         return __assign({}, unit);
     });
@@ -396,7 +406,6 @@ function processCombats(game, firestore) {
                             }
                         }
                     });
-                    combats.length > 0 && console.log("COMBATS", combats);
                     i = 0;
                     _a.label = 1;
                 case 1:
@@ -881,8 +890,8 @@ function spaceCombatAttackChooseTarget(combat, attacker, weapon, game) {
                 var oldDmgPotValue = oldDmgPot > 150 ? -1 : Math.round(oldDmgPot / 10);
                 points += dmgPotValue > oldDmgPotValue ? 1 : 0;
                 // console.log("\t", pos.typeClassName, pos.name, hitChanceValue, dmgPotValue, points);
-                var valueO = oldHitChance / 10 + oldDmgPot;
-                var valueN = newHitChance / 10 + newDmgPot;
+                // const valueO = oldHitChance / 10 + oldDmgPot;
+                // const valueN = newHitChance / 10 + newDmgPot;
                 if (points <= 0) {
                     // console.log(`\t KEEP: ${t.name} H%${oldHitChance} Dmg: ${oldDmgPot}`);
                     return t;
@@ -1079,6 +1088,10 @@ function spaceCombatRoundCleanUp(game, combat) {
                     su.shields = factionUnit.shieldsMax;
                 }
             }
+        }
+        su.damage -= fShipTech_1.techAutoRepairBots2(faction, su);
+        if (su.damage < 0) {
+            su.damage = 0;
         }
         return su;
     });

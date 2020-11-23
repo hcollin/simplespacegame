@@ -30,6 +30,7 @@ import DATASHIPS from "../data/dataShips";
 import { ShipDesign, ShipUnderConstruction } from "../models/Units";
 import ShipInfo from "./ShipInfo";
 import { shipCanBeBuiltOnSystemByFaction } from "../utils/unitUtils";
+import useUnitSelection from "../hooks/useUnitSelection";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -295,6 +296,7 @@ const SystemView: FC = () => {
     // const [user] = useCurrentUser();
     const [game] = useService<GameModel>(SERVICEID.GameService);
     const faction = useCurrentFaction();
+    const [fleet] = useUnitSelection();
     // const userIsReady = useUserIsReady();
 
     const [buildingView, setBuildingView] = useState<string>("");
@@ -302,6 +304,9 @@ const SystemView: FC = () => {
     if (!star || !game || !faction) {
         return null;
     }
+
+    // If there is an open fleet, do not open System View
+    if(fleet.length > 0) return null;
 
     function close() {
         if(buildingView === "") {

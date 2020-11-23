@@ -3,65 +3,64 @@ import { CommandType, FleetCommand } from "../../models/Commands";
 import { Coordinates } from "../../models/Models";
 import { ShipUnit } from "../../models/Units";
 
-import { createEmptyCommandForCurrentFactionAndGame } from "./SystemCommands";
+import { createEmptyCommandForCurrentFactionAndGame, factionIsReady } from "./SystemCommands";
 
 export function moveUnits(units: ShipUnit[], targetCoords: Coordinates) {
-    const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.FleetMove);
+	if (factionIsReady()) return;
+	const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.FleetMove);
 
-    if (!rootCommand) {
-        console.log("Cannot do fleet movement command for ", units, targetCoords);
-        return;
-    }
+	if (!rootCommand) {
+		console.log("Cannot do fleet movement command for ", units, targetCoords);
+		return;
+	}
 
-    const command = {
-        ...rootCommand,
-        unitIds: units.map((um: ShipUnit) => um.id),
-        target: targetCoords,
-    } as FleetCommand;
+	const command = {
+		...rootCommand,
+		unitIds: units.map((um: ShipUnit) => um.id),
+		target: targetCoords,
+	} as FleetCommand;
 
-    joki.trigger({
-        to: "CommandService",
-        action: "addCommand",
-        data: command,
-    });
+	joki.trigger({
+		to: "CommandService",
+		action: "addCommand",
+		data: command,
+	});
 }
 
-
 export function doAddUnitToFleet(unit: ShipUnit) {
-    joki.trigger({
-        to: "FleetService",
-        action: "addUnit",
-        data: unit,
-    });
+	joki.trigger({
+		to: "FleetService",
+		action: "addUnit",
+		data: unit,
+	});
 }
 
 export function doRemoveUnitFromFleet(unit: ShipUnit) {
-    joki.trigger({
-        to: "FleetService",
-        action: "addUnit",
-        data: unit.id,
-    });
+	joki.trigger({
+		to: "FleetService",
+		action: "addUnit",
+		data: unit.id,
+	});
 }
 
-export function doSetFleetTarget(coordinates: Coordinates|null) {
-    joki.trigger({
-        to: "FleetService",
-        action: "setTarget",
-        data: coordinates,
-    });
+export function doSetFleetTarget(coordinates: Coordinates | null) {
+	joki.trigger({
+		to: "FleetService",
+		action: "setTarget",
+		data: coordinates,
+	});
 }
 
-
-export function doConfirmFleet(coordinates: Coordinates|null) {
-    joki.trigger({
-        to: "FleetService",
-        action: "confirm",
-    });
+export function doConfirmFleet(coordinates: Coordinates | null) {
+	joki.trigger({
+		to: "FleetService",
+		action: "confirm",
+	});
 }
 
-export function doCancelFleet(coordinates: Coordinates|null) {
-    joki.trigger({
-        to: "FleetService",
-        action: "cancel",
-    });
+export function doCancelFleet(coordinates: Coordinates | null) {
+	joki.trigger({
+		to: "FleetService",
+		action: "cancel",
+	});
 }

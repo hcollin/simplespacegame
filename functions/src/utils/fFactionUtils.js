@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.calcalateNextDebtPayback = exports.calculateFactionDebt = exports.getFactionScore = exports.researchPointDistribution = exports.getSystemResearchPointGeneration = exports.researchPointGenerationCalculator = exports.systemExpenses = exports.unitExpenses = exports.getWelfareCommands = exports.commandCountCalculator = exports.expensesCalculator = exports.factionValues = exports.getFactionFromArrayById = void 0;
 var fBuildingRules_1 = require("../buildings/fBuildingRules");
 var fBusinessTech_1 = require("../tech/fBusinessTech");
 function getFactionFromArrayById(factions, id) {
@@ -43,7 +44,7 @@ function factionValues(game, factionId) {
     values.expenses = expensesCalculator(game, factionId);
     values.systemExpenses = game.systems.reduce(function (sum, sm) {
         if (sm.ownerFactionId === factionId) {
-            sum += systemExpenses(sm);
+            sum += systemExpenses(sm, faction);
         }
         return sum;
     }, 0);
@@ -54,14 +55,9 @@ function factionValues(game, factionId) {
         if (t.from === factionId) {
             return sum - t.money;
         }
-        return sum;
+        return sum + fBusinessTech_1.techMerchantGuild(faction);
     }, 0);
-    values.income =
-        values.totalEconomy +
-            values.trade -
-            values.expenses +
-            fBusinessTech_1.techMarketing(faction, game) +
-            fBusinessTech_1.techCapitalist(faction, game.systems);
+    values.income = values.totalEconomy + values.trade - values.expenses + fBusinessTech_1.techMarketing(faction, game) + fBusinessTech_1.techCapitalist(faction, game.systems);
     values.maxCommands = commandCountCalculator(game, factionId);
     return values;
 }
@@ -76,6 +72,7 @@ exports.factionValues = factionValues;
  */
 function expensesCalculator(game, factionId) {
     var expenses = 0;
+    var faction = getFactionFromArrayById(game.factions, factionId);
     game.units.forEach(function (unit) {
         if (unit.factionId === factionId) {
             expenses += unitExpenses(unit);
@@ -83,7 +80,7 @@ function expensesCalculator(game, factionId) {
     });
     game.systems.forEach(function (star) {
         if (star.ownerFactionId === factionId) {
-            expenses += systemExpenses(star);
+            expenses += systemExpenses(star, faction);
         }
     });
     return expenses;
@@ -124,12 +121,13 @@ function unitExpenses(um) {
     return um.cost >= 3 ? Math.floor(um.cost / 3) : 1;
 }
 exports.unitExpenses = unitExpenses;
-function systemExpenses(sm) {
+function systemExpenses(sm, faction) {
     var indExp = sm.industry < 3 ? 0 : Math.floor(sm.industry / 2);
     var welExp = sm.welfare < 3 ? 0 : Math.floor(sm.welfare / 2);
     var defExp = sm.defense;
     var buildingExpenses = sm.buildings.reduce(function (tot, b) { return tot + b.maintenanceCost; }, 0);
-    return indExp + welExp + defExp + buildingExpenses + 1;
+    var initBoost = faction ? fBusinessTech_1.techInitEcoBoost(faction) : 0;
+    return indExp + welExp + defExp + buildingExpenses + 1 + initBoost;
 }
 exports.systemExpenses = systemExpenses;
 function researchPointGenerationCalculator(game, faction) {
@@ -211,3 +209,52 @@ function getFactionScore(game, factionId) {
     return score;
 }
 exports.getFactionScore = getFactionScore;
+/**
+ * Calculate new debt amount and possible adjusted to money after debt
+ *
+ * @param game
+ * @param faction
+ */
+function calculateFactionDebt(game, faction) {
+    var values = factionValues(game, faction.id);
+    var newDebt = faction.debt;
+    // Debt increase while money is less than 0.
+    if (faction.money < 0) {
+        if (values.income < 0) {
+            newDebt += values.income;
+        }
+    }
+    var payback = calcalateNextDebtPayback(game, faction);
+    newDebt -= payback;
+    if (newDebt < 0) {
+        newDebt = 0;
+    }
+    if (newDebt > 0) {
+        newDebt++;
+    }
+    return [newDebt, payback];
+}
+exports.calculateFactionDebt = calculateFactionDebt;
+/**
+ * Debt is paid back slowly after money and income both are positive
+ * 33% (rounded) of income is used to payback the debt until it has been completely repaid
+ * Debt gains interest of 1 credit per turn
+ *
+ * @param game
+ * @param faction
+ */
+function calcalateNextDebtPayback(game, faction) {
+    var values = factionValues(game, faction.id);
+    var payback = 0;
+    if (faction.money > 0 && values.income > 0 && faction.debt > 0) {
+        payback = Math.floor(values.income / 3);
+        if (payback > faction.money) {
+            payback = faction.money;
+        }
+        if (payback > faction.debt) {
+            payback = faction.debt;
+        }
+    }
+    return payback;
+}
+exports.calcalateNextDebtPayback = calcalateNextDebtPayback;

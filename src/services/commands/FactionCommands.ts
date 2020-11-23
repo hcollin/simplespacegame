@@ -2,7 +2,7 @@ import { joki } from "jokits-react";
 import { CommandType, ResearchCommand } from "../../models/Commands";
 import { FactionTechSetting, GameModel, Technology, TechnologyField } from "../../models/Models";
 import { getFactionFromArrayById } from "../helpers/FactionHelpers";
-import { createEmptyCommandForCurrentFactionAndGame } from "./SystemCommands";
+import { createEmptyCommandForCurrentFactionAndGame, factionIsReady } from "./SystemCommands";
 
 
 
@@ -32,7 +32,7 @@ export function doAdjustTechValues(tech: TechnologyField, newValue: number, fact
 
 
 export function doResearchTechCommand(tech: Technology, factionId: string) {
-    
+    if(factionIsReady()) return;
     const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.TechnologyResearch);
 
     if (!rootCommand) {

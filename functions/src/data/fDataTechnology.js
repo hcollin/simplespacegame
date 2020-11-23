@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.DATATECHNOLOGY = exports.TECHIDS = void 0;
 var fModels_1 = require("../models/fModels");
 var TECHIDS;
 (function (TECHIDS) {
@@ -50,7 +51,6 @@ var TECHIDS;
     TECHIDS["GeneEngine"] = "T-B03";
     TECHIDS["AntimatterCon"] = "T-B04";
 })(TECHIDS = exports.TECHIDS || (exports.TECHIDS = {}));
-;
 exports.DATATECHNOLOGY = [
     {
         id: TECHIDS.AdvRobotics,
@@ -64,18 +64,14 @@ exports.DATATECHNOLOGY = [
     },
     {
         id: TECHIDS.HypTheory,
-        fieldreqs: [
-            [fModels_1.TechnologyField.PHYSICS, 160],
-        ],
+        fieldreqs: [[fModels_1.TechnologyField.PHYSICS, 160]],
         techprereq: [],
         name: "Hyper Space Theory",
         description: "Worth 5 Victory points"
     },
     {
         id: TECHIDS.GeneEngine,
-        fieldreqs: [
-            [fModels_1.TechnologyField.BIOLOGY, 160],
-        ],
+        fieldreqs: [[fModels_1.TechnologyField.BIOLOGY, 160]],
         techprereq: [],
         name: "Genetic Engineering",
         description: "Worth 5 Victory points"
@@ -323,6 +319,7 @@ exports.DATATECHNOLOGY = [
         description: "Minerally poor planets gain +1 industry maximum and +1 welfare maximum"
     },
     {
+        //FN DONE
         id: TECHIDS.AutoDef1,
         fieldreqs: [
             [fModels_1.TechnologyField.MATERIAL, 10],
@@ -335,6 +332,7 @@ exports.DATATECHNOLOGY = [
         description: "Each system gains +1 defense during invasion"
     },
     {
+        //FN DONE
         id: TECHIDS.AutoDef2,
         fieldreqs: [
             [fModels_1.TechnologyField.BIOLOGY, 10],
@@ -502,9 +500,7 @@ exports.DATATECHNOLOGY = [
     },
     {
         id: TECHIDS.Capitalist,
-        fieldreqs: [
-            [fModels_1.TechnologyField.BUSINESS, 320],
-        ],
+        fieldreqs: [[fModels_1.TechnologyField.BUSINESS, 320]],
         techprereq: [TECHIDS.AdvRobotics, TECHIDS.HypTheory],
         name: "Agenda: Capitalism",
         description: "Gain 5 money per turn per 7 systems you control per turn."

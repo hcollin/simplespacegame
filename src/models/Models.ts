@@ -49,7 +49,7 @@ export interface GameModel extends GameObject {
     factionsReady: string[];
     state: GameState;
     trades: Trade[];
-    playerIds: string[];
+    playerIds: string[];    
 }
 
 export interface Fleet {
@@ -115,6 +115,7 @@ export interface FactionModel extends GameObject {
     playerId: string;
     style: FactionStyle;
     technology: string[];
+    debt: number;
 }
 
 export interface FactionStyle {

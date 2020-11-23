@@ -246,6 +246,7 @@ export function createFactionFromSetup(setup: FactionSetup): FactionModel {
             fontFamily: setup.fontFamily,
         },
         technology: [],
+        debt: 0,
     };
 
     return fm;

@@ -69,9 +69,6 @@ export default function useUnitSelection(): [ShipUnit[], UnitSelectionActions] {
         });
     }
 
-
-
-
     return [selectedUnits, {
         add: addUnit,
         set: setUnits,
