@@ -8,7 +8,6 @@ import { FactionModel, GameModel, GameState } from "../models/Models";
 import { doCreateDraftGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import ReplayIcon from '@material-ui/icons/Replay';
-// import { asyncMapForeach } from "../utils/generalUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -278,8 +277,10 @@ const MenuPage: FC = () => {
                     </section>
                 </>
             )}
-
+{/* 
             <h3>Test area</h3>
+
+            <p>#FFFFFF: {convertHexRgbToComponents("#FFFA").join(", ")}</p> */}
 
 
 

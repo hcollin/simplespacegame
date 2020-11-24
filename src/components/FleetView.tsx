@@ -1,7 +1,7 @@
 import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 import { useAtom, useService } from "jokits-react";
 
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import useUnitSelection from "../hooks/useUnitSelection";
 import useUnitsInSelectedSystem from "../hooks/useUnitsInSelectedSystem";
@@ -13,6 +13,8 @@ import { unitIsMoving } from "../services/helpers/UnitHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { SERVICEID } from "../services/services";
 import { inSameLocation } from "../utils/locationUtils";
+import MiniUnitInfo from "./MiniUnitInfo";
+
 import UnitInfo from "./UnitInfo";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -25,6 +27,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			color: "#FFFD",
 			boxShadow: "inset 0 0 2rem 0.5rem #000",
 			border: "ridge 3px #FFF5",
+
+			"& div.destination": {
+				padding: "1rem",
+			},
 			"& > button.close": {
 				top: "-1rem",
 				right: "-1.75rem",
@@ -64,6 +70,14 @@ const useStyles = makeStyles((theme: Theme) =>
 			"& div.units": {
 				margin: "0.5rem 0",
 				padding: "0 0.5rem",
+
+				"& > div": {
+					marginBottom: "0.25rem",
+				},
+
+				"& .isNotInFleet": {
+					filter: "grayscale(0.8)",
+				},
 
 				// "& > div": {
 				//     padding: "3px 1rem",
@@ -128,26 +142,21 @@ const FleetView: FC = () => {
 
 	const faction = useCurrentFaction();
 	const [fleet, fleetActions] = useUnitSelection();
-	const units = useUnitsInSelectedSystem();
 	const [star, setStar] = useSelectedSystem();
-    const [commands] = useService<Command[]>(SERVICEID.CommandService);
+	const [commands] = useService<Command[]>(SERVICEID.CommandService);
 
 	if (!commands) return null;
 
-	const filteredUnits = units.filter((u: ShipUnit) => !unitIsMoving(commands, u));
-	const canCreateFleet = faction && star && fleet.length === 0 && filteredUnits.length > 0 && filteredUnits[0].factionId === faction.id;
-
-	if (fleet.length === 0 && !canCreateFleet) return null;
+	if (fleet.length === 0) return null;
 
 	let viewMode = "VIEW";
 	if (fleet.length > 0 && faction && fleet[0].factionId === faction.id && !unitIsMoving(commands, fleet[0])) viewMode = "MOVE";
-	if (canCreateFleet) viewMode = "CREATE";
 
 	function close() {
 		fleetActions.clr();
 		setStar(null);
 	}
-	console.log("FLEETVIEW", fleet, star, units);
+	// console.log("FLEETVIEW", viewMode, fleet, star, units);
 
 	if (fleet.length <= 0) {
 		return null;
@@ -159,8 +168,7 @@ const FleetView: FC = () => {
 				X
 			</button>
 
-			{/* {viewMode === "CREATE" && <CreateFleetContent units={units} system={star} close={close} commands={commands}/>} */}
-			{viewMode === "MOVE" && <MoveFleetContent units={fleet} system={star} close={close} commands={commands} />}
+			{viewMode === "MOVE" && <SelectUnitToFleet units={fleet} system={star} close={close} commands={commands} />}
 			{viewMode === "VIEW" && <ViewFleetContent units={fleet} system={null} close={close} commands={commands} />}
 		</div>
 	);
@@ -180,11 +188,6 @@ const ViewFleetContent: FC<ContentProps> = (props) => {
 
 			<div className="units">
 				{props.units.map((unit: ShipUnit) => {
-					const moving = unitIsMoving(props.commands, unit);
-					if (moving) {
-						return null;
-					}
-
 					return <UnitInfo unit={unit} key={unit.id} />;
 				})}
 			</div>
@@ -196,61 +199,84 @@ const ViewFleetContent: FC<ContentProps> = (props) => {
 	);
 };
 
-const CreateFleetContent: FC<ContentProps> = (props) => {
-	const [funits, setFunits] = useState<Set<ShipUnit>>(new Set<ShipUnit>());
-	const fl = useUnitSelection();
+const SelectUnitToFleet: FC<ContentProps> = (props) => {
+	const [inFleet, setInFleet] = useState<ShipUnit[]>(props.units);
 
-	const fleetActions = fl[1];
-
-	function toggleUnit(u: ShipUnit) {
-		if (funits.has(u)) {
-			setFunits((prev: Set<ShipUnit>) => {
-				prev.delete(u);
-				return new Set(prev);
-			});
-		} else {
-			setFunits((prev: Set<ShipUnit>) => {
-				prev.add(u);
-				return new Set(prev);
+	function addToFleet(ship: ShipUnit) {
+		if (!inFleet.includes(ship)) {
+			setInFleet((prev) => {
+				return [...prev, ship];
 			});
 		}
 	}
 
-	function createFleet() {
-		if (funits.size > 0) {
-			fleetActions.set(Array.from(funits));
-		} else {
-			fleetActions.set(props.units);
+	function removeFromFleet(ship: ShipUnit) {
+		if (inFleet.includes(ship)) {
+			setInFleet((prev) => {
+				return prev.filter((s: ShipUnit) => s.id !== ship.id);
+			});
 		}
 	}
+
+	function toggleUnit(ship: ShipUnit) {
+		if (inFleet.includes(ship)) {
+			removeFromFleet(ship);
+		} else {
+			addToFleet(ship);
+		}
+	}
+
+	function moveFleet() {
+		if (props.system && canMove) {
+			moveUnits(inFleet, props.system.location);
+			props.close();
+		}
+	}
+
+	const canMove = props.system !== null && inFleet.length > 0;
+
+	// const distance = canMove && distanceBetweenCoordinates()
 
 	return (
 		<>
-			<h4>Create fleet</h4>
-			{props.system && <h2>{props.system.name}</h2>}
+			<h4>Fleet</h4>
 
 			<div className="units">
 				{props.units.map((unit: ShipUnit) => {
-					const moving = unitIsMoving(props.commands, unit);
-					if (moving) {
-						return null;
-					}
-
-					return <UnitInfo unit={unit} key={unit.id} onClick={() => toggleUnit(unit)} selected={funits.has(unit)} />;
+					const isInFleet = inFleet.includes(unit);
+					return <MiniUnitInfo unit={unit} key={unit.id} className={!isInFleet ? "isNotInFleet" : ""} onClick={() => toggleUnit(unit)} />;
 				})}
 			</div>
 
-			<div className="actions">
-				<Button variant="contained" color="primary" onClick={createFleet}>
-					Create
-				</Button>
-			</div>
+			{props.system && (
+				<>
+					<h4>Destination</h4>
+
+					<div className="destination">
+						<p>Destination: {props.system.name}</p>
+					</div>
+					<div className="actions">
+						{/* <Button variant="outlined" color="secondary" onClick={() => fleetActions.clr()}>Cancel</Button> */}
+						<Button variant="contained" color="primary" onClick={moveFleet} disabled={!canMove}>
+							Move
+						</Button>
+					</div>
+				</>
+			)}
 		</>
 	);
 };
 
 const MoveFleetContent: FC<ContentProps> = (props) => {
 	const [fleet, fleetActions] = useUnitSelection();
+
+	const [toMove, setToMove] = useState<ShipUnit[]>([]);
+
+	useEffect(() => {
+		if (fleet.length) {
+			setToMove(fleet);
+		}
+	}, [fleet]);
 
 	if (fleet.length === 0) return null;
 
@@ -273,7 +299,7 @@ const MoveFleetContent: FC<ContentProps> = (props) => {
 			{props.system && <h4>{props.system.name}</h4>}
 
 			<div className="units">
-				{fleet.map((unit: ShipUnit) => {
+				{toMove.map((unit: ShipUnit) => {
 					return <UnitInfo unit={unit} key={unit.id} onClick={removeUnit} className="removable" />;
 				})}
 			</div>

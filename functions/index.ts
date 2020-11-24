@@ -40,6 +40,7 @@ exports.playerReady = functions.https.onCall((data: PlayerReadyData, context: an
         let game: GameModel | null = null;
 
         try {
+            
             const gameRef = await db.collection("Games").doc(data.gameId).get();
             game = gameRef.data();
             if (!game) {

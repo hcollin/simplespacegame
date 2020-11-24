@@ -27,6 +27,7 @@ import starfieldJpeg from "../../images/starfield2.jpg";
 import { getSystemByCoordinates } from "../../utils/systemUtils";
 import { SERVICEID } from "../../services/services";
 import { angleBetweenCoordinates, travelingBetweenCoordinates } from "../../utils/MathUtils";
+import { convertHexRgbToComponents } from "../../utils/generalUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -539,7 +540,7 @@ const FleetLayer: FC<FleetLayerProps> = (props) => {
     
     
 
-	console.log("FLEETS", fleets);
+	// console.log("FLEETS", fleets);
 
 	// return null;
 
@@ -559,6 +560,9 @@ const FleetLayer: FC<FleetLayerProps> = (props) => {
 
 					// const speed = getShipSpeed(um, getFactionFromArrayById(game.factions, um.factionId));
 
+					const shipFaction = getFactionFromArrayById(game.factions, fleet.factionId);
+					const shipColor = shipFaction ? shipFaction.color : "#FFF";
+
 					const isSelected = selFleet === fleet.fleetId;
 
 					if (fleet.state === "INORBIT") {
@@ -568,7 +572,7 @@ const FleetLayer: FC<FleetLayerProps> = (props) => {
                         const ang = star && isSelected ? angleBetweenCoordinates(star.location, fleet.location, false) : 0;
 						return (
 							<Group key={fleet.fleetId} onClick={() => selectFleet(fleet)}>
-								<ShipSprite x={x} y={y} size={size} angle={ang} selected={isSelected} color={faction.color} />
+								<ShipSprite x={x} y={y} size={size} angle={ang} selected={isSelected} color={shipColor} />
 								{/* <Image image={spaceShip} x={x} y={y} width={size} height={size} fill="" {...selPorps}/> */}
 							</Group>
 						);
@@ -600,7 +604,7 @@ const FleetLayer: FC<FleetLayerProps> = (props) => {
 									speed={moveFleet.speed}
 									adjust={0}
 								/>
-								<ShipSprite x={x} y={y} size={size} angle={ang} selected={isSelected} />
+								<ShipSprite x={x} y={y} size={size} angle={ang} selected={isSelected} color={shipColor}/>
 								{/* <Image image={spaceShip} x={x} y={y} width={size} height={size} rotation={ang} offsetX={size / 2} offsetY={size / 2}/> */}
 							</Group>
 						);
@@ -613,7 +617,7 @@ const FleetLayer: FC<FleetLayerProps> = (props) => {
 						return (
 							<Group key={fleet.fleetId} onClick={() => selectFleet(fleet)}>
 								{/* <Image image={spaceShip} x={x} y={y} width={size} height={size} /> */}
-								<ShipSprite x={x} y={y} size={size} angle={0} selected={isSelected} />
+								<ShipSprite x={x} y={y} size={size} angle={0} selected={isSelected} color={shipColor}/>
 							</Group>
 						);
 					}
@@ -654,7 +658,25 @@ interface ShipSpriteProps {
 const ShipSprite: FC<ShipSpriteProps> = (props) => {
 	const [spaceShip] = useImage("/spaceship.png");
 
+	const imageRef = useRef<any>();
+	const imageRef2 = useRef<any>();
+
+
 	const [ang, setAng] = useState<number>(0);
+
+	useEffect( () => {
+		if (spaceShip && imageRef && imageRef.current) {
+			imageRef2.current.cache();
+			imageRef2.current.getLayer().batchDraw();
+		  }
+	}, [spaceShip, props]);
+
+	useEffect( () => {
+		if (spaceShip && imageRef && imageRef.current) {
+			imageRef.current.cache();
+			imageRef.current.getLayer().batchDraw();
+		  }
+	}, [spaceShip, props]);
 
 	useEffect(() => {
 		if (props.selected) {
@@ -668,19 +690,44 @@ const ShipSprite: FC<ShipSpriteProps> = (props) => {
 		}
 	}, [props.selected]);
 
-	const col = props.color || "white";
+	const col = props.color || "#FFFFFF";
 
+	const colorParts = col.charAt(0) === "#" ? convertHexRgbToComponents(col): [255,255,255];
+
+	const shadowColor = 16;
 	return (
 		<Group >
 			{/* {props.selected === true && <Circle x={props.x} y={props.y} radius={props.size*0.75} fill={col} opacity={0.3} />} */}
 			{props.selected === true && (
 				<>
-					<Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={col} opacity={0.7} angle={60} rotation={ang} />
-                    <Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={col} opacity={0.7} angle={60} rotation={ang+120} />
-                    <Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={col} opacity={0.7} angle={60} rotation={ang-120} />
+					<Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={"#FFF"} opacity={0.7} angle={60} rotation={ang} />
+                    <Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={"#FFF"} opacity={0.7} angle={60} rotation={ang+120} />
+                    <Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={"#FFF"} opacity={0.7} angle={60} rotation={ang-120} />
 				</>
 			)}
 			<Image
+				ref={imageRef2}
+				image={spaceShip}
+				x={props.x}
+				y={props.y}
+				width={props.size}
+				height={props.size}
+				rotation={props.angle}
+				offsetX={props.size / 2.2}
+				offsetY={props.size / 2.2}
+				opacity={0.8}
+				// scaleX={1.2}
+				// scaleY={1.2}
+				filters={[Konva.Filters.RGB]}
+				red={shadowColor}
+				green={shadowColor}
+				blue={shadowColor}
+				
+				
+      			
+			/>
+			<Image
+				ref={imageRef}
 				image={spaceShip}
 				x={props.x}
 				y={props.y}
@@ -689,6 +736,11 @@ const ShipSprite: FC<ShipSpriteProps> = (props) => {
 				rotation={props.angle}
 				offsetX={props.size / 2}
 				offsetY={props.size / 2}
+				filters={[Konva.Filters.RGB]}
+				red={colorParts[0]}
+				green={colorParts[1]}
+				blue={colorParts[2]}
+      			
 			/>
 		</Group>
 	);
