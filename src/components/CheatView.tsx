@@ -1,9 +1,14 @@
 import { Button, ButtonGroup, MenuItem, Select } from "@material-ui/core";
 import { joki, useService } from "jokits-react";
 import React, { FC, useState } from "react";
+import DATASHIPS from "../data/dataShips";
 import { DATATECHNOLOGY } from "../data/dataTechnology";
+import useSelectedSystem from "../hooks/useSelectedSystem";
 import { FactionModel, FactionTechSetting, GameModel, Technology, TechnologyField } from "../models/Models";
+import { ShipDesign } from "../models/Units";
+import { createShipFromDesign } from "../services/helpers/UnitHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
+import { SERVICEID } from "../services/services";
 import { getTechById } from "../utils/techUtils";
 // import useCurrentFaction from "../services/hooks/useCurrentFaction";
 // import FactionInfo from "./FactionInfo";
@@ -46,7 +51,8 @@ const CheatView: FC = () => {
     // const classes = useStyles();
     const [game] = useService<GameModel>("GameService");
     const faction = useCurrentFaction();
-    // const faction = useCurrentFaction();
+
+    const [star] = useSelectedSystem();
 
     if (!game || !faction) return null;
 
@@ -70,11 +76,11 @@ const CheatView: FC = () => {
     }
 
     function moreTech(f: TechnologyField) {
-        if(faction) {
+        if (faction) {
             faction.technologyFields = faction.technologyFields.map((fts: FactionTechSetting) => {
-                if(fts.field === f) {
+                if (fts.field === f) {
                     fts.points += 10;
-                    return {...fts};
+                    return { ...fts };
                 }
                 return fts;
             });
@@ -88,6 +94,20 @@ const CheatView: FC = () => {
             action: "updateFaction",
             data: { ...f },
         });
+    }
+
+    function autoBuildShip(sn: string) {
+        console.log("Build ship", sn);
+        const sd = DATASHIPS.find((d: ShipDesign) => d.name === sn);
+        if (star && sd && faction && game) {
+            const ship = createShipFromDesign(sd, faction.id, star.location);
+            game.units.push(ship);
+            joki.trigger({
+                to: SERVICEID.GameService,
+                action: "devUpdateGame",
+                data: { ...game },
+            });
+        }
     }
     // function readyAllFactions() {
     //     console.log("Ready all factions");
@@ -117,35 +137,53 @@ const CheatView: FC = () => {
         <>
             <h1>Dev Commands</h1>
             {/* <Button variant="contained" onClick={readyAllFactions}>Ready all factions</Button> */}
-            <Picker<Technology> list={DATATECHNOLOGY} valKey="id" textKey="name" onConfirm={researchTech} buttonText="research" />
-
             <div style={{ padding: "1rem" }}>
+                <h4>Auto Research</h4>
+                <Picker<Technology>
+                    list={DATATECHNOLOGY}
+                    valKey="id"
+                    textKey="name"
+                    onConfirm={researchTech}
+                    buttonText="research"
+                />
+
+                <h4>Auto build</h4>
+                {star && (
+                    <Picker<ShipDesign>
+                        list={DATASHIPS}
+                        valKey="name"
+                        textKey="name"
+                        onConfirm={autoBuildShip}
+                        buttonText="build"
+                    />
+                )}
+
+                <h4>Money</h4>
                 <Button onClick={moreMoney} variant="contained">
                     +10 Money
                 </Button>
 
                 <br />
 
-                
-                    <Button onClick={() => moreTech(TechnologyField.BIOLOGY)} variant="contained">
-                        +10 {TechnologyField.BIOLOGY}
-                    </Button>
-                    <Button onClick={() => moreTech(TechnologyField.MATERIAL)} variant="contained">
-                        +10 {TechnologyField.MATERIAL}
-                    </Button>
-                    <Button onClick={() => moreTech(TechnologyField.BUSINESS)} variant="contained">
-                        +10 {TechnologyField.BUSINESS}
-                    </Button>
-                    <Button onClick={() => moreTech(TechnologyField.INFORMATION)} variant="contained">
-                        +10 {TechnologyField.INFORMATION}
-                    </Button>
-                    <Button onClick={() => moreTech(TechnologyField.CHEMISTRY)} variant="contained">
-                        +10 {TechnologyField.CHEMISTRY}
-                    </Button>
-                    <Button onClick={() => moreTech(TechnologyField.PHYSICS)} variant="contained">
-                        +10 {TechnologyField.PHYSICS}
-                    </Button>
-                
+                <h4>Tech points (+10)</h4>
+                <Button onClick={() => moreTech(TechnologyField.BIOLOGY)} variant="contained">
+                    {TechnologyField.BIOLOGY.slice(0, 3)}
+                </Button>
+                <Button onClick={() => moreTech(TechnologyField.MATERIAL)} variant="contained">
+                    {TechnologyField.MATERIAL.slice(0, 3)}
+                </Button>
+                <Button onClick={() => moreTech(TechnologyField.BUSINESS)} variant="contained">
+                    {TechnologyField.BUSINESS.slice(0, 3)}
+                </Button>
+                <Button onClick={() => moreTech(TechnologyField.INFORMATION)} variant="contained">
+                    {TechnologyField.INFORMATION.slice(0, 3)}
+                </Button>
+                <Button onClick={() => moreTech(TechnologyField.CHEMISTRY)} variant="contained">
+                    {TechnologyField.CHEMISTRY.slice(0, 3)}
+                </Button>
+                <Button onClick={() => moreTech(TechnologyField.PHYSICS)} variant="contained">
+                    {TechnologyField.PHYSICS.slice(0, 3)}
+                </Button>
             </div>
         </>
     );
@@ -163,7 +201,7 @@ function Picker<T extends object>(props: PickerProps<T>) {
     const [val, setVal] = useState<string>("");
 
     return (
-        <div style={{ padding: "0.25rem 0.5rem" }}>
+        <div >
             <Select
                 value={val}
                 onChange={(e: any) => {
@@ -182,8 +220,8 @@ function Picker<T extends object>(props: PickerProps<T>) {
                 })}
             </Select>
 
-            <Button variant="contained" onClick={() => props.onConfirm(val)}>
-                {props.buttonText || "Confirm" }
+            <Button variant="contained" onClick={() => props.onConfirm(val)} style={{marginLeft: "1rem"}}>
+                {props.buttonText || "Confirm"}
             </Button>
         </div>
     );

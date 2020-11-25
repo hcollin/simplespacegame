@@ -8,6 +8,7 @@ import { FactionModel, GameModel, GameState } from "../models/Models";
 import { doCreateDraftGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import ReplayIcon from '@material-ui/icons/Replay';
+import { getColorSum } from "../utils/generalUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -277,10 +278,18 @@ const MenuPage: FC = () => {
                     </section>
                 </>
             )}
-{/* 
+
             <h3>Test area</h3>
 
-            <p>#FFFFFF: {convertHexRgbToComponents("#FFFA").join(", ")}</p> */}
+            {["#FFF", "#F80", "#000", "#F00", "#FF0", "#A74", "#444", "#123", "#246"].map((col: string) => {
+                const sum = getColorSum(col);
+                return <div>
+                    {col}: {sum}
+
+                    <span style={{width: "1rem", height: "1rem", marginLeft: "1rem", display: "inline-block", background: col, border: `solid 2px ${sum > 30 ? "black" : "white"}`}}></span>
+                
+                </div>
+            })}
 
 
 

@@ -66,6 +66,9 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 				case "closeGame":
 					closeGame();
 					break;
+				case "devUpdateGame":
+					updateGame(event.data);
+					break;
 				case "updateFaction":
 					updateFaction(event.data as FactionModel);
 					break;
@@ -238,6 +241,14 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 		game = updateFactionInGame(game, fm);
 		sendUpdate();
 		saveGame();
+	}
+
+	function updateGame(newGame: GameModel) {
+		if(newGame.id === game.id) {
+			game = newGame;
+			sendUpdate();
+			saveGame();
+		}
 	}
 
 	async function processTurn(comms?: Command[]) {

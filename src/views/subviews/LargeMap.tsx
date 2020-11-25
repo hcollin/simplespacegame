@@ -27,7 +27,7 @@ import starfieldJpeg from "../../images/starfield2.jpg";
 import { getSystemByCoordinates } from "../../utils/systemUtils";
 import { SERVICEID } from "../../services/services";
 import { angleBetweenCoordinates, travelingBetweenCoordinates } from "../../utils/MathUtils";
-import { convertHexRgbToComponents } from "../../utils/generalUtils";
+import { convertHexRgbToComponents, getColorSum } from "../../utils/generalUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -658,6 +658,8 @@ interface ShipSpriteProps {
 const ShipSprite: FC<ShipSpriteProps> = (props) => {
 	const [spaceShip] = useImage("/spaceship.png");
 
+	const [hovering, setHovering] = useState<boolean>(false);
+
 	const imageRef = useRef<any>();
 	const imageRef2 = useRef<any>();
 
@@ -693,18 +695,13 @@ const ShipSprite: FC<ShipSpriteProps> = (props) => {
 	const col = props.color || "#FFFFFF";
 
 	const colorParts = col.charAt(0) === "#" ? convertHexRgbToComponents(col): [255,255,255];
+	const shadowColor = 16; //getColorSum(col) >= 50 ? 16 : 128;
 
-	const shadowColor = 16;
+	const scaleMod = hovering ? 1.5 : 1;
+
 	return (
-		<Group >
+		<Group onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)} >
 			{/* {props.selected === true && <Circle x={props.x} y={props.y} radius={props.size*0.75} fill={col} opacity={0.3} />} */}
-			{props.selected === true && (
-				<>
-					<Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={"#FFF"} opacity={0.7} angle={60} rotation={ang} />
-                    <Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={"#FFF"} opacity={0.7} angle={60} rotation={ang+120} />
-                    <Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={"#FFF"} opacity={0.7} angle={60} rotation={ang-120} />
-				</>
-			)}
 			<Image
 				ref={imageRef2}
 				image={spaceShip}
@@ -713,19 +710,26 @@ const ShipSprite: FC<ShipSpriteProps> = (props) => {
 				width={props.size}
 				height={props.size}
 				rotation={props.angle}
-				offsetX={props.size / 2.2}
-				offsetY={props.size / 2.2}
+				offsetX={props.size / 2}
+				offsetY={props.size / 2}
 				opacity={0.8}
-				// scaleX={1.2}
-				// scaleY={1.2}
+				scaleX={1.2}
+				scaleY={1.2}
 				filters={[Konva.Filters.RGB]}
 				red={shadowColor}
 				green={shadowColor}
 				blue={shadowColor}
-				
-				
-      			
 			/>
+			{props.selected === true && (
+				<>
+					<Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={"#FFF"} opacity={0.7} angle={60} rotation={ang} />
+                    <Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={"#FFF"} opacity={0.7} angle={60} rotation={ang+120} />
+                    <Arc x={props.x} y={props.y} innerRadius={props.size * 0.4} outerRadius={props.size*0.8} fill={"#FFF"} opacity={0.7} angle={60} rotation={ang-120} />
+				</>
+			)}
+			
+			
+			{hovering && <Circle x={props.x} y={props.y} radius={props.size/1.8} opacity={0.5} stroke="white" strokeWidth={0.1*props.size}/>}
 			<Image
 				ref={imageRef}
 				image={spaceShip}
@@ -736,6 +740,7 @@ const ShipSprite: FC<ShipSpriteProps> = (props) => {
 				rotation={props.angle}
 				offsetX={props.size / 2}
 				offsetY={props.size / 2}
+				
 				filters={[Konva.Filters.RGB]}
 				red={colorParts[0]}
 				green={colorParts[1]}
