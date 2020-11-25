@@ -278,7 +278,7 @@ const MenuPage: FC = () => {
                     </section>
                 </>
             )}
-
+{/* 
             <h3>Test area</h3>
 
             {["#FFF", "#F80", "#000", "#F00", "#FF0", "#A74", "#444", "#123", "#246"].map((col: string) => {
@@ -289,7 +289,7 @@ const MenuPage: FC = () => {
                     <span style={{width: "1rem", height: "1rem", marginLeft: "1rem", display: "inline-block", background: col, border: `solid 2px ${sum > 30 ? "black" : "white"}`}}></span>
                 
                 </div>
-            })}
+            })} */}
 
 
 

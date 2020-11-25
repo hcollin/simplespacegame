@@ -7,6 +7,7 @@ var BUILDINGTYPE;
     BUILDINGTYPE["BIODOME"] = "Biodome";
     BUILDINGTYPE["TRADEPOST"] = "Trade Post";
     BUILDINGTYPE["INDSECTOR"] = "Industry Sector";
+    BUILDINGTYPE["BANK"] = "Bank";
     BUILDINGTYPE["BUNKERS"] = "Bunkers";
     BUILDINGTYPE["COREMINE"] = "Core Mine";
     BUILDINGTYPE["GAIAPROJECT"] = "Gaia Project";
@@ -24,7 +25,6 @@ var BUILDINGTYPE;
     BUILDINGTYPE["ARCOLOGY"] = "Arcology";
     BUILDINGTYPE["SENATE"] = "Galactic Senate";
 })(BUILDINGTYPE = exports.BUILDINGTYPE || (exports.BUILDINGTYPE = {}));
-;
 var DATABUILDINGS = [
     {
         name: "Bio Dome",
@@ -67,7 +67,22 @@ var DATABUILDINGS = [
         techPreqs: [],
         maintenanceCost: 0,
         score: 0
-    }, {
+    },
+    {
+        name: "Bank",
+        type: BUILDINGTYPE.BANK,
+        buildTime: 2,
+        cost: 10,
+        description: "Generate +3 Money per turn",
+        keywords: [],
+        minIndustry: 1,
+        minEconomy: 3,
+        minWelfare: 1,
+        techPreqs: [],
+        maintenanceCost: 0,
+        score: 0
+    },
+    {
         name: "Bunkers",
         type: BUILDINGTYPE.BUNKERS,
         buildTime: 4,
@@ -80,12 +95,13 @@ var DATABUILDINGS = [
         techPreqs: [],
         maintenanceCost: 2,
         score: 1
-    }, {
+    },
+    {
         name: "Core Mine",
         type: BUILDINGTYPE.COREMINE,
         buildTime: 3,
         cost: 15,
-        description: "Generate +3 money per turn. Can be built on Rich mineral or Rare Mineral systems.",
+        description: "Generate +6 money per turn. Can be built on Rich mineral or Rare Mineral systems.",
         keywords: [],
         minIndustry: 3,
         minEconomy: 1,
@@ -93,7 +109,8 @@ var DATABUILDINGS = [
         techPreqs: [],
         maintenanceCost: 0,
         score: 1
-    }, {
+    },
+    {
         name: "Gaia Project",
         type: BUILDINGTYPE.GAIAPROJECT,
         buildTime: 4,
@@ -106,7 +123,8 @@ var DATABUILDINGS = [
         techPreqs: [],
         maintenanceCost: 1,
         score: 1
-    }, {
+    },
+    {
         name: "Factory Automation",
         type: BUILDINGTYPE.FACTAUTOM,
         buildTime: 3,
@@ -119,7 +137,9 @@ var DATABUILDINGS = [
         techPreqs: [],
         maintenanceCost: 2,
         score: 1
-    }, {
+    },
+    {
+        //TODO
         name: "Repair Station",
         type: BUILDINGTYPE.REPAIRSTATION,
         buildTime: 3,
@@ -134,6 +154,7 @@ var DATABUILDINGS = [
         score: 0
     },
     {
+        //TODO
         name: "Orbital Cannons",
         type: BUILDINGTYPE.ORBCANNONS,
         buildTime: 3,
@@ -160,7 +181,9 @@ var DATABUILDINGS = [
         techPreqs: [fDataTechnology_1.TECHIDS.HigherEdu],
         maintenanceCost: 2,
         score: 1
-    }, {
+    },
+    {
+        //TODO
         name: "Robot Workers",
         type: BUILDINGTYPE.ROBOTWORKERS,
         buildTime: 2,
@@ -173,7 +196,8 @@ var DATABUILDINGS = [
         techPreqs: [fDataTechnology_1.TECHIDS.AutoRepBots1],
         maintenanceCost: 3,
         score: 1
-    }, {
+    },
+    {
         name: "Command Center",
         type: BUILDINGTYPE.CMDCENTER,
         buildTime: 8,
@@ -186,7 +210,8 @@ var DATABUILDINGS = [
         techPreqs: [fDataTechnology_1.TECHIDS.HypTheory],
         maintenanceCost: 4,
         score: 2
-    }, {
+    },
+    {
         name: "Space Port",
         type: BUILDINGTYPE.SPACEPORT,
         buildTime: 5,
@@ -215,6 +240,7 @@ var DATABUILDINGS = [
         score: 3
     },
     {
+        //TODO
         name: "Gateway",
         type: BUILDINGTYPE.GATEWAY,
         buildTime: 10,
@@ -243,6 +269,7 @@ var DATABUILDINGS = [
         score: 5
     },
     {
+        //TODO
         name: "Dyson Sphere",
         type: BUILDINGTYPE.DYSONSP,
         buildTime: 15,
@@ -271,6 +298,7 @@ var DATABUILDINGS = [
         score: 5
     },
     {
+        //TODO
         name: "Galactic Senate",
         type: BUILDINGTYPE.SENATE,
         buildTime: 20,

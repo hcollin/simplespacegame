@@ -33,6 +33,8 @@ interface FactionValues {
     systemCount: number;
     systemIncome: number;
     trade: number;
+    debt: number;
+    debtRepayment: number;
 }
 
 export function factionValues(game: GameModel, factionId: string): FactionValues {
@@ -49,6 +51,8 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         systemCount: 0,
         systemIncome: 0,
         trade: 0,
+        debt: 0,
+        debtRepayment: 0,
     };
     const faction = getFactionFromArrayById(game.factions, factionId);
     if (!faction) {
@@ -99,6 +103,9 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
         techCapitalist(faction, game.systems);
 
     values.maxCommands = commandCountCalculator(game, factionId);
+
+    values.debt = faction.debt;
+    values.debtRepayment = faction.debt > 0 ? Math.floor(values.income / 3) : 0;
 
     return values;
 }
@@ -271,4 +278,66 @@ export function getFactionScore(game: GameModel, factionId: string): number {
     // Add technology scores from base research techs
 
     return score;
+}
+
+export function calculateTargetScore(game: GameModel) {
+
+    return Math.round((game.systems.length*1.5) + (80 - (game.setup.playerCount*10)));
+}
+
+/**
+ * Calculate new debt amount and possible adjusted to money after debt
+ *
+ * @param game
+ * @param faction
+ */
+export function calculateFactionDebt(game: GameModel, faction: FactionModel): [number, number] {
+	const values = factionValues(game, faction.id);
+
+	let newDebt = faction.debt;
+
+	// Debt increase while money is less than 0.
+	if (faction.money < 0) {
+		if (values.income < 0) {
+			newDebt += values.income;
+		}
+	}
+
+	const payback = calcalateNextDebtPayback(game, faction);
+	newDebt -= payback;
+	if (newDebt < 0) {
+		newDebt = 0;
+	}
+	if (newDebt > 0) {
+		newDebt++;
+	}
+
+	return [newDebt, payback];
+}
+
+/**
+ * Debt is paid back slowly after money and income both are positive
+ * 33% (rounded) of income is used to payback the debt until it has been completely repaid
+ * Debt gains interest of 1 credit per turn
+ *
+ * @param game
+ * @param faction
+ */
+export function calcalateNextDebtPayback(game: GameModel, faction: FactionModel): number {
+	const values = factionValues(game, faction.id);
+	let payback = 0;
+
+	if (faction.money > 0 && values.income > 0 && faction.debt > 0) {
+		payback = Math.floor(values.income / 3);
+
+		if (payback > faction.money) {
+			payback = faction.money;
+		}
+
+		if (payback > faction.debt) {
+			payback = faction.debt;
+		}
+	}
+
+	return payback;
 }
