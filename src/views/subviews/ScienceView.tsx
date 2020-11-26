@@ -87,7 +87,7 @@ const useStyles = makeStyles((theme: Theme) =>
             alignItems: "center",
             justifyContent: "space-between",
             marginTop: "2rem",
-            [theme.breakpoints.down("md")]: {
+            [theme.breakpoints.down("lg")]: {
                 flexWrap: "wrap",
                 justifyContent: "space-around",
             },
@@ -186,7 +186,7 @@ const useStyles = makeStyles((theme: Theme) =>
                     boxShadow: "inset 0 0 3rem 1rem #0004",
                 },
             },
-            [theme.breakpoints.down("md")]: {
+            [theme.breakpoints.down("lg")]: {
                 flexDirection: "column",
                 "& > div.col": {
                     "&.target": {
@@ -200,8 +200,8 @@ const useStyles = makeStyles((theme: Theme) =>
                     },
                 },
             },
-            [theme.breakpoints.up("lg")]: {
-                flexDirection: "column",
+            [theme.breakpoints.up("xl")]: {
+                flexDirection: "row",
                 "& > div.col": {
                     "&.target": {
                         background: "linear-gradient(90deg, transparent, #666A 5%, #666A 95%, transparent 100%)",
