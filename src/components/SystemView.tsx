@@ -88,6 +88,14 @@ const useStyles = makeStyles((theme: Theme) =>
                     textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
                 },
             },
+            [theme.breakpoints.down("md")]: {
+                top: "4rem",
+                left: "1rem",
+                right: "4rem",
+                bottom: "5rem",
+                zIndex: "80",
+                width: "auto",
+            },
         },
         mainContent: {
             overflowY: "auto",
@@ -208,8 +216,8 @@ const useStyles = makeStyles((theme: Theme) =>
             },
             "& > *": {
                 zIndex: 10,
-			},
-			
+            },
+
             "& > button.fullSizeButton": {
                 width: "100%",
                 height: "100%",
@@ -249,8 +257,8 @@ const useStyles = makeStyles((theme: Theme) =>
                     fontWeight: "bold",
                     margin: "0",
                     padding: "0",
-				},
-				
+                },
+
                 "&.cancellable:hover": {
                     border: "ridge 3px #F888",
                     "&:after": {
@@ -278,11 +286,11 @@ const useStyles = makeStyles((theme: Theme) =>
                 borderBottom: "ridge 3px #000A",
                 borderTop: "solid 2px #4448",
                 padding: "0.5rem 0",
-				boxShadow: "inset 0 0 2.5rem 0.5rem #0008",
-				"& div.notBuildable": {
-					filter: "grayscale(0.8)",
-					opacity: 0.5,
-				},
+                boxShadow: "inset 0 0 2.5rem 0.5rem #0008",
+                "& div.notBuildable": {
+                    filter: "grayscale(0.8)",
+                    opacity: 0.5,
+                },
             },
         },
     })
@@ -306,15 +314,14 @@ const SystemView: FC = () => {
     }
 
     // If there is an open fleet, do not open System View
-    if(fleet.length > 0) return null;
+    if (fleet.length > 0) return null;
 
     function close() {
-        if(buildingView === "") {
+        if (buildingView === "") {
             setStar(null);
         } else {
             setBuildingView("");
         }
-        
     }
 
     function buildBuilding(buildingDesign: BuildingDesign) {
@@ -395,7 +402,7 @@ const SystemView: FC = () => {
                             timeLeft: cmd.turnsLeft,
                             cmdId: cmd.id,
                             cancellable: cmd.turn === game.turn,
-						};
+                        };
                         ships.push(shipUC);
                     }
                 }
@@ -442,7 +449,7 @@ const SystemView: FC = () => {
                                         // variant="contained"
                                         // color="primary"
                                         onClick={() => plusIndustry(star.id)}
-                                        disabled={star.industry + comPlusInd>= sysEco.industryMax}
+                                        disabled={star.industry + comPlusInd >= sysEco.industryMax}
                                     >
                                         +
                                     </Button>
@@ -515,28 +522,29 @@ const SystemView: FC = () => {
 
                         <Grid item lg={7} className={classes.contentArea}>
                             <h2>Ship Dock</h2>
-							
-                            {mySystem && shipsUnderConstruction.map((ship: ShipUnderConstruction, ind: number) => {
-								if(ship.cancellable === false) {
-									return (
-										<div className={`${classes.shipDockSlot} building`}>
-											<label>building</label>
-											<h2>{ship.type}</h2>
-											<p className="ready">Ready in {ship.timeLeft} turn(s)</p>
-										</div>
-									);
-								}
-								return (
-									<div
-                                        className={`${classes.shipDockSlot} building cancellable`}
-                                        onClick={() => cancelConstruction(ship)}
-                                    >
-                                        <label>building</label>
-                                        <h2>{ship.type}</h2>
-                                        <p className="ready">Ready in {ship.timeLeft} turn(s)</p>
-                                    </div>
-                                );
-                            })}
+
+                            {mySystem &&
+                                shipsUnderConstruction.map((ship: ShipUnderConstruction, ind: number) => {
+                                    if (ship.cancellable === false) {
+                                        return (
+                                            <div className={`${classes.shipDockSlot} building`}>
+                                                <label>building</label>
+                                                <h2>{ship.type}</h2>
+                                                <p className="ready">Ready in {ship.timeLeft} turn(s)</p>
+                                            </div>
+                                        );
+                                    }
+                                    return (
+                                        <div
+                                            className={`${classes.shipDockSlot} building cancellable`}
+                                            onClick={() => cancelConstruction(ship)}
+                                        >
+                                            <label>building</label>
+                                            <h2>{ship.type}</h2>
+                                            <p className="ready">Ready in {ship.timeLeft} turn(s)</p>
+                                        </div>
+                                    );
+                                })}
                             {mySystem && freeShipYardSlots > 0 && (
                                 <div className={classes.shipDockSlot}>
                                     <Button className="fullSizeButton" onClick={() => setBuildingView("ships")}>
@@ -551,11 +559,11 @@ const SystemView: FC = () => {
                                     </Button>
                                 </div>
                             )}
-							{!mySystem && <div className={classes.shipDockSlot}>
-									<p>Shipyard slot</p>
-                                </div>}
-
-                            
+                            {!mySystem && (
+                                <div className={classes.shipDockSlot}>
+                                    <p>Shipyard slot</p>
+                                </div>
+                            )}
                         </Grid>
 
                         <Grid item lg={12} className={classes.contentArea}>
@@ -642,18 +650,18 @@ const SystemView: FC = () => {
                             <div className={classes.rows}>
                                 {DATASHIPS.map((ship: ShipDesign) => {
                                     const buildable = shipCanBeBuiltOnSystemByFaction(ship, faction, star);
-                                    
-									if(!buildable) {
-										return (
-											<div key={ship.typeClassName}>
-												<ShipInfo ship={ship} className="notBuildable" />
-											</div>
-										);
-									}
-									
+
+                                    if (!buildable) {
+                                        return (
+                                            <div key={ship.typeClassName}>
+                                                <ShipInfo ship={ship} className="notBuildable" />
+                                            </div>
+                                        );
+                                    }
+
                                     return (
                                         <div key={ship.typeClassName}>
-                                            <ShipInfo ship={ship} onClick={(s: ShipDesign) => buildUnit(ship, star)}  />
+                                            <ShipInfo ship={ship} onClick={(s: ShipDesign) => buildUnit(ship, star)} />
                                         </div>
                                     );
                                 })}

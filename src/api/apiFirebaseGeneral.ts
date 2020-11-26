@@ -1,6 +1,5 @@
 import Firebase from "firebase";
 import { db } from "./firebaseDb";
-
 import { GameObject } from "../models/Models";
 
 export interface FirebaseConfiguration {
@@ -32,54 +31,74 @@ export async function getAllItems<T extends GameObject>(collectionName: string):
 }
 
 export async function getItem<T extends GameObject>(collectionName: string, itemId: string): Promise<T | undefined> {
-    const snap = await db.collection(collectionName).doc(itemId).get();
+    try {
+        const snap = await db.collection(collectionName).doc(itemId).get();
 
-    if (!snap.data()) {
-        console.warn(`Item with id ${itemId} not found!`);
-        return;
-    }
-    const data: T = snap.data() as T;
-    if (data.id === undefined) {
-        data.id = snap.id;
-    }
+        if (!snap.data()) {
+            console.warn(`Item with id ${itemId} not found!`);
+            return;
+        }
+        const data: T = snap.data() as T;
+        if (data.id === undefined) {
+            data.id = snap.id;
+        }
 
-    return data;
+        return data;
+    } catch (e) {
+        console.error(`apiFirebaseGeneral:getItem: Cannot get item ${itemId} from Collection ${collectionName}!`);
+        console.error(e);
+        throw new Error(e);
+    }
 }
 
 export async function getItemsWhere<T extends GameObject>(
     collectionName: string,
-    where: [string, Firebase.firestore.WhereFilterOp, string|number]
+    where: [string, Firebase.firestore.WhereFilterOp, string | number]
 ): Promise<T[]> {
-    const snap = await db.collection(collectionName).where(where[0], where[1], where[2]).get();
+    try {
+        const snap = await db.collection(collectionName).where(where[0], where[1], where[2]).get();
 
-    const res: T[] = [];
-    snap.forEach((item) => {
-        const d: T = item.data() as T;
-
-        res.push(d);
-    });
-    return res;
+        const res: T[] = [];
+        snap.forEach((item) => {
+            const d: T = item.data() as T;
+            res.push(d);
+        });
+        return res;
+    } catch (e) {
+        console.error(
+            `apiFirebaseGeneral:getItemsWhere: Cannot retrieve items from collection ${collectionName} with query ${where.join(
+                ","
+            )}!`
+        );
+        console.error(e);
+        throw new Error(e);
+    }
 }
 
 export async function getItemsWheres<T extends GameObject>(
     collectionName: string,
-    wheres: [string, Firebase.firestore.WhereFilterOp, string|number][]
+    wheres: [string, Firebase.firestore.WhereFilterOp, string | number][]
 ): Promise<T[]> {
-    const collectionRef = db.collection(collectionName);
-    wheres.forEach((where: [string, Firebase.firestore.WhereFilterOp, string|number]) => {
-        console.log("Where", where);
-        collectionRef.where(where[0], where[1], where[2]);
-    });
-    console.log("CollectionRef", collectionRef);
-    const snap = await collectionRef.get();
+    try {
+        const collectionRef = db.collection(collectionName);
+        wheres.forEach((where: [string, Firebase.firestore.WhereFilterOp, string | number]) => {
+            collectionRef.where(where[0], where[1], where[2]);
+        });
+        const snap = await collectionRef.get();
 
-    const res: T[] = [];
-    snap.forEach((item) => {
-        const d: T = item.data() as T;
-
-        res.push(d);
-    });
-    return res;
+        const res: T[] = [];
+        snap.forEach((item) => {
+            const d: T = item.data() as T;
+            res.push(d);
+        });
+        return res;
+    } catch (e) {
+        console.error(
+            `apiFirebaseGeneral:getItemsWheres: Cannot retrieve items from collection ${collectionName} with queries...!`
+        );
+        console.error(e);
+        throw new Error(e);
+    }
 }
 
 export function listenItemWhere<T extends GameObject>(
@@ -87,20 +106,30 @@ export function listenItemWhere<T extends GameObject>(
     where: [string, Firebase.firestore.WhereFilterOp, string],
     callback: (item: T[] | undefined) => void
 ): () => void {
-    const subStop = db
-        .collection(collectionName)
-        .where(where[0], where[1], where[2])
-        .onSnapshot((querySnap) => {
-            const res: T[] = [];
-            querySnap.forEach((doc) => {
-                const item: T = doc.data() as T;
-                res.push(item);
+    try {
+        const subStop = db
+            .collection(collectionName)
+            .where(where[0], where[1], where[2])
+            .onSnapshot((querySnap) => {
+                const res: T[] = [];
+                querySnap.forEach((doc) => {
+                    const item: T = doc.data() as T;
+                    res.push(item);
+                });
+                callback(res);
             });
-            callback(res);
-        });
-    return () => {
-        subStop();
-    };
+        return () => {
+            subStop();
+        };
+    } catch (e) {
+        console.error(
+            `apiFirebaseGeneral:listenItemWhere: Could not start listening collection ${collectionName} with query: ${where.join(
+                ", "
+            )}!`
+        );
+        console.error(e);
+        throw new Error(e);
+    }
 }
 
 export async function deleteItem<T extends GameObject>(collectionName: string, item: T): Promise<void> {
@@ -147,6 +176,9 @@ export async function insertOrUpdateItem<T extends GameObject>(
         await db.collection(collectionName).doc(item.id).set(item);
         return item.id;
     } catch (e) {
+        console.error(
+            `apiFirebaseGeneral:insertOrUpdateItem: Could not update/insert item in collection ${collectionName}, item: NNNnnn... !`
+        );
         console.error(e);
         throw new Error(e);
     }

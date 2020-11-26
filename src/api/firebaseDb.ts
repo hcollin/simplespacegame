@@ -4,11 +4,7 @@ import Firebase from "firebase";
 const fire:Firebase.app.App = Firebase.initializeApp(firebaseConfig);
 const db: Firebase.firestore.Firestore = fire.firestore();
 
-
-
 Firebase.auth().setPersistence(Firebase.auth.Auth.Persistence.LOCAL);
-
-
 
 //eslint-disable-next-line no-restricted-globals
 if(location.hostname === "localhost") {

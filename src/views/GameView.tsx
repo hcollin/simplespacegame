@@ -68,8 +68,6 @@ const useStyles = makeStyles((theme: Theme) =>
                 alignItems: "center",
                 justifyContent: "space-around",
                 "& > img": {
-                    height: "4rem",
-                    width: "4rem",
                     filter: "grayscale(0.9)",
                     transform: "scale(0.75)",
                     transition: "all 0.2s ease",
@@ -88,6 +86,35 @@ const useStyles = makeStyles((theme: Theme) =>
                     },
                 },
             },
+            [theme.breakpoints.down("md")]: {
+                width: "100%",
+                height: "4rem",
+                borderRight: "none",
+                borderRadius:0,
+                padding: "0 1rem",
+                zIndex: 90,
+                "& > div": {
+                    
+                    "& > img": {
+                        height: "3.5rem",
+                        width: "3.5rem",
+                        // transform: "scale(0.75)",
+                        // transition: "all 0.2s ease",
+                    },
+                },
+            },
+            [theme.breakpoints.up("lg")]: {
+                width: "600px",
+                height: "5rem",
+                "& > div": {
+                    "& > img": {
+                        height: "4rem",
+                        width: "4rem",
+                    },
+                },
+            },
+            
+            
         },
         processing: {
             display: "flex",

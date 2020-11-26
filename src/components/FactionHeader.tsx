@@ -177,6 +177,28 @@ const useStyles = makeStyles((theme: Theme) =>
                     },
                 },
             },
+            [theme.breakpoints.down("md")]: {
+                right: 0,
+                height: "3rem",
+                width: "auto",
+                minWidth: 0,
+                "& > div.logo": {
+                    width: "4rem",
+                    minWidth: 0,
+                },
+                "& > div.title": {
+                    flex: "1 1 auto",
+                    "& > h1": {
+                        fontSize: "1rem",
+
+                    }                    
+                },
+                "& > div.rest": {
+                    
+                    display: "none",
+                }
+
+            }
         },
         sheet: {
             padding: 0,
@@ -368,7 +390,7 @@ const FactionHeader: FC = () => {
     return (
         <>
             <div
-                className={classes.root}
+                className={`${classes.root}`}
                 style={{
                     background: `linear-gradient(190deg, #222 0, ${faction.color} 10%,  white 50%, white 80%, gray 100%)`,
                 }}

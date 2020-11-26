@@ -529,8 +529,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 "& div.header": {
                     fontWeight: "bold",
                     fontSize: "0.9rem",
-                    textTransform: "uppercase"
-
+                    textTransform: "uppercase",
                 },
                 "& div.weapons": {
                     fontWeigth: "bold",
@@ -540,7 +539,7 @@ const useStyles = makeStyles((theme: Theme) =>
                     },
                     "& > div.weapon:nth-child(even)": {
                         background: "#FFF1",
-                    }
+                    },
                 },
                 "& div.row": {
                     display: "flex",
@@ -975,10 +974,12 @@ const CombatStatistics: FC<StatProps> = (props) => {
                     if (!faction) return null;
                     return (
                         <div key={ship.id} className="ship">
-                            <div className="total row" style={{background: faction.color}}>
+                            <div className="total row" style={{ background: faction.color }}>
                                 <div className="name">{ship.name}</div>
                                 <div className="shipclass">{ship.typeClassName}</div>
-                                <div className="faction" style={{fontFamily: faction.style.fontFamily}}>{faction.name}</div>
+                                <div className="faction" style={{ fontFamily: faction.style.fontFamily }}>
+                                    {faction.name}
+                                </div>
                                 <div className="dmg">{dmg}</div>
                                 <div className="shots">{shots}</div>
                                 <div className="hits">{hits}</div>
