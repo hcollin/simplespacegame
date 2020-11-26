@@ -175,7 +175,8 @@ const GameSetup: FC = () => {
             distances: distances,
             playerCount: plCount,
             faction: factionSetup || undefined,
-            specials: "AVERAGE",
+            specials: specials,
+            length: "MEDIUM",
         });
     }
 

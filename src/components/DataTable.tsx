@@ -65,6 +65,7 @@ export interface ColumnProps {
     size: number | string;
     className?: string;
     wrapper?: (value: any, item: ObjectType|null, index: number, isHeader: boolean) => any;
+    fn?: (item: any ) => any;
 }
 
 interface ObjectType {
@@ -102,7 +103,8 @@ const DataTable: FC<DataTableProps> = (props: DataTableProps) => {
                             <TableRow key={val.id}>
 
                                 {props.columns.map((c: ColumnProps) => {
-                                    const content = c.wrapper !== undefined ? c.wrapper(val[c.key], val, ind, false ) : val[c.key];
+                                    const value = c.fn ? c.fn(val) : val[c.key];
+                                    const content = c.wrapper !== undefined ? c.wrapper(value, val, ind, false ) : value;
                                     return (
                                         <TableCell key={`${val.id}-${c.key}`} className={c.className || ""}>
                                             {content}

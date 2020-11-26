@@ -23,7 +23,7 @@ import iconBuildSvg from "../images/iconUnderConstruction.svg";
 import iconScienceSvg from "../images/iconScience.svg";
 import iconFleetSvg from "../images/iconUnits.svg";
 import { IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconScore, IconWelfare } from "./Icons";
-import { factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
+import { calculateTargetScore, factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
 import { doPlayerDone } from "../services/commands/GameCommands";
 import { COMMANDPAGINATIONLIMIT } from "../configs";
 import { getSystemByCoordinates } from "../utils/systemUtils";
@@ -425,7 +425,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                 </div>
                 <div>
                     <IconScore size="lg" />
-                    {getFactionScore(game, faction.id)}
+                    {getFactionScore(game, faction.id)} <small>/ {calculateTargetScore(game)}</small>
                 </div>
                 <div>
                     <IconWelfare size="lg" />

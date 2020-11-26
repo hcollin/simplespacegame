@@ -8,6 +8,7 @@ import {
     buildingFactoryAutomation,
     buildingRingWorld,
     buildingBunkers,
+    buildingBank,
 } from "../buildings/fBuildingRules";
 import { Building } from "../models/fBuildings";
 import { Coordinates, GameModel, SystemKeyword, SystemModel } from "../models/fModels";
@@ -50,7 +51,7 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
         income:
             star.economy * buildingSpacePort(star) +
             buildingGalacticExchange(star, game.systems) +
-            buildingCoreMine(star),
+            buildingCoreMine(star) + buildingBank(star),
         profit: 0,
         expenses: 0,
         industryExpenses: star.industry < 3 ? 0 : Math.floor(star.industry / 2),

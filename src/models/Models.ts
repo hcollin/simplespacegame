@@ -23,6 +23,7 @@ export interface GameSetup {
     distances: string;
     density: string;
     specials: string;
+    length: string;
 }
 
 export interface PreGameSetup extends GameSetup {

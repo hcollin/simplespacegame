@@ -167,8 +167,6 @@ const IconFighter: FC<IconProps> = (props) => {
     return <GeneralIcon {...props} tooltip="Fighter" iconSvg={IconFighterSvg} />
 }
 
-
-
 export {
     IconCredit,
     IconResearchPoint,

@@ -47,6 +47,15 @@ export function buildingIndustrySector(star: SystemEconomy): SystemEconomy {
     return { ...star };
 }
 
+
+export function buildingBank(star: SystemModel): number {
+    if (starHasBuilding(star, BUILDINGTYPE.BANK)) {
+        return 3;
+    }
+    return 0;
+}
+
+
 export function buildingBunkers(star: SystemModel): number {
     if (starHasBuilding(star, BUILDINGTYPE.BUNKERS)) {
         return 3;
@@ -56,7 +65,7 @@ export function buildingBunkers(star: SystemModel): number {
 
 export function buildingCoreMine(star: SystemModel): number {
     if (starHasBuilding(star, BUILDINGTYPE.COREMINE)) {
-        return 3;
+        return 6;
     }
     return 0;
 }

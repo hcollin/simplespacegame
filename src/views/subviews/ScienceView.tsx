@@ -11,6 +11,7 @@ import businessSvg from "../../images/techBusiness.svg";
 import chemistrySvg from "../../images/techChemistry.svg";
 import socialSvg from "../../images/techSocial.svg";
 import informationSvg from "../../images/techInformation.svg";
+import materialSvg from "../../images/techMaterial.svg";
 import TechCard from "../../components/TechCard";
 import { DATATECHNOLOGY } from "../../data/dataTechnology";
 import { canAffordTech, getTechValue, missingResearchPoints, techPrerequisitesFulfilled } from "../../utils/techUtils";
@@ -676,7 +677,7 @@ export const TechFieldIcon: FC<TechFieldIconProps> = (props) => {
             image = chemistrySvg;
             break;
         case TechnologyField.MATERIAL:
-            image = socialSvg;
+            image = materialSvg;
             break;
         case TechnologyField.INFORMATION:
             image = informationSvg;

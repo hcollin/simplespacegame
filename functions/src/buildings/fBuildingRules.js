@@ -11,6 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
+exports.buildingGalacticSenate = exports.buildingArcology = exports.buildingDysonSphere = exports.buildingRingWorld = exports.buildingGateway = exports.buildingGalacticExchange = exports.buildingSpacePort = exports.buildingCommandCenter = exports.buildingRobotWorkers = exports.buildingUniversity = exports.buildingOrbitalCannon = exports.buildingRepairStation = exports.buildingFactoryAutomation = exports.buildingCGaiaProject = exports.buildingCoreMine = exports.buildingBunkers = exports.buildingBank = exports.buildingIndustrySector = exports.buildingTradePost = exports.buildingBioDome = exports.buildBuildingRules = void 0;
 var fDataBuildings_1 = require("../data/fDataBuildings");
 var fModels_1 = require("../models/fModels");
 var fFactionUtils_1 = require("../utils/fFactionUtils");
@@ -54,6 +55,13 @@ function buildingIndustrySector(star) {
     return __assign({}, star);
 }
 exports.buildingIndustrySector = buildingIndustrySector;
+function buildingBank(star) {
+    if (starHasBuilding(star, fDataBuildings_1.BUILDINGTYPE.BANK)) {
+        return 3;
+    }
+    return 0;
+}
+exports.buildingBank = buildingBank;
 function buildingBunkers(star) {
     if (starHasBuilding(star, fDataBuildings_1.BUILDINGTYPE.BUNKERS)) {
         return 3;
@@ -63,7 +71,7 @@ function buildingBunkers(star) {
 exports.buildingBunkers = buildingBunkers;
 function buildingCoreMine(star) {
     if (starHasBuilding(star, fDataBuildings_1.BUILDINGTYPE.COREMINE)) {
-        return 3;
+        return 6;
     }
     return 0;
 }
