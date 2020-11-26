@@ -3,7 +3,7 @@ import { makeStyles, Theme, createStyles, Container, Button } from "@material-ui
 
 import starfieldJpeg from "../images/starfield2.jpg";
 import useCurrentUser from "../services/hooks/useCurrentUser";
-
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -46,6 +46,35 @@ const useStyles = makeStyles((theme: Theme) =>
                         flexDirection: "row",
                         alignItems: "center",
                         justifyContent: "space-between",
+                    },
+
+                    "&.row": {
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "flex-start",
+                        justifyContent: "space-around",
+
+                        
+                        [theme.breakpoints.down("md")]: {
+                            flexWrap: "wrap",
+                            "& > *":{
+                                marginRight: 0,
+                                marginBottom: "0.5rem",
+                                "&:last-child": {
+                                    marginBottom: "none",
+                                }
+                            },
+                        },
+                        [theme.breakpoints.up("lg")]: {
+                            
+                            "& > *":{
+                                marginRight: "0.5rem",
+                                marginBottom: "0.5rem",
+                                "&:last-child": {
+                                    marginRight: "none",
+                                }
+                            },
+                        }
                     }
                 },
 
@@ -121,6 +150,15 @@ const useStyles = makeStyles((theme: Theme) =>
                 alignItems: "center",
                 justifyContent: "space-around",
             },
+            "& > .userInfo": {
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-around",
+                "& > button": {
+                    marginLeft: "0.5rem",
+                }
+            }
         },
 
         part: {
@@ -156,7 +194,11 @@ interface MenuPageContainerProps {
 const MenuPageContainer: FC<MenuPageContainerProps> = (props: MenuPageContainerProps) => {
     const classes = useStyles();
 
-    const [user] = useCurrentUser();
+    const [user, send] = useCurrentUser();
+
+    function logout() {
+        send("logout");
+    }
 
     return (
         <div className={classes.root}>
@@ -169,8 +211,9 @@ const MenuPageContainer: FC<MenuPageContainerProps> = (props: MenuPageContainerP
                     )}
                     <h1>{props.title}</h1>
                     {user && (
-                        <div>
+                        <div className="userInfo">
                             <p>Welcome, {user.name}!</p>
+                            <Button variant="contained" color="secondary" onClick={logout}><ExitToAppIcon /></Button>
                         </div>
                     )}
                 </header>

@@ -8,7 +8,11 @@ import { FactionModel, GameModel, GameState } from "../models/Models";
 import { doCreateDraftGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import ReplayIcon from '@material-ui/icons/Replay';
-import { getColorSum } from "../utils/generalUtils";
+import LoginForm from "../components/LoginForm";
+import AuthProviders from "../components/AuthProviders";
+
+import frostTrollLogoPng from '../images/FrostTrollLogo.png';
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -167,26 +171,19 @@ const MenuPage: FC = () => {
     const isDev = ENV === "development";
     return (
         <MenuPageContainer title="Frost Galaxy">
-            {!user && (
-                <div className="actions">
-                    <Button variant="contained" color="primary" onClick={loginWithGoogle}>
-                        Login with Google
-                    </Button>
-                    {isDev && <><Button variant="contained" color="primary" onClick={() => loginInDev(0)}>
-                        Login DEV-1
-                    </Button>
-                        <Button variant="contained" color="primary" onClick={() => loginInDev(1)}>
-                            Login DEV-2
-                    </Button>
-                        <Button variant="contained" color="primary" onClick={() => loginInDev(2)}>
-                            Login DEV-3
-                    </Button>
+            
 
-                        <Button variant="contained" color="primary" onClick={() => loginInDev(3)}>
-                            Login DEV-4
-                    </Button></>}
-                </div>
+            {!user && (
+                <section className="row">
+                    <LoginForm />
+                    <AuthProviders />
+
+                    <div style={{flex: "1 1 auto", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                        <img src={frostTrollLogoPng} alt="Frost Troll" style={{width: "80%"}}/>
+                    </div>
+                </section>
             )}
+
 
             {user && (
                 <div className="actions">
@@ -305,6 +302,10 @@ const MenuPage: FC = () => {
 
 
             {/* <div style={{display: "flex", flexWrap: "wrap"}}>{rndNames.map((n: string, i: number) => <p key={i} style={{width: "15rem", margin: "0.25rem 0", padding: 0}}>{n}</p>)}</div> */}
+
+            <footer>
+                &copy; Frost Troll 2020
+            </footer>
 
         </MenuPageContainer>
     );
