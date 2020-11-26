@@ -4,9 +4,7 @@ import Firebase from "firebase";
 const fire:Firebase.app.App = Firebase.initializeApp(firebaseConfig);
 const db: Firebase.firestore.Firestore = fire.firestore();
 
-
-
-Firebase.auth().setPersistence(Firebase.auth.Auth.Persistence.LOCAL);
+Firebase.auth().setPersistence(Firebase.auth.Auth.Persistence.SESSION);
 
 
 
