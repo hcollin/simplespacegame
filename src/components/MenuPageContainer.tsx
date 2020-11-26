@@ -33,6 +33,11 @@ const useStyles = makeStyles((theme: Theme) =>
                 padding: 0,
                 boxShadow: "inset 0 0 5rem 2rem #0008",
                 borderRadius: "2rem",
+                [theme.breakpoints.down("md")]: {
+                    border: "none",
+                    borderBottom: "groove 5px #68A8",
+                    borderRadius: 0,
+                },
 
                 "& > section": {
                     padding: "1rem",
@@ -67,9 +72,25 @@ const useStyles = makeStyles((theme: Theme) =>
                         width: "2px",
                         height: "80%",
                         margin: "10% 1rem",
+                    },
+                    [theme.breakpoints.down("md")]: {
+                        flexWrap: "wrap",
+                        justifyContent: "space-around",
+                        "& > button": {
+                            flex: "0 0 auto",
+                            width: "45%",
+                            marginBottom: "0.5rem",
+                        }
+
+                        
+                        
                     }
+
                 },
             },
+            [theme.breakpoints.down("md")]: {
+                padding: 0,
+            }
         },
         header: {
             display: "flex",

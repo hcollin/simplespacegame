@@ -53,55 +53,32 @@ const useStyles = makeStyles((theme: Theme) =>
             },
 
             "& > div.page": {
-                position: "relative",
-                zIndex: 10,
-                marginTop: "4rem",
-                padding: "1rem",
-                background:
-                    "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
-                color: "#FFFE",
-                borderRadius: "1rem",
-                width: "calc(100% - 18rem)",
-                marginBottom: "6rem",
-                border: "ridge 5px #DFD4",
                 "& > header": {
-                    position: "relative",
-                    height: "10rem",
-                    background: "#000",
-                    backgroundImage: `url(${researchimg})`,
-                    width: "100%",
-                    backgroundPosition: "center",
-                    // filter: "grayscale(0.4) sepia(0.7) hue-rotate(52deg)",
-                    boxShadow: "inset 0 0 2em 1rem #000",
-                    border: "ridge 5px #BD78",
-                    borderBottom: "none",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "0 2rem 2rem 2rem",
-                    "&:after": {
-                        content: '""',
-                        background: "linear-gradient(to bottom, transparent 75%, #0008 80%, #777E 97%, #555 100%)",
-                        position: "absolute",
-                        top: 0,
-                        bottom: 0,
-                        left: "-5px",
-                        right: "-5px",
-                        zIndex: 0,
-                        pointerEvents: "none",
-                    },
-                    "&>h1": {
-                        padding: "2rem",
-                        fontSize: "2.75rem",
-                        color: "#FFFD",
-                        letterSpacing: "0.25rem",
-                        textShadow:
-                            "0 0 1rem #BD7, 2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 4px #000,2px -2px 2px #000",
-                        fontFamily: "Averia Serif Libre",
-                        fontWeight: "normal",
-                    },
+                    // "&:after": {
+                    //     content: '""',
+                    //     background: "linear-gradient(to bottom, transparent 75%, #0008 80%, #777E 97%, #555 100%)",
+                    //     position: "absolute",
+                    //     top: 0,
+                    //     bottom: 0,
+                    //     left: "-5px",
+                    //     right: "-5px",
+                    //     zIndex: 0,
+                    //     pointerEvents: "none",
+                    // },
+                    // "&>h1": {
+                    //     padding: "2rem",
+                    //     fontSize: "2.75rem",
+                    //     color: "#FFFD",
+                    //     letterSpacing: "0.25rem",
+                    //     textShadow:
+                    //         "0 0 1rem #BD7, 2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 4px #000,2px -2px 2px #000",
+                    //     fontFamily: "Averia Serif Libre",
+                    //     fontWeight: "normal",
+                    // },
                 },
+            },
+            [theme.breakpoints.down("md")]: {
+                padding: 0,
             },
         },
         row: {
@@ -110,6 +87,10 @@ const useStyles = makeStyles((theme: Theme) =>
             alignItems: "center",
             justifyContent: "space-between",
             marginTop: "2rem",
+            [theme.breakpoints.down("lg")]: {
+                flexWrap: "wrap",
+                justifyContent: "space-around",
+            },
         },
         technologyGrid: {
             display: "flex",
@@ -149,8 +130,8 @@ const useStyles = makeStyles((theme: Theme) =>
                 borderRight: "groove 3px #0004",
                 flexDirection: "column",
                 justifyContent: "flex-start",
-				paddingTop: "7rem",
-				paddingBottom: "2rem",
+                paddingTop: "7rem",
+                paddingBottom: "2rem",
                 minWidth: "25%",
                 "& > div": {
                     cursor: "pointer",
@@ -181,31 +162,56 @@ const useStyles = makeStyles((theme: Theme) =>
 
                 "&.target": {
                     boxShadow: "inset 0 0 3rem 1rem #0004",
-                    background: "linear-gradient(90deg, transparent, #666A 5%, #666A 95%, transparent 100%)",
 
                     "& > .researchTarget": {
                         width: "90%",
-						margin: "2rem 0",
-						fontSize: "1.3rem",
-						borderRadius: "1rem",
-						display: "block",
-						padding: "2rem 0",
-						"& small": {
-							display: "block",
-							fontSize: "0.75rem",
-							fontStyle: "italic",
-							fontWeight: "bold",
-						}
+                        margin: "2rem 0",
+                        fontSize: "1.3rem",
+                        borderRadius: "1rem",
+                        display: "block",
+                        padding: "2rem 0",
+                        "& small": {
+                            display: "block",
+                            fontSize: "0.75rem",
+                            fontStyle: "italic",
+                            fontWeight: "bold",
+                        },
                     },
                 },
 
                 "&.prereq": {
                     boxShadow: "inset 0 0 3rem 1rem #0004",
-                    background: "linear-gradient(90deg, transparent, #3228 5%, #333A 95%, transparent 100%)",
                 },
                 "&.reqby": {
                     boxShadow: "inset 0 0 3rem 1rem #0004",
-                    background: "linear-gradient(90deg, transparent, #333A 5%, #2328 95%, transparent 100%)",
+                },
+            },
+            [theme.breakpoints.down("lg")]: {
+                flexDirection: "column",
+                "& > div.col": {
+                    "&.target": {
+                        background: "linear-gradient(0deg, transparent, #666A 5%, #666A 95%, transparent 100%)",
+                    },
+                    "&.prereq": {
+                        background: "linear-gradient(0deg, transparent, #3228 5%, #333A 95%, transparent 100%)",
+                    },
+                    "&.reqby": {
+                        background: "linear-gradient(0deg, transparent, #333A 5%, #2328 95%, transparent 100%)",
+                    },
+                },
+            },
+            [theme.breakpoints.up("xl")]: {
+                flexDirection: "row",
+                "& > div.col": {
+                    "&.target": {
+                        background: "linear-gradient(90deg, transparent, #666A 5%, #666A 95%, transparent 100%)",
+                    },
+                    "&.prereq": {
+                        background: "linear-gradient(90deg, transparent, #3228 5%, #333A 95%, transparent 100%)",
+                    },
+                    "&.reqby": {
+                        background: "linear-gradient(90deg, transparent, #333A 5%, #2328 95%, transparent 100%)",
+                    },
                 },
             },
         },
@@ -215,8 +221,8 @@ const useStyles = makeStyles((theme: Theme) =>
             flexDirection: "row",
             padding: "3.5rem 0 0 0",
             boxShadow: "inset 0 0 2rem 1rem #000D",
-			borderRadius: "1rem",
-			border: "solid 3px transparent",
+            borderRadius: "1rem",
+            border: "solid 3px transparent",
 
             "& > img.techFieldIcon": {
                 position: "absolute",
@@ -262,22 +268,22 @@ const useStyles = makeStyles((theme: Theme) =>
                     marginBottom: "0.25rem",
                     // padding: "0.25rem",
                 },
-			},
-			
-			"&.reqnotmet": {
-				boxShadow: "inset 0 0 2rem 1rem #100D",
-				border: "ridge 3px #F008",
-				"& h1": {
-					color: "#F00A",
-				}
-			},
-			"&.reqaremet": {
-				boxShadow: "inset 0 0 2rem 1rem #010D",
-				border: "ridge 3px #0F08",
-				"& h1": {
-					color: "#080A",
-				}
-			}
+            },
+
+            "&.reqnotmet": {
+                boxShadow: "inset 0 0 2rem 1rem #100D",
+                border: "ridge 3px #F008",
+                "& h1": {
+                    color: "#F00A",
+                },
+            },
+            "&.reqaremet": {
+                boxShadow: "inset 0 0 2rem 1rem #010D",
+                border: "ridge 3px #0F08",
+                "& h1": {
+                    color: "#080A",
+                },
+            },
         },
     })
 );
@@ -289,8 +295,8 @@ const ScienceView: FC = () => {
     const [game] = useService<GameModel>(SERVICEID.GameService);
 
     const [showMode, setShowMode] = useState<string>("ALL");
-	const [targetTech, setTargetTech] = useState<Technology | null>(null);
-	const comms = useMyCommands<ResearchCommand>(CommandType.TechnologyResearch);
+    const [targetTech, setTargetTech] = useState<Technology | null>(null);
+    const comms = useMyCommands<ResearchCommand>(CommandType.TechnologyResearch);
 
     if (!faction || !game) return null;
 
@@ -298,19 +304,18 @@ const ScienceView: FC = () => {
 
     const pointsGenerated = researchPointGenerationCalculator(game, faction);
 
-	const techUnderResearch = comms.map((cmd: ResearchCommand) => cmd.techId);
-	
+    const techUnderResearch = comms.map((cmd: ResearchCommand) => cmd.techId);
+
     function researchTech(tech: Technology) {
         if (faction && tech && !techUnderResearch.includes(tech.id)) {
             doResearchTechCommand(tech, faction.id);
-		}
-		if(techUnderResearch.includes(tech.id)) {
-			const cmd = comms.find((cmd: ResearchCommand) => cmd.techId === tech.id);
-			if(cmd) {
-				doRemoveCommand(cmd.id);
-			}
-			
-		}
+        }
+        if (techUnderResearch.includes(tech.id)) {
+            const cmd = comms.find((cmd: ResearchCommand) => cmd.techId === tech.id);
+            if (cmd) {
+                doRemoveCommand(cmd.id);
+            }
+        }
     }
 
     function clickTech(tech: Technology) {
@@ -338,11 +343,11 @@ const ScienceView: FC = () => {
         .filter((tech: Technology) => {
             if (showMode === "ALL") return true;
 
-			if(showMode === "OWNED") {
-				if(faction) {
-					return faction.technology.includes(tech.id);
-				}
-			}
+            if (showMode === "OWNED") {
+                if (faction) {
+                    return faction.technology.includes(tech.id);
+                }
+            }
 
             if (showMode === "SINGLE") {
                 if (targetTech === null) return true;
@@ -363,9 +368,9 @@ const ScienceView: FC = () => {
             if (missing.size === 0) return true;
 
             return false;
-		});
-		
-	const targetUnderResearch = targetTech === null ? false : techUnderResearch.includes(targetTech.id);
+        });
+
+    const targetUnderResearch = targetTech === null ? false : techUnderResearch.includes(targetTech.id);
 
     return (
         <div className={classes.root}>
@@ -386,8 +391,8 @@ const ScienceView: FC = () => {
                                 field={v.field}
                                 faction={faction}
                                 key={v.field}
-								rpTotal={pointsGenerated}
-								targetTech={targetTech}
+                                rpTotal={pointsGenerated}
+                                targetTech={targetTech}
                             />
                         );
                     })}
@@ -437,8 +442,8 @@ const ScienceView: FC = () => {
                                         key={tech.id}
                                         className={techClasses}
                                         onClick={clickTech}
-										highlightMissing={true}
-										underResearch={techUnderResearch.includes(tech.id)}
+                                        highlightMissing={true}
+                                        underResearch={techUnderResearch.includes(tech.id)}
                                     />
                                 );
                             }
@@ -451,8 +456,8 @@ const ScienceView: FC = () => {
                                         key={tech.id}
                                         className={techClasses}
                                         onClick={clickTech}
-										highlightMissing={true}
-										underResearch={techUnderResearch.includes(tech.id)}
+                                        highlightMissing={true}
+                                        underResearch={techUnderResearch.includes(tech.id)}
                                     />
                                 );
                             }
@@ -462,10 +467,10 @@ const ScienceView: FC = () => {
                                     tech={tech}
                                     faction={faction}
                                     key={tech.id}
-									className={techClasses}
-									highlightMissing={true}
-									onClick={clickTech}
-									underResearch={techUnderResearch.includes(tech.id)}
+                                    className={techClasses}
+                                    highlightMissing={true}
+                                    onClick={clickTech}
+                                    underResearch={techUnderResearch.includes(tech.id)}
                                 />
                             );
                         })}
@@ -494,8 +499,8 @@ const ScienceView: FC = () => {
                                         key={tech.id}
                                         className={techClasses}
                                         onClick={clickTech}
-										highlightMissing={true}
-										underResearch={techUnderResearch.includes(tech.id)}
+                                        highlightMissing={true}
+                                        underResearch={techUnderResearch.includes(tech.id)}
                                     />
                                 );
                             })}
@@ -511,8 +516,8 @@ const ScienceView: FC = () => {
                                         : ""
                                 } `}
                                 onClick={clickTech}
-								highlightMissing={true}
-								underResearch={targetUnderResearch}
+                                highlightMissing={true}
+                                underResearch={targetUnderResearch}
                             />
                             {/* ${!canAffordTech(targetTech, faction) ? "cannotAfford" : ""} */}
                             <Button
@@ -522,8 +527,16 @@ const ScienceView: FC = () => {
                                 disabled={!canAffordTech(targetTech, faction)}
                                 onClick={() => researchTech(targetTech)}
                             >
-                                {targetUnderResearch && <><small>Cancel:</small> {targetTech.name}</>} 
-								{!targetUnderResearch && <><small>Research:</small> {targetTech.name}</>} 
+                                {targetUnderResearch && (
+                                    <>
+                                        <small>Cancel:</small> {targetTech.name}
+                                    </>
+                                )}
+                                {!targetUnderResearch && (
+                                    <>
+                                        <small>Research:</small> {targetTech.name}
+                                    </>
+                                )}
                             </Button>
                         </div>
                         <div className="col reqby">
@@ -547,8 +560,8 @@ const ScienceView: FC = () => {
                                         key={tech.id}
                                         className={techClasses}
                                         onClick={clickTech}
-										highlightMissing={true}
-										underResearch={techUnderResearch.includes(tech.id)}
+                                        highlightMissing={true}
+                                        underResearch={techUnderResearch.includes(tech.id)}
                                     />
                                 );
                             })}
@@ -563,8 +576,8 @@ const ScienceView: FC = () => {
 interface TechFieldProps {
     field: TechnologyField;
     faction: FactionModel;
-	rpTotal: number;
-	targetTech: Technology|null;
+    rpTotal: number;
+    targetTech: Technology | null;
 }
 
 const TechnologyFieldWrapper: FC<TechFieldProps> = (props) => {
@@ -580,26 +593,21 @@ const TechnologyFieldWrapper: FC<TechFieldProps> = (props) => {
     if (index < 0) throw new Error(`Cannot find technology field ${props.field}`);
     const pointGen = rpDist[index];
 
-	
-
-	let meetsRequirements = "notneeded";
-	if(props.targetTech) {
-		
-		const required = props.targetTech.fieldreqs.find((req:[ TechnologyField, number])=> {
-			return (req[0] === props.field && req[1] > 0);
-		});
-		if(required) {
-			const missing = missingResearchPoints(props.targetTech, props.faction);
-			if(missing.has(props.field)) {
-				console.log(props.targetTech.name, props.field, missing.get(props.field));
-				meetsRequirements = "reqnotmet"
-			} else {
-				meetsRequirements = "reqaremet"
-			}
-		}
-
-		
-	}
+    let meetsRequirements = "notneeded";
+    if (props.targetTech) {
+        const required = props.targetTech.fieldreqs.find((req: [TechnologyField, number]) => {
+            return req[0] === props.field && req[1] > 0;
+        });
+        if (required) {
+            const missing = missingResearchPoints(props.targetTech, props.faction);
+            if (missing.has(props.field)) {
+                console.log(props.targetTech.name, props.field, missing.get(props.field));
+                meetsRequirements = "reqnotmet";
+            } else {
+                meetsRequirements = "reqaremet";
+            }
+        }
+    }
 
     return (
         <div className={`${classes.TechnologyFieldWrapper} ${meetsRequirements}`}>

@@ -17,7 +17,6 @@ import { getSystemById } from "../services/helpers/SystemHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { getTechById } from "../utils/techUtils";
 
-
 import CancelIcon from "@material-ui/icons/Cancel";
 
 import iconBuildSvg from "../images/iconUnderConstruction.svg";
@@ -29,6 +28,9 @@ import { doPlayerDone } from "../services/commands/GameCommands";
 import { COMMANDPAGINATIONLIMIT } from "../configs";
 import { getSystemByCoordinates } from "../utils/systemUtils";
 import CheatView from "./CheatView";
+
+import { MenuOpen } from "@material-ui/icons";
+import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -45,6 +47,9 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: "0 0 0.5rem 0",
             zIndex: 100,
             color: "white",
+            "& > .menuopener": {
+                display: "none",
+            },
             "&:before": {
                 content: '""',
                 position: "absolute",
@@ -110,6 +115,50 @@ const useStyles = makeStyles((theme: Theme) =>
                         },
                         "&.red": {
                             color: "#B00D",
+                        },
+                    },
+                },
+            },
+            [theme.breakpoints.down("md")]: {
+                right: "-15rem",
+                transition: "all 0.3s ease",
+                boxShadow: "inset 0 0 2rem 2rem #0124, 0 0 1rem 0.5rem #0008",
+
+                "& > .menuopener": {
+                    top: "calc(50% - 4.5rem)",
+                    left: "-2rem",
+                    margin: "0",
+                    display: "block",
+                    padding: "0",
+                    position: "absolute",
+                    height: "9rem",
+                    width: "2rem",
+                    borderTopLeftRadius: "1rem",
+                    borderBottomLeftRadius: "1rem",
+                    background: "#888",
+                    border: "groove 3px #0008",
+                    boxShadow: "inset 0 0 1rem 0.15rem #000A",
+                    borderRight: "none",
+                    opacity: 0.75,
+                    outline: "none",
+                    "& > .icon": {
+                        transform: "rotate(180deg)",
+                        transition: "all 0.6s ease",
+                        
+                    },
+                    "&:hover": {
+                        opacity: 1,
+                    },
+                    "&:focus": {
+                        opacity: 1,
+                    },
+                },
+                "&.open": {
+                    right: 0,
+                    "& > .menuopener": {
+                        "& > .icon": {
+                            transform: "rotate(0deg)",
+                            transition: "all 0.6s ease",
                         },
                     },
                 },
@@ -321,6 +370,8 @@ interface CommandListProps {}
 
 const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
     const classes = useStyles();
+
+    const [open, setOpen] = useState<boolean>(false);
     // const [commands] = useService<Command[]>("CommandService");
     const [game] = useService<GameModel>("GameService");
 
@@ -354,9 +405,12 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
     const pointsGenerated = researchPointGenerationCalculator(game, faction);
 
     const cmdsShown = commands.slice(cmdIndex, cmdIndex + COMMANDPAGINATIONLIMIT);
-    
+
     return (
-        <div className={classes.commands}>
+        <div className={`${classes.commands} ${open ? "open" : ""}`}>
+            <button className="menuopener" onClick={() => setOpen((prev: boolean) => !prev)}>
+                <DoubleArrowIcon className="icon" />
+            </button>
             <header>
                 <div>
                     <IconCredit size="lg" />
@@ -411,7 +465,6 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                         }
                         disabled={cmdIndex === 0}
                     >
-                        
                         Prev {COMMANDPAGINATIONLIMIT}
                     </Button>
                     <Button
@@ -565,7 +618,11 @@ const SystemBuildCommandItem: FC<CommandProps> = (props) => {
             <img src={iconBuildSvg} className="commandIcon lg" alt="Build icon" />
             <label>Build Unit</label>
             <h2>
-                {cmd.shipName}<br /><small>{systemName} ({cmd.turnsLeft})</small>
+                {cmd.shipName}
+                <br />
+                <small>
+                    {systemName} ({cmd.turnsLeft})
+                </small>
             </h2>
 
             {!props.isReady && (

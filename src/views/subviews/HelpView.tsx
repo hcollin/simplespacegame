@@ -32,7 +32,15 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             borderRadius: "1rem",
             width: "calc(100% - 28rem)",
             marginBottom: "6rem",
+            [theme.breakpoints.down("md")]: {
+                width: "100%",
+                paddingRight: "4rem",
+            }
         },
+        [theme.breakpoints.down("md")]: {
+            padding: 0,
+            
+        }
     }
 }));
 

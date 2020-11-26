@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.specialAntiFighter = void 0;
 var fDataShips_1 = require("../data/fDataShips");
 function specialAntiFighter(weapon, attacker, target) {
     if (!weapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.ANTIFIGHTER))

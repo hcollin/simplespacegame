@@ -48,10 +48,16 @@ const useStyles = makeStyles((theme: Theme) =>
                 "&.md": {
                     flex: "0 0 auto",
                     width: "8rem",
+                    [theme.breakpoints.down("md")]: {
+                        width: "25%",
+                    }
                 },
                 "&.lg": {
                     flex: "0 0 auto",
                     width: "16rem",
+                    [theme.breakpoints.down("md")]: {
+                        width: "50%",
+                    }
                 },
                 "&.center": {
                     textAlign: "center",
@@ -69,7 +75,12 @@ const useStyles = makeStyles((theme: Theme) =>
             },
             "&:nth-child(even)": {
                 backgroundColor: "#0001",
+            },
+            [theme.breakpoints.down("md")]: {
+                flexWrap: "wrap",
+                
             }
+
 
         },
     })

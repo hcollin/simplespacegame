@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.TechnologyField = exports.FactionState = exports.SystemKeyword = exports.GameState = void 0;
 var GameState;
 (function (GameState) {
     GameState[GameState["NONE"] = 0] = "NONE";

@@ -12,49 +12,54 @@ import economyimg from "../../images/art/economy.jpg";
 import { IconCredit } from "../../components/Icons";
 
 const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		root: {
-			position: "absolute",
-			top: 0,
-			left: 0,
-			zIndex: 2,
-			width: "100%",
-			height: "100vh",
-			color: "#FFFD",
-			background: "repeating-linear-gradient(0deg, #000 0, #320 4px, #210 16px)",
-			minHeight: "100vh",
-			padding: "2rem",
+    createStyles({
+        root: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 2,
+            width: "100%",
+            height: "100vh",
+            color: "#FFFD",
+            background: "repeating-linear-gradient(0deg, #000 0, #320 4px, #210 16px)",
+            minHeight: "100vh",
+            padding: "2rem",
 
-			"& > div.page": {
-				marginTop: "4rem",
-				padding: "1rem",
-				color: "#FFFE",
-				borderRadius: "1rem",
-				width: "calc(100% - 18rem)",
-				background: "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
-				border: "ridge 5px #FFD4",
-			},
-			"& span.red": {
-				color: "red",
-				fontWeight: "bold",
-			},
-			"& span.green": {
-				color: "green",
-				fontWeight: "bold",
-			},
-		},
-		systems: {
-			color: "#FFFD",
-			minHeight: "10rem",
-		},
-		row: {
-			display: "flex",
-			flexDirection: "row",
-			width: "100%",
-			alignItems: "center",
-			justifyContent: "space-around",
-		},
-	}),
+            "& > div.page": {
+                // marginTop: "4rem",
+                // padding: "1rem",
+                // color: "#FFFE",
+                // borderRadius: "1rem",
+                // width: "calc(100% - 18rem)",
+                // background:
+                //     "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
+                // border: "ridge 5px #FFD4",
+            },
+            "& span.red": {
+                color: "red",
+                fontWeight: "bold",
+            },
+            "& span.green": {
+                color: "green",
+                fontWeight: "bold",
+            },
+            [theme.breakpoints.down("md")]: {
+                padding: 0,
+
+            }
+        },
+        systems: {
+            color: "#FFFD",
+            minHeight: "10rem",
+        },
+        row: {
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "space-around",
+        },
+    })
 );
 
 interface ExtSystem extends SystemModel {

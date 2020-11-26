@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.calcalateNextDebtPayback = exports.calculateFactionDebt = exports.getFactionScore = exports.researchPointDistribution = exports.getSystemResearchPointGeneration = exports.researchPointGenerationCalculator = exports.systemExpenses = exports.unitExpenses = exports.getWelfareCommands = exports.commandCountCalculator = exports.expensesCalculator = exports.factionValues = exports.getFactionFromArrayById = void 0;
 var fBuildingRules_1 = require("../buildings/fBuildingRules");
 var fBusinessTech_1 = require("../tech/fBusinessTech");
 function getFactionFromArrayById(factions, id) {

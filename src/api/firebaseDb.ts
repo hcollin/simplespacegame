@@ -6,8 +6,6 @@ const db: Firebase.firestore.Firestore = fire.firestore();
 
 Firebase.auth().setPersistence(Firebase.auth.Auth.Persistence.SESSION);
 
-
-
 //eslint-disable-next-line no-restricted-globals
 if(location.hostname === "localhost") {
 

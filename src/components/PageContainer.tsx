@@ -83,7 +83,22 @@ const useStyles = (props: PageContainerProps) => {
                         },
                     },
                 },
+                [theme.breakpoints.down("md")]: {
+                
+                    zIndex: 10,
+                    marginTop: "4rem",
+                    padding: "1rem 4rem 1rem 1rem",
+                    
+                    
+                    // borderRadius: "1rem",
+                    width: "100%",
+                    marginBottom: "4rem",
+                    // border: "ridge 5px #DDD8",
+                    // border: `ridge 5px ${props.color}`,
+                    border: "none",
+                }
             },
+            
         });
     })();
 };

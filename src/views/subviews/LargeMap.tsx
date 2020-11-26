@@ -267,7 +267,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 							});
 
 							return (
-								<Group key={star.id} x={x} y={y} onClick={() => (isSelected ? deselect() : select(star))}>
+								<Group key={star.id} x={x} y={y} onClick={() => (isSelected ? deselect() : select(star))} onTap={() => (isSelected ? deselect() : select(star))} >
 									{hasReport && (
 										<Image image={combatReportPng} width={size * 5} height={size * 5} x={-size * 2.5} y={-size * 2.5} opacity={0.7} />
 									)}
@@ -571,7 +571,7 @@ const FleetLayer: FC<FleetLayerProps> = (props) => {
                         const y = h * (fleet.location.y / 100) * props.zoom - (star && isSelected ? 0 : size / 2);
                         const ang = star && isSelected ? angleBetweenCoordinates(star.location, fleet.location, false) : 0;
 						return (
-							<Group key={fleet.fleetId} onClick={() => selectFleet(fleet)}>
+							<Group key={fleet.fleetId} onClick={() => selectFleet(fleet)} onTap={() => selectFleet(fleet)}>
 								<ShipSprite x={x} y={y} size={size} angle={ang} selected={isSelected} color={shipColor} />
 								{/* <Image image={spaceShip} x={x} y={y} width={size} height={size} fill="" {...selPorps}/> */}
 							</Group>
@@ -593,7 +593,7 @@ const FleetLayer: FC<FleetLayerProps> = (props) => {
 						const ang = angleBetweenCoordinates(moveFleet.toCoord, moveFleet.location, false);
 
 						return (
-							<Group key={fleet.fleetId} onClick={() => selectFleet(fleet)}>
+							<Group key={fleet.fleetId} onClick={() => selectFleet(fleet)} onTap={() => selectFleet(fleet)}>
 								<CoordinateLine
 									game={game}
 									from={moveFleet.location}
@@ -615,7 +615,7 @@ const FleetLayer: FC<FleetLayerProps> = (props) => {
 						const x = h * (fleet.location.x / 100) * props.zoom;
 						const y = h * (fleet.location.y / 100) * props.zoom - size;
 						return (
-							<Group key={fleet.fleetId} onClick={() => selectFleet(fleet)}>
+							<Group key={fleet.fleetId} onClick={() => selectFleet(fleet)} onTap={() => selectFleet(fleet)}>
 								{/* <Image image={spaceShip} x={x} y={y} width={size} height={size} /> */}
 								<ShipSprite x={x} y={y} size={size} angle={0} selected={isSelected} color={shipColor}/>
 							</Group>

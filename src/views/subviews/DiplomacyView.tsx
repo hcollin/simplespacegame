@@ -9,7 +9,6 @@ import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
-
 import { IconCredit } from "../../components/Icons";
 import { GLOBALMESSAGEKEY } from "../../services/ChatService";
 import { getFactionById } from "../../utils/factionJokiUtils";
@@ -26,20 +25,21 @@ const useStyles = makeStyles((theme: Theme) =>
             color: "#FFFD",
             background: "repeating-linear-gradient(0deg, #000 0, #302 4px, #201 16px)",
             minHeight: "100vh",
-            padding: "2rem",
+            // padding: "2rem",
 
             "& > div.page": {
                 marginTop: "4rem",
-                padding: "1rem",
+
                 background:
                     "linear-gradient(180deg, #000 0, #555 1.5rem, #999 3rem, #555 4.5rem, #444 94%, #555 96%, #444 98%, #000 100%)",
                 color: "#FFFE",
-                borderRadius: "1rem",
-                width: "calc(100% - 18rem)",
-                border: "ridge 5px #FDF4",
+
+                // width: "calc(100% - 18rem)",
+                // border: "ridge 5px #FDF4",
                 "& div.columns": {
                     display: "flex",
-                    flexDirection: "row",
+                    position: "relative",
+                    paddingLeft: "6rem",
                 },
 
                 "& h3": {
@@ -48,13 +48,49 @@ const useStyles = makeStyles((theme: Theme) =>
                     margin: "1rem 0 0 0",
                 },
             },
+
+            [theme.breakpoints.down("md")]: {
+                padding: 0,
+                paddingBottom: "4rem",
+                right: "3rem",
+                width: "auto",
+                "& > div.page": {
+                    border: "none",
+                    width: "100%",
+                    padding: "1rem",
+                    borderRadius: 0,
+                    "& div.columns": {
+                        flexDirection: "column",
+                    },
+                },
+            },
+            [theme.breakpoints.up("lg")]: {
+                padding: "2rem",
+                "& > div.page": {
+                    width: "calc(100% - 18rem)",
+                    border: "ridge 5px #FDF4",
+                    padding: "1rem",
+                    borderRadius: "1rem",
+                    "& div.columns": {
+                        flexDirection: "row",
+                    },
+                },
+            },
         },
         factions: {
+            position: "absolute",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             width: "6rem",
             borderRight: "ridge 4px #0008",
+            borderTop: "ridge 4px #0008",
+            top: 0,
+            left: "-1rem",
+            bottom: "-1rem",
+            borderTopRightRadius: "0.5rem",
+            background: "#1252",
+            boxShadow: "inset 0 0 1rem 0.5rem #0004, 0 0.2rem 0.2rem 2px #0008",
 
             "& > div.faction": {
                 width: "4rem",
@@ -65,12 +101,16 @@ const useStyles = makeStyles((theme: Theme) =>
                 alignItems: "center",
                 justifyContent: "center",
                 border: "solid 2px #0008",
-                boxShadow: "inset 0 0 1rem 0.25rem #0008",
+                boxShadow: "inset 0 0 1rem 0.25rem #0008, 0 0 1rem 0.5rem #0004",
                 "& > img": {
                     width: "3rem",
                 },
                 "&.active": {
-                    border: "solid 2px white",
+                    marginTop: "0.75rem",
+                    border: "solid 2px #FFF8",
+                    boxShadow:
+                        "inset 0 0 1rem 0.25rem #0008, inset 0 0 2rem 0.5rem #FFF4, 0 0.1rem 0.5rem 0.25rem #0008",
+
                     // boxShadow: "0 0 1rem 0.25rem #0008",
                 },
             },
@@ -81,14 +121,19 @@ const useStyles = makeStyles((theme: Theme) =>
 
             "& div.largemessages": {
                 "& > .messages": {
-                    height: "60vh",
+                    height: "auto",
+                    maxHeight: "60vh",
+                    minHeight: "10vh",
+                    boxShadow: "inset 0 0 2rem 0.5rem #0008",
+                    background: "#0004",
+                    border: "groove 3px #0004",
                 },
             },
         },
         trade: {
             flex: "1 1 auto",
-            padding: "0 1rem",
-            borderRight: "ridge 4px #0004",
+            // padding: "0 1rem",
+            // borderRight: "ridge 4px #0004",
             "& .tradeItem": {
                 border: "solid 2px #0008",
                 borderRadius: "1rem",
@@ -138,6 +183,14 @@ const useStyles = makeStyles((theme: Theme) =>
                 "& > p": {
                     padding: "0 1rem",
                 },
+            },
+            [theme.breakpoints.down("md")]: {
+                padding: "1rem 0rem",
+                borderBottom: "ridge 4px #0004",
+            },
+            [theme.breakpoints.up("lg")]: {
+                padding: "0 1rem",
+                borderRight: "ridge 4px #0004",
             },
         },
         tradeCreator: {
@@ -274,7 +327,10 @@ const DiplomacyView: FC = () => {
                         {targetFaction === null && <h2>Global Discussion</h2>}
                         {targetFaction !== null && <h2>Private Discussion</h2>}
 
-                        <ChatView other={targetFaction ? targetFaction.id : GLOBALMESSAGEKEY} className="largemessages" />
+                        <ChatView
+                            other={targetFaction ? targetFaction.id : GLOBALMESSAGEKEY}
+                            className="largemessages"
+                        />
                     </div>
                 </div>
             </div>
