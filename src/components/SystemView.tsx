@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) =>
             "& > header": {
                 position: "relative",
                 // borderBottom: "solid 3px #0008",
-                padding: "0.5rem 1rem",
+                // padding: "0.5rem 1rem",
                 // background: "linear-gradient(180deg, #000 0, #222D 5%, #333E 15%, #222 69%, #700A 71%, #222 73%, #222 78%, #800A 80%, #222 82%, #222 87%, #700A 89%, #222, 91%, #222D 95%, #000 100%)",
 
                 "&:after": {
@@ -88,10 +88,29 @@ const useStyles = makeStyles((theme: Theme) =>
                     padding: "0.5rem 0",
                     textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
                 },
-                "& > div.ofbanner": {
-                    position: "absolute",
-                    top: "1.5rem",
-                    right: "6rem",
+               
+                [theme.breakpoints.down("md")]: {
+					padding: "0.5rem 1rem 4rem 1rem",
+					"& > div.ofbanner": {
+						position: "absolute",
+						top: "4rem",
+						right: "auto",
+						left: "1rem",
+					},
+					"& > h1": {
+						fontSize: "1.1rem",
+					},
+                },
+                [theme.breakpoints.up("lg")]: {
+					padding: "0.5rem 1rem",
+					"& > div.ofbanner": {
+						position: "absolute",
+						top: "1.5rem",
+						right: "6rem",
+					},
+					"& > h1": {
+						fontSize: "2rem",
+					},
                 },
             },
             [theme.breakpoints.down("md")]: {
@@ -106,10 +125,15 @@ const useStyles = makeStyles((theme: Theme) =>
         mainContent: {
             overflowY: "auto",
             position: "absolute",
-            top: "5rem",
             left: 0,
             right: 0,
-            bottom: 0,
+			bottom: 0,
+			[theme.breakpoints.down("md")]: {
+				top: "7rem",
+			},
+			[theme.breakpoints.up("lg")]: {
+				top: "5rem",
+			},
         },
         flexRow: {
             display: "flex",
@@ -122,6 +146,23 @@ const useStyles = makeStyles((theme: Theme) =>
 
             // background: "#0003",
             // boxShadow: "inset 0 0 2rem 1rem #0008",
+
+            "& p": {
+                "&.description": {
+                    fontStyle: "italic",
+                    textAlign: "center",
+                    fontSize: "0.9rem",
+                },
+                "&.keywords": {
+                    fontSize: "1.1rem",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    textTransform: "uppercase",
+                    background: "#0138",
+                    padding: "0.5rem",
+                    boxShadow: "inset 0 0 1rem 0.5rem #0008",
+                },
+            },
 
             "& div.infra": {
                 width: "17rem",
@@ -137,27 +178,63 @@ const useStyles = makeStyles((theme: Theme) =>
                 flexDirection: "row",
                 justifyContent: "space-between",
                 "& > div.value": {
-                    fontSize: "2rem",
+                    // fontSize: "2rem",
                     fontWeight: "bold",
                     color: "#FFFA",
                     "& > span.plus": {
-                        fontSize: "1.4rem",
+                        // fontSize: "1.4rem",
                         color: "#8F8A",
                     },
                     "& > small.maxValue": {
-                        fontSize: "1.2rem",
+                        // fontSize: "1.2rem",
                         color: "#AAAA",
-                        marginLeft: "0.5rem",
+                        // marginLeft: "0.5rem",
                     },
                 },
                 "& > button": {
-                    fontSize: "2rem",
+                    // fontSize: "2rem",
                     color: "#FFFA",
                     padding: 0,
                     margin: 0,
                 },
-                "& > img": {
-                    marginRight: "1rem",
+
+                [theme.breakpoints.down("md")]: {
+                    width: "auto",
+                    "& > div.value": {
+                        fontSize: "1.4rem",
+                        "& > span.plus": {
+                            fontSize: "1rem",
+                        },
+                        "& > small.maxValue": {
+                            fontSize: "0.9rem",
+                            marginLeft: "0.25rem",
+                        },
+                    },
+                    "& > button": {
+                        fontSize: "1.4rem",
+                    },
+                    "& > img": {
+                        marginRight: "0.5rem",
+                    },
+                },
+                [theme.breakpoints.up("lg")]: {
+                    width: "17rem",
+                    "& > div.value": {
+                        fontSize: "2rem",
+                        "& > span.plus": {
+                            fontSize: "1.4rem",
+                        },
+                        "& > small.maxValue": {
+                            fontSize: "1.2rem",
+                            marginLeft: "0.5rem",
+                        },
+                    },
+                    "& > button": {
+                        fontSize: "2rem",
+                    },
+                    "& > img": {
+                        marginRight: "1rem",
+                    },
                 },
             },
         },
@@ -198,10 +275,11 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         shipDockSlot: {
             position: "relative",
-            width: "20rem",
-            height: "10rem",
+            // width: "20rem",
+
+            // height: "10rem",
             border: "ridge 3px #FFF4",
-            borderRadius: "0.5rem",
+            // borderRadius: "0.5rem",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -279,6 +357,16 @@ const useStyles = makeStyles((theme: Theme) =>
                         fontWeight: "bold",
                     },
                 },
+            },
+            [theme.breakpoints.down("md")]: {
+                width: "auto",
+                height: "auto",
+                borderRadius: "0.5rem",
+            },
+            [theme.breakpoints.up("lg")]: {
+                width: "20rem",
+                height: "10rem",
+                borderRadius: "0.5rem",
             },
         },
         rows: {
@@ -722,7 +810,7 @@ const SystemView: FC = () => {
                             {star.keywords.length > 0 && <p className="keywords">{star.keywords.join(", ")}</p>}
                         </Grid>
 
-                        <Grid item lg={5} className={classes.contentArea}>
+                        <Grid item xs={12} lg={5} className={classes.contentArea}>
                             <h2>Infrastructure</h2>
 
                             <div className="infra">
@@ -810,7 +898,7 @@ const SystemView: FC = () => {
                             </div>
                         </Grid>
 
-                        <Grid item lg={7} className={classes.contentArea}>
+                        <Grid item xs={12} lg={7} className={classes.contentArea}>
                             <h2>Ship Dock</h2>
 
                             {mySystem &&
@@ -856,7 +944,7 @@ const SystemView: FC = () => {
                             )}
                         </Grid>
 
-                        <Grid item lg={12} className={classes.contentArea}>
+                        <Grid item xs={12} lg={12} className={classes.contentArea}>
                             <h2>Buildings</h2>
 
                             <div className={classes.slots}>
@@ -901,7 +989,7 @@ const SystemView: FC = () => {
             {buildingView === "building" && (
                 <div className={classes.mainContent}>
                     <Grid container>
-                        <Grid lg={12} className={classes.contentArea}>
+                        <Grid xs={12} className={classes.contentArea}>
                             <h2>Select building</h2>
 
                             <div className={classes.slots}>
@@ -932,11 +1020,11 @@ const SystemView: FC = () => {
             {buildingView === "ships" && (
                 <div className={classes.mainContent}>
                     <Grid container>
-                        <Grid lg={12} className={classes.contentArea}>
+                        <Grid xs={12} className={classes.contentArea}>
                             <h2>Select Ship</h2>
                         </Grid>
 
-                        <Grid lg={12} className={classes.contentArea}>
+                        <Grid xs={12} className={classes.contentArea}>
                             <div className={classes.rows}>
                                 {DATASHIPS.map((ship: ShipDesign) => {
                                     const buildable = shipCanBeBuiltOnSystemByFaction(ship, faction, star);
@@ -958,7 +1046,7 @@ const SystemView: FC = () => {
                             </div>
                         </Grid>
 
-                        <Grid lg={12} className={classes.contentArea}>
+                        <Grid xs={12} className={classes.contentArea}>
                             <Button variant="contained" color="secondary" onClick={() => setBuildingView("")}>
                                 Cancel
                             </Button>

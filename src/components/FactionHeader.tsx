@@ -11,18 +11,18 @@ import CombatViewer from "./CombatViewer";
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            position: "fixed",
+            position: "absolute",
             top: 0,
             left: 0,
             zIndex: 100,
-            height: "5rem",
+            // height: "5rem",
             // width: "calc(100% - 18rem)",
-            width: "50%",
-            minWidth: "30rem",
+            // width: "50%",
+            // minWidth: "30rem",
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            borderBottomRightRadius: "15rem 5rem",
+            // borderBottomRightRadius: "15rem 5rem",
             // background: "linear-gradient(170deg, #222 0, red 10%,  white 50%, white 80%, gray 100%)`}}",
             // background: "linear-gradient(0deg, white 0, black 0)",
             // borderBottom: "solid 2px #0008",
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                minWidth: "8rem",
+                // minWidth: "8rem",
                 background: "linear-gradient(to bottom, #222 0, #444E 5%, #555D 80%, #777C 90%, #444E 95%, #222 100%)",
                 boxShadow: "inset 0 0 1rem 0.5rem #4448",
 
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
                     boxShadow: "inset 0 0 1rem 0.5rem #0008",
                     "& > h1": {
                         color: "white",
-                        fontSize: "1.8rem",
+                        // fontSize: "1.8rem",
                         fontWeight: "normal",
                         textShadow: "2px 2px 0 black, -2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black",
                         margin: "0 1rem",
@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
                 "&.rest": {
                     flex: "1 1 auto",
-                    borderBottomRightRadius: "15rem 5rem",
+                    // borderBottomRightRadius: "15rem 5rem",
                     position: "relative",
                     display: "flex",
                     justifyContent: "flex-start",
@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme: Theme) =>
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        borderBottomRightRadius: "15rem 5rem",
+                        // borderBottomRightRadius: "15rem 5rem",
                         background:
                             "linear-gradient(45deg, transparent 25%, #0001 40%, #FFF3 50%, #0002 60%, #000D 100%)",
                         pointerEvents: "none",
@@ -113,19 +113,19 @@ const useStyles = makeStyles((theme: Theme) =>
                         },
                         "& > div.list": {
                             display: "none",
-                            top: "5rem",
-                            left: "0",
+                            // top: "5rem",
+                            // left: "0",
                             color: "#BDFA",
                             zIndex: "1000",
                             position: "absolute",
                             backgroundColor: "#000A",
-                            width: "20rem",
+                            // width: "20rem",
                             height: "auto",
                             borderRadius: "0.25rem",
                             padding: "0.5rem 0",
                             border: "ridge 3px #BDF8",
                             "& > div": {
-                                padding: "0.5rem 1rem",
+                                // padding: "0.5rem 1rem",
                                 borderBottom: "solid 2px #0004",
                             },
                         },
@@ -182,23 +182,85 @@ const useStyles = makeStyles((theme: Theme) =>
                 height: "3rem",
                 width: "auto",
                 minWidth: 0,
-                "& > div.logo": {
-                    width: "4rem",
-                    minWidth: 0,
+                borderBottomRightRadius: 0,
+                "& > div": {
+                    minWidth: "4rem",
+                    "&.logo": {
+                        width: "4rem",
+                        minWidth: "auto",
+                    },
+                    "&.title": {
+                        flex: "0 0 auto",
+                        width: "12rem",
+                        "& > h1": {
+                            fontSize: "1rem",
+                        },
+                    },
+                    "&.rest": {
+                        borderBottomRightRadius: 0,
+                        "&:after": { 
+                            borderBottomRightRadius: 0,
+                        },
+                        "& > .reportIcon": {
+                            width: "2.5rem",
+                            height: "100%",
+                            padding: "0 0.25rem",
+                            "& > div.list": {
+                                top: "3rem",
+                                right: "2rem",
+                                left: "auto",
+                                width: "15rem",
+                                "& > div": {
+                                    padding: "0.25rem 0.5rem",
+                                }
+                            },
+                        },
+                    },
                 },
-                "& > div.title": {
-                    flex: "1 1 auto",
-                    "& > h1": {
-                        fontSize: "1rem",
+               
+            },
+            [theme.breakpoints.up("lg")]: {
+                height: "5rem",
+                right: "auto",
+                width: "50%",
+                minWidth: "30rem",
+                borderBottomRightRadius: "15rem 5rem",
+                "& > div": {
+                    minWidth: "8rem",
+                    "&.logo": {
+                        width: "8rem",
+                        minWidth: 0,
+                    },
+                    "&.title": {
+                        flex: "1 1 auto",
+                        width: "auto",
+                        "& > h1": {
+                            fontSize: "1.8rem",
+                        },
+                    },
+                    "&.rest": {
+                        borderBottomRightRadius: "15rem 5rem",
+                        "&:after": { 
+                            borderBottomRightRadius: "15rem 5rem",
+                        },
+                        "& > .reportIcon": {
+                            width: "5rem",
+                            height: "100%",
+                            padding: "0 1rem",
+                            "& > div.list": {
+                                top: "5rem",
+                                left: 0,
+                                width: "20rem",
+                                "& > div": {
+                                    padding: "0.5rem 1rem",
+                                }
+                            },
+                        },
 
-                    }                    
+                    },
                 },
-                "& > div.rest": {
-                    
-                    display: "none",
-                }
-
-            }
+                
+            },
         },
         sheet: {
             padding: 0,
@@ -308,19 +370,19 @@ const useStyles = makeStyles((theme: Theme) =>
                 bottom: "4.5rem",
                 left: 0,
                 right: 0,
-				color: "#FFFA",
-				
-				"& ul": {
-					listStyle: "upper-roman",
-					"& >li":{
-						padding: "0.5rem 0",
-						borderBottom: "ridge 3px #0004",
-						fontSize: "1.2rem",
-						"&:last-child": {
-							borderBottom: "none",
-						}
-					}
-				}
+                color: "#FFFA",
+
+                "& ul": {
+                    listStyle: "upper-roman",
+                    "& >li": {
+                        padding: "0.5rem 0",
+                        borderBottom: "ridge 3px #0004",
+                        fontSize: "1.2rem",
+                        "&:last-child": {
+                            borderBottom: "none",
+                        },
+                    },
+                },
             },
         },
     })

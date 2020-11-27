@@ -19,13 +19,13 @@ const useStyles = makeStyles((theme: Theme) =>
             position: "absolute",
             top: 0,
             left: 0,
+            bottom: 0,
+            right: 0,
             zIndex: 2,
-            width: "100%",
-            height: "100vh",
             color: "#FFFD",
             background: "repeating-linear-gradient(0deg, #000 0, #302 4px, #201 16px)",
-            minHeight: "100vh",
             // padding: "2rem",
+            overflowY: "auto",
 
             "& > div.page": {
                 marginTop: "4rem",

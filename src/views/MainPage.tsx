@@ -23,6 +23,16 @@ const useStyles = makeStyles((theme: Theme) =>
 				color: "#FFFA",
 				fontSize: "4rem",
 				textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+				padding: "0 1rem",
+				textAlign: "center",
+				[theme.breakpoints.down("md")]: {
+					fontSize: "2rem",
+					
+                },
+                [theme.breakpoints.up("lg")]: {
+					fontSize: "4rem",
+					
+                }
 			},
 			"& > div": {
 				width: "60%",

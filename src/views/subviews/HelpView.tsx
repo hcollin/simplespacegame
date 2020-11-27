@@ -20,8 +20,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         minHeight: "100vh",
         color: "#FFFD",
         background: "repeating-linear-gradient(0deg, #000 0, #222 4px, #111 16px)",
-        height: "100&",
+        height: "100%",
         padding: "2rem",
+        overflowY: "auto",
         
 
         "& > div.page": {

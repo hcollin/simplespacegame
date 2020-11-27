@@ -24,6 +24,14 @@ import SystemView from "../components/SystemView";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        root: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            overflow: "hidden",
+        },
         factions: {
             position: "fixed",
             top: 0,
@@ -46,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
             zIndex: 100,
         },
         mainMenu: {
-            position: "fixed",
+            position: "absolute",
             bottom: 0,
             left: 0,
             zIndex: 100,
@@ -87,7 +95,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
             },
             [theme.breakpoints.down("md")]: {
-                width: "100%",
+                width: "calc(100% - 3rem)",
                 height: "4rem",
                 borderRight: "none",
                 borderRadius:0,
@@ -128,6 +136,14 @@ const useStyles = makeStyles((theme: Theme) =>
                 color: "#FFFA",
                 fontSize: "4rem",
                 textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+                padding: "0 1rem",
+                textAlign: "center",
+                [theme.breakpoints.down("md")]: {
+                    fontSize: "2rem",
+                },
+                [theme.breakpoints.up("lg")]: {
+                    fontSize: "4rem",
+                }
             },
             "& > div": {
                 width: "60%",
@@ -172,7 +188,7 @@ const GameView: FC = () => {
     }
 
     return (
-        <div>
+        <div className={classes.root}>
             <FactionHeader />
 
             {/* <div className={classes.rows}> */}

@@ -43,6 +43,8 @@ const useStyles = makeStyles((theme: Theme) =>
                     fontSize: "1rem",
                     margin: 0,
                     padding: 0,
+                    [theme.breakpoints.down("md")]: {},
+                    [theme.breakpoints.up("lg")]: {},
                 },
                 "& h2": {
                     fontSize: "0.65rem",
@@ -52,7 +54,6 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
                 "& > div": {
                     "&.name": {
-                        
                         borderBottomRightRadius: "2rem",
                         padding: "0.25rem 0.5rem 0.25rem 3rem",
                         position: "relative",
@@ -81,11 +82,20 @@ const useStyles = makeStyles((theme: Theme) =>
                             flexDirection: "row",
                             alignItems: "center",
                             justifyContent: "space-between",
-                            padding: "0 0.5rem",
                             borderLeft: "solid 1px #000",
                             height: "100%",
                             "& > img": {
                                 marginRight: "0.5rem",
+                            },
+                            [theme.breakpoints.down("md")]: {
+                                fontSize: "0.7rem",
+                                padding: "0 0.25rem",
+                                "&.troops": { display: "none" },
+                            },
+                            [theme.breakpoints.up("lg")]: {
+                                fontSize: "1rem",
+                                padding: "0 0.5rem",
+                                "&.troops": { display: "flex" },
                             },
                         },
                     },
@@ -201,8 +211,8 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
                 [theme.breakpoints.down("sm")]: {
                     "& div.row": {
-						flexDirection: "column",
-						alignItems: "flex-start",
+                        flexDirection: "column",
+                        alignItems: "flex-start",
                     },
                     "& div.weapon": {
                         flexWrap: "wrap",
@@ -210,9 +220,8 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
                 [theme.breakpoints.up("md")]: {
                     "& div.row": {
-						flexDirection: "row",
-						alignItems: "center",
-						
+                        flexDirection: "row",
+                        alignItems: "center",
                     },
                     "& div.weapon": {
                         flexWrap: "nowrap",
@@ -277,7 +286,7 @@ const MiniUnitInfo: FC<MiniUnitInfoProps> = (props) => {
                         <IconSpeed /> {ship.speed}
                     </span>
 
-                    <span>
+                    <span className="troops">
                         <IconTroops /> {ship.troops}
                     </span>
                 </div>

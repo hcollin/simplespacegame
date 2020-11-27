@@ -20,7 +20,6 @@ import SendIcon from "@material-ui/icons/Send";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
 
-import UnitInfo from "./UnitInfo";
 import HelpContainer from "./HelpContainer";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import FactionBanner from "./FactionBanner";
@@ -75,17 +74,32 @@ const useStyles = makeStyles((theme: Theme) =>
                     position: "absolute",
                     marginLeft: "-25%",
                     textAlign: "center",
-                    fontSize: "1rem",
+                    // fontSize: "1rem",
                     fontStyle: "italic",
                     color: "#FFFA",
                     textTransform: "uppercase",
-                    letterSpacing: "2px",
+                    // letterSpacing: "2px",
+
                     border: "ridge 3px #0008",
                     borderTop: "none",
-                    padding: "1rem 0 0.5rem 0",
-                    borderBottomLeftRadius: "3rem",
-                    borderBottomRightRadius: "3rem",
+                    // padding: "1rem 0 0.5rem 0",
+                    // borderBottomLeftRadius: "3rem",
+                    // borderBottomRightRadius: "3rem",
                     background: "#1246",
+                    [theme.breakpoints.down("md")]: {
+                        fontSize: "0.7rem",
+                        letterSpacing: 0,
+                        borderBottomLeftRadius: "2rem",
+                        borderBottomRightRadius: "2rem",
+                        padding: "0.5rem 0 0.25rem 0",
+                    },
+                    [theme.breakpoints.up("lg")]: {
+                        fontSize: "1rem",
+                        letterSpacing: "2px",
+                        borderBottomLeftRadius: "3rem",
+                        borderBottomRightRadius: "3rem",
+                        padding: "1rem 0 0.5rem 0",
+                    },
                 },
                 "& > div.from, & > div.to": {
                     // background: "radial-gradient(#FF0 0, #DD0 30%, #420 100%)",
@@ -115,11 +129,14 @@ const useStyles = makeStyles((theme: Theme) =>
                         },
                     },
                     [theme.breakpoints.down("md")]: {
-                        width: "6rem",
-                        height: "6rem",
+                        width: "3rem",
+                        height: "3rem",
                         "& > span": {
-                            fontSize: "0.8rem",
+                            fontSize: "0.5rem",
                         },
+                        "& > .fbanner": {
+                            display: "none",
+                        }
                     },
                     [theme.breakpoints.up("lg")]: {
                         width: "8rem",
@@ -152,11 +169,11 @@ const useStyles = makeStyles((theme: Theme) =>
                         },
                     },
                     [theme.breakpoints.down("md")]: {
-                        fontSize: "0.9rem",
+                        fontSize: "0.5rem",
                         "& > span": {
                             "& > b": {
-                                fontSize: "1.3rem",
-                                margin: "0 0.25rem",
+                                fontSize: "1rem",
+                                margin: "0 0.2rem",
                             },
                         },
                     },
@@ -310,11 +327,11 @@ const useStyles = makeStyles((theme: Theme) =>
                 width: "calc(100% - 5.5rem)",
                 left: "0.5rem",
                 maxWidth: "45rem",
-			},
-			[theme.breakpoints.up("lg")]: {
+            },
+            [theme.breakpoints.up("lg")]: {
                 width: "45rem",
-				left: "1rem",
-				maxWidth: "45rem",
+                left: "1rem",
+                maxWidth: "45rem",
             },
         },
     })
@@ -527,8 +544,7 @@ const SelectUnitToFleet: FC<ContentProps> = (props) => {
 
                         <div className="travel">
                             <span>
-                                <b>{trInfo.distance}</b>ly in <b>{trInfo.turns}</b> turns at speed of{" "}
-                                <b>{trInfo.slowestShip?.speed || 0}</b>.
+                                <b>{trInfo.distance}</b>ly in <b>{trInfo.turns}</b> turns at speed of <b>{trInfo.slowestShip?.speed || 0}</b>
                             </span>
                         </div>
 

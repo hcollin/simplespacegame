@@ -22,20 +22,26 @@ import CancelIcon from "@material-ui/icons/Cancel";
 import iconBuildSvg from "../images/iconUnderConstruction.svg";
 import iconScienceSvg from "../images/iconScience.svg";
 import iconFleetSvg from "../images/iconUnits.svg";
-import { IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconScore, IconWelfare } from "./Icons";
-import { calculateTargetScore, factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
+import { IconCommand, IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconScore, IconWelfare } from "./Icons";
+import {
+    calculateTargetScore,
+    factionValues,
+    getFactionScore,
+    researchPointGenerationCalculator,
+} from "../utils/factionUtils";
 import { doPlayerDone } from "../services/commands/GameCommands";
 import { COMMANDPAGINATIONLIMIT } from "../configs";
 import { getSystemByCoordinates } from "../utils/systemUtils";
 import CheatView from "./CheatView";
 
-import { MenuOpen } from "@material-ui/icons";
 import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
+import CommandIcon from "./CommandIcon";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         commands: {
-            position: "fixed",
+            position: "absolute",
             top: 0,
             right: 0,
             bottom: 0,
@@ -144,7 +150,6 @@ const useStyles = makeStyles((theme: Theme) =>
                     "& > .icon": {
                         transform: "rotate(180deg)",
                         transition: "all 0.6s ease",
-                        
                     },
                     "&:hover": {
                         opacity: 1,
@@ -245,6 +250,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
             "& > .cancelButton": {
                 zIndex: 10,
+                "& .commandIcon": {
+                    display: "none",
+                },
+                "& .cancelIcon": {
+                    display: "block",
+                },
             },
         },
         faction: {
@@ -361,6 +372,116 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
             },
         },
+        miniDisplay: {
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: "3rem",
+            background: "linear-gradient(90deg, #000, #555 6px, #222 8px, #444 100%)",
+            "&:before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: -1,
+                // background: "linear-gradient(to right, #000C 0, #7898 5%, #9AB3 95%,  #000C 100%)",
+                background:
+                    "repeating-linear-gradient(200deg, #000 0, #3338 5px, transparent 10px, #BDF1 120px, transparent 150px, #4448 155px, #000 160px)",
+            },
+
+            [theme.breakpoints.down("md")]: {
+                display: "flex",
+                flexDirection: "column",
+                zIndex: 200,
+                transition: "opacity 0.6s ease",
+                opacity: 1,
+
+                "& > div.value": {
+                    height: "1.5rem",
+                    display: "flex",
+                    position: "relative",
+                    fontSize: "1rem",
+                    alignItems: "center",
+                    fontWeight: "bold",
+                    textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+                    justifyContent: "center",
+                    paddingLeft: "0.75rem",
+                    borderBottom: "ridge 2px #0008",
+                    "& > img": {
+                        top: "5%",
+                        left: "-5%",
+                        width: "80%",
+                        height: "80%",
+                        position: "absolute",
+                        zIndex: "-1",
+                    },
+                    "&.red": {
+                        color: "#F33",
+                    },
+                },
+
+                "& > button.commandCancelButton": {
+                    width: "2.5rem",
+                    height: "2.5rem",
+                    margin: "0.1rem 0.1rem 0.1rem 0.4rem",
+                    padding: "0",
+                    borderRadius: "0.5rem",
+                    background: "#F00",
+                    boxShadow: "inset 0 0 1rem 0.5rem #0008",
+                    border: "ridge 3px #000A",
+                    "& > img": {
+                        width: "2rem",
+                        height: "2rem",
+                    },
+                    "&:hover": {
+                        background: "#F44",
+                        boxShadow: "inset 0 0 1rem 0.5rem #4448",
+                        border: "ridge 3px #000A",
+                    },
+                },
+
+                "& > div.empty": {
+                    flex: "1 1 auto",
+                },
+                "& > div.turn": {
+                    color: "#FFFA",
+                    width: "100%",
+                    margin: "0.5rem 0",
+                    fontSize: "1.4rem",
+                    textAlign: "center",
+                    textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+                    fontWeight: "bold",
+                },
+                "& > button.ready": {
+                    width: "2.5rem",
+                    height: "2.5rem",
+                    margin: "0 0.1rem 0.25rem 0.4rem",
+                    background: "#0C0",
+                    boxShadow: "inset 0 0 1rem 0.25rem #0008, 0 3px 2px 1px #000",
+                    border: "ridge 2px #0008",
+                    borderRadius: "0.5rem",
+                    "& > img": {
+                        width: "2rem",
+                        height: "2rem",
+                    },
+                    "&.notAllDone": {
+                        background: "#CC0",
+                    },
+                },
+
+                "&.open": {
+                    opacity: 0,
+                    pointerEvents: "none",
+                    userSelect: "none",
+                },
+            },
+            [theme.breakpoints.up("lg")]: {
+                display: "none",
+            },
+        },
     })
 );
 
@@ -411,6 +532,45 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
             <button className="menuopener" onClick={() => setOpen((prev: boolean) => !prev)}>
                 <DoubleArrowIcon className="icon" />
             </button>
+            <div className={`${classes.miniDisplay} ${open ? "open" : ""}`}>
+                <div className={`value ${values.income <= 0 ? "red" : ""}`}>
+                    <IconCredit />
+                    {faction.money}
+                </div>
+                <div className="value">
+                    <IconResearchPoint />
+                    {pointsGenerated >= 0 ? `+${pointsGenerated}` : `-${pointsGenerated}`}
+                </div>
+                <div className="value">
+                    <IconScore />
+                    {getFactionScore(game, faction.id)}
+                </div>
+                <div className="value">
+                    <IconWelfare />
+                    {values.totalWelfare}
+                </div>
+                <div className={`value ${commands.length >= values.maxCommands ? "red" : ""}`}>
+                    <IconCommand />
+                    {commands.length}
+                </div>
+                {cmdsShown.map((cmd: Command) => {
+                    return (
+                        <button key={cmd.id} className="commandCancelButton" onClick={() => doRemoveCommand(cmd.id)}>
+                            <CommandIcon command={cmd} />
+                        </button>
+                    );
+                })}
+
+                <div className="empty"></div>
+                <div className="turn">{game.turn}</div>
+                <button
+                    onClick={() => doPlayerDone(faction.id)}
+                    className={`ready ${commands.length < values.maxCommands ? "notAllDone" : ""}`}
+                    disabled={isReady}
+                >
+                    <DoneAllIcon />
+                </button>
+            </div>
             <header>
                 <div>
                     <IconCredit size="lg" />
@@ -554,10 +714,10 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
 
     return (
         <div className={`${classes.command} blue`}>
-            {cmd.type === CommandType.SystemEconomy && <IconCredit size="lg" />}
-            {cmd.type === CommandType.SystemDefense && <IconDefense size="lg" />}
-            {cmd.type === CommandType.SystemIndustry && <IconIndustry size="lg" />}
-            {cmd.type === CommandType.SystemWelfare && <IconWelfare size="lg" />}
+            {cmd.type === CommandType.SystemEconomy && <IconCredit size="lg" className="commandIcon" />}
+            {cmd.type === CommandType.SystemDefense && <IconDefense size="lg" className="commandIcon" />}
+            {cmd.type === CommandType.SystemIndustry && <IconIndustry size="lg" className="commandIcon" />}
+            {cmd.type === CommandType.SystemWelfare && <IconWelfare size="lg" className="commandIcon" />}
 
             <label>{cmdText}</label>
             <h2>{systemName}</h2>
@@ -570,7 +730,11 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
                     onClick={() => doRemoveCommand(cmd.id)}
                     disabled={props.game.turn !== cmd.turn}
                 >
-                    <CancelIcon />
+                    {cmd.type === CommandType.SystemEconomy && <IconCredit className="commandIcon" />}
+                    {cmd.type === CommandType.SystemDefense && <IconDefense className="commandIcon" />}
+                    {cmd.type === CommandType.SystemIndustry && <IconIndustry className="commandIcon" />}
+                    {cmd.type === CommandType.SystemWelfare && <IconWelfare className="commandIcon" />}
+                    <CancelIcon className="cancelIcon" />
                 </Button>
             )}
         </div>
@@ -599,7 +763,8 @@ const FleetMoveCommandItem: FC<CommandProps> = (props) => {
                     onClick={() => doRemoveCommand(cmd.id)}
                     disabled={props.game.turn !== cmd.turn}
                 >
-                    <CancelIcon />
+                    <img src={iconFleetSvg} className="commandIcon" alt="Fleet Icon" />
+                    <CancelIcon className="cancelIcon" />
                 </Button>
             )}
         </div>
@@ -633,7 +798,8 @@ const SystemBuildCommandItem: FC<CommandProps> = (props) => {
                     onClick={() => doRemoveCommand(cmd.id)}
                     disabled={props.game.turn !== cmd.turn}
                 >
-                    <CancelIcon />
+                    <img src={iconBuildSvg} className="commandIcon" alt="Build icon" />
+                    <CancelIcon className="cancelIcon" />
                 </Button>
             )}
         </div>
@@ -666,7 +832,8 @@ const SystemBuildBuildingItem: FC<CommandProps> = (props) => {
                     onClick={() => doRemoveCommand(cmd.id)}
                     disabled={props.game.turn !== cmd.turn}
                 >
-                    <CancelIcon />
+                    <img src={iconBuildSvg} className="commandIcon" alt="Build icon" />
+                    <CancelIcon className="cancelIcon" />
                 </Button>
             )}
         </div>
@@ -692,7 +859,8 @@ const ResearchCommandItem: FC<CommandProps> = (props) => {
                     onClick={() => doRemoveCommand(cmd.id)}
                     disabled={props.game.turn !== cmd.turn}
                 >
-                    <CancelIcon />
+                    <img src={iconScienceSvg} className="commandIcon" alt="Science Icon" />
+                    <CancelIcon className="cancelIcon" />
                 </Button>
             )}
         </div>

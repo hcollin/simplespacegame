@@ -32,6 +32,8 @@ const useStyles = makeStyles((theme: Theme) =>
             position: "absolute",
             top: 0,
             left: 0,
+            bottom: 0,
+            right: 0,
             zIndex: 2,
             width: "100%",
             minHeight: "100vh",
@@ -41,6 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 "repeating-linear-gradient(160deg, #000 0, #111 5px, #222 100px, #232 130px, #242 140px, #111 150px, #000 155px)",
             height: "100&",
             padding: "2rem",
+            overflowY: "auto",
 
             "&:after": {
                 content: '""',
@@ -130,9 +133,9 @@ const useStyles = makeStyles((theme: Theme) =>
                 borderRight: "groove 3px #0004",
                 flexDirection: "column",
                 justifyContent: "flex-start",
-                paddingTop: "7rem",
-                paddingBottom: "2rem",
-                minWidth: "25%",
+                // paddingTop: "7rem",
+                // paddingBottom: "2rem",
+                // minWidth: "25%",
                 "& > div": {
                     cursor: "pointer",
                     "&.cannotAfford": {
@@ -166,10 +169,10 @@ const useStyles = makeStyles((theme: Theme) =>
                     "& > .researchTarget": {
                         width: "90%",
                         margin: "2rem 0",
-                        fontSize: "1.3rem",
+                        // fontSize: "1.3rem",
                         borderRadius: "1rem",
                         display: "block",
-                        padding: "2rem 0",
+                        // padding: "2rem 0",
                         "& small": {
                             display: "block",
                             fontSize: "0.75rem",
@@ -189,22 +192,49 @@ const useStyles = makeStyles((theme: Theme) =>
             [theme.breakpoints.down("lg")]: {
                 flexDirection: "column",
                 "& > div.col": {
+                    paddingTop: "5rem",
+                    paddingBottom: "2rem",
+                    minWidth: "auto",
+                    "& > h3": {
+                        fontSize: "1rem",
+                    },
+
                     "&.target": {
                         background: "linear-gradient(0deg, transparent, #666A 5%, #666A 95%, transparent 100%)",
+                        "& > .researchTarget": {
+                            padding: "0.5rem 0",
+                            fontSize: "1rem",
+                        },
+                        "& > div": {
+                            width: "auto",
+                        },
                     },
                     "&.prereq": {
                         background: "linear-gradient(0deg, transparent, #3228 5%, #333A 95%, transparent 100%)",
+                        "& > div": {
+                            width: "auto",
+                        },
                     },
                     "&.reqby": {
                         background: "linear-gradient(0deg, transparent, #333A 5%, #2328 95%, transparent 100%)",
+                        "& > div": {
+                            width: "auto",
+                        },
                     },
                 },
             },
             [theme.breakpoints.up("xl")]: {
                 flexDirection: "row",
                 "& > div.col": {
+                    paddingTop: "7rem",
+                    paddingBottom: "2rem",
+                    minWidth: "25%",
                     "&.target": {
                         background: "linear-gradient(90deg, transparent, #666A 5%, #666A 95%, transparent 100%)",
+                        "& > .researchTarget": {
+                            padding: "2rem 0",
+                            fontSize: "1.3rem",
+                        },
                     },
                     "&.prereq": {
                         background: "linear-gradient(90deg, transparent, #3228 5%, #333A 95%, transparent 100%)",

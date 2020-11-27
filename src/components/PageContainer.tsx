@@ -22,6 +22,7 @@ const useStyles = (props: PageContainerProps) => {
                 width: "calc(100% - 18rem)",
                 marginBottom: "6rem",
                 // border: "ridge 5px #DDD8",
+                overflowY: "auto",
                 border: `ridge 5px ${props.color}`,
                 "& > header": {
                     position: "relative",
@@ -51,9 +52,9 @@ const useStyles = (props: PageContainerProps) => {
                     },
                     "&>h1": {
                         padding: "2rem",
-                        fontSize: "2.75rem",
+                        // fontSize: "2.75rem",
                         color: "#FFFD",
-                        letterSpacing: "0.25rem",
+                        // letterSpacing: "0.25rem",
                         textShadow:
                             "0 0 1rem #BD7, 2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 4px #000,2px -2px 2px #000",
                         fontFamily: props.font || "Averia Serif Libre",
@@ -84,21 +85,45 @@ const useStyles = (props: PageContainerProps) => {
                     },
                 },
                 [theme.breakpoints.down("md")]: {
-                
                     zIndex: 10,
                     marginTop: "4rem",
                     padding: "1rem 4rem 1rem 1rem",
-                    
-                    
-                    // borderRadius: "1rem",
-                    width: "100%",
                     marginBottom: "4rem",
-                    // border: "ridge 5px #DDD8",
-                    // border: `ridge 5px ${props.color}`,
                     border: "none",
-                }
+                    width: "100%",
+
+                    "& > header": {
+                        flexDirection: "column",
+                        height: "auto",
+                        justifyContent: "center",
+                        padding: "0 2rem 5rem 2rem",
+
+                        "& > h1": {
+                            fontSize: "2rem",
+                            letterSpacing: "0.1rem",
+                        },
+                    },
+                },
+                [theme.breakpoints.up("lg")]: {
+                    zIndex: 10,
+                    marginTop: "4rem",
+                    padding: "1rem 4rem 1rem 1rem",
+                    marginBottom: "6rem",
+                    border: "none",
+
+                    "& > header": {
+                        flexDirection: "row",
+                        height: "10rem",
+                        justifyContent: "space-between",
+                        padding: "0 2rem 2rem 2rem",
+
+                        "& > h1": {
+                            fontSize: "1.4rem",
+                            letterSpacing: "0.25rem",
+                        },
+                    },
+                },
             },
-            
         });
     })();
 };

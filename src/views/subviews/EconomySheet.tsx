@@ -16,14 +16,16 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             position: "absolute",
             top: 0,
-            left: 0,
+			left: 0,
+			bottom: 0,
+			right: 0,
             zIndex: 2,
-            width: "100%",
-            height: "100vh",
+            // width: "100%",
+            // height: "100vh",
             color: "#FFFD",
             background: "repeating-linear-gradient(0deg, #000 0, #320 4px, #210 16px)",
-            minHeight: "100vh",
-            padding: "2rem",
+			padding: "2rem",
+			overflowY: "auto",
 
             "& > div.page": {
                 // marginTop: "4rem",
@@ -57,7 +59,19 @@ const useStyles = makeStyles((theme: Theme) =>
             flexDirection: "row",
             width: "100%",
             alignItems: "center",
-            justifyContent: "space-around",
+			
+			[theme.breakpoints.down("md")]: {
+				flexDirection: "column",
+				justifyContent: "center",
+				"& > *": {
+					margin: "0.5rem 0",
+				}
+				
+			},
+			[theme.breakpoints.up("lg")]: {
+				justifyContent: "space-around",
+				flexDirection: "row",
+			},
         },
     })
 );
