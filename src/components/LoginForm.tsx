@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const LoginForm: FC = () => {
 	const classes = useStyles();
-	const [email, setEmail] = useState<string>("test@test.com");
+	const [email, setEmail] = useState<string>("");
     const [passwd, setPasswd] = useState<string>("");
     
     const [registerOn, setRegisterOn] = useState<boolean>(false);

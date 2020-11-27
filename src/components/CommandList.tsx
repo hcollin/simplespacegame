@@ -501,7 +501,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                 );
             })}
 
-            <CheatView />
+            {isDev && <CheatView />}
 
             <div className={classes.turn}>
                 <div>
