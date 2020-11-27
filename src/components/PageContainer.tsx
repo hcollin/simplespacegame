@@ -99,7 +99,7 @@ const useStyles = (props: PageContainerProps) => {
                         padding: "0 2rem 5rem 2rem",
 
                         "& > h1": {
-                            fontSize: "2rem",
+                            fontSize: "2em",
                             letterSpacing: "0.1rem",
                         },
                     },
@@ -118,7 +118,7 @@ const useStyles = (props: PageContainerProps) => {
                         padding: "0 2rem 2rem 2rem",
 
                         "& > h1": {
-                            fontSize: "1.4rem",
+                            fontSize: "3rem",
                             letterSpacing: "0.25rem",
                         },
                     },

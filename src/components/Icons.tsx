@@ -24,6 +24,12 @@ import IconReportSvg from '../images/iconReport.svg';
 import IconTroopsSvg from '../images/iconTroops.svg';
 import IconFighterSvg from '../images/iconFighter.svg';
 
+import IconTechBiologySvg from '../images/techBiology.svg';
+import IconTechMaterialSvg from '../images/techMaterial.svg';
+import IconTechBusinessSvg from '../images/techBusiness.svg';
+import IconTechInformationSvg from '../images/techInformation.svg';
+import IconTechChemistrySvg from '../images/techChemistry.svg';
+import IconTechPhysicsSvg from '../images/techPhysics.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -167,6 +173,26 @@ const IconFighter: FC<IconProps> = (props) => {
     return <GeneralIcon {...props} tooltip="Fighter" iconSvg={IconFighterSvg} />
 }
 
+const IconTechBiology: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Biology" iconSvg={IconTechBiologySvg} />
+}
+
+const IconTechMaterial: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Material" iconSvg={IconTechMaterialSvg} />
+}
+const IconTechBusiness: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Economy" iconSvg={IconTechBusinessSvg} />
+}
+const IconTechInformation: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Information" iconSvg={IconTechInformationSvg} />
+}
+const IconTechChemistry: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Chemistry" iconSvg={IconTechChemistrySvg} />
+}
+const IconTechPhysics: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Physics" iconSvg={IconTechPhysicsSvg} />
+}
+
 export {
     IconCredit,
     IconResearchPoint,
@@ -189,6 +215,12 @@ export {
     IconReport,
     IconTroops,
     IconFighter,
+    IconTechBiology,
+    IconTechMaterial,
+    IconTechBusiness,
+    IconTechInformation,
+    IconTechChemistry,
+    IconTechPhysics,
 };
 
 interface GeneralIcon extends IconProps {
