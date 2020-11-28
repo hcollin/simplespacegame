@@ -437,6 +437,7 @@ const FactionHeader: FC = () => {
 
     function openReport(repId?: string) {
         if (reports.length > 0) {
+            console.log("LOAD REPORT", repId);
             if (repId) {
                 setActiveReportId(repId);
             } else {
@@ -469,12 +470,13 @@ const FactionHeader: FC = () => {
 
                 <div className="rest" style={{ background: faction.color }}>
                     {reports.length > 0 && (
-                        <div className="reportIcon" onClick={() => openReport()}>
+                        <div className="reportIcon">
                             <IconReport size="lg" />
                             <p>{reports.length}</p>
 
                             <div className="list">
                                 {reports.map((r: Report) => {
+                                    console.log(r.type, r.reportId, r.turn);
                                     return (
                                         <div key={r.reportId} onClick={() => openReport(r.reportId)}>
                                             {r.type}

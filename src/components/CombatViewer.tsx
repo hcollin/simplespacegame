@@ -632,6 +632,7 @@ const CombatViewer: FC<Props> = (props) => {
                     {showStats && <>Statistics</>}
                     {round === 0 && <>{props.combatReport.rounds.length} rounds</>}
                 </h2>
+                <Button variant="contained" color="secondary" onClick={props.close}>X</Button>
             </header>
 
             {round === 0 && (

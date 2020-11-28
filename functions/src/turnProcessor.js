@@ -54,6 +54,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
+exports.updateUnitInCombat = exports.damagePotential = exports.getHitChance = exports.updateCooldownTime = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatInflictDamage = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatPostCombat = exports.spaceCombatPreCombat = exports.spaceCombatMain = exports.processTurn = void 0;
 var fBuildingRules_1 = require("./buildings/fBuildingRules");
 var fDataBuildings_1 = require("./data/fDataBuildings");
 var fDataShips_1 = require("./data/fDataShips");
@@ -628,6 +629,7 @@ function resolveCombat(game, origCombat, firestore) {
                         return fids;
                     }, new Set());
                     combat = spaceCombatMain(game, origCombat.units, origCombat.system);
+                    console.log("COMBAT UNITS AFTER CONFLICT:", combat.units.length, combat.origUnits.length);
                     destroyedUnits = origCombat.units
                         .filter(function (ou) {
                         var isAlive = combat.units.find(function (au) { return au.id === ou.id; });
@@ -676,7 +678,7 @@ function convertSpaceCombatToCombatReport(game, origCombat, combat) {
         factionIds: game.factions.map(function (fm) { return fm.id; }),
         rounds: combat.roundLog,
         units: combat.units,
-        origUnits: origCombat.units
+        origUnits: __spreadArrays(origCombat.units, combat.origUnits.filter(function (s) { return s.type === fUnits_1.SHIPCLASS.FIGHTER; }))
     };
     return report;
 }
@@ -781,7 +783,9 @@ function spaceCombatPreCombat(game, origCombat, system) {
         return fighters;
     }, []);
     combat.units = __spreadArrays(combat.units, fighters);
-    combat.origUnits = __spreadArrays(combat.units);
+    combat.origUnits = __spreadArrays(combat.units.map(function (s) {
+        return __assign({}, s);
+    }));
     return __assign({}, combat);
 }
 exports.spaceCombatPreCombat = spaceCombatPreCombat;
@@ -824,7 +828,9 @@ function spaceCombatAttacks(game, origCombat) {
         var nCombat = ship.weapons.reduce(function (c, weapon) {
             // if(weapon.cooldownTime > 0) console.log(c.round, ship.id, weapon);
             if (weaponCanFire(weapon)) {
+                ship = updateWeaponInUnit(ship, updateCooldownTime(weapon));
                 var target = spaceCombatAttackChooseTarget(c, ship, weapon, game);
+                c = updateUnitInCombat(c, ship);
                 if (target) {
                     var oldDmg = target.damage + target.shields;
                     var rc = spaceCombatAttackShoot(game, c, ship, weapon, target);
@@ -835,7 +841,10 @@ function spaceCombatAttacks(game, origCombat) {
                 }
             }
             else {
+                ship = updateWeaponInUnit(ship, updateCooldownTime(weapon));
+                c = updateUnitInCombat(c, ship);
                 var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, ship.factionId);
+                console.log("WEAPON:", ship.name, weapon, c.round);
                 c.currentRoundLog.attacks.push({
                     attacker: ship.id,
                     weapon: weapon.name,
@@ -1109,14 +1118,27 @@ function weaponCanFire(weapon) {
     }
     // Weapon is reloading
     if (weapon.cooldown > 0) {
-        weapon.cooldown--;
         return false;
     }
     // Fire!
-    weapon.cooldown = weapon.cooldownTime;
     return true;
 }
 exports.weaponCanFire = weaponCanFire;
+function updateCooldownTime(weapon) {
+    // No cool down
+    if (weapon.cooldownTime === 0) {
+        return weapon;
+    }
+    // Weapon is reloading
+    if (weapon.cooldown > 0) {
+        weapon.cooldown--;
+        return __assign({}, weapon);
+    }
+    // Fire!
+    weapon.cooldown = weapon.cooldownTime;
+    return __assign({}, weapon);
+}
+exports.updateCooldownTime = updateCooldownTime;
 function getHitChance(weapon, attacker, target, game) {
     var attFaction = fFactionUtils_1.getFactionFromArrayById(game.factions, attacker.factionId);
     var tarFaction = fFactionUtils_1.getFactionFromArrayById(game.factions, attacker.factionId);
@@ -1141,3 +1163,22 @@ function damagePotential(weapon, attacker, target, game) {
     return Math.round(((maxDamage - targetUnit.armor) / hpleft) * 100);
 }
 exports.damagePotential = damagePotential;
+function updateUnitInCombat(combat, unit) {
+    combat.units = combat.units.map(function (s) {
+        if (s.id === unit.id) {
+            return __assign({}, unit);
+        }
+        return s;
+    });
+    return __assign({}, combat);
+}
+exports.updateUnitInCombat = updateUnitInCombat;
+function updateWeaponInUnit(unit, weapon) {
+    unit.weapons = unit.weapons.map(function (w) {
+        if (w.id === weapon.id) {
+            return __assign({}, weapon);
+        }
+        return w;
+    });
+    return __assign({}, unit);
+}

@@ -12,6 +12,7 @@ import LoginForm from "../components/LoginForm";
 import AuthProviders from "../components/AuthProviders";
 
 import frostTrollLogoPng from '../images/FrostTrollLogo.png';
+import SubMenuButton from "../components/SubMenuButton";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -286,20 +287,9 @@ const MenuPage: FC = () => {
                     </section>
                 </>
             )}
-{/* 
-            <h3>Test area</h3>
 
-            {["#FFF", "#F80", "#000", "#F00", "#FF0", "#A74", "#444", "#123", "#246"].map((col: string) => {
-                const sum = getColorSum(col);
-                return <div>
-                    {col}: {sum}
-
-                    <span style={{width: "1rem", height: "1rem", marginLeft: "1rem", display: "inline-block", background: col, border: `solid 2px ${sum > 30 ? "black" : "white"}`}}></span>
-                
-                </div>
-            })} */}
-
-
+            {/* <h3>Test area</h3> */}
+            
 
             {/* <div style={{display: "flex", flexWrap: "wrap"}}>{rndNames.map((n: string, i: number) => <p key={i} style={{width: "15rem", margin: "0.25rem 0", padding: 0}}>{n}</p>)}</div> */}
 

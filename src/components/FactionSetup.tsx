@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../configs";
 import { FactionModel, FactionSetup } from "../models/Models";
 import { randomFactionName } from "../services/helpers/FactionHelpers";
-import { arnd, rnd } from "../utils/randUtils";
+import { arnd, prnd, rnd } from "../utils/randUtils";
 import RandomizeButton from "./RandomizeButton";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 
@@ -157,10 +157,12 @@ const FactionSetupView: FC<Props> = (props) => {
             name: randomFactionName(),
             color: arnd(FACTION_COLORS),
             fontFamily: arnd(FACTION_FONTS),
-            iconFileName: "abstract-001.svg",
+            iconFileName: `abstract-${prnd(1,118)}.svg`,
             playerId: "",
         }
     );
+    
+    
 
     const [valid] = useState<boolean>(true);
 
@@ -230,14 +232,45 @@ const FactionSetupView: FC<Props> = (props) => {
 
     function randomFaction() {
         if (user) {
-            const newSetup: FactionSetup = {
-                name: `${arnd(FACTION_NAMES[0])} ${arnd(FACTION_NAMES[1])} ${arnd(FACTION_NAMES[2])}`,
-                color: arnd(FACTION_COLORS),
-                fontFamily: arnd(FACTION_FONTS),
-                iconFileName: `abstract-${String(rnd(1, 120)).padStart(3, "0")}.svg`,
-                playerId: user.id,
-            };
-            setSetup(newSetup);
+
+            let valid = false;
+            while(!valid) {
+                const newSetup: FactionSetup = {
+                    name: `${arnd(FACTION_NAMES[0])} ${arnd(FACTION_NAMES[1])} ${arnd(FACTION_NAMES[2])}`,
+                    color: arnd(FACTION_COLORS),
+                    fontFamily: arnd(FACTION_FONTS),
+                    iconFileName: `abstract-${prnd(1, 120)}.svg`,
+                    playerId: user.id,
+                };
+
+                valid = true;
+
+                if(props.factions.find((fm: FactionModel) => {
+                    if(fm.color === newSetup.color) return true;
+                    if(fm.name === newSetup.name) return true;
+                    if(fm.iconFileName === newSetup.iconFileName) return true;
+                    if(fm.style.fontFamily === newSetup.fontFamily) return true;
+                    return false;
+                }) !== undefined) {
+                    valid=false;
+                }
+
+                
+
+                if(valid) {
+                    setSetup(newSetup);
+                }
+            }
+
+
+            // const newSetup: FactionSetup = {
+            //     name: `${arnd(FACTION_NAMES[0])} ${arnd(FACTION_NAMES[1])} ${arnd(FACTION_NAMES[2])}`,
+            //     color: arnd(FACTION_COLORS),
+            //     fontFamily: arnd(FACTION_FONTS),
+            //     iconFileName: `abstract-${String(rnd(1, 120)).padStart(3, "0")}.svg`,
+            //     playerId: user.id,
+            // };
+            
         }
     }
 

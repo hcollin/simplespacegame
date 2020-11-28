@@ -59,7 +59,16 @@ export default function createUserService(serviceId: string, api: JokiServiceApi
 	}
 
 	async function logout() {
+		
+
+		
 		api.api.setAtom<string>("UserLoginState", "PROCESSING");
+
+		api.api.trigger({
+			from: serviceId,
+			action: "LOGOUT",
+		});
+
 		await Firebase.auth().signOut();
 		user = null;
 		api.api.setAtom<string>("UserLoginState", "ANONYMOUS");

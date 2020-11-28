@@ -7,6 +7,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
+exports.rndId = exports.shuffle = exports.reps = exports.grnd = exports.roll = exports.fnreps = exports.arnds = exports.arnd = exports.prnd = exports.rnd = void 0;
 /**
  * Return a random integer number between two provided values
  *
@@ -150,6 +151,7 @@ exports.shuffle = shuffle;
 var Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890".split("");
 function rndId() {
     var ts = Date.now();
-    return "" + arnd(Characters) + arnd(Characters) + arnd(Characters) + arnd(Characters) + arnd(Characters) + "-" + ts + "-" + arnd(Characters) + arnd(Characters) + arnd(Characters) + arnd(Characters);
+    var id = "" + arnd(Characters) + arnd(Characters) + arnd(Characters) + arnd(Characters) + arnd(Characters) + "-" + ts + "-" + arnd(Characters) + arnd(Characters) + arnd(Characters) + arnd(Characters);
+    return id;
 }
 exports.rndId = rndId;

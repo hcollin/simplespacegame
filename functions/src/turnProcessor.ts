@@ -599,7 +599,7 @@ async function resolveCombat(game: GameModel, origCombat: SpaceCombat, firestore
 	}, new Set<string>());
 
 	const combat = spaceCombatMain(game, origCombat.units, origCombat.system);
-
+	console.log("COMBAT UNITS AFTER CONFLICT:", combat.units.length, combat.origUnits.length);
 	const destroyedUnits = origCombat.units
 		.filter((ou: ShipUnit) => {
 			const isAlive = combat.units.find((au: ShipUnit) => au.id === ou.id);
@@ -646,7 +646,7 @@ function convertSpaceCombatToCombatReport(game: GameModel, origCombat: SpaceComb
 		factionIds: game.factions.map((fm: FactionModel) => fm.id),
 		rounds: combat.roundLog,
 		units: combat.units,
-		origUnits: origCombat.units,
+		origUnits: [...origCombat.units, ...combat.origUnits.filter((s: ShipUnit) => s.type === SHIPCLASS.FIGHTER)],
 	};
 
 	return report;
@@ -767,15 +767,19 @@ export function spaceCombatPreCombat(game: GameModel, origCombat: SpaceCombat, s
 			for (let i = 0; i < unit.fighters; i++) {
 				const fighter = createShipFromDesign(DATASHIPS[0], unit.factionId, { x: 0, y: 0 });
 				fighter.name = `${des} squadron ${i}`;
+
 				fighters.push(fighter);
 			}
 		}
 
 		return fighters;
 	}, []);
-
 	combat.units = [...combat.units, ...fighters];
-	combat.origUnits = [...combat.units];
+	combat.origUnits = [
+		...combat.units.map((s: ShipUnit) => {
+			return { ...s };
+		}),
+	];
 
 	return { ...combat };
 }
@@ -825,20 +829,26 @@ export function spaceCombatAttacks(game: GameModel, origCombat: SpaceCombat): Sp
 			const nCombat = ship.weapons.reduce(
 				(c: SpaceCombat, weapon: ShipWeapon) => {
 					// if(weapon.cooldownTime > 0) console.log(c.round, ship.id, weapon);
+
 					if (weaponCanFire(weapon)) {
+						ship = updateWeaponInUnit(ship, updateCooldownTime(weapon));
 						const target = spaceCombatAttackChooseTarget(c, ship, weapon, game);
+						c = updateUnitInCombat(c, ship);
 						if (target) {
 							const oldDmg = target.damage + target.shields;
 
 							let rc = spaceCombatAttackShoot(game, c, ship, weapon, target);
-
+							
 							const newDmg = target.damage + target.shields;
 
 							if (oldDmg < newDmg) hit = true;
 							return { ...rc };
 						}
 					} else {
+						ship = updateWeaponInUnit(ship, updateCooldownTime(weapon));
+						c = updateUnitInCombat(c, ship);
 						const faction = getFactionFromArrayById(game.factions, ship.factionId);
+						console.log("WEAPON:", ship.name, weapon, c.round);
 						c.currentRoundLog.attacks.push({
 							attacker: ship.id,
 							weapon: weapon.name,
@@ -1144,13 +1154,27 @@ export function weaponCanFire(weapon: ShipWeapon): boolean {
 
 	// Weapon is reloading
 	if (weapon.cooldown > 0) {
-		weapon.cooldown--;
 		return false;
+	}
+	// Fire!
+	return true;
+}
+
+export function updateCooldownTime(weapon: ShipWeapon): ShipWeapon {
+	// No cool down
+	if (weapon.cooldownTime === 0) {
+		return weapon;
+	}
+
+	// Weapon is reloading
+	if (weapon.cooldown > 0) {
+		weapon.cooldown--;
+		return { ...weapon };
 	}
 
 	// Fire!
 	weapon.cooldown = weapon.cooldownTime;
-	return true;
+	return { ...weapon };
 }
 
 export function getHitChance(weapon: ShipWeapon, attacker: ShipUnit, target: ShipUnit, game: GameModel): number {
@@ -1175,4 +1199,25 @@ export function damagePotential(weapon: ShipWeapon, attacker: ShipUnit, target: 
 	const maxDamage = getMaxDamageForWeapon(factionWeapon, true, targetUnit.armor);
 	const hpleft = targetUnit.hull - target.damage + target.shields;
 	return Math.round(((maxDamage - targetUnit.armor) / hpleft) * 100);
+}
+
+export function updateUnitInCombat(combat: SpaceCombat, unit: ShipUnit): SpaceCombat {
+	combat.units = combat.units.map((s: ShipUnit) => {
+		if (s.id === unit.id) {
+			return { ...unit };
+		}
+		return s;
+	});
+
+	return { ...combat };
+}
+
+function updateWeaponInUnit(unit: ShipUnit, weapon: ShipWeapon): ShipUnit {
+	unit.weapons = unit.weapons.map((w: ShipWeapon) => {
+		if(w.id === weapon.id) {
+			return {...weapon};
+		}
+		return w;
+	});
+	return {...unit};
 }

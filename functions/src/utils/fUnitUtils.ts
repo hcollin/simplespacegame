@@ -189,6 +189,10 @@ export function createShipFromDesign(design: ShipDesign, factionId: string, loca
         name: shipNameGenerator(),
     };
 
+    ship.weapons = ship.weapons.map((w: ShipWeapon) => {
+        return {...w, id: rndId()};
+    })
+
     return ship;
 }
 

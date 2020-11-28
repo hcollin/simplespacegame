@@ -108,7 +108,7 @@ const HelpView: FC = () => {
                         Industry.
                     </p>
                     <p>
-                        <i>Cost per turn: 1 money per 2 industry after 3.</i>
+                        <i>Cost per turn: 1 money per 2 industry after 2.</i>
                     </p>
                     <h4>
                         <IconCredit /> Economy
@@ -136,7 +136,7 @@ const HelpView: FC = () => {
                         has 5 welfare, another command is added to the pool. <br />
                     </p>
                     <p>
-                        <i>Cost per turn: 1 money per 2 walfare points over 3</i>
+                        <i>Cost per turn: 1 money per 2 walfare points over 2</i>
                     </p>
                     <h3>Building units</h3>
                     <p>

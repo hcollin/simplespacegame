@@ -11,6 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
+exports.getDesignByName = exports.createShipFromDesign = exports.getWeaponFireRate = exports.getMaxDamageForWeapon = exports.shipCanBeBuiltOnSystemByFaction = exports.getFactionAdjustedUnit = exports.getFactionAdjustedWeapon = exports.getWeaponCooldownTime = exports.getWeaponAccuracy = exports.getWeaponDamage = exports.getShipAgility = exports.getShipShieldsReg = exports.getShipShieldsMax = exports.getShipArmor = exports.getShipHull = exports.getShipTroops = exports.getShipCost = exports.getShipTechReq = exports.getShipIndustry = exports.getShipSpeed = exports.getAdjustedShip = void 0;
 var fDataShips_1 = require("../data/fDataShips");
 var fUnits_1 = require("../models/fUnits");
 var fShipTech_1 = require("../tech/fShipTech");
@@ -181,6 +182,9 @@ exports.getWeaponFireRate = getWeaponFireRate;
 /// FROM HELPERS
 function createShipFromDesign(design, factionId, location) {
     var ship = __assign(__assign({}, design), { id: fRandUtils_1.rndId(), damage: 0, morale: 100, shields: design.shieldsMax, location: location, factionId: factionId, experience: 0, name: fDataShips_1.shipNameGenerator() });
+    ship.weapons = ship.weapons.map(function (w) {
+        return __assign(__assign({}, w), { id: fRandUtils_1.rndId() });
+    });
     return ship;
 }
 exports.createShipFromDesign = createShipFromDesign;

@@ -1,6 +1,8 @@
 import classes from "*.module.css";
 import { Button, createStyles, makeStyles, Theme } from "@material-ui/core";
 import React, { FC } from "react";
+import DATAUSERS from "../data/dataUser.";
+import { User } from "../models/User";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import Wrapper from "./Wrapper";
 
@@ -40,22 +42,16 @@ const AuthProviders: FC = () => {
 				<Button variant="contained" color="primary" fullWidth onClick={loginWithGoogle}>
 					Google
 				</Button>
-				{isDev && (
-					<>
-						<Button variant="contained" fullWidth color="primary" onClick={() => loginInDev(0)}>
-							Login DEV-1
-						</Button>
-						<Button variant="contained" color="primary" fullWidth onClick={() => loginInDev(1)}>
-							Login DEV-2
-						</Button>
-						<Button variant="contained" color="primary" fullWidth onClick={() => loginInDev(2)}>
-							Login DEV-3
-						</Button>
-						<Button variant="contained" color="primary" fullWidth onClick={() => loginInDev(3)}>
-							Login DEV-4
-						</Button>
-					</>
-				)}
+				{isDev && <h4>Development Users</h4>}
+				{isDev &&
+
+					DATAUSERS.map((usr: User, ind: number) => {
+						return (
+							<Button variant="contained" fullWidth color="primary" onClick={() => loginInDev(ind)} key={usr.id}>
+								{usr.name}
+							</Button>
+						);
+					})}
 			</div>
 		</Wrapper>
 	);

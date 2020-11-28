@@ -82,6 +82,10 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 					break;
 			}
 		}
+
+		if(event.from === SERVICEID.UserService && event.action === "LOGOUT") {
+			closeGame();
+		}
 	}
 
 	function createNewGameDraft() {
@@ -114,6 +118,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 		switch (game.state) {
 			case GameState.OPEN:
 			case GameState.INIT:
+			case GameState.TURN:
 				game = { ...EMPTYGAME };
 				sendUpdate();
 				break;

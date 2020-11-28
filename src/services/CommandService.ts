@@ -146,6 +146,7 @@ export default function createCommandService(serviceId: string, api: JokiService
 
     function playerDone(game: GameModel) {
         // Save all commands to Firebase
+        
         const allSaved: Promise<Command>[] = [];
         commands.forEach((cmd: Command) => {
             if (cmd) cmd.id = "";
