@@ -19,6 +19,14 @@ export function doPlayerDone(factionId: string) {
     });
 }
 
+export function doPlayerNotDone(factionId: string) {
+    joki.trigger({
+        to: SERVICEID.GameService,
+        action: "unready",
+        data: factionId,
+    })
+}
+
 export function doCreateNewGame(setup: PreGameSetup) {
     joki.trigger({
         to: SERVICEID.GameService,

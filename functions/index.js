@@ -53,6 +53,11 @@ var functions = require('firebase-functions');
 var admin = require('firebase-admin');
 admin.initializeApp();
 var db = admin.firestore();
+var Collections;
+(function (Collections) {
+    Collections["GAMES"] = "Games";
+    Collections["COMMANDS"] = "Commands";
+})(Collections || (Collections = {}));
 /**
  * PLayer is ready Cloud function
  *
@@ -61,16 +66,16 @@ var db = admin.firestore();
  */
 exports.playerReady = functions.https.onCall(function (data, context) {
     console.log("playerReady started", data);
-    function readyPlayer(gameId, factionId, commands) {
+    function readyPlayer(gameId, factionId) {
         return __awaiter(this, void 0, void 0, function () {
-            var game, gameRef, i, cmd, docRef, e_1;
+            var game, gameRef, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         game = null;
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 11, , 12]);
+                        _a.trys.push([1, 6, , 7]);
                         return [4 /*yield*/, db.collection("Games").doc(data.gameId).get()];
                     case 2:
                         gameRef = _a.sent();
@@ -82,46 +87,71 @@ exports.playerReady = functions.https.onCall(function (data, context) {
                         if (game.factionsReady.includes(factionId)) {
                             throw new Error("Faction " + factionId + " is already set to ready!");
                         }
-                        i = 0;
-                        _a.label = 3;
-                    case 3:
-                        if (!(i < commands.length)) return [3 /*break*/, 7];
-                        cmd = commands[i];
-                        cmd.turn = game.turn;
-                        cmd.factionId = factionId;
-                        console.log("COMMAND TO BE ADDED:", cmd);
-                        return [4 /*yield*/, db.collection("Commands").add(cmd)];
-                    case 4:
-                        docRef = _a.sent();
-                        cmd.id = docRef.id;
-                        return [4 /*yield*/, db.collection("Commands").doc(cmd.id).set(__assign({}, cmd))];
-                    case 5:
-                        _a.sent();
-                        _a.label = 6;
-                    case 6:
-                        i++;
-                        return [3 /*break*/, 3];
-                    case 7:
+                        // for (let i = 0; i < commands.length; i++) {
+                        //     const cmd = commands[i];
+                        //     cmd.turn = game.turn;
+                        //     cmd.factionId = factionId;
+                        //     console.log("COMMAND TO BE ADDED:", cmd);
+                        //     const docRef = await db.collection("Commands").add(cmd);
+                        //     cmd.id = docRef.id;
+                        //     await db.collection("Commands").doc(cmd.id).set({...cmd});
+                        // }
                         game.factionsReady.push(factionId);
                         return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign({}, game))];
-                    case 8:
+                    case 3:
                         _a.sent();
-                        if (!(game.factionsReady.length === game.factions.length)) return [3 /*break*/, 10];
+                        if (!(game.factionsReady.length === game.factions.length)) return [3 /*break*/, 5];
                         return [4 /*yield*/, runTurnProcessor(game.id)];
-                    case 9:
+                    case 4:
                         _a.sent();
-                        _a.label = 10;
-                    case 10: return [3 /*break*/, 12];
-                    case 11:
+                        _a.label = 5;
+                    case 5: return [3 /*break*/, 7];
+                    case 6:
                         e_1 = _a.sent();
                         console.error("Could not load the game", gameId, e_1);
                         return [2 /*return*/];
-                    case 12: return [2 /*return*/];
+                    case 7: return [2 /*return*/];
                 }
             });
         });
     }
-    return readyPlayer(data.gameId, data.factionId, data.commands);
+    return readyPlayer(data.gameId, data.factionId);
+});
+exports.playerCancelReady = functions.https.onCall(function (data, context) {
+    console.log("playerCancelReady started", data);
+    function cancelPlayerReady(gameId, factionId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var game, gameRef, e_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        game = null;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, db.collection("Games").doc(data.gameId).get()];
+                    case 2:
+                        gameRef = _a.sent();
+                        game = gameRef.data();
+                        if (!game) {
+                            console.error("No game found with id: " + gameId);
+                            return [2 /*return*/];
+                        }
+                        game.factionsReady = game.factionsReady.filter(function (fid) { return fid !== factionId; });
+                        return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign({}, game))];
+                    case 3:
+                        _a.sent();
+                        return [3 /*break*/, 5];
+                    case 4:
+                        e_2 = _a.sent();
+                        console.error("Could not load the game", gameId, e_2);
+                        return [2 /*return*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    }
+    return cancelPlayerReady(data.gameId, data.factionId);
 });
 /**
  * Run the turn processor by force for provided gameId
@@ -131,7 +161,7 @@ exports.processTurn = functions.https.onCall(function (data, context) {
 });
 function runTurnProcessor(gameId) {
     return __awaiter(this, void 0, void 0, function () {
-        var game, commands, gameRef, cmdsSnap, e_2, turnCommands, _a, newGame, comms, e_3;
+        var game, commands, gameRef, cmdsSnap, e_3, turnCommands, _a, newGame, comms, e_4;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -153,8 +183,8 @@ function runTurnProcessor(gameId) {
                     });
                     return [3 /*break*/, 5];
                 case 4:
-                    e_2 = _b.sent();
-                    console.error("Could not load the game", gameId, e_2);
+                    e_3 = _b.sent();
+                    console.error("Could not load the game", gameId, e_3);
                     return [2 /*return*/];
                 case 5:
                     if (game === null || !game) {
@@ -196,8 +226,8 @@ function runTurnProcessor(gameId) {
                     _b.sent();
                     return [3 /*break*/, 11];
                 case 10:
-                    e_3 = _b.sent();
-                    console.error("FAILED TO PROCESS THE TURN", e_3);
+                    e_4 = _b.sent();
+                    console.error("FAILED TO PROCESS THE TURN", e_4);
                     return [3 /*break*/, 11];
                 case 11: return [2 /*return*/];
             }

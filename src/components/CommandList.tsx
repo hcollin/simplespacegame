@@ -1,9 +1,9 @@
-import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
+import { makeStyles, Theme, createStyles, Button, CircularProgress } from "@material-ui/core";
 import { joki, useService } from "jokits-react";
 import React, { FC, useEffect, useState } from "react";
 import useMyCommands from "../hooks/useMyCommands";
 import { BuildBuildingCommand, BuildUnitCommand, Command, CommandType, FleetCommand, ResearchCommand, SystemPlusCommand } from "../models/Commands";
-import { FactionModel, GameModel } from "../models/Models";
+import { FactionModel, GameModel, GameState } from "../models/Models";
 import { doRemoveCommand } from "../services/commands/SystemCommands";
 import { getSystemById } from "../services/helpers/SystemHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
@@ -16,7 +16,7 @@ import iconScienceSvg from "../images/iconScience.svg";
 import iconFleetSvg from "../images/iconUnits.svg";
 import { IconCommand, IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconScore, IconWelfare } from "./Icons";
 import { calculateTargetScore, factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
-import { doPlayerDone } from "../services/commands/GameCommands";
+import { doPlayerDone, doPlayerNotDone } from "../services/commands/GameCommands";
 import { COMMANDPAGINATIONLIMIT } from "../configs";
 import { getSystemByCoordinates } from "../utils/systemUtils";
 import CheatView from "./CheatView";
@@ -240,6 +240,10 @@ const useStyles = makeStyles((theme: Theme) =>
 					display: "block",
 				},
 			},
+			"& .wait": {
+				marginRight: "0.5rem",
+
+			}
 		},
 		faction: {
 			position: "relative",
@@ -354,34 +358,28 @@ const useStyles = makeStyles((theme: Theme) =>
 				},
 				"&.menu": {
 					flex: "0 0 auto",
-                    width: "6rem",
-                    marginRight: "1rem",
-                    
-                    "& > div": {
-                        
-                        "& > div.submenu": {
-                            background: "#0008",
-                            padding: "0.5rem",
-                            left: "auto",
-                            right: 0,
-                            borderTopLeftRadius: "1rem",
-                            borderTopRightRadius: "1rem",
+					width: "6rem",
+					marginRight: "1rem",
 
-                            "& > button": {
-                                margin: "0.25rem 0",
-                                "&:first-child": {
-                                    
-                                }
-                            },
-                            "& > hr": {
-                                background: "#FFF8",
-                                margin: "0.5rem 0",
-                            }
-                            
-                        },
-                    }
+					"& > div": {
+						"& > div.submenu": {
+							background: "#0008",
+							padding: "0.5rem",
+							left: "auto",
+							right: 0,
+							borderTopLeftRadius: "1rem",
+							borderTopRightRadius: "1rem",
 
-					
+							"& > button": {
+								margin: "0.25rem 0",
+								"&:first-child": {},
+							},
+							"& > hr": {
+								background: "#FFF8",
+								margin: "0.5rem 0",
+							},
+						},
+					},
 				},
 			},
 		},
@@ -577,8 +575,8 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 
 				<div className="empty"></div>
 				<div className="turn">{game.turn}</div>
-                
-                <button
+
+				<button
 					onClick={() => doPlayerDone(faction.id)}
 					className={`ready ${commands.length < values.maxCommands ? "notAllDone" : ""}`}
 					disabled={isReady}
@@ -670,17 +668,19 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 					<h1>{game.turn}</h1>
 				</div>
 				<div className="menu">
-					<SubMenuButton direction="UP" color={commandsLeft === 0 ? "primary": "default"}>
-						
+					<SubMenuButton direction="UP" color={commandsLeft === 0 ? "primary" : "default"}>
 						<Button variant="contained" color="primary" onClick={() => doCloseGame()}>
 							CLOSE
 						</Button>
 						<Button variant="contained" color="primary" onClick={() => doLogout()}>
 							LOGOUT
 						</Button>
-                        <hr />
-                        <Button variant="contained" color="primary" onClick={() => doPlayerDone(faction.id)} disabled={isReady}>
+						<hr />
+						<Button variant="contained" color="primary" onClick={() => doPlayerDone(faction.id)} disabled={isReady}>
 							READY
+						</Button>
+						<Button variant="contained" color="primary" onClick={() => doPlayerNotDone(faction.id)} disabled={!isReady || game.state !== GameState.TURN}>
+							UNREADY
 						</Button>
 					</SubMenuButton>
 				</div>
@@ -720,7 +720,7 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
 
 	const system = getSystemById(props.game, cmd.targetSystem);
 	const systemName = system ? system.name : cmd.targetSystem;
-
+	const isTemp = props.command.id.slice(0, 5) === "TEMP-";
 	return (
 		<div className={`${classes.command} blue`}>
 			{cmd.type === CommandType.SystemEconomy && <IconCredit size="lg" className="commandIcon" />}
@@ -728,10 +728,10 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
 			{cmd.type === CommandType.SystemIndustry && <IconIndustry size="lg" className="commandIcon" />}
 			{cmd.type === CommandType.SystemWelfare && <IconWelfare size="lg" className="commandIcon" />}
 
-			<label>{cmdText}</label>
+			<label>{cmdText} {cmd.turn}</label>
 			<h2>{systemName}</h2>
 
-			{!props.isReady && (
+			{!props.isReady && !isTemp && (
 				<Button
 					variant="contained"
 					color="secondary"
@@ -746,6 +746,7 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
 					<CancelIcon className="cancelIcon" />
 				</Button>
 			)}
+			{isTemp && <CircularProgress size="2rem" color="secondary" className="wait" />}
 		</div>
 	);
 };
@@ -755,16 +756,17 @@ const FleetMoveCommandItem: FC<CommandProps> = (props) => {
 	const cmd = props.command as FleetCommand;
 	const system = getSystemByCoordinates(props.game, cmd.target);
 	const systemName = system ? system.name : `coordinates ${cmd.target.x}, ${cmd.target.y}`;
+	const isTemp = props.command.id.slice(0, 5) === "TEMP-";
 	return (
 		<div className={`${classes.command} red`}>
 			<img src={iconFleetSvg} className="commandIcon lg" alt="Fleet Icon" />
-			<label>Fleet Movement to</label>
+			<label>Fleet Movement to {cmd.turn}</label>
 			<h2>{systemName}</h2>
 
 			{/* <p>
                 {cmd.unitIds.length} Units moving to {systemName}
             </p> */}
-			{!props.isReady && (
+			{!props.isReady && !isTemp && (
 				<Button
 					variant="contained"
 					color="secondary"
@@ -787,6 +789,7 @@ const SystemBuildCommandItem: FC<CommandProps> = (props) => {
 	const systemName = system ? system.name : cmd.targetSystem;
 	// const system = getSystemByCoordinates(props.game, cmd.target);
 	// const systemName = system ? system.name : `coordinates ${cmd.target.x}, ${cmd.target.y}`;
+	const isTemp = props.command.id.slice(0, 5) === "TEMP-";
 	return (
 		<div className={`${classes.command} red`}>
 			<img src={iconBuildSvg} className="commandIcon lg" alt="Build icon" />
@@ -799,7 +802,7 @@ const SystemBuildCommandItem: FC<CommandProps> = (props) => {
 				</small>
 			</h2>
 
-			{!props.isReady && (
+			{!props.isReady && !isTemp && (
 				<Button
 					variant="contained"
 					color="secondary"
@@ -820,6 +823,7 @@ const SystemBuildBuildingItem: FC<CommandProps> = (props) => {
 	const cmd = props.command as BuildBuildingCommand;
 	const system = getSystemById(props.game, cmd.targetSystem);
 	const systemName = system ? system.name : cmd.targetSystem;
+	const isTemp = props.command.id.slice(0, 5) === "TEMP-";
 
 	return (
 		<div className={`${classes.command} blue`}>
@@ -833,7 +837,7 @@ const SystemBuildBuildingItem: FC<CommandProps> = (props) => {
 				</small>
 			</h2>
 
-			{!props.isReady && (
+			{!props.isReady && !isTemp && (
 				<Button
 					variant="contained"
 					color="secondary"
@@ -853,14 +857,14 @@ const ResearchCommandItem: FC<CommandProps> = (props) => {
 	const classes = useStyles();
 	const cmd = props.command as ResearchCommand;
 	const tech = getTechById(cmd.techId);
-
+	const isTemp = props.command.id.slice(0, 5) === "TEMP-";
 	return (
 		<div className={`${classes.command} green`}>
 			<img src={iconScienceSvg} className="commandIcon lg" alt="Science Icon" />
 
 			<label>Research</label>
 			<h2>{tech.name}</h2>
-			{!props.isReady && (
+			{!props.isReady && !isTemp && (
 				<Button
 					variant="contained"
 					color="secondary"
@@ -872,6 +876,7 @@ const ResearchCommandItem: FC<CommandProps> = (props) => {
 					<CancelIcon className="cancelIcon" />
 				</Button>
 			)}
+			
 		</div>
 	);
 };

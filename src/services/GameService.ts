@@ -1,5 +1,5 @@
 import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
-import { fnPlayerReady, fnProcessTurn } from "../api/apiFunctions";
+import { fnPlayerNotReady, fnPlayerReady, fnProcessTurn } from "../api/apiFunctions";
 import { apiLoadGame, apiNewGame, apiSubscribeToGame, apiUpdateGame } from "../api/apiGame";
 
 import { Command } from "../models/Commands";
@@ -55,6 +55,9 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 				case "ready":
 					factionReady(event.data);
 					break;
+				case "unready":
+					factionNotReady(event.data);
+					break;
 				case "newGame":
 					newGame(event.data);
 					break;
@@ -83,7 +86,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 			}
 		}
 
-		if(event.from === SERVICEID.UserService && event.action === "LOGOUT") {
+		if (event.from === SERVICEID.UserService && event.action === "LOGOUT") {
 			closeGame();
 		}
 	}
@@ -227,20 +230,24 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 		}
 	}
 
+	async function factionNotReady(factionId: string) {
+		if(game.factionsReady.includes(factionId)) {
+			game.state = GameState.PROCESSING;
+			sendUpdate();
+			await fnPlayerNotReady(game.id, factionId);
+		}
+	}
+
 	async function _setFactionDone(factionId: string) {
 		if (!game.factionsReady.includes(factionId)) {
 			game.factionsReady.push(factionId);
-
+			game.state = GameState.PROCESSING;
 			sendUpdate();
-
-			const allCommands = api.api.getServiceState<Command[]>(SERVICEID.CommandService);
-			if (allCommands) {
-				await fnPlayerReady(
-					game.id,
-					factionId,
-					allCommands.filter((cmd: Command) => cmd.turn === game.turn && cmd.factionId === factionId),
-				);
-			}
+			await fnPlayerReady(game.id, factionId);
+			// if(game.factionsReady.length === game.factions.length) {
+			// 	game.state = GameState.PROCESSING;
+			// }
+			// sendUpdate();
 		}
 	}
 
@@ -251,7 +258,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
 	}
 
 	function updateGame(newGame: GameModel) {
-		if(newGame.id === game.id) {
+		if (newGame.id === game.id) {
 			game = newGame;
 			sendUpdate();
 			saveGame();

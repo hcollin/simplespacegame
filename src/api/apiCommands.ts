@@ -1,5 +1,5 @@
 import { Command } from "../models/Commands";
-import { getItemsWhere, getItemsWheres, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
+import { deleteItem, getItemsWhere, getItemsWheres, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
 
 const COLLECTION = "Commands";
 
@@ -35,6 +35,10 @@ export async function apiUpdateCommand(commmand: Command): Promise<boolean> {
         }
     }
     return false;
+}
+
+export async function apiDeleteCommand(command: Command): Promise<void> {
+    return await deleteItem(COLLECTION, command);
 }
 
 export async function apiClearCommands(gameId: string, cmdIds: string[]) {

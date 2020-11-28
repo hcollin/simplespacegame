@@ -25,6 +25,11 @@ interface PlayerReadyData {
     commands: Command[];
 }
 
+enum Collections {
+    GAMES = "Games",
+    COMMANDS = "Commands",
+}
+
 
 /**
  * PLayer is ready Cloud function
@@ -35,7 +40,7 @@ interface PlayerReadyData {
 exports.playerReady = functions.https.onCall((data: PlayerReadyData, context: any) => {
     console.log("playerReady started", data);
 
-    async function readyPlayer(gameId: string, factionId: string, commands: Command[]) {
+    async function readyPlayer(gameId: string, factionId: string) {
 
         let game: GameModel | null = null;
 
@@ -43,24 +48,15 @@ exports.playerReady = functions.https.onCall((data: PlayerReadyData, context: an
             
             const gameRef = await db.collection("Games").doc(data.gameId).get();
             game = gameRef.data();
+            
             if (!game) {
                 console.error(`No game found with id: ${gameId}`);
                 return;
             }
-
+            
+            
             if (game.factionsReady.includes(factionId)) {
                 throw new Error(`Faction ${factionId} is already set to ready!`);
-            }
-
-            for (let i = 0; i < commands.length; i++) {
-                const cmd = commands[i];
-                cmd.turn = game.turn;
-                cmd.factionId = factionId;
-                
-                console.log("COMMAND TO BE ADDED:", cmd);
-                const docRef = await db.collection("Commands").add(cmd);
-                cmd.id = docRef.id;
-                await db.collection("Commands").doc(cmd.id).set({...cmd});
             }
 
             game.factionsReady.push(factionId);
@@ -79,8 +75,40 @@ exports.playerReady = functions.https.onCall((data: PlayerReadyData, context: an
         return;
     }
 
-    return readyPlayer(data.gameId, data.factionId, data.commands)
+    return readyPlayer(data.gameId, data.factionId)
 });
+
+exports.playerCancelReady = functions.https.onCall((data: PlayerReadyData, context: any) => {
+    console.log("playerCancelReady started", data);
+
+
+    async function cancelPlayerReady(gameId: string, factionId: string) {
+        let game: GameModel | null = null;
+
+        try {
+            
+            const gameRef = await db.collection("Games").doc(data.gameId).get();
+            game = gameRef.data();
+            
+            if (!game) {
+                console.error(`No game found with id: ${gameId}`);
+                return;
+            }
+            
+            game.factionsReady = game.factionsReady.filter((fid: string) => fid !== factionId);
+            await db.collection("Games").doc(game.id).set({ ...game });
+
+        } catch (e) {
+            console.error("Could not load the game", gameId, e);
+            return;
+        }
+    }
+
+    return cancelPlayerReady(data.gameId, data.factionId);
+
+});
+
+
 
 /**
  * Run the turn processor by force for provided gameId
