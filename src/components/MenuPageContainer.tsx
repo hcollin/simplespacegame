@@ -181,6 +181,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
             "& .field": {},
         },
+        copy: {
+            color: "#FFF8",
+            fontSize: "0.8rem",
+        }
     })
 );
 
@@ -218,7 +222,10 @@ const MenuPageContainer: FC<MenuPageContainerProps> = (props: MenuPageContainerP
                     )}
                 </header>
                 {props.children}
+
+                <p className={classes.copy}> &copy; Frost Troll Game Design Studio 2020, version 0.1.1.</p>
             </Container>
+
         </div>
     );
 };

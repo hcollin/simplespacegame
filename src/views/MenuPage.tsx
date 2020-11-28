@@ -293,10 +293,6 @@ const MenuPage: FC = () => {
 
             {/* <div style={{display: "flex", flexWrap: "wrap"}}>{rndNames.map((n: string, i: number) => <p key={i} style={{width: "15rem", margin: "0.25rem 0", padding: 0}}>{n}</p>)}</div> */}
 
-            <footer>
-                &copy; Frost Troll 2020
-            </footer>
-
         </MenuPageContainer>
     );
 };
