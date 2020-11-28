@@ -36,6 +36,7 @@ import SubMenuButton from "../../components/SubMenuButton";
 
 import { FiberManualRecord } from "@material-ui/icons";
 import StarIcon from "@material-ui/icons/Star";
+import { IconShip, IconShipBlack } from "../../components/Icons";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -68,6 +69,13 @@ const useStyles = makeStyles((theme: Theme) =>
 				"& > button": {
 					position: "relative",
 					marginTop: "0.5rem",
+					
+
+				},
+				"& .submenu": {
+					"& button img": {
+						height: "24px",
+					}
 				},
 				[theme.breakpoints.down("md")]: {
 					bottom: "4rem",
@@ -109,7 +117,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 	const [zoomLevel, setZoomLevel] = useState<number>(ozoom);
 	const [game] = useService<GameModel>("GameService");
 
-	const [options, setOptions] = useState<string[]>(["Systems"]);
+	const [options, setOptions] = useState<string[]>(["Systems", "Ships"]);
 
 	const [mapAdj, setMapAdj] = useState<[number, number]>([ox, oy]);
 
@@ -219,10 +227,9 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 	// console.log("Selected System", selectedSystem);
 
 	const possibleOptions: [string, JSX.Element][] = [
-		["InfluenceRings", <FiberManualRecord />],
+		// ["InfluenceRings", <FiberManualRecord />],
 		["Systems", <StarIcon />],
-		// ["Ships", <FiberManualRecord />],
-		// ["Systems", <FiberManualRecord />],
+		["Ships", <IconShipBlack />],
 	];
 
 	const showReset =
@@ -237,7 +244,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 				</Button>
 			)}
 			<div className="controls">
-				<SubMenuButton>
+				<SubMenuButton icon={<LayersIcon />}>
 					{possibleOptions.map((opt: [string, JSX.Element]) => {
 						return (
 							<Button variant="contained" onClick={() => setOption(opt[0])} color={options.includes(opt[0]) ? "primary" : "default"} key={opt[0]}>
@@ -265,7 +272,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 					ref={mapRef}
 					onDragEnd={(e: KonvaEventObject<DragEvent>) => setMapAdj([e.currentTarget.getAttr("x"), e.currentTarget.getAttr("y")])}
 				>
-					<FleetLayer zoom={zoomLevel} />
+					{options.includes("Ships") && <FleetLayer zoom={zoomLevel} />}
 
 					{showMoveLine && selectedSystem && fleet[0].location && (
 						<Layer>
