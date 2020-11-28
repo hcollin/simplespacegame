@@ -184,6 +184,7 @@ const useStyles = makeStyles((theme: Theme) =>
         copy: {
             color: "#FFF8",
             fontSize: "0.8rem",
+            textAlign: "center",
         }
     })
 );
