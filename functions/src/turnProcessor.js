@@ -87,7 +87,7 @@ function processTurn(origGame, commands, firestore) {
                         return sm;
                     });
                     console.log("START TURN PROCESSING!", game.name, game.turn);
-                    if (!commands) return [3 /*break*/, 4];
+                    if (!commands) return [3 /*break*/, 2];
                     return [4 /*yield*/, processSystemCommands(commands, game, firestore)];
                 case 1:
                     game = _a.sent();
@@ -95,14 +95,13 @@ function processTurn(origGame, commands, firestore) {
                     // Process trades
                     game = processTrades(game);
                     game = processResearchCommands(commands, game);
-                    return [4 /*yield*/, processCombats(game, firestore)];
-                case 2:
-                    game = _a.sent();
-                    return [4 /*yield*/, processInvasion(game, firestore)];
+                    _a.label = 2;
+                case 2: return [4 /*yield*/, processCombats(game, firestore)];
                 case 3:
                     game = _a.sent();
-                    _a.label = 4;
+                    return [4 /*yield*/, processInvasion(game, firestore)];
                 case 4:
+                    game = _a.sent();
                     // Process economy
                     game = processEconomy(game);
                     // Process Repairs
@@ -833,6 +832,7 @@ function spaceCombatAttacks(game, origCombat) {
                 c = updateUnitInCombat(c, ship);
                 if (target) {
                     var oldDmg = target.damage + target.shields;
+                    c.currentRoundLog.messages.push(ship.name + ":" + weapon.name + ":FIRES:" + target.name);
                     var rc = spaceCombatAttackShoot(game, c, ship, weapon, target);
                     var newDmg = target.damage + target.shields;
                     if (oldDmg < newDmg)
@@ -841,6 +841,7 @@ function spaceCombatAttacks(game, origCombat) {
                 }
             }
             else {
+                c.currentRoundLog.messages.push(ship.name + ":" + weapon.name + ": Cannot fire");
                 ship = updateWeaponInUnit(ship, updateCooldownTime(weapon));
                 c = updateUnitInCombat(c, ship);
                 var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, ship.factionId);
@@ -916,6 +917,7 @@ function spaceCombatAttackChooseTarget(combat, attacker, weapon, game) {
             return betterTarget;
         return target;
     }
+    combat.currentRoundLog.messages.push("No valid target found for " + attacker.name + ". Combat ends.");
     combat.done = true;
     return null;
 }
@@ -927,6 +929,7 @@ function spaceCombatAttackShoot(game, combat, attacker, weapon, target) {
         return combat;
     var hitChance = getHitChance(weapon, attacker, target, game); //50 + weapon.accuracy - target.agility;
     var hitRoll = fRandUtils_1.rnd(1, 100);
+    combat.currentRoundLog.messages.push(attacker.name + ":" + weapon.name + ":" + hitRoll + "/" + hitChance);
     if (hitRoll <= hitChance) {
         var targetFactionUnit = fUnitUtils_1.getFactionAdjustedUnit(targetFaction, target);
         var factionWeapon = fUnitUtils_1.getFactionAdjustedWeapon(weapon, attackFaction);

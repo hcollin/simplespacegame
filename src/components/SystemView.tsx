@@ -8,17 +8,9 @@ import { GameModel, SystemModel } from "../models/Models";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { SERVICEID } from "../services/services";
-import { getSystemEconomy } from "../utils/systemUtils";
-import { IconDefense, IconEconomy, IconIndustry, IconWelfare } from "./Icons";
-import {
-    doBuildBuilding,
-    doBuildUnit,
-    doRemoveCommand,
-    plusDefense,
-    plusEconomy,
-    plusIndustry,
-    plusWelfare,
-} from "../services/commands/SystemCommands";
+import { getSystemEconomy, simulateCommandsEffectsForSystem } from "../utils/systemUtils";
+import { IconCommand, IconCredit, IconDefense, IconEconomy, IconIndustry, IconResearchPoint, IconScore, IconWelfare } from "./Icons";
+import { doBuildBuilding, doBuildUnit, doRemoveCommand, plusDefense, plusEconomy, plusIndustry, plusWelfare } from "../services/commands/SystemCommands";
 import { BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
 import { Building, BuildingDesign } from "../models/Buildings";
 import BuildingDesignSlot from "./BuildingDesignSlot";
@@ -32,64 +24,63 @@ import ShipInfo from "./ShipInfo";
 import { shipCanBeBuiltOnSystemByFaction } from "../utils/unitUtils";
 import useUnitSelection from "../hooks/useUnitSelection";
 import FactionBanner from "./FactionBanner";
+import BuildingSlot from "./BuildingSlot";
 
 const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            position: "fixed",
-            top: "1rem",
-            right: "20rem",
-            bottom: "1rem",
-            width: "51rem",
-            background:
-                "linear-gradient(90deg, #000 0,#333 20px, #666 40px, #222 60px,#181820 calc(100% - 20px), #111 calc(100% - 10px), #000 100%)",
-            zIndex: 1000,
-            color: "#FFFA",
-            boxShadow: "inset 0 0 8rem 2rem #000",
-            borderRadius: "1rem",
-            border: "groove 5px #FFF4",
+	createStyles({
+		root: {
+			position: "fixed",
+			top: "1rem",
+			right: "20rem",
+			bottom: "1rem",
+			width: "51rem",
+			background: "linear-gradient(90deg, #000 0,#333 20px, #666 40px, #222 60px,#181820 calc(100% - 20px), #111 calc(100% - 10px), #000 100%)",
+			zIndex: 1000,
+			color: "#FFFA",
+			boxShadow: "inset 0 0 8rem 2rem #000",
+			borderRadius: "1rem",
+			border: "groove 5px #FFF4",
 
-            "&:after": {
-                content: '""',
-                userSelect: "none",
-                pointerEvents: "none",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                bottom: 0,
-                right: 0,
-                zIndex: -1,
-                background:
-                    "repeating-linear-gradient(200deg, #000 0, #3338 5px, transparent 10px, #BDF1 120px, transparent 150px, #4448 155px, #000 160px)",
-                borderRadius: "1rem",
-            },
-            "& > header": {
-                position: "relative",
-                // borderBottom: "solid 3px #0008",
-                // padding: "0.5rem 1rem",
-                // background: "linear-gradient(180deg, #000 0, #222D 5%, #333E 15%, #222 69%, #700A 71%, #222 73%, #222 78%, #800A 80%, #222 82%, #222 87%, #700A 89%, #222, 91%, #222D 95%, #000 100%)",
+			"&:after": {
+				content: '""',
+				userSelect: "none",
+				pointerEvents: "none",
+				position: "absolute",
+				top: 0,
+				left: 0,
+				bottom: 0,
+				right: 0,
+				zIndex: -1,
+				background: "repeating-linear-gradient(200deg, #000 0, #3338 5px, transparent 10px, #BDF1 120px, transparent 150px, #4448 155px, #000 160px)",
+				borderRadius: "1rem",
+			},
+			"& > header": {
+				position: "relative",
+				// borderBottom: "solid 3px #0008",
+				// padding: "0.5rem 1rem",
+				// background: "linear-gradient(180deg, #000 0, #222D 5%, #333E 15%, #222 69%, #700A 71%, #222 73%, #222 78%, #800A 80%, #222 82%, #222 87%, #700A 89%, #222, 91%, #222D 95%, #000 100%)",
 
-                "&:after": {
-                    content: '""',
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background:
-                        "linear-gradient(180deg, #000 0, #222 5%, #333 15%, #222 69%, #0009 71%, #222 73%, #222 78%, #0008 80%, #222 82%, #222 87%, #0009 89%, #222, 91%, #222 95%, #000 100%)",
-                    zIndex: 0,
-                },
-                "& > * ": {
-                    zIndex: 10,
-                },
-                "& > h1": {
-                    margin: 0,
-                    padding: "0.5rem 0",
-                    textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
-                },
-               
-                [theme.breakpoints.down("md")]: {
+				"&:after": {
+					content: '""',
+					position: "absolute",
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+					background:
+						"linear-gradient(180deg, #000 0, #222 5%, #333 15%, #222 69%, #0009 71%, #222 73%, #222 78%, #0008 80%, #222 82%, #222 87%, #0009 89%, #222, 91%, #222 95%, #000 100%)",
+					zIndex: 0,
+				},
+				"& > * ": {
+					zIndex: 10,
+				},
+				"& > h1": {
+					margin: 0,
+					padding: "0.5rem 0",
+					textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+				},
+
+				[theme.breakpoints.down("md")]: {
 					padding: "0.5rem 1rem 4rem 1rem",
 					"& > div.ofbanner": {
 						position: "absolute",
@@ -100,8 +91,8 @@ const useStyles = makeStyles((theme: Theme) =>
 					"& > h1": {
 						fontSize: "1.1rem",
 					},
-                },
-                [theme.breakpoints.up("lg")]: {
+				},
+				[theme.breakpoints.up("lg")]: {
 					padding: "0.5rem 1rem",
 					"& > div.ofbanner": {
 						position: "absolute",
@@ -111,283 +102,309 @@ const useStyles = makeStyles((theme: Theme) =>
 					"& > h1": {
 						fontSize: "2rem",
 					},
-                },
-            },
-            [theme.breakpoints.down("md")]: {
-                top: "4rem",
-                left: "1rem",
-                right: "4rem",
-                bottom: "5rem",
-                zIndex: "80",
-                width: "auto",
-            },
-        },
-        mainContent: {
-            overflowY: "auto",
-            position: "absolute",
-            left: 0,
-            right: 0,
+				},
+			},
+			[theme.breakpoints.down("md")]: {
+				top: "4rem",
+				left: "1rem",
+				right: "4rem",
+				bottom: "5rem",
+				zIndex: "80",
+				width: "auto",
+			},
+		},
+		mainContent: {
+			overflowY: "auto",
+			position: "absolute",
+			left: 0,
+			right: 0,
 			bottom: 0,
+
 			[theme.breakpoints.down("md")]: {
 				top: "7rem",
 			},
 			[theme.breakpoints.up("lg")]: {
 				top: "5rem",
 			},
-        },
-        flexRow: {
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-        },
-        contentArea: {
-            padding: "0.5rem",
+		},
+		flexRow: {
+			display: "flex",
+			flexDirection: "row",
+			alignItems: "center",
+			justifyContent: "space-between",
+		},
+		contentArea: {
+			padding: "0.5rem",
 
-            // background: "#0003",
-            // boxShadow: "inset 0 0 2rem 1rem #0008",
+			// background: "#0003",
+			// boxShadow: "inset 0 0 2rem 1rem #0008",
 
-            "& p": {
-                "&.description": {
-                    fontStyle: "italic",
-                    textAlign: "center",
-                    fontSize: "0.9rem",
-                },
-                "&.keywords": {
-                    fontSize: "1.1rem",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    textTransform: "uppercase",
-                    background: "#0138",
-                    padding: "0.5rem",
-                    boxShadow: "inset 0 0 1rem 0.5rem #0008",
-                },
-            },
+			"& p": {
+				"&.description": {
+					fontStyle: "italic",
+					textAlign: "center",
+					fontSize: "0.9rem",
+				},
+				"&.keywords": {
+					fontSize: "1.1rem",
+					textAlign: "center",
+					fontWeight: "bold",
+					textTransform: "uppercase",
+					background: "#0138",
+					padding: "0.5rem",
+					boxShadow: "inset 0 0 1rem 0.5rem #0008",
+				},
+			},
 
-            "& div.infra": {
-                width: "17rem",
-                border: "groove 3px #FFF3",
-                display: "flex",
-                padding: "0.5rem 1rem",
-                background:
-                    "linear-gradient(90deg, #0000, #666 0.5rem, #666 3.5rem, #DEF8 3.6rem, #013D 3.7rem, #0138 98%, #000 100%)",
-                boxShadow: "inset 0 0 1rem 0.5rem #0008",
-                alignItems: "center",
-                borderRadius: "1rem",
-                marginBottom: "0.5rem",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                "& > div.value": {
-                    // fontSize: "2rem",
-                    fontWeight: "bold",
-                    color: "#FFFA",
-                    "& > span.plus": {
-                        // fontSize: "1.4rem",
-                        color: "#8F8A",
+			"& div.inforow": {
+				display: "flex",
+				alignItems: "center",
+				flexDirection: "row",
+				justifyContent: "space-between",
+				background: "#1256",
+				boxShadow: "inset 0 0 0.5rem 0.25rem #0008",
+				border: "ridge 3px #FFF4",
+				borderRadius: "0.5rem",
+				"&> div": {
+					fontWeight: "bold",
+					borderRight: "solid 2px #0008",
+					padding: "0.5rem",
+					flex: "1 1 auto",
+					textAlign: "center",
+					borderLeft: "solid 1px #FFF2",
+					"&:last-child": {
+						borderRight: "none",
                     },
-                    "& > small.maxValue": {
-                        // fontSize: "1.2rem",
-                        color: "#AAAA",
-                        // marginLeft: "0.5rem",
-                    },
+                    "&:first-child": {
+						borderLeft: "none",
+					},
                 },
-                "& > button": {
-                    // fontSize: "2rem",
-                    color: "#FFFA",
-                    padding: 0,
-                    margin: 0,
-                },
+                
+			},
 
-                [theme.breakpoints.down("md")]: {
-                    width: "auto",
-                    "& > div.value": {
-                        fontSize: "1.4rem",
-                        "& > span.plus": {
-                            fontSize: "1rem",
-                        },
-                        "& > small.maxValue": {
-                            fontSize: "0.9rem",
-                            marginLeft: "0.25rem",
-                        },
-                    },
-                    "& > button": {
-                        fontSize: "1.4rem",
-                    },
-                    "& > img": {
-                        marginRight: "0.5rem",
-                    },
-                },
-                [theme.breakpoints.up("lg")]: {
-                    width: "17rem",
-                    "& > div.value": {
-                        fontSize: "2rem",
-                        "& > span.plus": {
-                            fontSize: "1.4rem",
-                        },
-                        "& > small.maxValue": {
-                            fontSize: "1.2rem",
-                            marginLeft: "0.5rem",
-                        },
-                    },
-                    "& > button": {
-                        fontSize: "2rem",
-                    },
-                    "& > img": {
-                        marginRight: "1rem",
-                    },
-                },
-            },
-        },
-        buildingSlot: {
-            position: "relative",
-            width: "15rem",
-            height: "15rem",
-            border: "ridge 3px #FFF4",
-            borderRadius: "0.5rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "inset 0 0 1rem 0.5rem #000",
-            background: "#0138",
-            "& > button.fullSizeButton": {
-                width: "100%",
-                height: "100%",
-                margin: 0,
-                fontSize: "3rem",
-                color: "#FFFA",
-            },
-            "& > p": {
-                color: "#CDE8",
-                fontSize: "0.8rem",
-                textAlign: "center",
-                textTransform: "uppercase",
-                fontStyle: "italic",
-                fontWeight: "bold",
-            },
-        },
-        slots: {
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            "& > div": {
-                margin: "0.5rem",
-            },
-        },
-        shipDockSlot: {
-            position: "relative",
-            // width: "20rem",
+			"& div.infra": {
+				width: "17rem",
+				border: "groove 3px #FFF3",
+				display: "flex",
+				padding: "0.5rem 1rem",
+				background: "linear-gradient(90deg, #0000, #666 0.5rem, #666 3.5rem, #DEF8 3.6rem, #013D 3.7rem, #0138 98%, #000 100%)",
+				boxShadow: "inset 0 0 1rem 0.5rem #0008",
+				alignItems: "center",
+				borderRadius: "1rem",
+				marginBottom: "0.5rem",
+				flexDirection: "row",
+				justifyContent: "space-between",
+				"& > div.value": {
+					// fontSize: "2rem",
+					fontWeight: "bold",
+					color: "#FFFA",
+					"& > span.plus": {
+						// fontSize: "1.4rem",
+						color: "#8F8A",
+					},
+					"& > small.maxValue": {
+						// fontSize: "1.2rem",
+						color: "#AAAA",
+						// marginLeft: "0.5rem",
+					},
+				},
+				"& > button": {
+					// fontSize: "2rem",
+					color: "#FFFA",
+					padding: 0,
+					margin: 0,
+				},
 
-            // height: "10rem",
-            border: "ridge 3px #FFF4",
-            // borderRadius: "0.5rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "inset 0 0 1rem 0.5rem #000",
-            background: `url(${SpaceStationJpeg})`,
-            backgroundPosition: "50% 0%",
-            backgroundSize: "cover",
-            marginBottom: "0.75rem",
-            flexDirection: "column",
-            "&:after": {
-                content: '""',
-                position: "absolute",
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-                background: "#0138",
-            },
-            "& > *": {
-                zIndex: 10,
-            },
+				[theme.breakpoints.down("md")]: {
+					width: "auto",
+					"& > div.value": {
+						fontSize: "1.4rem",
+						"& > span.plus": {
+							fontSize: "1rem",
+						},
+						"& > small.maxValue": {
+							fontSize: "0.9rem",
+							marginLeft: "0.25rem",
+						},
+					},
+					"& > button": {
+						fontSize: "1.4rem",
+					},
+					"& > img": {
+						marginRight: "0.5rem",
+					},
+				},
+				[theme.breakpoints.up("lg")]: {
+					width: "17rem",
+					"& > div.value": {
+						fontSize: "2rem",
+						"& > span.plus": {
+							fontSize: "1.4rem",
+						},
+						"& > small.maxValue": {
+							fontSize: "1.2rem",
+							marginLeft: "0.5rem",
+						},
+					},
+					"& > button": {
+						fontSize: "2rem",
+					},
+					"& > img": {
+						marginRight: "1rem",
+					},
+				},
+			},
+		},
+		buildingSlot: {
+			position: "relative",
+			width: "15rem",
+			height: "15rem",
+			border: "ridge 3px #FFF4",
+			borderRadius: "0.5rem",
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center",
+			boxShadow: "inset 0 0 1rem 0.5rem #000",
+			background: "#0138",
+			"& > button.fullSizeButton": {
+				width: "100%",
+				height: "100%",
+				margin: 0,
+				fontSize: "3rem",
+				color: "#FFFA",
+			},
+			"& > p": {
+				color: "#CDE8",
+				fontSize: "0.8rem",
+				textAlign: "center",
+				textTransform: "uppercase",
+				fontStyle: "italic",
+				fontWeight: "bold",
+			},
+		},
+		slots: {
+			display: "flex",
+			flexDirection: "row",
+			flexWrap: "wrap",
+			"& > div": {
+				margin: "0.5rem",
+			},
+		},
+		shipDockSlot: {
+			position: "relative",
+			// width: "20rem",
 
-            "& > button.fullSizeButton": {
-                width: "100%",
-                height: "100%",
-                margin: 0,
-                fontSize: "3rem",
-                color: "#FFFA",
-            },
+			// height: "10rem",
+			border: "ridge 3px #FFF4",
+			// borderRadius: "0.5rem",
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center",
+			boxShadow: "inset 0 0 1rem 0.5rem #000",
+			background: `url(${SpaceStationJpeg})`,
+			backgroundPosition: "50% 0%",
+			backgroundSize: "cover",
+			marginBottom: "0.75rem",
+			flexDirection: "column",
+			"&:after": {
+				content: '""',
+				position: "absolute",
+				top: 0,
+				bottom: 0,
+				left: 0,
+				right: 0,
+				background: "#0138",
+			},
+			"& > *": {
+				zIndex: 10,
+			},
 
-            "&.building": {
-                "& > p": {
-                    color: "#CDE8",
-                    fontSize: "0.8rem",
-                    textAlign: "center",
-                    textTransform: "uppercase",
-                    fontStyle: "italic",
-                    fontWeight: "bold",
-                    margin: 0,
-                    "&.ready": {
-                        color: "#FFFA",
-                        fontSize: "0.7rem",
-                    },
-                },
-                "& > h2": {
-                    color: "#FFFC",
-                    margin: "0.5rem 0",
-                    padding: "0.25rem",
-                    background: "#FFF4",
-                    width: "100%",
-                    textAlign: "center",
-                    boxShadow: "inset 0 0 1rem 0.1rem #0138",
-                    textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
-                },
-                "& > label": {
-                    fontSize: "0.8rem",
-                    fontStyle: "italic",
-                    color: "#FFF8",
-                    fontWeight: "bold",
-                    margin: "0",
-                    padding: "0",
-                },
+			"& > button.fullSizeButton": {
+				width: "100%",
+				height: "100%",
+				margin: 0,
+				fontSize: "3rem",
+				color: "#FFFA",
+			},
 
-                "&.cancellable:hover": {
-                    border: "ridge 3px #F888",
-                    "&:after": {
-                        content: '"CANCEL"',
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        zIndex: 20,
-                        background: "#800A",
-                        color: "white",
-                        fontSize: "2rem",
-                        fontWeight: "bold",
-                    },
-                },
-            },
-            [theme.breakpoints.down("md")]: {
-                width: "auto",
-                height: "auto",
-                borderRadius: "0.5rem",
-            },
-            [theme.breakpoints.up("lg")]: {
-                width: "20rem",
-                height: "10rem",
-                borderRadius: "0.5rem",
-            },
-        },
-        rows: {
-            display: "flex",
-            flexDirection: "column",
-            "& > div": {
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                borderBottom: "ridge 3px #000A",
-                borderTop: "solid 2px #4448",
-                padding: "0.5rem 0",
-                boxShadow: "inset 0 0 2.5rem 0.5rem #0008",
-                "& div.notBuildable": {
-                    filter: "grayscale(0.8)",
-                    opacity: 0.5,
-                },
-            },
-        },
-    })
+			"&.building": {
+				"& > p": {
+					color: "#CDE8",
+					fontSize: "0.8rem",
+					textAlign: "center",
+					textTransform: "uppercase",
+					fontStyle: "italic",
+					fontWeight: "bold",
+					margin: 0,
+					"&.ready": {
+						color: "#FFFA",
+						fontSize: "0.7rem",
+					},
+				},
+				"& > h2": {
+					color: "#FFFC",
+					margin: "0.5rem 0",
+					padding: "0.25rem",
+					background: "#FFF4",
+					width: "100%",
+					textAlign: "center",
+					boxShadow: "inset 0 0 1rem 0.1rem #0138",
+					textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+				},
+				"& > label": {
+					fontSize: "0.8rem",
+					fontStyle: "italic",
+					color: "#FFF8",
+					fontWeight: "bold",
+					margin: "0",
+					padding: "0",
+				},
+
+				"&.cancellable:hover": {
+					border: "ridge 3px #F888",
+					"&:after": {
+						content: '"CANCEL"',
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						zIndex: 20,
+						background: "#800A",
+						color: "white",
+						fontSize: "2rem",
+						fontWeight: "bold",
+					},
+				},
+			},
+			[theme.breakpoints.down("md")]: {
+				width: "auto",
+				height: "auto",
+				borderRadius: "0.5rem",
+			},
+			[theme.breakpoints.up("lg")]: {
+				width: "20rem",
+				height: "10rem",
+				borderRadius: "0.5rem",
+			},
+		},
+		rows: {
+			display: "flex",
+			flexDirection: "column",
+			"& > div": {
+				display: "flex",
+				flexDirection: "row",
+				alignItems: "center",
+				justifyContent: "center",
+				borderBottom: "ridge 3px #000A",
+				borderTop: "solid 2px #4448",
+				padding: "0.5rem 0",
+				boxShadow: "inset 0 0 2.5rem 0.5rem #0008",
+				"& div.notBuildable": {
+					filter: "grayscale(0.8)",
+					opacity: 0.5,
+				},
+			},
+		},
+	}),
 );
 
 const SystemView: FC = () => {
@@ -508,6 +525,7 @@ const SystemView: FC = () => {
     );
 
     const freeShipYardSlots = sysEco.shipyards - shipsUnderConstruction.length;
+    const nextTurnStar = simulateCommandsEffectsForSystem(game, faction.id, star, comms);
 
     return (
         <div className={classes.root}>
@@ -526,6 +544,43 @@ const SystemView: FC = () => {
                             <p className="description">{star.description}</p>
                             {star.keywords.length > 0 && <p className="keywords">{star.keywords.join(", ")}</p>}
                         </Grid>
+                        
+                        <Grid item sm={12} lg={6} className={classes.contentArea}>
+							<h4>Current Values</h4>
+							<div className="inforow">
+								<div>
+									<IconCredit /> {sysEco.profit} = {sysEco.income} - {sysEco.expenses}
+								</div>
+								<div>
+									<IconResearchPoint /> {sysEco.research}
+								</div>
+								<div>
+									<IconScore /> {sysEco.vps}
+								</div>
+								<div>
+									<IconDefense /> {sysEco.totalDefense}
+								</div>
+							</div>
+						</Grid>
+
+						<Grid item sm={12} lg={6} className={classes.contentArea}>
+							<h4>Estimate for future</h4>
+							<div className="inforow">
+								<div>
+									<IconCredit /> {nextTurnStar.profit} = {nextTurnStar.income} - {nextTurnStar.expenses}
+								</div>
+								<div>
+									<IconResearchPoint /> {nextTurnStar.research}
+								</div>
+								<div>
+									<IconScore /> {nextTurnStar.vps}
+								</div>
+								<div>
+									<IconDefense /> {nextTurnStar.totalDefense}
+								</div>
+							</div>
+						</Grid>
+
 
                         <Grid item xs={12} lg={5} className={classes.contentArea}>
                             <h2>Infrastructure</h2>

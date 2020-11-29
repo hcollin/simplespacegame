@@ -24,9 +24,12 @@ import CheatView from "./CheatView";
 import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 import CommandIcon from "./CommandIcon";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+
 import SubMenuButton from "./SubMenuButton";
 import { doCloseGame, doLogout } from "../services/commands/UserCommands";
 import { getActionPointCostOfCommands, getFactionActionPointPool } from "../utils/commandUtils";
+import useMobileMode from "../hooks/useMobileMode";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -84,16 +87,16 @@ const useStyles = makeStyles((theme: Theme) =>
 				background: "#9BF1",
 				"& > div": {
 					flex: "1 1 auto",
-					width: "50%",
+					// width: "50%",
 					color: "#FFFD",
-					fontSize: "1.1rem",
+					// fontSize: "1.1rem",
 					fontWeight: "bold",
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
 					borderRight: "solid 3px #0008",
 					borderBottom: "solid 3px #0008",
-					padding: "0.5rem",
+					
 					boxShadow: "inset 0 0 1rem 0.25rem #0124",
 					textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
 					"& > img": {
@@ -113,9 +116,27 @@ const useStyles = makeStyles((theme: Theme) =>
 						},
 					},
 				},
+				[theme.breakpoints.down("md")]: {
+					fontSize: "0.8rem",
+					
+					"& > div": {
+						padding: "0.25rem",
+						width: "50%",
+					}
+					
+				},
+				[theme.breakpoints.up("lg")]: {
+					fontSize: "1.1rem",
+					"& > div": {
+						padding: "0.5rem",
+						width: "50%",
+					}
+				}
+				
 			},
 			[theme.breakpoints.down("md")]: {
 				right: "-15rem",
+
 				transition: "all 0.3s ease",
 				boxShadow: "inset 0 0 2rem 2rem #0124, 0 0 1rem 0.5rem #0008",
 
@@ -156,6 +177,7 @@ const useStyles = makeStyles((theme: Theme) =>
 						},
 					},
 				},
+				
 			},
 		},
 		pagination: {
@@ -247,36 +269,38 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		faction: {
 			position: "relative",
-			// display: "flex",
-			// flexDirection: "row",
-			// alignItems: "center",
+			display: "flex",
+			flexDirection: "row",
+			alignItems: "center",
 			// justifyContent: "space-between",
 			borderBottom: "solid 2px #FFF2",
 			borderTop: "solid 2px #0008",
 			background: "linear-gradient(90deg, black 0, #FFF3 3px, #FFF8 1.5rem, #FFF5 2.5rem, #4448 3rem,  #3338 95%, #000 100%)",
-			height: "5rem",
+			height: "2rem",
 			// marginBottom: "0.25rem",
 			// padding: "0 0.25rem",
+
 			"& > img": {
-				width: "2.4rem",
+				width: "1.6rem",
 				// marginRight: "0.5rem",
-				margin: "2rem 0.25rem 0 0.25rem",
+				margin: "0.2rem 0.25rem",
 			},
 			"& > h3": {
 				fontSize: "0.8rem",
 				color: "#FFFD",
 				textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
-				position: "absolute",
-				top: 0,
-				left: 0,
-				right: 0,
-				background: "#0008",
+				// position: "absolute",
+				// top: 0,
+				// left: 0,
+				// right: 0,
+				// bottom: 0,
+				// background: "#0008",
 				padding: "0.25rem 0.5rem",
 				margin: 0,
 			},
 			"& > .vpIcon": {
 				position: "absolute",
-				top: "2.5rem",
+				top: 0,
 				right: "1.5rem",
 				margin: 0,
 				padding: 0,
@@ -284,7 +308,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			},
 			"& > .score": {
 				position: "absolute",
-				top: "2.5rem",
+				top: 0,
 				right: "0.5rem",
 				margin: 0,
 				padding: 0,
@@ -303,14 +327,14 @@ const useStyles = makeStyles((theme: Theme) =>
 					color: "#FFFD",
 					width: "10rem",
 					content: '"READY"',
+					zIndex: "100",
 					position: "absolute",
-					fontSize: "2.5rem",
+					fontSize: "1.2rem",
+					transform: "rotate(-8deg)",
+					marginTop: "-0.8rem",
+					textAlign: "center",
 					fontWeight: "bold",
 					marginLeft: "-5rem",
-					zIndex: "100",
-					marginTop: "-1.75rem",
-					textAlign: "center",
-					transform: "rotate(-10deg)",
 					letterSpacing: "6px",
 				},
 			},
@@ -442,6 +466,7 @@ const useStyles = makeStyles((theme: Theme) =>
 					background: "#F00",
 					boxShadow: "inset 0 0 1rem 0.5rem #0008",
 					border: "ridge 3px #000A",
+					outline: "none",
 					"& > img": {
 						width: "2rem",
 						height: "2rem",
@@ -451,6 +476,39 @@ const useStyles = makeStyles((theme: Theme) =>
 						boxShadow: "inset 0 0 1rem 0.5rem #4448",
 						border: "ridge 3px #000A",
 					},
+				},
+
+				"& > button.commandNextButton": {
+					width: "2.5rem",
+					height: "2.5rem",
+					margin: "0.1rem 0.1rem 0.1rem 0.4rem",
+					padding: "0",
+					borderRadius: "0.5rem",
+					background: "#888",
+					boxShadow: "inset 0 0 1rem 0.5rem #0008",
+					border: "ridge 3px #000A",
+					outline: "none",
+
+					"& > img": {
+						width: "2rem",
+						height: "2rem",
+					},
+					"&:hover": {
+						background: "#AAA",
+						boxShadow: "inset 0 0 1rem 0.5rem #4448",
+						border: "ridge 3px #000A",
+					},
+				},
+				"&> div.done": {
+					color: "#FFFE",
+					width: "100%",
+					textAlign: "center",
+					fontSize: "1rem",
+					textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+					fontWeight: "bold",
+					padding: "0.5rem 0",
+					borderTop: "ridge 3px #0008",
+					borderBottom: "ridge 3px #0008",
 				},
 
 				"& > div.empty": {
@@ -509,10 +567,13 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 	const [cmdIndex, setCmdIndex] = useState<number>(0);
 	const [commands, apsUsed, apsPool] = useMyCommands();
 	const faction = useCurrentFaction();
+	const inMobileView = useMobileMode();
 
+	const limit = inMobileView ? 3 : COMMANDPAGINATIONLIMIT;
+	console.log("limit:", limit, inMobileView);
 	useEffect(() => {
 		if (cmdIndex >= commands.length) {
-			setCmdIndex((prev: number) => (prev > COMMANDPAGINATIONLIMIT ? prev - COMMANDPAGINATIONLIMIT : 0));
+			setCmdIndex((prev: number) => (prev > limit ? prev - limit : 0));
 		}
 	}, [commands, cmdIndex]);
 
@@ -535,9 +596,13 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 	const commandsFull = commands.length >= values.maxCommands;	
 	const pointsGenerated = researchPointGenerationCalculator(game, faction);
 
-	const cmdsShown = commands.slice(cmdIndex, cmdIndex + COMMANDPAGINATIONLIMIT);
+
+	const cmdsShown = commands.slice(cmdIndex, cmdIndex + limit);
 
 	const commandsLeft = values.maxCommands - commands.length;
+
+	const factDonePerc = Math.round((game.factionsReady.length / game.factions.length)*100);
+	console.log(factDonePerc);
 
 	return (
 		<div className={`${classes.commands} ${open ? "open" : ""}`}>
@@ -572,6 +637,18 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 						</button>
 					);
 				})}
+				{commands.length > limit && (
+					<button className="commandNextButton" onClick={() => setCmdIndex((prev: number) => {
+						const ni = prev + limit;
+						if(ni >=  commands.length) return 0;
+						return ni;
+					})}>{cmdIndex + limit >= commands.length ? <FirstPageIcon /> : <DoubleArrowIcon />}</button>
+				)}
+
+				<div className="done" style={{background: `linear-gradient(90deg, #0F08 ${factDonePerc}%, black 100%)`}}>
+					{game.factionsReady.length} / {game.factions.length}
+				</div>
+
 
 				<div className="empty"></div>
 				<div className="turn">{game.turn}</div>
@@ -630,22 +707,22 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 						return <SystemPlusCommandItem command={cm} key={cm.id} game={game} isReady={isReady} />;
 				}
 			})}
-			{commands.length > COMMANDPAGINATIONLIMIT && (
+			{commands.length > limit && (
 				<div className={classes.pagination}>
 					<Button
 						variant="contained"
-						onClick={() => setCmdIndex((prev: number) => (prev >= COMMANDPAGINATIONLIMIT ? prev - COMMANDPAGINATIONLIMIT : 0))}
+						onClick={() => setCmdIndex((prev: number) => (prev >= limit ? prev - limit : 0))}
 						disabled={cmdIndex === 0}
 					>
-						Prev {COMMANDPAGINATIONLIMIT}
+						Prev {limit}
 					</Button>
 					<Button
 						variant="contained"
-						onClick={() => setCmdIndex((prev: number) => (prev + COMMANDPAGINATIONLIMIT < commands.length ? prev + COMMANDPAGINATIONLIMIT : prev))}
-						disabled={cmdIndex + COMMANDPAGINATIONLIMIT > commands.length}
+						onClick={() => setCmdIndex((prev: number) => (prev + limit < commands.length ? prev + limit : prev))}
+						disabled={cmdIndex + limit > commands.length}
 					>
 						{" "}
-						Next {COMMANDPAGINATIONLIMIT}
+						Next {limit}
 					</Button>
 				</div>
 			)}
@@ -655,7 +732,12 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 				const isReady = game.factionsReady.includes(fm.id);
 				const score = getFactionScore(game, fm.id);
 				return (
-					<div className={`${classes.faction} ${isReady ? "ready" : ""}`} key={fm.id} onClick={() => loginFaction(fm)}>
+					<div
+						className={`${classes.faction} ${isReady ? "ready" : ""}`}
+						key={fm.id}
+						onClick={() => loginFaction(fm)}
+						style={{ background: `linear-gradient(90deg, transparent 0, ${fm.color} 1.25rem, transparent 2.5rem)` }}
+					>
 						<img src={require(`../images/symbols/${fm.iconFileName}`)} alt={faction.name} />
 						<h3 style={{ color: fm.color, fontFamily: fm.style.fontFamily || "Arial" }}> {fm.name}</h3>
 
