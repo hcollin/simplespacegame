@@ -23,6 +23,7 @@ import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
 import HelpContainer from "./HelpContainer";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import FactionBanner from "./FactionBanner";
+import { getFactionAdjustedUnit } from "../utils/unitUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -475,7 +476,8 @@ const SelectUnitToFleet: FC<ContentProps> = (props) => {
             const frFaction = getFactionFromArrayById(game.factions, origSystem.ownerFactionId);
             trInfo.fromFaction = frFaction || null;
         }
-        trInfo.slowestShip = slowestUnit;
+        const unFaction = getFactionFromArrayById(game.factions, slowestUnit.factionId);
+        trInfo.slowestShip = unFaction ? getFactionAdjustedUnit(unFaction, slowestUnit) : slowestUnit;
         trInfo.distance = Math.ceil(distanceBetweenCoordinates(slowestUnit.location, props.system.location));
         trInfo.turns = Math.ceil(trInfo.distance / slowestUnit.speed);
     }
