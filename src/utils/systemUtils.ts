@@ -11,6 +11,7 @@ import {
 	buildingSpacePort,
 } from "../buildings/buildingRules";
 import { Building } from "../models/Buildings";
+import { BuildBuildingCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
 import { Coordinates, GameModel, SystemKeyword, SystemModel } from "../models/Models";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import {
@@ -24,6 +25,7 @@ import {
 	techUndergroundConstruction,
 } from "../tech/businessTech";
 import { techAutoDefenses, techDroidDefences } from "../tech/invasionTech";
+import { createBuildingFromDesign, getBuildingDesignByType } from "./buildingUtils";
 import { getSystemResearchPointGeneration } from "./factionUtils";
 import { inSameLocation } from "./locationUtils";
 
@@ -43,6 +45,7 @@ export interface SystemEconomy extends SystemModel {
 	buildingExpenses: number;
 	shipyards: number;
 	vps: number;
+	totalDefense: number;
 }
 
 export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEconomy {
@@ -65,6 +68,7 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
 		buildingExpenses: star.buildings.reduce((tot: number, b: Building) => tot + b.maintenanceCost, 0),
 		shipyards: 1,
 		vps: 0,
+		totalDefense: 0,
 	};
 
 	eco.expenses = eco.industryExpenses + eco.defenseExpenses + eco.welfareExpenses + eco.buildingExpenses + 1;
@@ -77,6 +81,7 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
 	}
 
 	eco.vps = getSystemVps(game, eco);
+	eco.totalDefense = getSystemDefence(game, star);
 
 	return buildingBioDome(buildingArcology(buildingIndustrySector(buildingFactoryAutomation(buildingRingWorld(eco)))));
 }
@@ -151,7 +156,6 @@ export function getSystemByCoordinates(game: GameModel, coords: Coordinates): Sy
 	return game.systems.find((sm: SystemModel) => inSameLocation(sm.location, coords));
 }
 
-
 export function getSystemVps(game: GameModel, star: SystemEconomy): number {
 	let score = 0;
 	score += 3;
@@ -162,4 +166,53 @@ export function getSystemVps(game: GameModel, star: SystemEconomy): number {
 
 	score += bScore;
 	return score;
+}
+
+export function simulateCommandsEffectsForSystem(game: GameModel, factionId: string, star: SystemModel, commands: Command[]): SystemEconomy {
+	const faction = getFactionFromArrayById(game.factions, factionId);
+
+	const tempStar = {...star, buildings: [...star.buildings]};
+	const nStar = commands.reduce(
+		(s: SystemModel, cmd: Command) => {
+			if (commandIsTargetsSystem(cmd, star.id)) {
+				switch (cmd.type) {
+					case CommandType.SystemEconomy:
+						s.economy++;
+						break;
+					case CommandType.SystemWelfare:
+						s.welfare++;
+						break;
+					case CommandType.SystemIndustry:
+						s.industry++;
+						break;
+					case CommandType.SystemDefense:
+						s.defense++;
+						break;
+					case CommandType.SystemBuildingBuild:
+						const bcmd = {...cmd} as BuildBuildingCommand;
+						const b: Building = {...getBuildingDesignByType(bcmd.buildingType), id: "TEMP"};
+						s.buildings.push(b);
+						break;
+				}
+				return {...s};
+			}
+
+			return s;
+		},
+		{ ...tempStar },
+	);
+
+	return getSystemEconomy(nStar, game);
+}
+
+function commandIsTargetsSystem(cmd: Command, systemId: string): boolean {
+	if ([CommandType.SystemDefense, CommandType.SystemEconomy, CommandType.SystemIndustry, CommandType.SystemWelfare].includes(cmd.type)) {
+		const sysCmd = { ...cmd } as SystemPlusCommand;
+		return sysCmd.targetSystem === systemId;
+	}
+	if (cmd.type === CommandType.SystemBuildingBuild) {
+		const sysCmd = { ...cmd } as BuildBuildingCommand;
+		return sysCmd.targetSystem === systemId;
+	}
+	return false;
 }

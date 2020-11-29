@@ -33,10 +33,10 @@ const DATABUILDINGS: BuildingDesign[] = [
 		description: "Provides +1 to maximum welfare and economy",
 		keywords: [],
 		minEconomy: 1,
-		minIndustry: 1,
+			minIndustry: 1,
 		minWelfare: 1,
 		techPreqs: [],
-		maintenanceCost: 1,
+		maintenanceCost: 0,
 		score: 1,
 	},
 	{

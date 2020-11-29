@@ -102,7 +102,7 @@ const EconomySheet: FC = () => {
 		{
 			key: "name",
 			header: "Name",
-			size: 300,
+			size: 200,
 		},
 		{
 			key: "keyword",

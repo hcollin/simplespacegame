@@ -22,6 +22,15 @@ export function buildingCanBeBuiltOnSystem(building: BuildingDesign, star: Syste
     return buildBuildingRules(star, building.type);
 }
 
+export function getBuildingDesignByType(btype: BUILDINGTYPE): BuildingDesign {
+    const bd = DATABUILDINGS.find((bd: BuildingDesign) => bd.type === btype);
+    if (!bd) {
+        throw new Error(`Unknown building type ${btype}. Cannot build.`);
+    }
+
+    return bd;
+}
+
 export function getBuildingTime(buildingType: BUILDINGTYPE): number {
     const bd = DATABUILDINGS.find((bd: BuildingDesign) => bd.type === buildingType);
     if(!bd) {
@@ -65,3 +74,4 @@ export function createBuildingFromDesign(bdesign: BuildingDesign): Building {
 export function systemHasBuilding(star: SystemModel, bt: BUILDINGTYPE): boolean {
     return star.buildings.find((b: Building) => b.type === bt) !== undefined;
 }
+
