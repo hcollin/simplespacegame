@@ -26,6 +26,7 @@ import CommandIcon from "./CommandIcon";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import SubMenuButton from "./SubMenuButton";
 import { doCloseGame, doLogout } from "../services/commands/UserCommands";
+import useMobileMode from "../hooks/useMobileMode";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -83,16 +84,16 @@ const useStyles = makeStyles((theme: Theme) =>
 				background: "#9BF1",
 				"& > div": {
 					flex: "1 1 auto",
-					width: "50%",
+					// width: "50%",
 					color: "#FFFD",
-					fontSize: "1.1rem",
+					// fontSize: "1.1rem",
 					fontWeight: "bold",
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
 					borderRight: "solid 3px #0008",
 					borderBottom: "solid 3px #0008",
-					padding: "0.5rem",
+					
 					boxShadow: "inset 0 0 1rem 0.25rem #0124",
 					textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
 					"& > img": {
@@ -112,9 +113,27 @@ const useStyles = makeStyles((theme: Theme) =>
 						},
 					},
 				},
+				[theme.breakpoints.down("md")]: {
+					fontSize: "0.8rem",
+					
+					"& > div": {
+						padding: "0.25rem",
+						width: "50%",
+					}
+					
+				},
+				[theme.breakpoints.up("lg")]: {
+					fontSize: "1.1rem",
+					"& > div": {
+						padding: "0.5rem",
+						width: "50%",
+					}
+				}
+				
 			},
 			[theme.breakpoints.down("md")]: {
 				right: "-15rem",
+
 				transition: "all 0.3s ease",
 				boxShadow: "inset 0 0 2rem 2rem #0124, 0 0 1rem 0.5rem #0008",
 
@@ -155,6 +174,7 @@ const useStyles = makeStyles((theme: Theme) =>
 						},
 					},
 				},
+				
 			},
 		},
 		pagination: {
@@ -507,10 +527,13 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 	const [cmdIndex, setCmdIndex] = useState<number>(0);
 	const commands = useMyCommands();
 	const faction = useCurrentFaction();
+	const inMobileView = useMobileMode();
 
+	const limit = inMobileView ? 3 : COMMANDPAGINATIONLIMIT;
+	console.log("limit:", limit, inMobileView);
 	useEffect(() => {
 		if (cmdIndex >= commands.length) {
-			setCmdIndex((prev: number) => (prev > COMMANDPAGINATIONLIMIT ? prev - COMMANDPAGINATIONLIMIT : 0));
+			setCmdIndex((prev: number) => (prev > limit ? prev - limit : 0));
 		}
 	}, [commands, cmdIndex]);
 
@@ -533,7 +556,8 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 	const commandsFull = commands.length >= values.maxCommands;
 	const pointsGenerated = researchPointGenerationCalculator(game, faction);
 
-	const cmdsShown = commands.slice(cmdIndex, cmdIndex + COMMANDPAGINATIONLIMIT);
+
+	const cmdsShown = commands.slice(cmdIndex, cmdIndex + limit);
 
 	const commandsLeft = values.maxCommands - commands.length;
 
@@ -623,22 +647,22 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 						return <SystemPlusCommandItem command={cm} key={cm.id} game={game} isReady={isReady} />;
 				}
 			})}
-			{commands.length > COMMANDPAGINATIONLIMIT && (
+			{commands.length > limit && (
 				<div className={classes.pagination}>
 					<Button
 						variant="contained"
-						onClick={() => setCmdIndex((prev: number) => (prev >= COMMANDPAGINATIONLIMIT ? prev - COMMANDPAGINATIONLIMIT : 0))}
+						onClick={() => setCmdIndex((prev: number) => (prev >= limit ? prev - limit : 0))}
 						disabled={cmdIndex === 0}
 					>
-						Prev {COMMANDPAGINATIONLIMIT}
+						Prev {limit}
 					</Button>
 					<Button
 						variant="contained"
-						onClick={() => setCmdIndex((prev: number) => (prev + COMMANDPAGINATIONLIMIT < commands.length ? prev + COMMANDPAGINATIONLIMIT : prev))}
-						disabled={cmdIndex + COMMANDPAGINATIONLIMIT > commands.length}
+						onClick={() => setCmdIndex((prev: number) => (prev + limit < commands.length ? prev + limit : prev))}
+						disabled={cmdIndex + limit > commands.length}
 					>
 						{" "}
-						Next {COMMANDPAGINATIONLIMIT}
+						Next {limit}
 					</Button>
 				</div>
 			)}

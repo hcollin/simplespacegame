@@ -755,7 +755,6 @@ const SystemView: FC = () => {
 							<div className={classes.slots}>
 								{DATABUILDINGS.map((bd: BuildingDesign, ind: number) => {
 									const buildable = buildingCanBeBuiltOnSystem(bd, star, faction);
-
 									return <BuildingDesignSlot building={bd} key={`bd-${ind}`} onClick={() => buildBuilding(bd)} disabled={!buildable} />;
 								})}
 							</div>
