@@ -394,7 +394,7 @@ const SystemView: FC = () => {
     const classes = useStyles();
 
     const [star, setStar] = useSelectedSystem();
-    const comms = useMyCommands();
+    const [comms] = useMyCommands();
     // const [user] = useCurrentUser();
     const [game] = useService<GameModel>(SERVICEID.GameService);
     const faction = useCurrentFaction();
@@ -543,7 +543,7 @@ const SystemView: FC = () => {
                                     <Button
                                         // variant="contained"
                                         // color="primary"
-                                        onClick={() => plusIndustry(star.id)}
+                                        onClick={() => plusIndustry(star)}
                                         disabled={star.industry + comPlusInd >= sysEco.industryMax}
                                     >
                                         +
@@ -564,7 +564,7 @@ const SystemView: FC = () => {
                                     <Button
                                         // variant="contained"
                                         // color="primary"
-                                        onClick={() => plusEconomy(star.id)}
+                                        onClick={() => plusEconomy(star)}
                                         disabled={star.economy + comPlusEco >= sysEco.economyMax}
                                     >
                                         +
@@ -585,7 +585,7 @@ const SystemView: FC = () => {
                                     <Button
                                         // variant="contained"
                                         // color="primary"
-                                        onClick={() => plusDefense(star.id)}
+                                        onClick={() => plusDefense(star)}
                                         disabled={star.defense + comPlusDef >= sysEco.defenseMax}
                                     >
                                         +
@@ -606,7 +606,7 @@ const SystemView: FC = () => {
                                     <Button
                                         // variant="outlined"
                                         // color="primary"
-                                        onClick={() => plusWelfare(star.id)}
+                                        onClick={() => plusWelfare(star)}
                                         disabled={star.welfare + comPlusWlf >= sysEco.welfareMax}
                                     >
                                         +

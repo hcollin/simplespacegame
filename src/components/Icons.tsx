@@ -33,7 +33,7 @@ import IconTechPhysicsSvg from '../images/techPhysics.svg';
 
 import IconShipSvg from '../images/iconShip.svg';
 import IconShipBlackSvg from '../images/iconShipBlack.svg';
-
+import iconActionPointSvg from '../images/iconActionPoint.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -196,13 +196,14 @@ const IconTechChemistry: FC<IconProps> = (props) => {
 const IconTechPhysics: FC<IconProps> = (props) => {
     return <GeneralIcon {...props} tooltip="Physics" iconSvg={IconTechPhysicsSvg} />
 }
-
 const IconShip: FC<IconProps> = (props) => {
     return <GeneralIcon {...props} tooltip="Ship" iconSvg={IconShipSvg} />
 }
-
 const IconShipBlack: FC<IconProps> = (props) => {
     return <GeneralIcon {...props} tooltip="Ship" iconSvg={IconShipBlackSvg} />
+}
+const IconActionPoint: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Action Point" iconSvg={iconActionPointSvg} />
 }
 
 export {
@@ -235,6 +236,7 @@ export {
     IconTechPhysics,
     IconShip,
     IconShipBlack,
+    IconActionPoint,
 };
 
 interface GeneralIcon extends IconProps {

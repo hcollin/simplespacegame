@@ -2,14 +2,14 @@ import { joki } from "jokits-react";
 import { BUILDINGTYPE } from "../../data/dataBuildings";
 
 import { BuildBuildingCommand, BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../../models/Commands";
-import { GameModel } from "../../models/Models";
+import { GameModel, SystemModel } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
 import { User } from "../../models/User";
 import { getBuildingTime } from "../../utils/buildingUtils";
 import { factionCanDoMoreCommands, getFactionByUserId } from "../helpers/FactionHelpers";
 import { SERVICEID } from "../services";
 
-export function plusEconomy(targetSystem: string) {
+export function plusEconomy(targetSystem: SystemModel, apCost=1) {
 	if (factionIsReady()) return;
 	const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemEconomy);
 
@@ -18,7 +18,7 @@ export function plusEconomy(targetSystem: string) {
 		return;
 	}
 
-	const command = { ...rootCommand, targetSystem: targetSystem } as SystemPlusCommand;
+	const command = { ...rootCommand, targetSystem: targetSystem.id, actionPoints: apCost } as SystemPlusCommand;
 
 	joki.trigger({
 		to: "CommandService",
@@ -27,7 +27,7 @@ export function plusEconomy(targetSystem: string) {
 	});
 }
 
-export function plusIndustry(targetSystem: string) {
+export function plusIndustry(targetSystem: SystemModel, apCost=1) {
 	if (factionIsReady()) return;
 	const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemIndustry);
 
@@ -36,7 +36,7 @@ export function plusIndustry(targetSystem: string) {
 		return;
 	}
 
-	const command = { ...rootCommand, targetSystem: targetSystem } as SystemPlusCommand;
+	const command = { ...rootCommand, targetSystem: targetSystem.id, actionPoints: apCost } as SystemPlusCommand;
 
 	joki.trigger({
 		to: "CommandService",
@@ -45,7 +45,7 @@ export function plusIndustry(targetSystem: string) {
 	});
 }
 
-export function plusWelfare(targetSystem: string) {
+export function plusWelfare(targetSystem: SystemModel, apCost=1) {
 	if (factionIsReady()) return;
 	const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemWelfare);
 
@@ -54,7 +54,7 @@ export function plusWelfare(targetSystem: string) {
 		return;
 	}
 
-	const command = { ...rootCommand, targetSystem: targetSystem } as SystemPlusCommand;
+	const command = { ...rootCommand, targetSystem: targetSystem.id, actionPoints: apCost } as SystemPlusCommand;
 
 	joki.trigger({
 		to: "CommandService",
@@ -63,7 +63,7 @@ export function plusWelfare(targetSystem: string) {
 	});
 }
 
-export function plusDefense(targetSystem: string) {
+export function plusDefense(targetSystem: SystemModel, apCost=1) {
 	if (factionIsReady()) return;
 	const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.SystemDefense);
 
@@ -72,7 +72,7 @@ export function plusDefense(targetSystem: string) {
 		return;
 	}
 
-	const command = { ...rootCommand, targetSystem: targetSystem } as SystemPlusCommand;
+	const command = { ...rootCommand, targetSystem: targetSystem.id, actionPoints: apCost} as SystemPlusCommand;
 
 	joki.trigger({
 		to: "CommandService",
@@ -158,6 +158,7 @@ export function createEmptyCommandForCurrentFactionAndGame(type: CommandType): C
 		factionId: faction.id,
 		type: type,
 		completed: false,
+		actionPoints: 1,
 		turn: game.turn,
 	};
 
@@ -176,3 +177,4 @@ export function factionIsReady() {
 
 	return game.factionsReady.includes(faction.id);
 }
+

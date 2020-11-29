@@ -112,7 +112,7 @@ const LargeMap: FC<LargeMapProps> = (props) => {
 	const [combatReportPng] = useImage("/combatReport.png");
 
 	const faction = useCurrentFaction();
-	const commands = useMyCommands<FleetCommand>(CommandType.FleetMove);
+	const [commands] = useMyCommands<FleetCommand>(CommandType.FleetMove);
 	const [fleet, fleetActions] = useUnitSelection();
 	const [zoomLevel, setZoomLevel] = useState<number>(ozoom);
 	const [game] = useService<GameModel>("GameService");
@@ -514,7 +514,7 @@ const FleetLayer: FC<FleetLayerProps> = (props) => {
 	const [fleets, setFleets] = useState<MapFleet[]>([]);
 
 	const [game] = useService<GameModel>(SERVICEID.GameService);
-	const commands = useMyCommands<FleetCommand>(CommandType.FleetMove);
+	const [commands] = useMyCommands<FleetCommand>(CommandType.FleetMove);
 	const faction = useCurrentFaction();
 	const [spaceShip] = useImage("/spaceship.png");
 	const windowSize = useWindowSize();

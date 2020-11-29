@@ -26,6 +26,7 @@ import CommandIcon from "./CommandIcon";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import SubMenuButton from "./SubMenuButton";
 import { doCloseGame, doLogout } from "../services/commands/UserCommands";
+import { getActionPointCostOfCommands, getFactionActionPointPool } from "../utils/commandUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -242,8 +243,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			},
 			"& .wait": {
 				marginRight: "0.5rem",
-
-			}
+			},
 		},
 		faction: {
 			position: "relative",
@@ -507,7 +507,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 	const [game] = useService<GameModel>("GameService");
 
 	const [cmdIndex, setCmdIndex] = useState<number>(0);
-	const commands = useMyCommands();
+	const [commands, apsUsed, apsPool] = useMyCommands();
 	const faction = useCurrentFaction();
 
 	useEffect(() => {
@@ -532,7 +532,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 
 	const values = factionValues(game, faction.id);
 
-	const commandsFull = commands.length >= values.maxCommands;
+	const commandsFull = commands.length >= values.maxCommands;	
 	const pointsGenerated = researchPointGenerationCalculator(game, faction);
 
 	const cmdsShown = commands.slice(cmdIndex, cmdIndex + COMMANDPAGINATIONLIMIT);
@@ -608,6 +608,11 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 				Commands
 				<small className={commandsFull ? "red" : ""}>
 					({commands.length} / {values.maxCommands})
+
+				</small>
+				<small className={apsUsed >= apsPool? "red" : ""}>
+					({apsUsed} / {apsPool})
+					
 				</small>
 			</h1>
 
@@ -679,7 +684,12 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 						<Button variant="contained" color="primary" onClick={() => doPlayerDone(faction.id)} disabled={isReady}>
 							READY
 						</Button>
-						<Button variant="contained" color="primary" onClick={() => doPlayerNotDone(faction.id)} disabled={!isReady || game.state !== GameState.TURN}>
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={() => doPlayerNotDone(faction.id)}
+							disabled={!isReady || game.state !== GameState.TURN}
+						>
 							UNREADY
 						</Button>
 					</SubMenuButton>
@@ -728,7 +738,9 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
 			{cmd.type === CommandType.SystemIndustry && <IconIndustry size="lg" className="commandIcon" />}
 			{cmd.type === CommandType.SystemWelfare && <IconWelfare size="lg" className="commandIcon" />}
 
-			<label>{cmdText} {cmd.turn}</label>
+			<label>
+				{cmdText} {cmd.turn}
+			</label>
 			<h2>{systemName}</h2>
 
 			{!props.isReady && !isTemp && (
@@ -876,7 +888,6 @@ const ResearchCommandItem: FC<CommandProps> = (props) => {
 					<CancelIcon className="cancelIcon" />
 				</Button>
 			)}
-			
 		</div>
 	);
 };
