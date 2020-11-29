@@ -516,7 +516,7 @@ const FleetLayer: FC<FleetLayerProps> = (props) => {
 	const [game] = useService<GameModel>(SERVICEID.GameService);
 	const commands = useMyCommands<FleetCommand>(CommandType.FleetMove);
 	const faction = useCurrentFaction();
-	const [spaceShip] = useImage("/spaceship.png");
+	// const [spaceShip] = useImage("/spaceship.png");
 	const windowSize = useWindowSize();
 	const [fleetUnits, fleetActions] = useUnitSelection();
 
