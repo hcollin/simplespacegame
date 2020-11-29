@@ -766,7 +766,6 @@ export function spaceCombatPreCombat(game: GameModel, origCombat: SpaceCombat, s
 			for (let i = 0; i < unit.fighters; i++) {
 				const fighter = createShipFromDesign(DATASHIPS[0], unit.factionId, { x: 0, y: 0 });
 				fighter.name = `${des} squadron ${i}`;
-
 				fighters.push(fighter);
 			}
 		}
@@ -835,7 +834,7 @@ export function spaceCombatAttacks(game: GameModel, origCombat: SpaceCombat): Sp
 						c = updateUnitInCombat(c, ship);
 						if (target) {
 							const oldDmg = target.damage + target.shields;
-
+							c.currentRoundLog.messages.push(`${ship.name}:${weapon.name}:FIRES:${target.name}`);
 							let rc = spaceCombatAttackShoot(game, c, ship, weapon, target);
 
 							const newDmg = target.damage + target.shields;
@@ -844,6 +843,7 @@ export function spaceCombatAttacks(game: GameModel, origCombat: SpaceCombat): Sp
 							return { ...rc };
 						}
 					} else {
+						c.currentRoundLog.messages.push(`${ship.name}:${weapon.name}: Cannot fire`);
 						ship = updateWeaponInUnit(ship, updateCooldownTime(weapon));
 						c = updateUnitInCombat(c, ship);
 						const faction = getFactionFromArrayById(game.factions, ship.factionId);
@@ -946,6 +946,7 @@ export function spaceCombatAttackShoot(game: GameModel, combat: SpaceCombat, att
 	const hitChance = getHitChance(weapon, attacker, target, game); //50 + weapon.accuracy - target.agility;
 	const hitRoll = rnd(1, 100);
 
+	combat.currentRoundLog.messages.push(`${attacker.name}:${weapon.name}:${hitRoll}/${hitChance}`);
 	if (hitRoll <= hitChance) {
 		const targetFactionUnit = getFactionAdjustedUnit(targetFaction, target);
 		const factionWeapon = getFactionAdjustedWeapon(weapon, attackFaction);
