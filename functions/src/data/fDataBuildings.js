@@ -37,7 +37,7 @@ var DATABUILDINGS = [
         minIndustry: 1,
         minWelfare: 1,
         techPreqs: [],
-        maintenanceCost: 1,
+        maintenanceCost: 0,
         score: 1
     },
     {
