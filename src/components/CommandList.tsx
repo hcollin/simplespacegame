@@ -253,7 +253,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			height: "2rem",
 			// marginBottom: "0.25rem",
 			// padding: "0 0.25rem",
-			
+
 			"& > img": {
 				width: "1.6rem",
 				// marginRight: "0.5rem",
@@ -271,7 +271,6 @@ const useStyles = makeStyles((theme: Theme) =>
 				// background: "#0008",
 				padding: "0.25rem 0.5rem",
 				margin: 0,
-				
 			},
 			"& > .vpIcon": {
 				position: "absolute",
@@ -302,14 +301,14 @@ const useStyles = makeStyles((theme: Theme) =>
 					color: "#FFFD",
 					width: "10rem",
 					content: '"READY"',
+					zIndex: "100",
 					position: "absolute",
-					fontSize: "2.5rem",
+					fontSize: "1.2rem",
+					transform: "rotate(-8deg)",
+					marginTop: "-0.8rem",
+					textAlign: "center",
 					fontWeight: "bold",
 					marginLeft: "-5rem",
-					zIndex: "100",
-					marginTop: "-1.75rem",
-					textAlign: "center",
-					transform: "rotate(-10deg)",
 					letterSpacing: "6px",
 				},
 			},
@@ -357,34 +356,28 @@ const useStyles = makeStyles((theme: Theme) =>
 				},
 				"&.menu": {
 					flex: "0 0 auto",
-                    width: "6rem",
-                    marginRight: "1rem",
-                    
-                    "& > div": {
-                        
-                        "& > div.submenu": {
-                            background: "#0008",
-                            padding: "0.5rem",
-                            left: "auto",
-                            right: 0,
-                            borderTopLeftRadius: "1rem",
-                            borderTopRightRadius: "1rem",
+					width: "6rem",
+					marginRight: "1rem",
 
-                            "& > button": {
-                                margin: "0.25rem 0",
-                                "&:first-child": {
-                                    
-                                }
-                            },
-                            "& > hr": {
-                                background: "#FFF8",
-                                margin: "0.5rem 0",
-                            }
-                            
-                        },
-                    }
+					"& > div": {
+						"& > div.submenu": {
+							background: "#0008",
+							padding: "0.5rem",
+							left: "auto",
+							right: 0,
+							borderTopLeftRadius: "1rem",
+							borderTopRightRadius: "1rem",
 
-					
+							"& > button": {
+								margin: "0.25rem 0",
+								"&:first-child": {},
+							},
+							"& > hr": {
+								background: "#FFF8",
+								margin: "0.5rem 0",
+							},
+						},
+					},
 				},
 			},
 		},
@@ -580,8 +573,8 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 
 				<div className="empty"></div>
 				<div className="turn">{game.turn}</div>
-                
-                <button
+
+				<button
 					onClick={() => doPlayerDone(faction.id)}
 					className={`ready ${commands.length < values.maxCommands ? "notAllDone" : ""}`}
 					disabled={isReady}
@@ -655,7 +648,12 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 				const isReady = game.factionsReady.includes(fm.id);
 				const score = getFactionScore(game, fm.id);
 				return (
-					<div className={`${classes.faction} ${isReady ? "ready" : ""}`} key={fm.id} onClick={() => loginFaction(fm)} style={{background: `linear-gradient(90deg, transparent 0, ${fm.color} 1.25rem, transparent 2.5rem)`}}>
+					<div
+						className={`${classes.faction} ${isReady ? "ready" : ""}`}
+						key={fm.id}
+						onClick={() => loginFaction(fm)}
+						style={{ background: `linear-gradient(90deg, transparent 0, ${fm.color} 1.25rem, transparent 2.5rem)` }}
+					>
 						<img src={require(`../images/symbols/${fm.iconFileName}`)} alt={faction.name} />
 						<h3 style={{ color: fm.color, fontFamily: fm.style.fontFamily || "Arial" }}> {fm.name}</h3>
 
@@ -673,16 +671,15 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 					<h1>{game.turn}</h1>
 				</div>
 				<div className="menu">
-					<SubMenuButton direction="UP" color={commandsLeft === 0 ? "primary": "default"}>
-						
+					<SubMenuButton direction="UP" color={commandsLeft === 0 ? "primary" : "default"}>
 						<Button variant="contained" color="primary" onClick={() => doCloseGame()}>
 							CLOSE
 						</Button>
 						<Button variant="contained" color="primary" onClick={() => doLogout()}>
 							LOGOUT
 						</Button>
-                        <hr />
-                        <Button variant="contained" color="primary" onClick={() => doPlayerDone(faction.id)} disabled={isReady}>
+						<hr />
+						<Button variant="contained" color="primary" onClick={() => doPlayerDone(faction.id)} disabled={isReady}>
 							READY
 						</Button>
 					</SubMenuButton>
