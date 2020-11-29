@@ -105,6 +105,17 @@ const EconomySheet: FC = () => {
 			size: 300,
 		},
 		{
+			key: "keyword",
+			header: "Keywords",
+			size: 100,
+			wrapper: (value: string | number, item: any, index: number, isH: boolean) => {
+				if (isH) return value;
+				const star = item as SystemEconomy;
+				return star.keywords.join(", ");
+				// return <span style={{fontWeight: "bold"}}>{value} / <small style={{fontWeight: "normal", fontSize: "0.7rem"}}>{star.industryMax}</small></span>;
+			},
+		},
+		{
 			key: "industry",
 			header: "Industry",
 			size: 100,
@@ -202,6 +213,12 @@ const EconomySheet: FC = () => {
 			size: 100,
 			className: "center",
 		},
+		{
+			key: "vps",
+			header: "VPs",
+			size: 80,
+			className: "center",
+		}
 	];
 
 	return (

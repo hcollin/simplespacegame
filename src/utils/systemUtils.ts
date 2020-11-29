@@ -42,6 +42,7 @@ export interface SystemEconomy extends SystemModel {
 	buildingSlots: number;
 	buildingExpenses: number;
 	shipyards: number;
+	vps: number;
 }
 
 export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEconomy {
@@ -63,6 +64,7 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
 		buildingSlots: getSystemMaxBuildingSlots(star, game),
 		buildingExpenses: star.buildings.reduce((tot: number, b: Building) => tot + b.maintenanceCost, 0),
 		shipyards: 1,
+		vps: 0,
 	};
 
 	eco.expenses = eco.industryExpenses + eco.defenseExpenses + eco.welfareExpenses + eco.buildingExpenses + 1;
@@ -73,6 +75,8 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
 		eco.buildingSlots += techUndergroundConstruction(faction) + techLevitationBuildings(faction);
 		eco.shipyards = techSpaceDock(faction, eco);
 	}
+
+	eco.vps = getSystemVps(game, eco);
 
 	return buildingBioDome(buildingArcology(buildingIndustrySector(buildingFactoryAutomation(buildingRingWorld(eco)))));
 }
@@ -145,4 +149,17 @@ export function getSystemDefence(game: GameModel, sm: SystemModel): number {
 export function getSystemByCoordinates(game: GameModel, coords: Coordinates): SystemModel | undefined {
 	// const game = joki.service.getState("GameService") as GameModel;
 	return game.systems.find((sm: SystemModel) => inSameLocation(sm.location, coords));
+}
+
+
+export function getSystemVps(game: GameModel, star: SystemEconomy): number {
+	let score = 0;
+	score += 3;
+	score += Math.round((star.industry + star.economy + star.defense + star.welfare) / 4);
+	const bScore = star.buildings.reduce((tot: number, b: Building) => {
+		return tot + b.score;
+	}, 0);
+
+	score += bScore;
+	return score;
 }
