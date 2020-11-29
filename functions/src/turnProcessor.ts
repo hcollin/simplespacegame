@@ -70,10 +70,9 @@ export async function processTurn(origGame: GameModel, commands: Command[], fire
 		game = processTrades(game);
 
 		game = processResearchCommands(commands, game);
-
-		game = await processCombats(game, firestore);
-		game = await processInvasion(game, firestore);
 	}
+	game = await processCombats(game, firestore);
+	game = await processInvasion(game, firestore);
 
 	// Process economy
 	game = processEconomy(game);
@@ -838,7 +837,7 @@ export function spaceCombatAttacks(game: GameModel, origCombat: SpaceCombat): Sp
 							const oldDmg = target.damage + target.shields;
 
 							let rc = spaceCombatAttackShoot(game, c, ship, weapon, target);
-							
+
 							const newDmg = target.damage + target.shields;
 
 							if (oldDmg < newDmg) hit = true;
@@ -933,6 +932,7 @@ export function spaceCombatAttackChooseTarget(combat: SpaceCombat, attacker: Shi
 		if (betterTarget) return betterTarget;
 		return target;
 	}
+	combat.currentRoundLog.messages.push(`No valid target found for ${attacker.name}. Combat ends.`);
 	combat.done = true;
 	return null;
 }
@@ -1214,10 +1214,10 @@ export function updateUnitInCombat(combat: SpaceCombat, unit: ShipUnit): SpaceCo
 
 function updateWeaponInUnit(unit: ShipUnit, weapon: ShipWeapon): ShipUnit {
 	unit.weapons = unit.weapons.map((w: ShipWeapon) => {
-		if(w.id === weapon.id) {
-			return {...weapon};
+		if (w.id === weapon.id) {
+			return { ...weapon };
 		}
 		return w;
 	});
-	return {...unit};
+	return { ...unit };
 }

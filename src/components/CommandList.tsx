@@ -24,6 +24,8 @@ import CheatView from "./CheatView";
 import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 import CommandIcon from "./CommandIcon";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+
 import SubMenuButton from "./SubMenuButton";
 import { doCloseGame, doLogout } from "../services/commands/UserCommands";
 import useMobileMode from "../hooks/useMobileMode";
@@ -460,6 +462,7 @@ const useStyles = makeStyles((theme: Theme) =>
 					background: "#F00",
 					boxShadow: "inset 0 0 1rem 0.5rem #0008",
 					border: "ridge 3px #000A",
+					outline: "none",
 					"& > img": {
 						width: "2rem",
 						height: "2rem",
@@ -469,6 +472,39 @@ const useStyles = makeStyles((theme: Theme) =>
 						boxShadow: "inset 0 0 1rem 0.5rem #4448",
 						border: "ridge 3px #000A",
 					},
+				},
+
+				"& > button.commandNextButton": {
+					width: "2.5rem",
+					height: "2.5rem",
+					margin: "0.1rem 0.1rem 0.1rem 0.4rem",
+					padding: "0",
+					borderRadius: "0.5rem",
+					background: "#888",
+					boxShadow: "inset 0 0 1rem 0.5rem #0008",
+					border: "ridge 3px #000A",
+					outline: "none",
+
+					"& > img": {
+						width: "2rem",
+						height: "2rem",
+					},
+					"&:hover": {
+						background: "#AAA",
+						boxShadow: "inset 0 0 1rem 0.5rem #4448",
+						border: "ridge 3px #000A",
+					},
+				},
+				"&> div.done": {
+					color: "#FFFE",
+					width: "100%",
+					textAlign: "center",
+					fontSize: "1rem",
+					textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
+					fontWeight: "bold",
+					padding: "0.5rem 0",
+					borderTop: "ridge 3px #0008",
+					borderBottom: "ridge 3px #0008",
 				},
 
 				"& > div.empty": {
@@ -561,6 +597,9 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 
 	const commandsLeft = values.maxCommands - commands.length;
 
+	const factDonePerc = Math.round((game.factionsReady.length / game.factions.length)*100);
+	console.log(factDonePerc);
+
 	return (
 		<div className={`${classes.commands} ${open ? "open" : ""}`}>
 			<button className="menuopener" onClick={() => setOpen((prev: boolean) => !prev)}>
@@ -594,6 +633,18 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 						</button>
 					);
 				})}
+				{commands.length > limit && (
+					<button className="commandNextButton" onClick={() => setCmdIndex((prev: number) => {
+						const ni = prev + limit;
+						if(ni >=  commands.length) return 0;
+						return ni;
+					})}>{cmdIndex + limit >= commands.length ? <FirstPageIcon /> : <DoubleArrowIcon />}</button>
+				)}
+
+				<div className="done" style={{background: `linear-gradient(90deg, #0F08 ${factDonePerc}%, black 100%)`}}>
+					{game.factionsReady.length} / {game.factions.length}
+				</div>
+
 
 				<div className="empty"></div>
 				<div className="turn">{game.turn}</div>
