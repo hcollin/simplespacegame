@@ -243,36 +243,39 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		faction: {
 			position: "relative",
-			// display: "flex",
-			// flexDirection: "row",
-			// alignItems: "center",
+			display: "flex",
+			flexDirection: "row",
+			alignItems: "center",
 			// justifyContent: "space-between",
 			borderBottom: "solid 2px #FFF2",
 			borderTop: "solid 2px #0008",
 			background: "linear-gradient(90deg, black 0, #FFF3 3px, #FFF8 1.5rem, #FFF5 2.5rem, #4448 3rem,  #3338 95%, #000 100%)",
-			height: "5rem",
+			height: "2rem",
 			// marginBottom: "0.25rem",
 			// padding: "0 0.25rem",
+			
 			"& > img": {
-				width: "2.4rem",
+				width: "1.6rem",
 				// marginRight: "0.5rem",
-				margin: "2rem 0.25rem 0 0.25rem",
+				margin: "0.2rem 0.25rem",
 			},
 			"& > h3": {
 				fontSize: "0.8rem",
 				color: "#FFFD",
 				textShadow: "2px 2px 2px #000, -2px 2px 2px #000, -2px -2px 2px #000, 2px -2px 2px #000",
-				position: "absolute",
-				top: 0,
-				left: 0,
-				right: 0,
-				background: "#0008",
+				// position: "absolute",
+				// top: 0,
+				// left: 0,
+				// right: 0,
+				// bottom: 0,
+				// background: "#0008",
 				padding: "0.25rem 0.5rem",
 				margin: 0,
+				
 			},
 			"& > .vpIcon": {
 				position: "absolute",
-				top: "2.5rem",
+				top: 0,
 				right: "1.5rem",
 				margin: 0,
 				padding: 0,
@@ -280,7 +283,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			},
 			"& > .score": {
 				position: "absolute",
-				top: "2.5rem",
+				top: 0,
 				right: "0.5rem",
 				margin: 0,
 				padding: 0,
@@ -652,7 +655,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 				const isReady = game.factionsReady.includes(fm.id);
 				const score = getFactionScore(game, fm.id);
 				return (
-					<div className={`${classes.faction} ${isReady ? "ready" : ""}`} key={fm.id} onClick={() => loginFaction(fm)}>
+					<div className={`${classes.faction} ${isReady ? "ready" : ""}`} key={fm.id} onClick={() => loginFaction(fm)} style={{background: `linear-gradient(90deg, transparent 0, ${fm.color} 1.25rem, transparent 2.5rem)`}}>
 						<img src={require(`../images/symbols/${fm.iconFileName}`)} alt={faction.name} />
 						<h3 style={{ color: fm.color, fontFamily: fm.style.fontFamily || "Arial" }}> {fm.name}</h3>
 
