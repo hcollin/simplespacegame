@@ -23,7 +23,7 @@ import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
 import HelpContainer from "./HelpContainer";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import FactionBanner from "./FactionBanner";
-import { getFactionAdjustedUnit } from "../utils/unitUtils";
+import { getFactionAdjustedUnit,unitIsInFriendlyOrbit } from "../utils/unitUtils";
 import useMobileMode from "../hooks/useMobileMode";
 import ModalButton from "./ModalButton";
 import MinimizeIcon from '@material-ui/icons/Minimize';
@@ -541,7 +541,8 @@ const SelectUnitToFleet: FC<ContentProps> = (props) => {
 			<div className="units">
 				{shownUnits.map((unit: ShipUnit) => {
 					const isInFleet = inFleet.includes(unit);
-					return <MiniUnitInfo unit={unit} key={unit.id} className={`ship ${!isInFleet ? "isNotInFleet" : ""}`} onClick={() => toggleUnit(unit)} />;
+					const recyclable = unitIsInFriendlyOrbit(unit, game.systems);
+					return <MiniUnitInfo unit={unit} key={unit.id} className={`ship ${!isInFleet ? "isNotInFleet" : ""}`} onClick={() => toggleUnit(unit)} recyclable={recyclable} />;
 				})}
 			</div>
 

@@ -1,5 +1,6 @@
 import { SHIPWEAPONSPECIAL } from "../data/dataShips";
 import { TECHIDS } from "../data/dataTechnology";
+import { Command, CommandType, FleetCommand, UnitScrapCommand } from "../models/Commands";
 import { FactionModel, SystemModel } from "../models/Models";
 import { SHIPCLASS, ShipDesign, ShipUnit, ShipWeapon, WEAPONTYPE } from "../models/Units";
 import {
@@ -13,6 +14,7 @@ import {
     techTargetingComputerTwo,
     techWarpEngines,
 } from "../tech/shipTech";
+import { inSameLocation } from "./locationUtils";
 
 // SHIP VALUES
 // The functions should be used to access the provided ship design value if tech and faction specific modifiers need to be taken account
@@ -170,4 +172,44 @@ export function getWeaponFireRate(weapon: ShipWeapon, faction: FactionModel | tr
         (factionWeapon.special.includes(SHIPWEAPONSPECIAL.RAPIDFIRE) ? 2 : 0) +
         (factionWeapon.special.includes(SHIPWEAPONSPECIAL.HAILOFFIRE) ? 4 : 0)
     );
+}
+
+export function getRecycleProfit(ship: ShipUnit): number {
+    if (ship.hull === 0) return 0;
+    const dmgPerc = ship.damage / ship.hull;
+    return Math.round(ship.cost * 0.5 * (1 - dmgPerc));
+}
+
+export function unitIsInFriendlyOrbit(unit: ShipUnit, stars: SystemModel[]): boolean {
+    return (
+        stars.find((star: SystemModel) => {
+            return inSameLocation(unit.location, star.location);
+        }) !== undefined
+    );
+}
+
+export function unitIsBeingScrapped(unit: ShipUnit, commands: Command[]): UnitScrapCommand | undefined {
+    const cmd = commands.find((cmd: Command) => {
+        if (cmd.type !== CommandType.UnitScrap) return false;
+        const scrapCmd = cmd as UnitScrapCommand;
+        return scrapCmd.unitId === unit.id;
+    });
+    if (cmd) {
+        return cmd as UnitScrapCommand;
+    }
+    return;
+}
+
+export function unitIsAlreadyInCommand(unit: ShipUnit, commands: Command[]): Command | undefined {
+    return commands.find((cmd: Command) => {
+        if (cmd.type === CommandType.UnitScrap) {
+            const scrapCmd = cmd as UnitScrapCommand;
+            return scrapCmd.unitId === unit.id;
+        }
+        if (cmd.type === CommandType.FleetMove) {
+            const fleetCmd = cmd as FleetCommand;
+            return fleetCmd.unitIds.includes(unit.id);
+        }
+        return false;
+    });
 }

@@ -12,8 +12,10 @@ var __assign = (this && this.__assign) || function () {
 };
 exports.__esModule = true;
 var fDataShips_1 = require("../data/fDataShips");
+var fCommands_1 = require("../models/fCommands");
 var fUnits_1 = require("../models/fUnits");
 var fShipTech_1 = require("../tech/fShipTech");
+var fLocationUtils_1 = require("./fLocationUtils");
 var fRandUtils_1 = require("./fRandUtils");
 // import { getFactionById } from "./factionJokiUtils";
 // SHIP VALUES
@@ -178,6 +180,46 @@ function getWeaponFireRate(weapon, faction) {
         (factionWeapon.special.includes(fDataShips_1.SHIPWEAPONSPECIAL.HAILOFFIRE) ? 4 : 0));
 }
 exports.getWeaponFireRate = getWeaponFireRate;
+function getRecycleProfit(ship) {
+    if (ship.hull === 0)
+        return 0;
+    var dmgPerc = ship.damage / ship.hull;
+    return Math.round(ship.cost * 0.5 * (1 - dmgPerc));
+}
+exports.getRecycleProfit = getRecycleProfit;
+function unitIsInFriendlyOrbit(unit, stars) {
+    return (stars.find(function (star) {
+        return fLocationUtils_1.inSameLocation(unit.location, star.location);
+    }) !== undefined);
+}
+exports.unitIsInFriendlyOrbit = unitIsInFriendlyOrbit;
+function unitIsBeingScrapped(unit, commands) {
+    var cmd = commands.find(function (cmd) {
+        if (cmd.type !== fCommands_1.CommandType.UnitScrap)
+            return false;
+        var scrapCmd = cmd;
+        return scrapCmd.unitId === unit.id;
+    });
+    if (cmd) {
+        return cmd;
+    }
+    return;
+}
+exports.unitIsBeingScrapped = unitIsBeingScrapped;
+function unitIsAlreadyInCommand(unit, commands) {
+    return commands.find(function (cmd) {
+        if (cmd.type === fCommands_1.CommandType.UnitScrap) {
+            var scrapCmd = cmd;
+            return scrapCmd.unitId === unit.id;
+        }
+        if (cmd.type === fCommands_1.CommandType.FleetMove) {
+            var fleetCmd = cmd;
+            return fleetCmd.unitIds.includes(unit.id);
+        }
+        return false;
+    });
+}
+exports.unitIsAlreadyInCommand = unitIsAlreadyInCommand;
 /// FROM HELPERS
 function createShipFromDesign(design, factionId, location) {
     var ship = __assign(__assign({}, design), { id: fRandUtils_1.rndId(), damage: 0, morale: 100, shields: design.shieldsMax, location: location, factionId: factionId, experience: 0, name: fDataShips_1.shipNameGenerator() });

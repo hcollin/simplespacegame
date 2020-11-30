@@ -70,7 +70,6 @@ export function doDisbandUnit(unitId: string) {
     if (factionIsReady()) return;
     const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.UnitScrap, 0);
 
-
     if (!rootCommand) {
         console.log("Cannot do scrap Unit command for ", unitId);
         return;
@@ -110,3 +109,4 @@ export function doRecycleUnit(unitId: string) {
         data: command,
     });
 }
+

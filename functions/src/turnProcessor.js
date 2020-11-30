@@ -87,6 +87,7 @@ function processTurn(origGame, commands, firestore) {
                     });
                     console.log("START TURN PROCESSING!", game.name, game.turn);
                     if (!commands) return [3 /*break*/, 2];
+                    game = processScrapCommands(commands, game);
                     return [4 /*yield*/, processSystemCommands(commands, game, firestore)];
                 case 1:
                     game = _a.sent();
@@ -176,6 +177,39 @@ function processMovementCommands(commands, oldGame) {
     commands.forEach(function (cmd) {
         if (cmd.type === fCommands_1.CommandType.FleetMove) {
             game = processFleetMoveCommand(cmd, game);
+        }
+    });
+    return game;
+}
+/**
+ * Scrap units from the game either by disbanding or by recycling
+ *
+ * @param commands
+ * @param oldGame
+ */
+function processScrapCommands(commands, oldGame) {
+    var game = __assign({}, oldGame);
+    function recycleUnit(g, u) {
+        var recValue = fUnitUtils_1.getRecycleProfit(u);
+        if (recValue > 0) {
+            var unitFaction = __assign({}, fFactionUtils_1.getFactionFromArrayById(g.factions, u.factionId));
+            unitFaction.money += recValue;
+            return updateFactionInGame(g, unitFaction);
+        }
+        return __assign({}, g);
+    }
+    commands.forEach(function (cmd) {
+        if (cmd.type === fCommands_1.CommandType.UnitScrap) {
+            var scrapCmd_1 = cmd;
+            game.units = game.units.filter(function (unit) {
+                if (unit.id === scrapCmd_1.unitId) {
+                    if (scrapCmd_1.recycle) {
+                        game = recycleUnit(game, unit);
+                    }
+                    return false;
+                }
+                return true;
+            });
         }
     });
     return game;
@@ -841,7 +875,21 @@ exports.spaceCombatMain = spaceCombatMain;
 function spaceCombatPreCombat(game, origCombat, system) {
     var combat = __assign({}, origCombat);
     // Deploy Fighters
-    var designations = fRandUtils_1.shuffle(["Alpha", "Beta", "Gamma", "Delta", "Phi", "Tau", "Red", "Blue", "Green", "Gold", "Yellow", "Brown", "Tan"]);
+    var designations = fRandUtils_1.shuffle([
+        "Alpha",
+        "Beta",
+        "Gamma",
+        "Delta",
+        "Phi",
+        "Tau",
+        "Red",
+        "Blue",
+        "Green",
+        "Gold",
+        "Yellow",
+        "Brown",
+        "Tan",
+    ]);
     var fighters = combat.units.reduce(function (fighters, unit) {
         if (unit.fighters > 0) {
             var des = designations.pop();

@@ -10,7 +10,7 @@ export enum CommandType {
     SystemWelfare = "SystemWelfare",
     SystemDefense = "SystemDefense",
     FleetMove = "FleetMove",
-    UnitScrap ="UnitScrap",
+    UnitScrap = "UnitScrap",
     TechnologyResearch = "Research",
 }
 
