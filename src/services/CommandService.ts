@@ -120,8 +120,10 @@ export default function createCommandService(serviceId: string, api: JokiService
 
 	async function addCommand(command: Command) {
 		command.id = `TEMP-${v4()}`;
-        commands.push(command);
-        const tempId = command.id;
+		
+		commands.push(command);
+		console.log(command);
+		const tempId = command.id;
         sendUpdate();
         try {
             const newCmd = await apiNewCommand({...command, id: ""});

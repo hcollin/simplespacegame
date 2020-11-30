@@ -87,15 +87,6 @@ exports.playerReady = functions.https.onCall(function (data, context) {
                         if (game.factionsReady.includes(factionId)) {
                             throw new Error("Faction " + factionId + " is already set to ready!");
                         }
-                        // for (let i = 0; i < commands.length; i++) {
-                        //     const cmd = commands[i];
-                        //     cmd.turn = game.turn;
-                        //     cmd.factionId = factionId;
-                        //     console.log("COMMAND TO BE ADDED:", cmd);
-                        //     const docRef = await db.collection("Commands").add(cmd);
-                        //     cmd.id = docRef.id;
-                        //     await db.collection("Commands").doc(cmd.id).set({...cmd});
-                        // }
                         game.factionsReady.push(factionId);
                         return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign({}, game))];
                     case 3:

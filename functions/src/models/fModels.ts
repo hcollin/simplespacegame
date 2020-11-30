@@ -13,6 +13,7 @@ export enum GameState {
     "INIT",
     "OPEN",
     "TURN",
+    "BUSY",
     "PROCESSING",
     "CLEANUP",
     "ENDED",
@@ -23,6 +24,7 @@ export interface GameSetup {
     distances: string;
     density: string;
     specials: string;
+    length: string;
 }
 
 export interface PreGameSetup extends GameSetup {
@@ -49,7 +51,7 @@ export interface GameModel extends GameObject {
     factionsReady: string[];
     state: GameState;
     trades: Trade[];
-    playerIds: string[];
+    playerIds: string[];    
 }
 
 export interface Fleet {
@@ -116,6 +118,7 @@ export interface FactionModel extends GameObject {
     style: FactionStyle;
     technology: string[];
     debt: number;
+    aps: number;
 }
 
 export interface FactionStyle {

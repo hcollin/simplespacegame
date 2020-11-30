@@ -13,6 +13,7 @@ export enum GameState {
     "INIT",
     "OPEN",
     "TURN",
+    "BUSY",
     "PROCESSING",
     "CLEANUP",
     "ENDED",
@@ -117,6 +118,7 @@ export interface FactionModel extends GameObject {
     style: FactionStyle;
     technology: string[];
     debt: number;
+    aps: number;
 }
 
 export interface FactionStyle {

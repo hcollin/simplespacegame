@@ -1,4 +1,4 @@
-import { SystemKeyword } from "./models/Models";
+import { SystemKeyword } from "./models/fModels";
 
 
 // Possible colors for the faction

@@ -14,8 +14,8 @@ import CancelIcon from "@material-ui/icons/Cancel";
 import iconBuildSvg from "../images/iconUnderConstruction.svg";
 import iconScienceSvg from "../images/iconScience.svg";
 import iconFleetSvg from "../images/iconUnits.svg";
-import { IconCommand, IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconScore, IconWelfare } from "./Icons";
-import { calculateTargetScore, factionValues, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
+import { IconActionPoint, IconCommand, IconCredit, IconDefense, IconIndustry, IconResearchPoint, IconScore, IconWelfare } from "./Icons";
+import { calculateTargetScore, factionValues, getActionPointGeneration, getFactionScore, researchPointGenerationCalculator } from "../utils/factionUtils";
 import { doPlayerDone, doPlayerNotDone } from "../services/commands/GameCommands";
 import { COMMANDPAGINATIONLIMIT } from "../configs";
 import { getSystemByCoordinates } from "../utils/systemUtils";
@@ -70,6 +70,9 @@ const useStyles = makeStyles((theme: Theme) =>
 				margin: "0",
 				padding: "0.5rem",
 				borderBottom: "ridge 5px #FFF8",
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "space-between",
 				"& > small": {
 					marginLeft: "1rem",
 					"&.red": {
@@ -600,6 +603,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 	const cmdsShown = commands.slice(cmdIndex, cmdIndex + limit);
 
 	const commandsLeft = values.maxCommands - commands.length;
+	const apsLeft = apsPool - apsUsed;
 
 	const factDonePerc = Math.round((game.factionsReady.length / game.factions.length)*100);
 	console.log(factDonePerc);
@@ -609,6 +613,8 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 			<button className="menuopener" onClick={() => setOpen((prev: boolean) => !prev)}>
 				<DoubleArrowIcon className="icon" />
 			</button>
+
+			{/* Mini display on mobile mode START */}
 			<div className={`${classes.miniDisplay} ${open ? "open" : ""}`}>
 				<div className={`value ${values.income <= 0 ? "red" : ""}`}>
 					<IconCredit />
@@ -626,9 +632,9 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 					<IconWelfare />
 					{values.totalWelfare}
 				</div>
-				<div className={`value ${commandsLeft <= 0 ? "red" : ""}`}>
+				<div className={`value ${apsLeft <= 0 ? "red" : ""}`}>
 					<IconCommand />
-					{commandsLeft}
+					{apsLeft}
 				</div>
 				{cmdsShown.map((cmd: Command) => {
 					return (
@@ -661,6 +667,8 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 					<DoneAllIcon />
 				</button>
 			</div>
+			{/* Mini display on mobile mode END */}
+
 			<header>
 				<div>
 					<IconCredit size="lg" />
@@ -669,12 +677,16 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 				</div>
 				<div>
 					<IconResearchPoint size="lg" />
-					{pointsGenerated}
+				{pointsGenerated >= 0 ? "+": ""}{pointsGenerated}
 				</div>
 				<div>
+					<IconCommand size="lg" />
+					{apsLeft} <small>(+{getActionPointGeneration(game, faction.id )})</small>
+				</div>
+				{/* <div>
 					<IconScore size="lg" />
 					{getFactionScore(game, faction.id)} <small>/ {calculateTargetScore(game)}</small>
-				</div>
+				</div> */}
 				<div>
 					<IconWelfare size="lg" />
 					{values.totalWelfare}
@@ -683,10 +695,6 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 
 			<h1>
 				Commands
-				<small className={commandsFull ? "red" : ""}>
-					({commands.length} / {values.maxCommands})
-
-				</small>
 				<small className={apsUsed >= apsPool? "red" : ""}>
 					({apsUsed} / {apsPool})
 					
@@ -727,7 +735,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 				</div>
 			)}
 
-			<h1>Factions</h1>
+			<h1>Factions <small><IconScore /> {calculateTargetScore(game)}</small></h1>
 			{game.factions.map((fm: FactionModel) => {
 				const isReady = game.factionsReady.includes(fm.id);
 				const score = getFactionScore(game, fm.id);

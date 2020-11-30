@@ -6,7 +6,7 @@ import { GameModel, SystemModel } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
 import { User } from "../../models/User";
 import { getBuildingTime } from "../../utils/buildingUtils";
-import { factionCanDoMoreCommands, getFactionByUserId } from "../helpers/FactionHelpers";
+import { factionCanDoMoreCommands, factionHasEnoughActionPoints, getFactionByUserId } from "../helpers/FactionHelpers";
 import { SERVICEID } from "../services";
 
 export function plusEconomy(targetSystem: SystemModel, apCost=1) {
@@ -137,7 +137,7 @@ export function doBuildUnit(ship: ShipDesign, systemId: string) {
 	});
 }
 
-export function createEmptyCommandForCurrentFactionAndGame(type: CommandType): Command | undefined {
+export function createEmptyCommandForCurrentFactionAndGame(type: CommandType, actionPointCost=1): Command | undefined {
 	const user = joki.service.getState(SERVICEID.UserService) as User | null;
 	const game = joki.service.getState(SERVICEID.GameService) as GameModel;
 	const commands = joki.service.getState(SERVICEID.CommandService) as Command[];
@@ -148,9 +148,9 @@ export function createEmptyCommandForCurrentFactionAndGame(type: CommandType): C
 
 	if (!faction) return;
 
-	if (!factionCanDoMoreCommands(game, commands, faction)) {
-		return;
-	}
+	// if (!factionCanDoMoreCommands(game, commands, faction)) {
+	// 	return;
+	// }
 
 	const command: Command = {
 		id: "",
@@ -158,9 +158,13 @@ export function createEmptyCommandForCurrentFactionAndGame(type: CommandType): C
 		factionId: faction.id,
 		type: type,
 		completed: false,
-		actionPoints: 1,
+		actionPoints: actionPointCost,
 		turn: game.turn,
 	};
+
+	if(!factionHasEnoughActionPoints(game, faction, commands, command)) {
+		return;
+	}
 
 	return command;
 }

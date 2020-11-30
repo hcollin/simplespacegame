@@ -25,7 +25,7 @@ export default function useMyCommands<T extends Command>(type?: CommandType): [T
                 
                 const fcoms = allCommands.filter((c: Command) => c.factionId === faction.id);
                 const pool = getFactionActionPointPool(game, faction);
-                const aps = getActionPointCostOfCommands(fcoms);
+                const aps = getActionPointCostOfCommands(game, fcoms);
                 if(type === undefined) {
                     setCommands(fcoms as T[]);
                 } else {

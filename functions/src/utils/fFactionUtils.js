@@ -1,7 +1,7 @@
 "use strict";
 exports.__esModule = true;
-exports.calcalateNextDebtPayback = exports.calculateFactionDebt = exports.getFactionScore = exports.researchPointDistribution = exports.getSystemResearchPointGeneration = exports.researchPointGenerationCalculator = exports.systemExpenses = exports.unitExpenses = exports.getWelfareCommands = exports.commandCountCalculator = exports.expensesCalculator = exports.factionValues = exports.getFactionFromArrayById = void 0;
 var fBuildingRules_1 = require("../buildings/fBuildingRules");
+var configs_1 = require("../configs");
 var fBusinessTech_1 = require("../tech/fBusinessTech");
 function getFactionFromArrayById(factions, id) {
     return factions.find(function (fm) { return fm.id === id; });
@@ -20,7 +20,9 @@ function factionValues(game, factionId) {
         systemExpenses: 0,
         systemCount: 0,
         systemIncome: 0,
-        trade: 0
+        trade: 0,
+        debt: 0,
+        debtRepayment: 0
     };
     var faction = getFactionFromArrayById(game.factions, factionId);
     if (!faction) {
@@ -59,6 +61,8 @@ function factionValues(game, factionId) {
     }, 0);
     values.income = values.totalEconomy + values.trade - values.expenses + fBusinessTech_1.techMarketing(faction, game) + fBusinessTech_1.techCapitalist(faction, game.systems);
     values.maxCommands = commandCountCalculator(game, factionId);
+    values.debt = faction.debt;
+    values.debtRepayment = faction.debt > 0 ? Math.floor(values.income / 3) : 0;
     return values;
 }
 exports.factionValues = factionValues;
@@ -114,9 +118,13 @@ function commandCountCalculator(game, factionId) {
 }
 exports.commandCountCalculator = commandCountCalculator;
 function getWelfareCommands(faction, welfarePointTotal) {
-    return 3 + Math.floor(welfarePointTotal / fBusinessTech_1.techDecisionEngine(faction));
+    return Math.floor(welfarePointTotal / fBusinessTech_1.techDecisionEngine(faction));
 }
 exports.getWelfareCommands = getWelfareCommands;
+function getActionPointGeneration(game, factionId) {
+    return configs_1.BASEACTIONPOINTCOUNT + commandCountCalculator(game, factionId);
+}
+exports.getActionPointGeneration = getActionPointGeneration;
 function unitExpenses(um) {
     return um.cost >= 3 ? Math.floor(um.cost / 3) : 1;
 }
@@ -205,10 +213,15 @@ function getFactionScore(game, factionId) {
         throw new Error("Invalid faction id " + factionId);
     score += faction.technology.length * 2;
     score += fBuildingRules_1.buildingGalacticSenate(game, faction);
+    // score -= faction.debt * Math.ceil(faction.debt/20);
     // Add technology scores from base research techs
     return score;
 }
 exports.getFactionScore = getFactionScore;
+function calculateTargetScore(game) {
+    return Math.round(game.systems.length * 1.5 + (80 - game.setup.playerCount * 10));
+}
+exports.calculateTargetScore = calculateTargetScore;
 /**
  * Calculate new debt amount and possible adjusted to money after debt
  *

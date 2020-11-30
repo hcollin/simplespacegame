@@ -23,14 +23,18 @@ export function unitIsInFleet(commands: Command[], unit: ShipUnit): FleetCommand
 	return null;
 }
 
-export function getActionPointCostOfCommands(commands: Command[]): number {
+export function getActionPointCostOfCommands(game: GameModel, commands: Command[]): number {
     return commands.reduce((tot: number, cmd: Command) => {
-        return tot + cmd.actionPoints;
+		if(game.turn !== cmd.turn) {
+			return tot;
+		}
+		return tot + cmd.actionPoints;
     }, 0);
 }
 
 export function getFactionActionPointPool(game: GameModel, faction: FactionModel): number {
-    const maxCommands = commandCountCalculator(game, faction.id);
-    return maxCommands;
+	const maxCommands = commandCountCalculator(game, faction.id);
+	
+    return maxCommands + faction.aps;
 }
 

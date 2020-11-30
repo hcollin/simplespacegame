@@ -34,6 +34,7 @@ import {
 	factionValues,
 	getFactionFromArrayById,
 	calculateFactionDebt,
+	getActionPointGeneration,
 } from "./utils/fFactionUtils";
 import { asyncArrayMap, asyncMapForeach, mapAdd } from "./utils/fGeneralUtils";
 import { inSameLocation } from "./utils/fLocationUtils";
@@ -86,11 +87,11 @@ export async function processTurn(origGame: GameModel, commands: Command[], fire
 	// Win Conditions
 	game = processWinConditions(game);
 
-	// Increase turn counter
-	game.turn++;
+	// Turn final processing
+	game = processStartNewTurn(game);
 
 	// Clear ready states
-	game.factionsReady = [];
+	
 
 	// // Clear Commands
 	// api.api.trigger({
@@ -106,6 +107,11 @@ export async function processTurn(origGame: GameModel, commands: Command[], fire
 	return [{ ...game }, [...(commands || [])]];
 }
 
+/**
+ * Check if any player has won
+ * 
+ * @param game 
+ */
 function processWinConditions(game: GameModel): GameModel {
 	const winners: string[] = [];
 
@@ -127,6 +133,35 @@ function processWinConditions(game: GameModel): GameModel {
 	return { ...game };
 }
 
+
+/**
+ * Clean after processing and prepareing for the next turn
+ * 
+ * @param game 
+ */
+function processStartNewTurn(game: GameModel): GameModel {
+
+	const nGame = {...game};
+
+	nGame.factions = nGame.factions.map((f: FactionModel) => {
+		const newAps = getActionPointGeneration(nGame, f.id);
+		f.aps += newAps;
+		return f;
+	})
+
+	nGame.factionsReady = [];
+	nGame.turn++;
+
+	return nGame;
+	
+}
+
+/**
+ * Process Fleet movement commands
+ * 
+ * @param commands 
+ * @param oldGame 
+ */
 function processMovementCommands(commands: Command[], oldGame: GameModel): GameModel {
 	let game = { ...oldGame };
 
@@ -139,6 +174,11 @@ function processMovementCommands(commands: Command[], oldGame: GameModel): GameM
 	return game;
 }
 
+/**
+ * Process Research Point generation for each faction
+ * 
+ * @param oldGame 
+ */
 function processResearch(oldGame: GameModel) {
 	const game = { ...oldGame };
 
@@ -157,6 +197,11 @@ function processResearch(oldGame: GameModel) {
 	return game;
 }
 
+/**
+ * Process active trades
+ * 
+ * @param oldGame 
+ */
 function processTrades(oldGame: GameModel): GameModel {
 	let game = { ...oldGame };
 
@@ -186,6 +231,12 @@ function processTrades(oldGame: GameModel): GameModel {
 	return game;
 }
 
+/**
+ * Handle Research commands that actually gives new tech for factions
+ * 
+ * @param commands 
+ * @param oldGame 
+ */
 function processResearchCommands(commands: Command[], oldGame: GameModel): GameModel {
 	let game = { ...oldGame };
 
@@ -198,7 +249,7 @@ function processResearchCommands(commands: Command[], oldGame: GameModel): GameM
 				if (tech && faction && canAffordTech(tech, faction)) {
 					faction.technologyFields = factionPaysForTech(faction.technologyFields, tech);
 					faction.technology.push(tech.id);
-					game = updateFactionInGame(game, faction);
+					game = updateFactionInGame(payActionPointCost(game, command), faction);
 					markCommandDone(cmd);
 				}
 			}
@@ -208,6 +259,13 @@ function processResearchCommands(commands: Command[], oldGame: GameModel): GameM
 	return game;
 }
 
+/**
+ * Process all command given for a system like improving infrastructure and building units and buildings
+ * 
+ * @param commands 
+ * @param oldGame 
+ * @param firestore 
+ */
 async function processSystemCommands(commands: Command[], oldGame: GameModel, firestore: any): Promise<GameModel> {
 	let game = { ...oldGame };
 
@@ -236,6 +294,12 @@ async function processSystemCommands(commands: Command[], oldGame: GameModel, fi
 	return game;
 }
 
+/**
+ * Process Ground combat
+ * 
+ * @param oldGame 
+ * @param firestore 
+ */
 async function processInvasion(oldGame: GameModel, firestore: any): Promise<GameModel> {
 	let game = { ...oldGame };
 
@@ -395,26 +459,27 @@ function processSystemEconomyCommand(command: SystemPlusCommand, game: GameModel
 	const system = getSystemFromGame(game, command.targetSystem);
 	system.economy++;
 	markCommandDone(command);
-	return updateSystemInGame(game, system);
+	return updateSystemInGame(payActionPointCost(game, command), system);
 }
 
 function processSystemWelfareCommand(command: SystemPlusCommand, game: GameModel): GameModel {
 	const system = getSystemFromGame(game, command.targetSystem);
 	system.welfare++;
 	markCommandDone(command);
-	return updateSystemInGame(game, system);
+	return updateSystemInGame(payActionPointCost(game, command), system);
 }
 
 function processSystemIndustryCommand(command: SystemPlusCommand, game: GameModel): GameModel {
 	const system = getSystemFromGame(game, command.targetSystem);
 	system.industry++;
 	markCommandDone(command);
-	return updateSystemInGame(game, system);
+	return updateSystemInGame(payActionPointCost(game, command), system);
 }
 
-function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameModel): GameModel {
+function processSystemBuildUnitCommand(command: BuildUnitCommand, oldGame: GameModel): GameModel {
+	let game = {...oldGame};
 	const faction = getFactionFromArrayById(game.factions, command.factionId);
-
+	
 	if (faction) {
 		const shipDesign = getDesignByName(command.shipName);
 		const system = getSystemFromGame(game, command.targetSystem);
@@ -423,6 +488,7 @@ function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameMode
 			const cost = shipDesign.cost * buildingRobotWorkers(system);
 			if (faction.money >= cost) {
 				faction.money = faction.money - cost;
+				game = payActionPointCost(game, command);
 				command.turnsLeft--;
 				if (buildingDysonSphere(system)) {
 					command.turnsLeft = 0;
@@ -455,9 +521,11 @@ function processSystemBuildUnitCommand(command: BuildUnitCommand, game: GameMode
 	return { ...game };
 }
 
-async function processSystemBuildBuildingCommand(command: BuildBuildingCommand, game: GameModel, firestore: any): Promise<GameModel> {
+async function processSystemBuildBuildingCommand(command: BuildBuildingCommand, oldGame: GameModel, firestore: any): Promise<GameModel> {
+	
+	
+	let game = {...oldGame};
 	const faction = getFactionFromArrayById(game.factions, command.factionId);
-
 	if (faction) {
 		const bdesign = getBuildingDesignByType(command.buildingType);
 		const system = getSystemFromGame(game, command.targetSystem);
@@ -466,6 +534,7 @@ async function processSystemBuildBuildingCommand(command: BuildBuildingCommand, 
 			const cost = bdesign.cost * buildingRobotWorkers(system);
 			if (faction.money >= cost) {
 				faction.money = faction.money - cost;
+				game = payActionPointCost(game, command);
 				command.turnsLeft--;
 				if (buildingDysonSphere(system)) {
 					command.turnsLeft = 0;
@@ -522,7 +591,7 @@ function processSysteDefenseCommand(command: SystemPlusCommand, game: GameModel)
 	const system = getSystemFromGame(game, command.targetSystem);
 	system.defense++;
 	markCommandDone(command);
-	return updateSystemInGame(game, system);
+	return updateSystemInGame(payActionPointCost(game, command), system);
 }
 
 function processFleetMoveCommand(command: FleetCommand, game: GameModel): GameModel {
@@ -540,12 +609,17 @@ function processFleetMoveCommand(command: FleetCommand, game: GameModel): GameMo
 		}
 	}
 
+	if(command.turn === nGame.turn) {
+		nGame = payActionPointCost(nGame, command);
+	}
+
 	command.unitIds.forEach((uid: string) => {
 		const unit = getUnitFromGame(game, uid);
 		const faction = getFactionFromArrayById(game.factions, unit.factionId);
 
 		if (newPoint === null) {
 			newPoint = travelingBetweenCoordinates(unit.location, command.target, getShipSpeed(unit, faction));
+
 		}
 
 		const nUnit = { ...unit };
@@ -698,6 +772,20 @@ function addReportToSystem(game: GameModel, system: SystemModel, type: DetailRep
 
 function markCommandDone(command: Command) {
 	command.completed = true;
+}
+
+function payActionPointCost(oldGame: GameModel, command: Command): GameModel {
+	const game = {...oldGame};
+
+	game.factions = game.factions.map((f: FactionModel) => {
+		if(f.id === command.factionId) {
+			f.aps -= command.actionPoints;
+			return {...f};
+		}
+		return f;
+	});
+	
+	return game;
 }
 
 /***********************************************************************************************************

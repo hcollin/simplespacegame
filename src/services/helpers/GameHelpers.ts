@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { MAPDensities, MAPSizes } from "../../configs";
+import { BASEACTIONPOINTCOUNT, MAPDensities, MAPSizes } from "../../configs";
 
 import {
     Coordinates,
@@ -249,6 +249,7 @@ export function createFactionFromSetup(setup: FactionSetup): FactionModel {
         },
         technology: [],
         debt: 0,
+        aps: BASEACTIONPOINTCOUNT,
     };
 
     return fm;

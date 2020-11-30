@@ -1,4 +1,5 @@
 import { buildingCGaiaProject, buildingCommandCenter, buildingGalacticSenate, buildingUniversity } from "../buildings/buildingRules";
+import { BASEACTIONPOINTCOUNT } from "../configs";
 import { Building } from "../models/Buildings";
 import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/Models";
@@ -158,7 +159,11 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
 }
 
 export function getWelfareCommands(faction: FactionModel, welfarePointTotal: number): number {
-	return 3 + Math.floor(welfarePointTotal / techDecisionEngine(faction));
+	return Math.floor(welfarePointTotal / techDecisionEngine(faction));
+}
+
+export function getActionPointGeneration(game: GameModel, factionId: string): number {
+	return BASEACTIONPOINTCOUNT + commandCountCalculator(game, factionId);
 }
 
 export function unitExpenses(um: ShipUnit): number {
@@ -326,3 +331,5 @@ export function calcalateNextDebtPayback(game: GameModel, faction: FactionModel)
 
 	return payback;
 }
+
+

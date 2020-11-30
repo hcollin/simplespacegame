@@ -54,7 +54,6 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-exports.updateUnitInCombat = exports.damagePotential = exports.getHitChance = exports.updateCooldownTime = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatInflictDamage = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatPostCombat = exports.spaceCombatPreCombat = exports.spaceCombatMain = exports.processTurn = void 0;
 var fBuildingRules_1 = require("./buildings/fBuildingRules");
 var fDataBuildings_1 = require("./data/fDataBuildings");
 var fDataShips_1 = require("./data/fDataShips");
@@ -110,10 +109,9 @@ function processTurn(origGame, commands, firestore) {
                     game = processResearch(game);
                     // Win Conditions
                     game = processWinConditions(game);
-                    // Increase turn counter
-                    game.turn++;
+                    // Turn final processing
+                    game = processStartNewTurn(game);
                     // Clear ready states
-                    game.factionsReady = [];
                     // // Clear Commands
                     // api.api.trigger({
                     //     from: serviceId,
@@ -128,6 +126,11 @@ function processTurn(origGame, commands, firestore) {
     });
 }
 exports.processTurn = processTurn;
+/**
+ * Check if any player has won
+ *
+ * @param game
+ */
 function processWinConditions(game) {
     var winners = [];
     // Score based winning to be done
@@ -146,6 +149,28 @@ function processWinConditions(game) {
     }
     return __assign({}, game);
 }
+/**
+ * Clean after processing and prepareing for the next turn
+ *
+ * @param game
+ */
+function processStartNewTurn(game) {
+    var nGame = __assign({}, game);
+    nGame.factions = nGame.factions.map(function (f) {
+        var newAps = fFactionUtils_1.getActionPointGeneration(nGame, f.id);
+        f.aps += newAps;
+        return f;
+    });
+    nGame.factionsReady = [];
+    nGame.turn++;
+    return nGame;
+}
+/**
+ * Process Fleet movement commands
+ *
+ * @param commands
+ * @param oldGame
+ */
 function processMovementCommands(commands, oldGame) {
     var game = __assign({}, oldGame);
     commands.forEach(function (cmd) {
@@ -155,6 +180,11 @@ function processMovementCommands(commands, oldGame) {
     });
     return game;
 }
+/**
+ * Process Research Point generation for each faction
+ *
+ * @param oldGame
+ */
 function processResearch(oldGame) {
     var game = __assign({}, oldGame);
     game.factions = game.factions.map(function (fm) {
@@ -168,6 +198,11 @@ function processResearch(oldGame) {
     });
     return game;
 }
+/**
+ * Process active trades
+ *
+ * @param oldGame
+ */
 function processTrades(oldGame) {
     var game = __assign({}, oldGame);
     game.trades = game.trades.map(function (tr) {
@@ -190,6 +225,12 @@ function processTrades(oldGame) {
     });
     return game;
 }
+/**
+ * Handle Research commands that actually gives new tech for factions
+ *
+ * @param commands
+ * @param oldGame
+ */
 function processResearchCommands(commands, oldGame) {
     var game = __assign({}, oldGame);
     commands.forEach(function (cmd) {
@@ -201,7 +242,7 @@ function processResearchCommands(commands, oldGame) {
                 if (tech && faction && fTechUtils_1.canAffordTech(tech, faction)) {
                     faction.technologyFields = fTechUtils_1.factionPaysForTech(faction.technologyFields, tech);
                     faction.technology.push(tech.id);
-                    game = updateFactionInGame(game, faction);
+                    game = updateFactionInGame(payActionPointCost(game, command_1), faction);
                     markCommandDone(cmd);
                 }
             }
@@ -209,6 +250,13 @@ function processResearchCommands(commands, oldGame) {
     });
     return game;
 }
+/**
+ * Process all command given for a system like improving infrastructure and building units and buildings
+ *
+ * @param commands
+ * @param oldGame
+ * @param firestore
+ */
 function processSystemCommands(commands, oldGame, firestore) {
     return __awaiter(this, void 0, void 0, function () {
         var game, i, cmd;
@@ -249,6 +297,12 @@ function processSystemCommands(commands, oldGame, firestore) {
         });
     });
 }
+/**
+ * Process Ground combat
+ *
+ * @param oldGame
+ * @param firestore
+ */
 function processInvasion(oldGame, firestore) {
     return __awaiter(this, void 0, void 0, function () {
         var game, invadedSystems, _a;
@@ -429,21 +483,22 @@ function processSystemEconomyCommand(command, game) {
     var system = getSystemFromGame(game, command.targetSystem);
     system.economy++;
     markCommandDone(command);
-    return updateSystemInGame(game, system);
+    return updateSystemInGame(payActionPointCost(game, command), system);
 }
 function processSystemWelfareCommand(command, game) {
     var system = getSystemFromGame(game, command.targetSystem);
     system.welfare++;
     markCommandDone(command);
-    return updateSystemInGame(game, system);
+    return updateSystemInGame(payActionPointCost(game, command), system);
 }
 function processSystemIndustryCommand(command, game) {
     var system = getSystemFromGame(game, command.targetSystem);
     system.industry++;
     markCommandDone(command);
-    return updateSystemInGame(game, system);
+    return updateSystemInGame(payActionPointCost(game, command), system);
 }
-function processSystemBuildUnitCommand(command, game) {
+function processSystemBuildUnitCommand(command, oldGame) {
+    var game = __assign({}, oldGame);
     var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, command.factionId);
     if (faction) {
         var shipDesign = fUnitUtils_1.getDesignByName(command.shipName);
@@ -452,6 +507,7 @@ function processSystemBuildUnitCommand(command, game) {
             var cost = shipDesign.cost * fBuildingRules_1.buildingRobotWorkers(system);
             if (faction.money >= cost) {
                 faction.money = faction.money - cost;
+                game = payActionPointCost(game, command);
                 command.turnsLeft--;
                 if (fBuildingRules_1.buildingDysonSphere(system)) {
                     command.turnsLeft = 0;
@@ -484,12 +540,13 @@ function processSystemBuildUnitCommand(command, game) {
     }
     return __assign({}, game);
 }
-function processSystemBuildBuildingCommand(command, game, firestore) {
+function processSystemBuildBuildingCommand(command, oldGame, firestore) {
     return __awaiter(this, void 0, void 0, function () {
-        var faction, bdesign, system, cost, system_1, report, system_2;
+        var game, faction, bdesign, system, cost, system_1, report, system_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    game = __assign({}, oldGame);
                     faction = fFactionUtils_1.getFactionFromArrayById(game.factions, command.factionId);
                     if (!faction) return [3 /*break*/, 5];
                     bdesign = fBuildingUtils_1.getBuildingDesignByType(command.buildingType);
@@ -498,6 +555,7 @@ function processSystemBuildBuildingCommand(command, game, firestore) {
                     cost = bdesign.cost * fBuildingRules_1.buildingRobotWorkers(system);
                     if (!(faction.money >= cost)) return [3 /*break*/, 3];
                     faction.money = faction.money - cost;
+                    game = payActionPointCost(game, command);
                     command.turnsLeft--;
                     if (fBuildingRules_1.buildingDysonSphere(system)) {
                         command.turnsLeft = 0;
@@ -549,7 +607,7 @@ function processSysteDefenseCommand(command, game) {
     var system = getSystemFromGame(game, command.targetSystem);
     system.defense++;
     markCommandDone(command);
-    return updateSystemInGame(game, system);
+    return updateSystemInGame(payActionPointCost(game, command), system);
 }
 function processFleetMoveCommand(command, game) {
     var newPoint = null;
@@ -562,6 +620,9 @@ function processFleetMoveCommand(command, game) {
         if (fBuildingRules_1.buildingGateway(startStar, endStar, unit.factionId)) {
             newPoint = endStar.location;
         }
+    }
+    if (command.turn === nGame.turn) {
+        nGame = payActionPointCost(nGame, command);
     }
     command.unitIds.forEach(function (uid) {
         var unit = getUnitFromGame(game, uid);
@@ -722,6 +783,17 @@ function addReportToSystem(game, system, type, factionIds, reportId) {
 }
 function markCommandDone(command) {
     command.completed = true;
+}
+function payActionPointCost(oldGame, command) {
+    var game = __assign({}, oldGame);
+    game.factions = game.factions.map(function (f) {
+        if (f.id === command.factionId) {
+            f.aps -= command.actionPoints;
+            return __assign({}, f);
+        }
+        return f;
+    });
+    return game;
 }
 /***********************************************************************************************************
  * SPACE COMBAT

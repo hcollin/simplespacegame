@@ -1,4 +1,5 @@
 import { buildingCGaiaProject, buildingCommandCenter, buildingUniversity, buildingGalacticSenate } from "../buildings/fBuildingRules";
+import { BASEACTIONPOINTCOUNT } from "../configs";
 import { Building } from "../models/fBuildings";
 import { Trade } from "../models/fCommunication";
 import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/fModels";
@@ -31,6 +32,8 @@ interface FactionValues {
 	systemCount: number;
 	systemIncome: number;
 	trade: number;
+	debt: number;
+	debtRepayment: number;
 }
 
 export function factionValues(game: GameModel, factionId: string): FactionValues {
@@ -47,6 +50,8 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
 		systemCount: 0,
 		systemIncome: 0,
 		trade: 0,
+		debt: 0,
+		debtRepayment: 0,
 	};
 	const faction = getFactionFromArrayById(game.factions, factionId);
 	if (!faction) {
@@ -92,6 +97,9 @@ export function factionValues(game: GameModel, factionId: string): FactionValues
 	values.income = values.totalEconomy + values.trade - values.expenses + techMarketing(faction, game) + techCapitalist(faction, game.systems);
 
 	values.maxCommands = commandCountCalculator(game, factionId);
+
+	values.debt = faction.debt;
+	values.debtRepayment = faction.debt > 0 ? Math.floor(values.income / 3) : 0;
 
 	return values;
 }
@@ -142,7 +150,6 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
 
 			// 1 bonus command per 5 welfare in this system
 			bonusCommands += Math.floor(star.welfare / 5);
-
 			bonusCommands += buildingCGaiaProject(star, "COMMAND");
 			bonusCommands += buildingCommandCenter(star);
 		}
@@ -155,7 +162,11 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
 }
 
 export function getWelfareCommands(faction: FactionModel, welfarePointTotal: number): number {
-	return 3 + Math.floor(welfarePointTotal / techDecisionEngine(faction));
+	return Math.floor(welfarePointTotal / techDecisionEngine(faction));
+}
+
+export function getActionPointGeneration(game: GameModel, factionId: string): number {
+	return BASEACTIONPOINTCOUNT + commandCountCalculator(game, factionId);
 }
 
 export function unitExpenses(um: ShipUnit): number {
@@ -256,9 +267,15 @@ export function getFactionScore(game: GameModel, factionId: string): number {
 
 	score += buildingGalacticSenate(game, faction);
 
+	// score -= faction.debt * Math.ceil(faction.debt/20);
+
 	// Add technology scores from base research techs
 
 	return score;
+}
+
+export function calculateTargetScore(game: GameModel) {
+	return Math.round(game.systems.length * 1.5 + (80 - game.setup.playerCount * 10));
 }
 
 /**
@@ -317,3 +334,5 @@ export function calcalateNextDebtPayback(game: GameModel, faction: FactionModel)
 
 	return payback;
 }
+
+

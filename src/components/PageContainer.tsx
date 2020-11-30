@@ -107,7 +107,7 @@ const useStyles = (props: PageContainerProps) => {
                 [theme.breakpoints.up("lg")]: {
                     zIndex: 10,
                     marginTop: "4rem",
-                    padding: "1rem 4rem 1rem 1rem",
+                    padding: "1rem ",
                     marginBottom: "6rem",
                     border: "none",
 

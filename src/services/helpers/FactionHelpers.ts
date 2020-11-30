@@ -1,10 +1,11 @@
-import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../../configs";
+import { BASEACTIONPOINTCOUNT, FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../../configs";
 import DATASHIPS from "../../data/dataShips";
 
 import DATAUSERS from "../../data/dataUser.";
 import { Command } from "../../models/Commands";
 import { FactionModel, FactionState, GameModel, TechnologyField } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
+import { getActionPointCostOfCommands, getFactionActionPointPool } from "../../utils/commandUtils";
 import { factionValues } from "../../utils/factionUtils";
 import { arnd, arnds, prnd, rnd, shuffle } from "../../utils/randUtils";
 
@@ -67,7 +68,10 @@ export function createNewFaction(): FactionModel {
         },
         technology: [],
         debt: 0,
+        aps: BASEACTIONPOINTCOUNT,
     }
+
+
 
     return fm;
 }
@@ -81,6 +85,15 @@ export function getFactionByUserId(factions: FactionModel[], userId: string): Fa
     return factions.find((fm: FactionModel) => fm.playerId === userId);
 }
 
+export function factionHasEnoughActionPoints(game: GameModel, faction: FactionModel, commands: Command[], command: Command) {
+    
+    const cmds = commands.filter((cmd: Command) => cmd.factionId === faction.id && cmd.turn === game.turn);
+    const pool = getFactionActionPointPool(game, faction);
+    const aps = getActionPointCostOfCommands(game, cmds);
+
+    return (aps + command.actionPoints) <= pool;
+}
+
 
 export function factionCanDoMoreCommands(game: GameModel, commands: Command[], faction: FactionModel): boolean {
     // const game = joki.service.getState("GameService") as GameModel;
@@ -88,6 +101,11 @@ export function factionCanDoMoreCommands(game: GameModel, commands: Command[], f
     // const commands = joki.service.getState("CommandService") as Command[];
     const myCurrentCommands = commands.filter((cm: Command) => cm.factionId === faction.id && cm.completed === false);
     if(game.factionsReady.includes(faction.id)) return false;
+    // const pool = getFactionActionPointPool(game, faction);
+    // const aps = getActionPointCostOfCommands(myCurrentCommands);
+
+    
+
     return myCurrentCommands.length < values.maxCommands;
 }
 
