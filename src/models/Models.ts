@@ -2,6 +2,7 @@ import { TECHIDS } from "../data/dataTechnology";
 import { Building } from "./Buildings";
 import { Trade } from "./Communication";
 import { CombatRoundReport, DetailReportType } from "./Report";
+import { SystemModel } from "./StarSystem";
 import { ShipUnit } from "./Units";
 
 export interface GameObject {
@@ -64,34 +65,6 @@ export interface Coordinates {
     y: number;
 }
 
-export enum SystemKeyword {
-    HOMEWORLD = "Homeworld",
-    MINERALRICH = "Mineral Rich",
-    MINERALPOOR = "Mineral Poor",
-    MINERALRARE = "Rare Minerals",
-    HOSTILE = "Hostile Environment",
-    GAIA = "Gaia world",
-    NATIVES = "Natives",
-    ARTIFACTS = "Alien Artifacts",
-}
-
-export interface SystemModel extends GameObject {
-    name: string;
-    location: Coordinates;
-    ownerFactionId: string;
-
-    industry: number;
-    economy: number;
-    defense: number;
-    welfare: number;
-
-    color: string;
-    keywords: (string | SystemKeyword)[];
-    reports: Report[];
-
-    buildings: Building[];
-    description?: string;
-}
 
 export enum FactionState {
     "INIT",

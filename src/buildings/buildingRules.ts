@@ -1,6 +1,7 @@
 import { BUILDINGTYPE } from "../data/dataBuildings";
 import { Building } from "../models/Buildings";
-import { FactionModel, GameModel, SystemKeyword, SystemModel } from "../models/Models";
+import { FactionModel, GameModel, Coordinates} from "../models/Models";
+import { SystemModel, SystemKeyword } from "../models/StarSystem";
 import { factionValues } from "../utils/factionUtils";
 import { distanceBetweenCoordinates } from "../utils/MathUtils";
 import { roll } from "../utils/randUtils";

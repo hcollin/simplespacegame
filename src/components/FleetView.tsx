@@ -6,7 +6,7 @@ import useSelectedSystem from "../hooks/useSelectedSystem";
 import useUnitSelection from "../hooks/useUnitSelection";
 
 import { Command } from "../models/Commands";
-import { FactionModel, GameModel, SystemModel } from "../models/Models";
+import { FactionModel, GameModel } from "../models/Models";
 import { ShipUnit } from "../models/Units";
 import { moveUnits } from "../services/commands/UnitCommands";
 import { unitIsMoving } from "../services/helpers/UnitHelpers";
@@ -28,6 +28,7 @@ import useMobileMode from "../hooks/useMobileMode";
 import ModalButton from "./ModalButton";
 import MinimizeIcon from '@material-ui/icons/Minimize';
 import AllOutIcon from '@material-ui/icons/AllOut';
+import { SystemModel } from "../models/StarSystem";
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {

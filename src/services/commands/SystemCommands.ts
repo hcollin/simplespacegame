@@ -2,7 +2,8 @@ import { joki } from "jokits-react";
 import { BUILDINGTYPE } from "../../data/dataBuildings";
 
 import { BuildBuildingCommand, BuildUnitCommand, Command, CommandType, SystemPlusCommand } from "../../models/Commands";
-import { GameModel, SystemModel } from "../../models/Models";
+import { GameModel } from "../../models/Models";
+import { SystemModel } from "../../models/StarSystem";
 import { ShipDesign } from "../../models/Units";
 import { User } from "../../models/User";
 import { getBuildingTime } from "../../utils/buildingUtils";

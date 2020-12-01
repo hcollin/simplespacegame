@@ -1,5 +1,4 @@
-import { SystemKeyword } from "./models/Models";
-
+import { SystemKeyword } from "./models/StarSystem";
 
 // Possible colors for the faction
 const FACTION_COLORS: string[] = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4'];

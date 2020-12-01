@@ -1,5 +1,6 @@
 import { JokiEvent, JokiService, JokiServiceApi } from "jokits";
-import { Coordinates, Fleet, SystemModel } from "../models/Models";
+import { Coordinates, Fleet } from "../models/Models";
+import { SystemModel } from "../models/StarSystem";
 import { ShipUnit } from "../models/Units";
 import { hasGameObject } from "../utils/arrUtils";
 import { moveUnits } from "./commands/UnitCommands";

@@ -1,3 +1,5 @@
+import { rnd } from "./randUtils";
+
 export function mapAdd<K>(m: Map<K, number>, k: K, v: number): Map<K, number> {
     if (m.has(k)) {
         const cur = m.get(k);
@@ -87,3 +89,13 @@ export function getColorSum(hexColor: string, bgisdark = true): number {
 
     return Math.round((total / 3 / 255) * 100);
 }
+
+
+export function randomEnum<T>(anEnum: T): T[keyof T] {
+    const enumValues = Object.keys(anEnum)
+      .map(n => Number.parseInt(n))
+      .filter(n => !Number.isNaN(n)) as unknown as T[keyof T][]
+    
+    const randomEnumValue = enumValues[rnd(0, enumValues.length)]
+    return randomEnumValue;
+  }

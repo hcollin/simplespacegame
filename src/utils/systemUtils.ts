@@ -12,7 +12,8 @@ import {
 } from "../buildings/buildingRules";
 import { Building } from "../models/Buildings";
 import { BuildBuildingCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
-import { Coordinates, GameModel, SystemKeyword, SystemModel } from "../models/Models";
+import { Coordinates, GameModel } from "../models/Models";
+import { SystemModel, SystemKeyword } from "../models/StarSystem";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import {
 	techAdaptability,

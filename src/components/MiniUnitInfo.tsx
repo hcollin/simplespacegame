@@ -24,6 +24,7 @@ import Repeat from "./Repeat";
 import { unitIsMoving } from "../services/helpers/UnitHelpers";
 import { doDisbandUnit, doRecycleUnit } from "../services/commands/UnitCommands";
 import useMyCommands from "../hooks/useMyCommands";
+import useCurrentFaction from "../services/hooks/useCurrentFaction";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -288,10 +289,13 @@ interface MiniUnitInfoProps {
 
 const MiniUnitInfo: FC<MiniUnitInfoProps> = (props) => {
     const classes = useStyles();
-    const [comms, apsUsed, apsPool] = useMyCommands();
+	const [comms, apsUsed, apsPool] = useMyCommands();
+	const myFaction = useCurrentFaction();
     const faction = getFactionById(props.unit.factionId);
 
     const [infoState, setInfoState] = useState<boolean>(false);
+
+	if(!myFaction) return null;
 
     function click() {
         if (props.onClick) {
@@ -406,7 +410,7 @@ const MiniUnitInfo: FC<MiniUnitInfoProps> = (props) => {
 
                     <p className="description">{ship.description}</p>
 
-                    <div className="unitActions">
+                    {myFaction.id === ship.factionId && <div className="unitActions">
                         <Button
                             variant="contained"
                             color="secondary"
@@ -429,7 +433,7 @@ const MiniUnitInfo: FC<MiniUnitInfoProps> = (props) => {
                                 <IconCredit />
                             </Button>
                         )}
-                    </div>
+                    </div>}
                 </div>
             )}
         </div>

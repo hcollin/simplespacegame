@@ -1,10 +1,10 @@
-
-
 import { SYSTEMBONUS } from "../../configs";
 import { greekAlphabet, romanNumbers, starName } from "../../data/dataWords";
-import { Coordinates, GameModel, SystemKeyword, SystemModel } from "../../models/Models";
-import { inSameLocation } from "../../utils/locationUtils";
-import { arnd, rnd, roll } from "../../utils/randUtils";
+import { GameModel } from "../../models/Models";
+import { SystemModel, SystemKeyword, SystemInfo, Planet, PlanetType } from "../../models/StarSystem";
+import { randomEnum } from "../../utils/generalUtils";
+
+import { arnd, arnds, rnd, roll } from "../../utils/randUtils";
 import { getSpecialChances } from "./GameHelpers";
 
 const starColors: string[] = ["#FFFD", "#FDAD", "#FF8D"];
@@ -43,23 +43,35 @@ export function createNewSystem(ax = 1, ay = 1, as = 99, special = "AVERAGE"): S
         star.keywords.push(key);
     }
 
+    star.info = systemInfoGenerator(star);
+
     let fillC = "#777";
-    if (star.keywords.includes(SystemKeyword.HOSTILE)) { fillC = "#F00"; }
-    if (star.keywords.includes(SystemKeyword.MINERALRARE)) { fillC = "#FFD700"; }
-    if (star.keywords.includes(SystemKeyword.MINERALRICH)) { fillC = "#68C"; }
-    if (star.keywords.includes(SystemKeyword.NATIVES)) { fillC = "#88F"; }
-    if (star.keywords.includes(SystemKeyword.ARTIFACTS)) { fillC = "#F0F"; }
-    if (star.keywords.includes(SystemKeyword.GAIA)) { fillC = "#0F0"; }
-    if (star.keywords.includes(SystemKeyword.MINERALPOOR)) { fillC = "#A33"; }
+    if (star.keywords.includes(SystemKeyword.HOSTILE)) {
+        fillC = "#F00";
+    }
+    if (star.keywords.includes(SystemKeyword.MINERALRARE)) {
+        fillC = "#FFD700";
+    }
+    if (star.keywords.includes(SystemKeyword.MINERALRICH)) {
+        fillC = "#68C";
+    }
+    if (star.keywords.includes(SystemKeyword.NATIVES)) {
+        fillC = "#88F";
+    }
+    if (star.keywords.includes(SystemKeyword.ARTIFACTS)) {
+        fillC = "#F0F";
+    }
+    if (star.keywords.includes(SystemKeyword.GAIA)) {
+        fillC = "#0F0";
+    }
+    if (star.keywords.includes(SystemKeyword.MINERALPOOR)) {
+        fillC = "#A33";
+    }
 
     star.color = fillC;
 
-
     star.description = systemDescriptionGenerator(star);
-
-    
-
-
+    console.log("system info", star.info);
     return star;
 }
 
@@ -71,17 +83,22 @@ export function createRandomMap(starCount: number, size = 99, special = "AVERAGE
 
     // [x, y, size, star count]
     const ar: [number, number, number, number][] = [
-        [1, 1, p - 1, c], [p, 1, p - 1, c * 2], [p * 2, 1, p - 1, c * 3],
-        [1, p, p - 1, c * 4], [p, p, p - 1, c * 5], [p * 2, p, p - 1, c * 6],
-        [1, p * 2, p - 1, c * 7], [p, p * 2, p - 1, c * 8], [p * 2, p * 2, p - 1, c * 9],
-        [p, p, p - 1, starCount]
+        [1, 1, p - 1, c],
+        [p, 1, p - 1, c * 2],
+        [p * 2, 1, p - 1, c * 3],
+        [1, p, p - 1, c * 4],
+        [p, p, p - 1, c * 5],
+        [p * 2, p, p - 1, c * 6],
+        [1, p * 2, p - 1, c * 7],
+        [p, p * 2, p - 1, c * 8],
+        [p * 2, p * 2, p - 1, c * 9],
+        [p, p, p - 1, starCount],
     ];
 
     let confIndex = 0;
     let conf = ar[confIndex];
 
     while (stars.length < starCount) {
-
         if (stars.length > conf[3]) {
             confIndex++;
             conf = ar[confIndex];
@@ -99,44 +116,8 @@ export function createRandomMap(starCount: number, size = 99, special = "AVERAGE
         }
     }
 
-    // const st = 11;
-
-    // const ringWorldAreas: [number, number, number, number][] = [
-    //     [st, st, st, c], [st*4, st, st, c * 2], [st*7, st, st, c * 3],
-    //     [st, st*4, st, c * 4], [st*4, st*4, st, c * 6], [st*7, st*4, st, c * 7],
-    //     [st, st*7, st, c * 8], [st*4, st*7, st, c * 9], [st*7, st*7, st, starCount],
-    // ];
-
-    // ringWorldAreas.forEach((conf: [number, number, number, number], ind: number) => {
-
-    //     function createRingWorld(conf: [number, number, number, number], currentStars: SystemModel[]): boolean {
-    //         const star = createNewSystem(conf[0], conf[1], conf[2]);
-
-    //         star.ringWorld = true;
-
-    //         if (
-    //             currentStars.findIndex(
-    //                 (sm: SystemModel) =>
-    //                     (sm.location.x === star.location.x && sm.location.y === star.location.y) || sm.name === star.name
-    //             ) === -1
-    //         ) {
-    //             currentStars.push(star);
-    //             return true;
-    //         }
-    //         return false;
-    //     }
-
-    //     while(createRingWorld(conf, stars) === false) {
-
-    //     }
-
-    // })
-
-
     return stars;
 }
-
-
 
 export function randomStarName() {
     const gr = roll(15) ? ` ${arnd(greekAlphabet)}` : "";
@@ -144,17 +125,35 @@ export function randomStarName() {
     return `${arnd(starName)}${gr}${rm}`;
 }
 
-
 export function getSystemById(game: GameModel, systemId: string): SystemModel | undefined {
     // const game = joki.service.getState("GameService") as GameModel;
     return game.systems.find((sm: SystemModel) => sm.id === systemId);
 }
 
-
-export function systemDescriptionGenerator(star: SystemModel): string{
-
-    const planetCount = rnd(1,12);
+export function systemDescriptionGenerator(star: SystemModel): string {
+    const planetCount = rnd(1, 12);
     const starClass = arnd(["O", "B", "A", "F", "G", "K", "M"]);
 
-    return `${star.name} is ${starClass} class star with  ${planetCount} planets circling it.`;    
+    return `${star.name} is ${starClass} class star with  ${planetCount} planets circling it.`;
+}
+
+export function systemInfoGenerator(star: SystemModel): SystemInfo {
+    const planets = arnds([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], rnd(1, 6), true).map((d: number) => {
+        return planetGenerator(star, d);
+    });
+
+    return {
+        planets: planets,
+        starClass: arnd(["O", "B", "A", "F", "G", "K", "M"]),
+    };
+}
+
+export function planetGenerator(star: SystemModel, distance: number): Planet {
+    return {
+        population: 0,
+        type: randomEnum(PlanetType),
+        distanceFromStar: distance,
+        name: `${star.name} ${distance}`,
+        size: rnd(1, 10),
+    };
 }

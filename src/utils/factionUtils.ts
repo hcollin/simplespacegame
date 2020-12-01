@@ -2,7 +2,8 @@ import { buildingCGaiaProject, buildingCommandCenter, buildingGalacticSenate, bu
 import { BASEACTIONPOINTCOUNT } from "../configs";
 import { Building } from "../models/Buildings";
 import { Trade } from "../models/Communication";
-import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/Models";
+import { FactionModel, FactionTechSetting, GameModel } from "../models/Models";
+import { SystemModel } from "../models/StarSystem";
 import { ShipUnit } from "../models/Units";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import {

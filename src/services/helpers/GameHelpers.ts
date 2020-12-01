@@ -9,9 +9,9 @@ import {
     GameModel,
     GameState,
     PreGameSetup,
-    SystemModel,
     TechnologyField,
 } from "../../models/Models";
+import { SystemModel } from "../../models/StarSystem";
 import { ShipUnit } from "../../models/Units";
 import { inSameLocation } from "../../utils/locationUtils";
 import { findClosestCoordinate } from "../../utils/MathUtils";

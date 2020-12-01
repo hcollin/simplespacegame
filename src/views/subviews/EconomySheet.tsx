@@ -1,7 +1,7 @@
 import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import { useService } from "jokits-react";
 import React, { FC } from "react";
-import { GameModel, SystemModel } from "../../models/Models";
+import { GameModel } from "../../models/Models";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 import { factionValues } from "../../utils/factionUtils";
 import DataTable, { ColumnProps } from "../../components/DataTable";
@@ -10,6 +10,7 @@ import PageContainer from "../../components/PageContainer";
 
 import economyimg from "../../images/art/economy.jpg";
 import { IconCredit } from "../../components/Icons";
+import { SystemModel } from "../../models/StarSystem";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

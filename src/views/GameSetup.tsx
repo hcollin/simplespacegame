@@ -13,7 +13,7 @@ import {
 import { useService } from "jokits-react";
 import React, { FC, useEffect, useState } from "react";
 import FactionSetupView from "../components/FactionSetup";
-import { FactionSetup, GameModel, SystemModel } from "../models/Models";
+import { FactionSetup, GameModel } from "../models/Models";
 import { doCloseCurrentGame, doCreateNewGame } from "../services/commands/GameCommands";
 import { SERVICEID } from "../services/services";
 
@@ -23,6 +23,7 @@ import { getDistanceMultiplier, getStarCount } from "../services/helpers/GameHel
 import { createRandomMap } from "../services/helpers/SystemHelpers";
 import MiniMap from "../components/MiniMap";
 import { PLAYERCOUNTS } from "../configs";
+import { SystemModel } from "../models/StarSystem";
 
 
 const useStyles = makeStyles((theme: Theme) =>

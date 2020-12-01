@@ -9,7 +9,7 @@ import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
 
 import useSelectedSystem from "../../hooks/useSelectedSystem";
 import useWindowSize from "../../hooks/useWIndowResize";
-import { SystemModel, FactionModel, Coordinates, GameModel, Report } from "../../models/Models";
+import { FactionModel, Coordinates, GameModel, Report } from "../../models/Models";
 import { getFactionFromArrayById } from "../../services/helpers/FactionHelpers";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 import useMyCommands from "../../hooks/useMyCommands";
@@ -37,6 +37,7 @@ import SubMenuButton from "../../components/SubMenuButton";
 import { FiberManualRecord } from "@material-ui/icons";
 import StarIcon from "@material-ui/icons/Star";
 import { IconShip, IconShipBlack } from "../../components/Icons";
+import { SystemModel } from "../../models/StarSystem";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

@@ -4,7 +4,8 @@ import { BUILDINGTYPE, DATABUILDINGS } from "../data/dataBuildings";
 import { TECHIDS } from "../data/dataTechnology";
 import { Building, BuildingDesign, BuildingUnderConstruction } from "../models/Buildings";
 import { BuildBuildingCommand, Command, CommandType } from "../models/Commands";
-import { FactionModel, GameModel, SystemModel } from "../models/Models";
+import { FactionModel, GameModel } from "../models/Models";
+import { SystemModel } from "../models/StarSystem";
 
 export function buildingCanBeBuiltOnSystem(building: BuildingDesign, star: SystemModel, faction: FactionModel): boolean {
 	if (building.minEconomy > star.economy) return false;

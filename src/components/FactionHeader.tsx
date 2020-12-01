@@ -2,11 +2,12 @@ import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import React, { FC, useEffect, useState } from "react";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { useService } from "jokits-react";
-import { GameModel, Report, SystemModel } from "../models/Models";
+import { GameModel, Report } from "../models/Models";
 import { IconReport } from "./Icons";
 import { CombatReport, DetailReport, DetailReportType, InvasionReport, SystemReport } from "../models/Report";
 import { apiLoadReport } from "../api/apiReport";
 import CombatViewer from "./CombatViewer";
+import { SystemModel } from "../models/StarSystem";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

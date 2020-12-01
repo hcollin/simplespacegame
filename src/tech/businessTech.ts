@@ -1,5 +1,6 @@
 import { TECHIDS } from "../data/dataTechnology";
-import { FactionModel, GameModel, SystemKeyword, SystemModel } from "../models/Models";
+import { FactionModel, GameModel } from "../models/Models";
+import { SystemModel, SystemKeyword } from "../models/StarSystem";
 import { factionHasTechnology } from "./techTools";
 
 export function techMarketing(faction: FactionModel, game: GameModel): number {

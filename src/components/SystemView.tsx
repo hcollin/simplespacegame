@@ -4,7 +4,7 @@ import { useService } from "jokits-react";
 
 import useMyCommands from "../hooks/useMyCommands";
 import useSelectedSystem from "../hooks/useSelectedSystem";
-import { GameModel, SystemModel } from "../models/Models";
+import { GameModel } from "../models/Models";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { SERVICEID } from "../services/services";
@@ -42,6 +42,7 @@ import { shipCanBeBuiltOnSystemByFaction } from "../utils/unitUtils";
 import useUnitSelection from "../hooks/useUnitSelection";
 import FactionBanner from "./FactionBanner";
 import BuildingSlot from "./BuildingSlot";
+import { SystemModel } from "../models/StarSystem";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

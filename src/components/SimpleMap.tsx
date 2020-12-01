@@ -1,11 +1,12 @@
 import React, { FC } from "react";
-import { FactionModel, SystemModel } from "../models/Models";
+import { FactionModel } from "../models/Models";
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 // import { inSameLocation } from "../utils/locationUtils";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import AirplanemodeActiveIcon from '@material-ui/icons/AirplanemodeActive';
 import { ShipUnit } from "../models/Units";
+import { SystemModel } from "../models/StarSystem";
 
 const size = window.innerHeight - 200;
 

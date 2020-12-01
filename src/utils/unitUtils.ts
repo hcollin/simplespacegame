@@ -1,7 +1,8 @@
 import { SHIPWEAPONSPECIAL } from "../data/dataShips";
 import { TECHIDS } from "../data/dataTechnology";
 import { Command, CommandType, FleetCommand, UnitScrapCommand } from "../models/Commands";
-import { FactionModel, SystemModel } from "../models/Models";
+import { FactionModel } from "../models/Models";
+import { SystemModel } from "../models/StarSystem";
 import { SHIPCLASS, ShipDesign, ShipUnit, ShipWeapon, WEAPONTYPE } from "../models/Units";
 import {
     techFocusBeam,

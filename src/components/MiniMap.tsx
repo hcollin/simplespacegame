@@ -1,7 +1,8 @@
 import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import React, { FC } from "react";
 import { Circle, Layer, Stage } from "react-konva";
-import { SystemKeyword, SystemModel } from "../models/Models";
+import { SystemModel, SystemKeyword } from "../models/StarSystem";
+
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

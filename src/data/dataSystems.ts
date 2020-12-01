@@ -1,4 +1,5 @@
-import { SystemModel } from "../models/Models";
+
+import { SystemModel } from "../models/StarSystem";
 import { createRandomMap } from "../services/helpers/SystemHelpers";
 
 

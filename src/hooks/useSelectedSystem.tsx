@@ -1,6 +1,7 @@
 import { joki, useAtom, useService } from "jokits-react";
 import { useEffect, useState } from "react";
-import { GameModel, SystemModel } from "../models/Models";
+import { GameModel } from "../models/Models";
+import { SystemModel } from "../models/StarSystem";
 
 export default function useSelectedSystem(): [SystemModel | null, ((id: string | null) => void)] {
 
