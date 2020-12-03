@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.PlanetType = exports.SystemKeyword = void 0;
 var SystemKeyword;
 (function (SystemKeyword) {
     SystemKeyword["HOMEWORLD"] = "Homeworld";
@@ -11,3 +12,22 @@ var SystemKeyword;
     SystemKeyword["NATIVES"] = "Natives";
     SystemKeyword["ARTIFACTS"] = "Alien Artifacts";
 })(SystemKeyword = exports.SystemKeyword || (exports.SystemKeyword = {}));
+var PlanetType;
+(function (PlanetType) {
+    PlanetType["Chthonian"] = "Chthonian planet";
+    PlanetType["Carbon"] = "Carbon planet";
+    PlanetType["Coreless"] = "Coreless planet";
+    PlanetType["Desert"] = "Desert planet";
+    PlanetType["GasDwarf"] = "Gas Dwarf";
+    PlanetType["GasGiant"] = "Gas Giant";
+    PlanetType["Helium"] = "Helium planet";
+    PlanetType["IceGiant"] = "Ice Giant";
+    PlanetType["IcePlanet"] = "Ice planet";
+    PlanetType["Iron"] = "Iron planet";
+    PlanetType["Lava"] = "Lava planet";
+    PlanetType["Ocean"] = "Ocean planet";
+    PlanetType["Proto"] = "Protoplanet";
+    PlanetType["Puffy"] = "Puffy planet";
+    PlanetType["Silicate"] = "Silicate planet";
+    PlanetType["Terrestrial"] = "Terrestrial planet";
+})(PlanetType = exports.PlanetType || (exports.PlanetType = {}));

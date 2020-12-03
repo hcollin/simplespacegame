@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.SHIPKEYWORD = exports.WEAPONTYPE = exports.SHIPCLASS = void 0;
 var SHIPCLASS;
 (function (SHIPCLASS) {
     SHIPCLASS["FIGHTER"] = "Fighter";
