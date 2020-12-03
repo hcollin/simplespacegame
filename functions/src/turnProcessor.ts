@@ -24,7 +24,6 @@ import { Trade } from "./models/fCommunication";
 import {
     GameModel,
     GameState,
-    SystemModel,
     FactionModel,
     FactionState,
     FactionTechSetting,
@@ -42,6 +41,7 @@ import {
     SystemReport,
 } from "./models/fReport";
 import { SHIPCLASS, ShipUnit, ShipWeapon, WEAPONTYPE } from "./models/fUnits";
+import { SystemModel } from "./models/SystemModel";
 import { techAutoRepairBots, techAutoRepairBots2 } from "./tech/fShipTech";
 import { createBuildingFromDesign, getBuildingDesignByType, systemHasBuilding } from "./utils/fBuildingUtils";
 import {

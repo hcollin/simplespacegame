@@ -1,7 +1,7 @@
 "use strict";
 exports.__esModule = true;
 var fDataTechnology_1 = require("../data/fDataTechnology");
-var fModels_1 = require("../models/fModels");
+var fStarSystem_1 = require("../models/fStarSystem");
 var fTechTools_1 = require("./fTechTools");
 function techMarketing(faction, game) {
     if (!fTechTools_1.factionHasTechnology(faction, fDataTechnology_1.TECHIDS.Marketing))
@@ -30,7 +30,7 @@ exports.techMerchantGuild = techMerchantGuild;
 function techMineralPros(faction, star) {
     if (!fTechTools_1.factionHasTechnology(faction, fDataTechnology_1.TECHIDS.MineralPros))
         return 0;
-    if (!star.keywords.includes(fModels_1.SystemKeyword.MINERALRARE) && !star.keywords.includes(fModels_1.SystemKeyword.MINERALRICH)) {
+    if (!star.keywords.includes(fStarSystem_1.SystemKeyword.MINERALRARE) && !star.keywords.includes(fStarSystem_1.SystemKeyword.MINERALRICH)) {
         return 0;
     }
     return 1;
@@ -39,7 +39,7 @@ exports.techMineralPros = techMineralPros;
 function techAlternativePros(faction, star) {
     if (!fTechTools_1.factionHasTechnology(faction, fDataTechnology_1.TECHIDS.AlterPros))
         return 0;
-    if (!star.keywords.includes(fModels_1.SystemKeyword.MINERALPOOR)) {
+    if (!star.keywords.includes(fStarSystem_1.SystemKeyword.MINERALPOOR)) {
         return 0;
     }
     return 1;
@@ -66,7 +66,7 @@ exports.techGalacticSenate = techGalacticSenate;
 function techAdaptability(faction, star, current) {
     if (!fTechTools_1.factionHasTechnology(faction, fDataTechnology_1.TECHIDS.Adaptability))
         return current;
-    if (!star.keywords.includes(fModels_1.SystemKeyword.HOSTILE))
+    if (!star.keywords.includes(fStarSystem_1.SystemKeyword.HOSTILE))
         return current;
     if (current > 3)
         return current;

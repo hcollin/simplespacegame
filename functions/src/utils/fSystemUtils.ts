@@ -11,7 +11,10 @@ import {
 	buildingBank,
 } from "../buildings/fBuildingRules";
 import { Building } from "../models/fBuildings";
-import { Coordinates, GameModel, SystemKeyword, SystemModel } from "../models/fModels";
+import { Coordinates, GameModel } from "../models/fModels";
+import { SystemKeyword, SystemModel } from "../models/fStarSystem";
+
+
 import {
 	techEfficientBureaucracy,
 	techUndergroundConstruction,

@@ -2,8 +2,10 @@ import { buildingCGaiaProject, buildingCommandCenter, buildingUniversity, buildi
 import { BASEACTIONPOINTCOUNT } from "../configs";
 import { Building } from "../models/fBuildings";
 import { Trade } from "../models/fCommunication";
-import { FactionModel, FactionTechSetting, GameModel, SystemModel } from "../models/fModels";
+import { FactionModel, FactionTechSetting, GameModel } from "../models/fModels";
+import { SystemModel } from "../models/fStarSystem";
 import { ShipUnit } from "../models/fUnits";
+
 import {
 	techCapitalist,
 	techDecisionEngine,

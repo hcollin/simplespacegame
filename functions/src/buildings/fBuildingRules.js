@@ -12,7 +12,7 @@ var __assign = (this && this.__assign) || function () {
 };
 exports.__esModule = true;
 var fDataBuildings_1 = require("../data/fDataBuildings");
-var fModels_1 = require("../models/fModels");
+var fStarSystem_1 = require("../models/fStarSystem");
 var fFactionUtils_1 = require("../utils/fFactionUtils");
 var fMathUtils_1 = require("../utils/fMathUtils");
 var fRandUtils_1 = require("../utils/fRandUtils");
@@ -22,11 +22,11 @@ function starHasBuilding(star, bt) {
 function buildBuildingRules(star, bt) {
     switch (bt) {
         case fDataBuildings_1.BUILDINGTYPE.COREMINE:
-            return (star.keywords.includes(fModels_1.SystemKeyword.MINERALRARE) || star.keywords.includes(fModels_1.SystemKeyword.MINERALRICH));
+            return (star.keywords.includes(fStarSystem_1.SystemKeyword.MINERALRARE) || star.keywords.includes(fStarSystem_1.SystemKeyword.MINERALRICH));
         case fDataBuildings_1.BUILDINGTYPE.GAIAPROJECT:
-            return star.keywords.includes(fModels_1.SystemKeyword.GAIA);
+            return star.keywords.includes(fStarSystem_1.SystemKeyword.GAIA);
         case fDataBuildings_1.BUILDINGTYPE.TRADEPOST:
-            return star.keywords.includes(fModels_1.SystemKeyword.NATIVES);
+            return star.keywords.includes(fStarSystem_1.SystemKeyword.NATIVES);
         default:
             return true;
     }

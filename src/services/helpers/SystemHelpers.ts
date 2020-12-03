@@ -43,7 +43,8 @@ export function createNewSystem(ax = 1, ay = 1, as = 99, special = "AVERAGE"): S
         star.keywords.push(key);
     }
 
-    star.info = systemInfoGenerator(star);
+    // star.info = systemInfoGenerator(star);
+    console.log(systemInfoGenerator(star));
 
     let fillC = "#777";
     if (star.keywords.includes(SystemKeyword.HOSTILE)) {

@@ -42,7 +42,7 @@ import { shipCanBeBuiltOnSystemByFaction } from "../utils/unitUtils";
 import useUnitSelection from "../hooks/useUnitSelection";
 import FactionBanner from "./FactionBanner";
 import BuildingSlot from "./BuildingSlot";
-import { SystemModel } from "../models/StarSystem";
+import { Planet, SystemModel } from "../models/StarSystem";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -562,6 +562,11 @@ const SystemView: FC = () => {
                     <Grid container>
                         <Grid item lg={12} className={classes.contentArea}>
                             <p className="description">{star.description}</p>
+                            {star.info && <div className="planets">
+                                {star.info.planets.map((p: Planet) => (
+                                    <p key={p.name}>{p.name} {p.distanceFromStar} {p.population} {p.size} {p.type}</p>
+                                ))}
+                            </div>  }
                             {star.keywords.length > 0 && <p className="keywords">{star.keywords.join(", ")}</p>}
                         </Grid>
 

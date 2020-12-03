@@ -1,8 +1,10 @@
 import DATASHIPS, { shipNameGenerator, SHIPWEAPONSPECIAL } from "../data/fDataShips";
 import { TECHIDS } from "../data/fDataTechnology";
 import { Command, UnitScrapCommand, CommandType, FleetCommand } from "../models/fCommands";
-import { FactionModel, Coordinates, SystemModel } from "../models/fModels";
+import { FactionModel, Coordinates } from "../models/fModels";
+import { SystemModel } from "../models/fStarSystem";
 import { SHIPCLASS, ShipDesign, ShipUnit, ShipWeapon, WEAPONTYPE } from "../models/fUnits";
+
 import {
     techFocusBeam,
     techHeavyRounds,

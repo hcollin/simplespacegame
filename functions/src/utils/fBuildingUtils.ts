@@ -3,7 +3,8 @@ import { BUILDINGTYPE, DATABUILDINGS } from "../data/fDataBuildings";
 import { TECHIDS } from "../data/fDataTechnology";
 import { Building, BuildingDesign, BuildingUnderConstruction } from "../models/fBuildings";
 import { Command, CommandType, BuildBuildingCommand } from "../models/fCommands";
-import { SystemModel, FactionModel, GameModel } from "../models/fModels";
+import { FactionModel, GameModel } from "../models/fModels";
+import { SystemModel } from "../models/fStarSystem";
 import { rndId } from "./fRandUtils";
 
 

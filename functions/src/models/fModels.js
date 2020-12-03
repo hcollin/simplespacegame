@@ -11,17 +11,6 @@ var GameState;
     GameState[GameState["CLEANUP"] = 6] = "CLEANUP";
     GameState[GameState["ENDED"] = 7] = "ENDED";
 })(GameState = exports.GameState || (exports.GameState = {}));
-var SystemKeyword;
-(function (SystemKeyword) {
-    SystemKeyword["HOMEWORLD"] = "Homeworld";
-    SystemKeyword["MINERALRICH"] = "Mineral Rich";
-    SystemKeyword["MINERALPOOR"] = "Mineral Poor";
-    SystemKeyword["MINERALRARE"] = "Rare Minerals";
-    SystemKeyword["HOSTILE"] = "Hostile Environment";
-    SystemKeyword["GAIA"] = "Gaia world";
-    SystemKeyword["NATIVES"] = "Natives";
-    SystemKeyword["ARTIFACTS"] = "Alien Artifacts";
-})(SystemKeyword = exports.SystemKeyword || (exports.SystemKeyword = {}));
 var FactionState;
 (function (FactionState) {
     FactionState[FactionState["INIT"] = 0] = "INIT";

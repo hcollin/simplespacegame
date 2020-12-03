@@ -12,7 +12,7 @@ var __assign = (this && this.__assign) || function () {
 };
 exports.__esModule = true;
 var fBuildingRules_1 = require("../buildings/fBuildingRules");
-var fModels_1 = require("../models/fModels");
+var fStarSystem_1 = require("../models/fStarSystem");
 var fBusinessTech_1 = require("../tech/fBusinessTech");
 var fInvasionTech_1 = require("../tech/fInvasionTech");
 var fFactionUtils_1 = require("./fFactionUtils");
@@ -33,15 +33,15 @@ exports.getSystemEconomy = getSystemEconomy;
 function getStarIndustryMax(star, game) {
     var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, star.ownerFactionId);
     var def = 5;
-    if (star.keywords.includes(fModels_1.SystemKeyword.HOSTILE))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.HOSTILE))
         def = 7;
-    if (star.keywords.includes(fModels_1.SystemKeyword.MINERALRICH))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.MINERALRICH))
         def = 6;
-    if (star.keywords.includes(fModels_1.SystemKeyword.MINERALRARE))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.MINERALRARE))
         def = 6;
-    if (star.keywords.includes(fModels_1.SystemKeyword.GAIA))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.GAIA))
         def = 4;
-    if (star.keywords.includes(fModels_1.SystemKeyword.MINERALPOOR))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.MINERALPOOR))
         def = 3;
     if (faction) {
         def += fBusinessTech_1.techMineralPros(faction, star);
@@ -53,11 +53,11 @@ exports.getStarIndustryMax = getStarIndustryMax;
 function getStarEconomyMax(star, game) {
     // const faction = getFactionFromArrayById(game.factions, star.ownerFactionId);
     var def = 5;
-    if (star.keywords.includes(fModels_1.SystemKeyword.ARTIFACTS))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.ARTIFACTS))
         def = 7;
-    if (star.keywords.includes(fModels_1.SystemKeyword.MINERALRARE))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.MINERALRARE))
         def = 6;
-    if (star.keywords.includes(fModels_1.SystemKeyword.GAIA))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.GAIA))
         def = 6;
     return def;
 }
@@ -65,7 +65,7 @@ exports.getStarEconomyMax = getStarEconomyMax;
 function getStarDefenceMax(star, game) {
     // const faction = getFactionFromArrayById(game.factions, star.ownerFactionId);
     var def = 5;
-    if (star.keywords.includes(fModels_1.SystemKeyword.HOSTILE))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.HOSTILE))
         def = 7;
     return def;
 }
@@ -73,11 +73,11 @@ exports.getStarDefenceMax = getStarDefenceMax;
 function getStarWelfareMax(star, game) {
     var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, star.ownerFactionId);
     var def = 5;
-    if (star.keywords.includes(fModels_1.SystemKeyword.NATIVES))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.NATIVES))
         def = 6;
-    if (star.keywords.includes(fModels_1.SystemKeyword.GAIA))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.GAIA))
         def = 7;
-    if (star.keywords.includes(fModels_1.SystemKeyword.HOSTILE))
+    if (star.keywords.includes(fStarSystem_1.SystemKeyword.HOSTILE))
         def = 1;
     if (faction) {
         def = fBusinessTech_1.techAdaptability(faction, star, def);

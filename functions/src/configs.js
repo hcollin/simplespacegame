@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-var fModels_1 = require("./models/fModels");
+var SystemModel_1 = require("./models/SystemModel");
 // Possible colors for the faction
 var FACTION_COLORS = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4'];
 exports.FACTION_COLORS = FACTION_COLORS;
@@ -29,7 +29,7 @@ var MAPSizes = [66, 99, 132];
 exports.MAPSizes = MAPSizes;
 var MAPDensities = [15, 25, 35];
 exports.MAPDensities = MAPDensities;
-var SYSTEMBONUS = [fModels_1.SystemKeyword.MINERALRICH, fModels_1.SystemKeyword.MINERALRICH, fModels_1.SystemKeyword.MINERALPOOR, fModels_1.SystemKeyword.MINERALRARE, fModels_1.SystemKeyword.GAIA, fModels_1.SystemKeyword.ARTIFACTS, fModels_1.SystemKeyword.HOSTILE, fModels_1.SystemKeyword.NATIVES, fModels_1.SystemKeyword.NATIVES];
+var SYSTEMBONUS = [SystemModel_1.SystemKeyword.MINERALRICH, SystemModel_1.SystemKeyword.MINERALRICH, SystemModel_1.SystemKeyword.MINERALPOOR, SystemModel_1.SystemKeyword.MINERALRARE, SystemModel_1.SystemKeyword.GAIA, SystemModel_1.SystemKeyword.ARTIFACTS, SystemModel_1.SystemKeyword.HOSTILE, SystemModel_1.SystemKeyword.NATIVES, SystemModel_1.SystemKeyword.NATIVES];
 exports.SYSTEMBONUS = SYSTEMBONUS;
 var PLAYERCOUNTS = [2, 3, 4, 5, 6, 7, 8];
 exports.PLAYERCOUNTS = PLAYERCOUNTS;

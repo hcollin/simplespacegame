@@ -21,7 +21,6 @@ import { createNewFaction } from "./FactionHelpers";
 import { createRandomMap } from "./SystemHelpers";
 import { createShipFromDesign, getDesignByName } from "./UnitHelpers";
 
-
 export function getDensityMultiplier(density: string): number {
     return density === "LOW" ? MAPDensities[0] : density === "HIGH" ? MAPDensities[2] : MAPDensities[1];
 }
@@ -31,7 +30,7 @@ export function getDistanceMultiplier(distance: string): number {
 }
 
 export function getSpecialChances(special: string): number {
-    switch(special) {
+    switch (special) {
         case "NONE":
             return 0;
         case "RARE":
@@ -41,39 +40,38 @@ export function getSpecialChances(special: string): number {
         case "COMMON":
             return 75;
         case "ALL":
-             return 100;
-        default: 
+            return 100;
+        default:
             return 40;
     }
 }
 
 /**
  * How many stars are in the map
- * 
+ *
  * size  = how long is the side of the square
  * density = stars per 1000 slots which is (size/2)^2
- * 
- * 
- * @param density 
- * @param distance 
- * @param playerCount 
+ *
+ *
+ * @param density
+ * @param distance
+ * @param playerCount
  */
 export function getStarCount(density: string, distance: string, playerCount: number) {
     const densityMultiplier = getDensityMultiplier(density);
     const sizeCounter = getDistanceMultiplier(distance);
-    const dens = Math.pow(sizeCounter/2, 2);
-    const plPlus = (Math.round((playerCount*2)/5) +1)*playerCount;
+    const dens = Math.pow(sizeCounter / 2, 2);
+    const plPlus = (Math.round((playerCount * 2) / 5) + 1) * playerCount;
     console.log(densityMultiplier, sizeCounter, playerCount, dens);
-    return Math.round(((dens)/1000)*densityMultiplier+plPlus+10);
+    return Math.round((dens / 1000) * densityMultiplier + plPlus + 10);
     // return playerCount * densityMultiplier * (sizeCounter/MAPSizes[1]);
 }
-
 
 export function createGameFromSetup(setup: PreGameSetup): GameModel {
     // const densityMultiplier = getDensityMultiplier(setup.density);
     const sizeCounter = getDistanceMultiplier(setup.distances);
     const starCount = getStarCount(setup.density, setup.distances, setup.playerCount);
-    
+
     const stars = createRandomMap(starCount, sizeCounter, setup.specials);
 
     const game: GameModel = {
@@ -200,15 +198,15 @@ export function startGame(game: GameModel): GameModel {
     // const densityMultiplier = getDensityMultiplier(game.setup.density);
     const sizeCounter = getDistanceMultiplier(game.setup.distances);
     const starLocs = game.systems.map((s: SystemModel) => s.location);
-    
+
     game.factions.forEach((fm: FactionModel, index: number) => {
-        const targetCoord: Coordinates  = {
+        const targetCoord: Coordinates = {
             x: coords[index][0] * sizeCounter,
             y: coords[index][1] * sizeCounter,
-        }
+        };
         const closestCoord = findClosestCoordinate(starLocs, targetCoord);
         const star = game.systems.find((s: SystemModel) => inSameLocation(s.location, closestCoord));
-        if(star) {
+        if (star) {
             star.ownerFactionId = fm.id;
             star.welfare = 2;
             star.industry = 2;
@@ -224,7 +222,7 @@ export function startGame(game: GameModel): GameModel {
         const hm = homeSystems.find((hm: SystemModel) => hm.id === sm.id);
         return hm ? hm : sm;
     });
-    return {...game, units: units, state: GameState.TURN, turn: 1};
+    return { ...game, units: units, state: GameState.TURN, turn: 1 };
 }
 
 export function createFactionFromSetup(setup: FactionSetup): FactionModel {
@@ -313,6 +311,6 @@ const homeSystemPositionsByPlayerCount: [number, number][][] = [
         [0.075, 0.675],
         [1 - 0.075, 0.675],
         [0.325, 0.95],
-        [1- 0.325, 0.95],
-    ]
+        [1 - 0.325, 0.95],
+    ],
 ];
