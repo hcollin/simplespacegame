@@ -4,10 +4,21 @@ import { getAllItems, getItem, getItemsWhere, insertOrUpdateItem, listenItemWher
 const COLLECTION = "Games";
 
 export async function apiNewGame(game: GameModel): Promise<GameModel> {
-    const newId = await insertOrUpdateItem<GameModel>(game, COLLECTION, true);
-    game.id = newId;
-    await apiUpdateGame(game);
-    return game;
+    try {
+        const newId = await insertOrUpdateItem<GameModel>(game, COLLECTION, true);
+        game.id = newId;
+        if(!newId) {
+            throw new Error(`No valid id provided ${newId}, cannot create a new game`)
+        }
+        await apiUpdateGame(game);
+        return game;
+    } catch(e) {
+        console.error("Could not create a game");
+        console.log(game);
+        throw new Error(e);
+
+    }
+    
 }
 
 export async function apiUpdateGame(game: GameModel): Promise<boolean> {

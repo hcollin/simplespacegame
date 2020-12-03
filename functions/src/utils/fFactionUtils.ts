@@ -290,15 +290,16 @@ export function calculateFactionDebt(game: GameModel, faction: FactionModel): [n
 	const values = factionValues(game, faction.id);
 
 	let newDebt = faction.debt;
-
+	
 	// Debt increase while money is less than 0.
 	if (faction.money < 0) {
 		if (values.income < 0) {
-			newDebt += values.income;
+			newDebt += (values.income * -1);
 		}
 	}
-
+	
 	const payback = calcalateNextDebtPayback(game, faction);
+	
 	newDebt -= payback;
 	if (newDebt < 0) {
 		newDebt = 0;
@@ -306,6 +307,7 @@ export function calculateFactionDebt(game: GameModel, faction: FactionModel): [n
 	if (newDebt > 0) {
 		newDebt++;
 	}
+	
 
 	return [newDebt, payback];
 }

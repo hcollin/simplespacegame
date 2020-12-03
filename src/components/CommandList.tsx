@@ -139,10 +139,10 @@ const useStyles = makeStyles((theme: Theme) =>
                     "& > small": {
                         fontSize: "0.7rem",
                         marginLeft: "0.5rem",
-                        "&.green": {
+                        "&.green, & > span.green": {
                             color: "#0B0D",
                         },
-                        "&.red": {
+                        "&.red, & > span.red": {
                             color: "#B00D",
                         },
                     },
@@ -713,8 +713,11 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
                 <div>
                     <IconCredit size="lg" />
                     {faction.money}
-                    <small className={values.income < 0 ? "red" : "green"}>
-                        {values.income >= 0 ? `+${values.income}` : values.income}
+                    <small>
+                        <span className={values.income < 0 ? "red" : "green"}>{values.income >= 0 ? `+${values.income}` : values.income}</span>
+                        
+                        {faction.debt > 0 && <><br /><span className="red">{faction.debt}</span></>}
+                        
                     </small>
                 </div>
                 <div>

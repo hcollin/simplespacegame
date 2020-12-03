@@ -2,7 +2,7 @@ import { SYSTEMBONUS } from "../../configs";
 import { greekAlphabet, romanNumbers, starName } from "../../data/dataWords";
 import { GameModel } from "../../models/Models";
 import { SystemModel, SystemKeyword, SystemInfo, Planet, PlanetType } from "../../models/StarSystem";
-import { randomEnum } from "../../utils/generalUtils";
+import { getRandomEnum } from "../../utils/generalUtils";
 
 import { arnd, arnds, rnd, roll } from "../../utils/randUtils";
 import { getSpecialChances } from "./GameHelpers";
@@ -44,7 +44,7 @@ export function createNewSystem(ax = 1, ay = 1, as = 99, special = "AVERAGE"): S
     }
 
     // star.info = systemInfoGenerator(star);
-    console.log(systemInfoGenerator(star));
+    star.info = systemInfoGenerator(star)
 
     let fillC = "#777";
     if (star.keywords.includes(SystemKeyword.HOSTILE)) {
@@ -72,7 +72,7 @@ export function createNewSystem(ax = 1, ay = 1, as = 99, special = "AVERAGE"): S
     star.color = fillC;
 
     star.description = systemDescriptionGenerator(star);
-    console.log("system info", star.info);
+    // console.log("system info", star.info);
     return star;
 }
 
@@ -150,9 +150,10 @@ export function systemInfoGenerator(star: SystemModel): SystemInfo {
 }
 
 export function planetGenerator(star: SystemModel, distance: number): Planet {
+    
     return {
         population: 0,
-        type: randomEnum(PlanetType),
+        type: getRandomEnum(PlanetType),
         distanceFromStar: distance,
         name: `${star.name} ${distance}`,
         size: rnd(1, 10),

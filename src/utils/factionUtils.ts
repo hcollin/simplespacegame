@@ -265,7 +265,7 @@ export function getFactionScore(game: GameModel, factionId: string): number {
 
 	score += buildingGalacticSenate(game, faction);
 
-	// score -= faction.debt * Math.ceil(faction.debt/20);
+	score -= faction.debt;
 
 	// Add technology scores from base research techs
 

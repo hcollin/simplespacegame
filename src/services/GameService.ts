@@ -26,6 +26,10 @@ const EMPTYGAME: GameModel = {
         specials: "",
         length: "MEDIUM",
     },
+    settings: {
+        turnTimer: 0,
+        discordWebHookUrl: ""
+    },
     name: "",
     state: GameState.NONE,
     turn: 0,
@@ -101,6 +105,10 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
                 specials: "AVERAGE",
                 length: "MEDIUM",
             },
+            settings: {
+                turnTimer: 0,
+                discordWebHookUrl: ""
+            },
             name: randomGameName(),
             state: GameState.INIT,
             turn: 0,
@@ -131,16 +139,10 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
     }
 
     async function newGame(gameSetup: PreGameSetup) {
-        console.log("NEW GAME", gameSetup);
 
         game = createGameFromSetup(gameSetup);
-        // debugger;
-
-        // game = createNewGame(gameSetup.playerCount);
         game = await apiNewGame(game);
-
         sendUpdate();
-        // startListening();
     }
 
     async function joinGame(factionSetup: FactionSetup) {

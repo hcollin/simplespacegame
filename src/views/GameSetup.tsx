@@ -129,6 +129,7 @@ const GameSetup: FC = () => {
     const [distances, setDistances] = useState<string>("");
     const [specials, setSpecials] = useState<string>("AVERAGE");
     const [autoJoin, setAutoJoin] = useState<boolean>(true);
+    const [webHook, setWebHook] = useState<string>("");
 
     const [factionSetup, setFactionSetup] = useState<FactionSetup | undefined>(undefined);
 
@@ -178,6 +179,7 @@ const GameSetup: FC = () => {
             faction: factionSetup || undefined,
             specials: specials,
             length: "MEDIUM",
+            discordWebHook: webHook
         });
     }
 
@@ -187,6 +189,10 @@ const GameSetup: FC = () => {
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
+    };
+
+    const handleWebHookChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setWebHook(event.target.value);
     };
 
     // const denM = getDensityMultiplier(starDensity);
@@ -252,6 +258,10 @@ const GameSetup: FC = () => {
                                 label={autoJoin ? "Yes" : "No "}
                                 color="default"
                             />
+                        </div>
+                        <div>
+                        <InputLabel>Discord Web Hook</InputLabel>
+                        <TextField value={webHook} variant="outlined" onChange={handleWebHookChange} />
                         </div>
                     </Grid>
                     <Grid item lg={4} className={classes.column}>

@@ -177,7 +177,7 @@ export async function insertOrUpdateItem<T extends GameObject>(
         return item.id;
     } catch (e) {
         console.error(
-            `apiFirebaseGeneral:insertOrUpdateItem: Could not update/insert item in collection ${collectionName}, item: NNNnnn... !`
+            `apiFirebaseGeneral:insertOrUpdateItem: Could not update/insert item in collection ${collectionName} !`, item
         );
         console.error(e);
         throw new Error(e);

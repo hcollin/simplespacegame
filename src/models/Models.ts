@@ -32,6 +32,7 @@ export interface PreGameSetup extends GameSetup {
     name: string;
     autoJoin: boolean;
     faction?: FactionSetup;
+    discordWebHook: string;
 }
 
 export interface FactionSetup {
@@ -44,6 +45,7 @@ export interface FactionSetup {
 
 export interface GameModel extends GameObject {
     setup: GameSetup;
+    settings: GameSettings;
     turn: number;
     name: string;
     factions: FactionModel[];
@@ -52,7 +54,12 @@ export interface GameModel extends GameObject {
     factionsReady: string[];
     state: GameState;
     trades: Trade[];
-    playerIds: string[];    
+    playerIds: string[];
+}
+
+export interface GameSettings {
+    discordWebHookUrl: string|null;
+    turnTimer: number;
 }
 
 export interface Fleet {

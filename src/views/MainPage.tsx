@@ -2,6 +2,7 @@ import { makeStyles, Theme, createStyles, LinearProgress } from "@material-ui/co
 import { useAtomValue, useService } from "jokits-react";
 import React, { FC } from "react";
 import { GameModel, GameState } from "../models/Models";
+
 // import { doCreateNewGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import GameSetup from "./GameSetup";
@@ -27,12 +28,10 @@ const useStyles = makeStyles((theme: Theme) =>
 				textAlign: "center",
 				[theme.breakpoints.down("md")]: {
 					fontSize: "2rem",
-					
-                },
-                [theme.breakpoints.up("lg")]: {
+				},
+				[theme.breakpoints.up("lg")]: {
 					fontSize: "4rem",
-					
-                }
+				},
 			},
 			"& > div": {
 				width: "60%",

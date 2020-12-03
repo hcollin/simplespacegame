@@ -49,8 +49,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var fModels_1 = require("./src/models/fModels");
 var turnProcessor_1 = require("./src/turnProcessor");
-var functions = require('firebase-functions');
-var admin = require('firebase-admin');
+var functions = require("firebase-functions");
+var admin = require("firebase-admin");
 admin.initializeApp();
 var db = admin.firestore();
 var Collections;
@@ -88,7 +88,10 @@ exports.playerReady = functions.https.onCall(function (data, context) {
                             throw new Error("Faction " + factionId + " is already set to ready!");
                         }
                         game.factionsReady.push(factionId);
-                        return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign({}, game))];
+                        return [4 /*yield*/, db
+                                .collection("Games")
+                                .doc(game.id)
+                                .set(__assign({}, game))];
                     case 3:
                         _a.sent();
                         if (!(game.factionsReady.length === game.factions.length)) return [3 /*break*/, 5];
@@ -129,7 +132,10 @@ exports.playerCancelReady = functions.https.onCall(function (data, context) {
                             return [2 /*return*/];
                         }
                         game.factionsReady = game.factionsReady.filter(function (fid) { return fid !== factionId; });
-                        return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign({}, game))];
+                        return [4 /*yield*/, db
+                                .collection("Games")
+                                .doc(game.id)
+                                .set(__assign({}, game))];
                     case 3:
                         _a.sent();
                         return [3 /*break*/, 5];
@@ -187,7 +193,10 @@ function runTurnProcessor(gameId) {
                         return [2 /*return*/];
                     }
                     game.state = fModels_1.GameState.PROCESSING;
-                    return [4 /*yield*/, db.collection("Games").doc(game.id).set(__assign({}, game))];
+                    return [4 /*yield*/, db
+                            .collection("Games")
+                            .doc(game.id)
+                            .set(__assign({}, game))];
                 case 6:
                     _b.sent();
                     turnCommands = commands.filter(function (cmd) {
@@ -209,10 +218,15 @@ function runTurnProcessor(gameId) {
                     // console.log("commands done now", comms);
                     comms.forEach(function (cmd) {
                         if (cmd.completed || cmd.save === true) {
-                            db.collection("Commands").doc(cmd.id).set(__assign({}, cmd));
+                            db.collection("Commands")
+                                .doc(cmd.id)
+                                .set(__assign({}, cmd));
                         }
                     });
-                    return [4 /*yield*/, db.collection("Games").doc(newGame.id).set(__assign({}, newGame))];
+                    return [4 /*yield*/, db
+                            .collection("Games")
+                            .doc(newGame.id)
+                            .set(__assign({}, newGame))];
                 case 9:
                     _b.sent();
                     return [3 /*break*/, 11];

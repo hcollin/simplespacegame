@@ -235,7 +235,7 @@ function calculateFactionDebt(game, faction) {
     // Debt increase while money is less than 0.
     if (faction.money < 0) {
         if (values.income < 0) {
-            newDebt += values.income;
+            newDebt += (values.income * -1);
         }
     }
     var payback = calcalateNextDebtPayback(game, faction);

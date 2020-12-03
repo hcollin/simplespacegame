@@ -1,3 +1,4 @@
+import { settings } from "cluster";
 import { v4 } from "uuid";
 import { BASEACTIONPOINTCOUNT, MAPDensities, MAPSizes } from "../../configs";
 
@@ -73,7 +74,7 @@ export function createGameFromSetup(setup: PreGameSetup): GameModel {
     const starCount = getStarCount(setup.density, setup.distances, setup.playerCount);
 
     const stars = createRandomMap(starCount, sizeCounter, setup.specials);
-
+    console.log(setup)
     const game: GameModel = {
         id: "",
         factions: [],
@@ -88,6 +89,10 @@ export function createGameFromSetup(setup: PreGameSetup): GameModel {
             specials: setup.specials,
             length: setup.length,
         },
+        settings: {
+            turnTimer: 0,
+            discordWebHookUrl: setup.discordWebHook === "" ? null : setup.discordWebHook
+        },
         systems: stars,
         trades: [],
         turn: 0,
@@ -95,13 +100,18 @@ export function createGameFromSetup(setup: PreGameSetup): GameModel {
     };
 
     if (setup.autoJoin && setup.faction && setup.faction.playerId) {
-        console.log(setup, setup.faction);
-
+        
         game.playerIds.push(setup.faction.playerId);
 
         const fm = createFactionFromSetup(setup.faction);
         game.factions.push(fm);
+
+        
     }
+
+    // Hard Coded url for #peliprokkis channel on our discard. This needs to be configurable in the future (and very near future)
+    // game.settings.discordWebHookUrl = "https://discordapp.com/api/webhooks/784122350777925642/UjbjOnDI02hnEB1qG8RJt-9Zc6zIE3X7ZLTdGz93a3-80sxg4uK00jhw3t-SceH9n8Ce";
+    
 
     return game;
 }
@@ -167,6 +177,10 @@ export function createNewGame(playerCount = 4): GameModel {
             distances: "MEDIUM",
             specials: "AVERAGE",
             length: "MEDIUM",
+        },
+        settings: {
+            turnTimer: 0,
+            discordWebHookUrl: ""
         },
         name: randomGameName(),
         factions: factions,

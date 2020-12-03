@@ -55,6 +55,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 };
 exports.__esModule = true;
 exports.updateUnitInCombat = exports.damagePotential = exports.getHitChance = exports.updateCooldownTime = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatInflictDamage = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatPostCombat = exports.spaceCombatPreCombat = exports.spaceCombatMain = exports.processTurn = void 0;
+var axios_1 = require("axios");
 var fBuildingRules_1 = require("./buildings/fBuildingRules");
 var fDataBuildings_1 = require("./data/fDataBuildings");
 var fDataShips_1 = require("./data/fDataShips");
@@ -77,7 +78,7 @@ var fUnitUtils_1 = require("./utils/fUnitUtils");
 var fWeaponUtils_1 = require("./utils/fWeaponUtils");
 function processTurn(origGame, commands, firestore) {
     return __awaiter(this, void 0, void 0, function () {
-        var game;
+        var game, discordRequestConfig, axlog, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -120,9 +121,33 @@ function processTurn(origGame, commands, firestore) {
                     //     action: "nextTurn",
                     // });
                     game.state = fModels_1.GameState.TURN;
-                    // await saveGame();
-                    // sendUpdate();
-                    return [2 /*return*/, [__assign({}, game), __spreadArrays((commands || []))]];
+                    if (!(game.settings.discordWebHookUrl !== null)) return [3 /*break*/, 8];
+                    _a.label = 5;
+                case 5:
+                    _a.trys.push([5, 7, , 8]);
+                    discordRequestConfig = {
+                        url: game.settings.discordWebHookUrl,
+                        method: "post",
+                        headers: {
+                            "Content-type": "application/json"
+                        },
+                        data: {
+                            content: "Game " + game.name + " turn " + game.turn
+                        }
+                    };
+                    return [4 /*yield*/, axios_1["default"](discordRequestConfig)];
+                case 6:
+                    axlog = _a.sent();
+                    return [3 /*break*/, 8];
+                case 7:
+                    e_1 = _a.sent();
+                    console.error(game.name + ":" + game.id + ":Error while sending notification to discord", game.settings);
+                    console.log(e_1);
+                    return [3 /*break*/, 8];
+                case 8: 
+                // await saveGame();
+                // sendUpdate();
+                return [2 /*return*/, [__assign({}, game), __spreadArrays((commands || []))]];
             }
         });
     });
@@ -190,26 +215,26 @@ function processMovementCommands(commands, oldGame) {
  */
 function processScrapCommands(commands, oldGame) {
     var game = __assign({}, oldGame);
-    function recycleUnit(g, u) {
-        var recValue = fUnitUtils_1.getRecycleProfit(u);
-        if (recValue > 0) {
-            var unitFaction = __assign({}, fFactionUtils_1.getFactionFromArrayById(g.factions, u.factionId));
-            unitFaction.money += recValue;
-            return updateFactionInGame(g, unitFaction);
-        }
-        return __assign({}, g);
-    }
     commands.forEach(function (cmd) {
         if (cmd.type === fCommands_1.CommandType.UnitScrap) {
             var scrapCmd_1 = cmd;
+            var moneyToFactions_1 = new Map();
             game.units = game.units.filter(function (unit) {
                 if (unit.id === scrapCmd_1.unitId) {
                     if (scrapCmd_1.recycle) {
-                        game = recycleUnit(game, unit);
+                        fGeneralUtils_1.mapAdd(moneyToFactions_1, unit.factionId, fUnitUtils_1.getRecycleProfit(unit));
                     }
                     return false;
                 }
                 return true;
+            });
+            game.factions = game.factions.map(function (f) {
+                var mon = moneyToFactions_1.get(f.id);
+                if (mon) {
+                    f.money += mon;
+                    return __assign({}, f);
+                }
+                return f;
             });
         }
     });
@@ -876,21 +901,7 @@ exports.spaceCombatMain = spaceCombatMain;
 function spaceCombatPreCombat(game, origCombat, system) {
     var combat = __assign({}, origCombat);
     // Deploy Fighters
-    var designations = fRandUtils_1.shuffle([
-        "Alpha",
-        "Beta",
-        "Gamma",
-        "Delta",
-        "Phi",
-        "Tau",
-        "Red",
-        "Blue",
-        "Green",
-        "Gold",
-        "Yellow",
-        "Brown",
-        "Tan",
-    ]);
+    var designations = fRandUtils_1.shuffle(["Alpha", "Beta", "Gamma", "Delta", "Phi", "Tau", "Red", "Blue", "Green", "Gold", "Yellow", "Brown", "Tan"]);
     var fighters = combat.units.reduce(function (fighters, unit) {
         if (unit.fighters > 0) {
             var des = designations.pop();

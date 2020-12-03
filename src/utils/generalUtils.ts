@@ -1,4 +1,4 @@
-import { rnd } from "./randUtils";
+import { arnd, rnd } from "./randUtils";
 
 export function mapAdd<K>(m: Map<K, number>, k: K, v: number): Map<K, number> {
     if (m.has(k)) {
@@ -91,11 +91,8 @@ export function getColorSum(hexColor: string, bgisdark = true): number {
 }
 
 
-export function randomEnum<T>(anEnum: T): T[keyof T] {
-    const enumValues = Object.keys(anEnum)
-      .map(n => Number.parseInt(n))
-      .filter(n => !Number.isNaN(n)) as unknown as T[keyof T][]
-    
-    const randomEnumValue = enumValues[rnd(0, enumValues.length)]
-    return randomEnumValue;
-  }
+
+export function getRandomEnum<T extends string, TEnumValue extends string>(e: { [key in T]: TEnumValue }): TEnumValue {
+	const values = Object.values(e) as TEnumValue[];
+	return arnd<TEnumValue>(values);
+}

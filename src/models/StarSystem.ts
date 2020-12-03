@@ -28,6 +28,7 @@ export interface SystemModel extends GameObject {
 
     buildings: Building[];
     description?: string;
+    
     info?: SystemInfo;
 }
 
