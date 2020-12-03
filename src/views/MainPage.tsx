@@ -5,6 +5,7 @@ import { GameModel, GameState } from "../models/Models";
 
 // import { doCreateNewGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
+import AdminPage from "./AdminPage";
 import GameSetup from "./GameSetup";
 import GameView from "./GameView";
 import JoinGameView from "./JoinGame";
@@ -66,6 +67,10 @@ const MainPage: FC = () => {
 	}
 
 	// console.log(game.state, GameState[game.state]);
+
+	if(user.email==="admin@admin.com") {
+		return <AdminPage />;
+	}
 
 	switch (game.state) {
 		case GameState.INIT:
