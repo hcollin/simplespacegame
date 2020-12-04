@@ -11,7 +11,6 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.getSystemByCoordinates = exports.getSystemDefence = exports.getSystemMaxBuildingSlots = exports.getStarWelfareMax = exports.getStarDefenceMax = exports.getStarEconomyMax = exports.getStarIndustryMax = exports.getSystemEconomy = void 0;
 var fBuildingRules_1 = require("../buildings/fBuildingRules");
 var fStarSystem_1 = require("../models/fStarSystem");
 var fBusinessTech_1 = require("../tech/fBusinessTech");

@@ -20,7 +20,7 @@ export default function useMyCommands<T extends Command>(type?: CommandType): [T
 
     useEffect(() => {
         if(user && allCommands && game) {
-            const faction = getFactionByUserId(game.factions, user.id);
+            const faction = getFactionByUserId(game.factions, user.userId);
             if(faction) {
                 
                 const fcoms = allCommands.filter((c: Command) => c.factionId === faction.id);

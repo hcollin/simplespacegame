@@ -90,9 +90,9 @@ export function createChatService(serviceId: string, api: JokiServiceApi): JokiS
         const game = api.api.getServiceState("GameService") as GameModel;
         const user = api.api.getServiceState("UserService") as User;
 
-        const f = game.factions.find((fm: FactionModel) => fm.playerId === user.id);
+        const f = game.factions.find((fm: FactionModel) => fm.playerId === user.userId);
         if (!f) {
-            throw new Error(`No faction for user ${user.name} ${user.id} found in game ${game.id}!`);
+            throw new Error(`No faction for user ${user.name} ${user.userId} found in game ${game.id}!`);
         }
         return f;
     }

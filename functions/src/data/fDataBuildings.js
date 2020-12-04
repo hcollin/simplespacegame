@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.DATABUILDINGS = exports.BUILDINGTYPE = void 0;
 var fDataTechnology_1 = require("./fDataTechnology");
 var BUILDINGTYPE;
 (function (BUILDINGTYPE) {

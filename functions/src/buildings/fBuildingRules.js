@@ -11,7 +11,6 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.buildingGalacticSenate = exports.buildingArcology = exports.buildingDysonSphere = exports.buildingRingWorld = exports.buildingGateway = exports.buildingGalacticExchange = exports.buildingSpacePort = exports.buildingCommandCenter = exports.buildingRobotWorkers = exports.buildingUniversity = exports.buildingOrbitalCannon = exports.buildingRepairStation = exports.buildingFactoryAutomation = exports.buildingCGaiaProject = exports.buildingCoreMine = exports.buildingBunkers = exports.buildingBank = exports.buildingIndustrySector = exports.buildingTradePost = exports.buildingBioDome = exports.buildBuildingRules = void 0;
 var fDataBuildings_1 = require("../data/fDataBuildings");
 var fStarSystem_1 = require("../models/fStarSystem");
 var fFactionUtils_1 = require("../utils/fFactionUtils");

@@ -145,7 +145,7 @@ export function createEmptyCommandForCurrentFactionAndGame(type: CommandType, ac
 
 	if (!user || !game || !commands) return;
 
-	const faction = getFactionByUserId(game.factions, user.id);
+	const faction = getFactionByUserId(game.factions, user.userId);
 
 	if (!faction) return;
 
@@ -176,7 +176,7 @@ export function factionIsReady() {
 
 	if (!user || !game) return true;
 
-	const faction = getFactionByUserId(game.factions, user.id);
+	const faction = getFactionByUserId(game.factions, user.userId);
 
 	if (!faction) return true;
 

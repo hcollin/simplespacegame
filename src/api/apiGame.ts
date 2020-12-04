@@ -1,5 +1,5 @@
 import { GameModel, GameState } from "../models/Models";
-import { getAllItems, getItem, getItemsWhere, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
+import { deleteItem, getAllItems, getItem, getItemsWhere, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
 
 const COLLECTION = "Games";
 
@@ -64,4 +64,9 @@ export function apiSubscribeToGame(gameId: string, onChange: (GameModel: GameMod
         }
     }));
     return unsub;
+}
+
+
+export async function apiDeleteGame(game: GameModel): Promise<void> {
+    return await deleteItem(COLLECTION, game);
 }

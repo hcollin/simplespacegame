@@ -107,10 +107,10 @@ const DataTable: FC<DataTableProps> = (props: DataTableProps) => {
             <Table classes={{ root: classes.root }}>
                 <TableHead classes={{ root: classes.tableHead }}>
                     <TableRow>
-                        {props.columns.map((c: ColumnProps) => {
+                        {props.columns.map((c: ColumnProps, ind: number) => {
                             const content = c.wrapper !== undefined ? c.wrapper(c.header, null, -1, true) : c.header;
                             return (
-                                <TableCell key={c.key} width={c.size} className={c.className || ""}>
+                                <TableCell key={`H-${c.key}-${ind}`} width={c.size} className={c.className || ""}>
                                     {content}
                                 </TableCell>
                             );

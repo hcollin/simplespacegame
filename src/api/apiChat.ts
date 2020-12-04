@@ -1,6 +1,6 @@
 
 import { ChatMessage } from "../models/Communication";
-import { getItemsWhere, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
+import { deleteItemsWhere, getItemsWhere, insertOrUpdateItem, listenItemWhere } from "./apiFirebaseGeneral";
 
 const COLLECTION = "CHAT";
 
@@ -36,4 +36,9 @@ export function apiSubscribeToChat(gameId: string, onChange: (chatMsgs: ChatMess
         }
     }));
     return unsub;
+}
+
+
+export async function apiDeleteChatsForGame(gameId: string): Promise<void> {
+    return await deleteItemsWhere(COLLECTION, ["gameId", "==", gameId]);
 }

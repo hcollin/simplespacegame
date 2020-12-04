@@ -53,7 +53,7 @@ const JoinGameView: FC = () => {
         }
     }
 
-    const alreadyJoined = game.factions.find((fm: FactionModel) => fm.playerId === user.id) !== undefined;
+    const alreadyJoined = game.factions.find((fm: FactionModel) => fm.playerId === user.userId) !== undefined;
 
     const freePlayerSlots = game.setup.playerCount - game.factions.length;
 

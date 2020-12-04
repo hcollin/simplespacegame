@@ -16,7 +16,7 @@ const FactionInfo: FC<FactionInfoProps> = (props: FactionInfoProps) => {
 
     return (
         <div onClick={login}>
-            <h2 style={{color: props.faction.color, border: user && user.id === props.faction.playerId ? "solid 2px black": ""}}>{props.faction.name}</h2>
+            <h2 style={{color: props.faction.color, border: user && user.userId === props.faction.playerId ? "solid 2px black": ""}}>{props.faction.name}</h2>
         </div>
     )
 

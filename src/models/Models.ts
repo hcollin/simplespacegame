@@ -18,6 +18,7 @@ export enum GameState {
     "PROCESSING",
     "CLEANUP",
     "ENDED",
+    "CLOSED",
 }
 
 export interface GameSetup {

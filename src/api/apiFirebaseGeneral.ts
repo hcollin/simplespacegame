@@ -203,17 +203,20 @@ export async function insertOrUpdateItem<T extends GameObject>(
 //     }
 // }
 
-// export async function deleteItemsWhere(
-//     collectionName: string,
-//     where: [string, Firebase.firestore.WhereFilterOp, string]
-// ) {
-//     try {
-//         // const batch = db.batch();
-//         const delRefs = await db.collection(collectionName).where(where[0], where[1], where[2]).get();
-//         delRefs.forEach((itemRef) => {
-//             console.log(itemRef);
-//         });
-//     } catch (e) {
-//         console.error("DELETE ITEMS ERROR", e);
-//     }
-// }
+export async function deleteItemsWhere(
+    collectionName: string,
+    where: [string, Firebase.firestore.WhereFilterOp, string]
+): Promise<void> {
+    try {
+        const snap = await db.collection(collectionName).where(where[0], where[1], where[2]).get();
+
+        const batch = db.batch();
+        snap.forEach((item) => {
+            batch.delete(item.ref);
+        });
+        return batch.commit();
+
+    } catch (e) {
+        console.error("DELETE ITEMS ERROR", e);
+    }
+}

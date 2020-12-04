@@ -82,7 +82,7 @@ export default function createCommandService(serviceId: string, api: JokiService
 		const game = api.api.getServiceState(SERVICEID.GameService) as GameModel;
 		const user = api.api.getServiceState(SERVICEID.UserService) as User | null;
 		if (user !== null && game.state === GameState.TURN) {
-			const faction = game.factions.find((fm: FactionModel) => fm.playerId === user.id);
+			const faction = game.factions.find((fm: FactionModel) => fm.playerId === user.userId);
 			if (faction) {
 				const allCommands = await apiLoadCommands(game.id);
 				const myCommands = allCommands.filter((c: Command) => c.factionId === faction.id && c.completed !== true);
@@ -210,9 +210,9 @@ export default function createCommandService(serviceId: string, api: JokiService
 		const game = api.api.getServiceState("GameService") as GameModel;
 		const user = api.api.getServiceState("UserService") as User;
 
-		const f = game.factions.find((fm: FactionModel) => fm.playerId === user.id);
+		const f = game.factions.find((fm: FactionModel) => fm.playerId === user.userId);
 		if (!f) {
-			throw new Error(`No faction for user ${user.name} ${user.id} found in game ${game.id}!`);
+			throw new Error(`No faction for user ${user.name} ${user.userId} found in game ${game.id}!`);
 		}
 		return f;
 	}

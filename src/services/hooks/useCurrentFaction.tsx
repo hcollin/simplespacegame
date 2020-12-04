@@ -15,7 +15,7 @@ export default function useCurrentFaction(): FactionModel | null {
     useEffect(() => {
 
         if (game && user) {
-            const f = game.factions.find((f: FactionModel) => f.playerId === user.id);
+            const f = game.factions.find((f: FactionModel) => f.playerId === user.userId);
             if (f) {
                 setFaction(f);
             } else {

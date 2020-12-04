@@ -13,6 +13,7 @@ import AuthProviders from "../components/AuthProviders";
 
 import frostTrollLogoPng from '../images/FrostTrollLogo.png';
 import SubMenuButton from "../components/SubMenuButton";
+import { useAtom, useAtomValue } from "jokits-react";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -101,6 +102,8 @@ const MenuPage: FC = () => {
     const [myGames, setMyGames] = useState<GameModel[]>([]);
     const [openGames, setOpenGames] = useState<GameModel[]>([]);
 
+    const viewState = useAtomValue("menuViewState", "menu");
+
     useEffect(() => {
         async function loadGames(uid: string) {
             const games = await apiListMyGames(uid);
@@ -110,7 +113,7 @@ const MenuPage: FC = () => {
             }
         }
         if (user) {
-            loadGames(user.id);
+            loadGames(user.userId);
         }
     }, [user]);
 
@@ -125,6 +128,8 @@ const MenuPage: FC = () => {
 
         loadGames();
     }, []);
+
+    if(viewState !== "menu") return null;
 
     function loginWithGoogle() {
         if (!user) {
@@ -144,13 +149,14 @@ const MenuPage: FC = () => {
     }
 
     function loadGame(gid: string) {
+        
         doLoadGame(gid);
     }
 
 
     async function refreshList() {
         if (user) {
-            apiListMyGames(user.id).then((games) => {
+            apiListMyGames(user.userId).then((games) => {
                 setMyGames(games);
             });
         }
@@ -205,7 +211,7 @@ const MenuPage: FC = () => {
                         </header>
 
                         {myGames.map((gm: GameModel) => {
-                            const faction = gm.factions.find((fm: FactionModel) => fm.playerId === user.id);
+                            const faction = gm.factions.find((fm: FactionModel) => fm.playerId === user.userId);
                             if (!faction) return null;
                             return (
 
@@ -239,15 +245,11 @@ const MenuPage: FC = () => {
                                                 VIEW
                                             </Button>
                                         )}
-                                        {gm.state === GameState.OPEN && !gm.playerIds.includes(user.id) && (
+                                        {gm.state === GameState.OPEN && !gm.playerIds.includes(user.userId) && (
                                             <Button onClick={() => loadGame(gm.id)} variant="contained">
                                                 JOIN
                                             </Button>
                                         )}
-                                        {/* {gm.state === GameState.OPEN && gm.playerIds.includes(user.id) && (
-                                            <p>Waiting for more players...</p>
-                                        )} */}
-                                        {/* {gm.state !== GameState.PROCESSING && <Button onClick={() => processTurn(gm.id)} variant="outlined">PROCESS</Button>} */}
                                     </div>
                                 </div>
                             );
@@ -259,7 +261,7 @@ const MenuPage: FC = () => {
                             <h2>Open Games</h2>
                         </header>
                         {openGames.map((gm: GameModel) => {
-                            if (gm.playerIds.includes(user.id)) return null;
+                            if (gm.playerIds.includes(user.userId)) return null;
                             return (
                                 <div key={gm.id} className={classes.row}>
                                     <div className="first">

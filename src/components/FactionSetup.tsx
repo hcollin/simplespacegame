@@ -172,8 +172,8 @@ const FactionSetupView: FC<Props> = (props) => {
     useEffect(() => {
         if (user) {
             setSetup((prev: FactionSetup) => {
-                if (prev.playerId !== user.id) {
-                    return { ...prev, playerId: user.id };
+                if (prev.playerId !== user.userId) {
+                    return { ...prev, playerId: user.userId };
                 }
                 return prev;
             });
@@ -240,7 +240,7 @@ const FactionSetupView: FC<Props> = (props) => {
                     color: arnd(FACTION_COLORS),
                     fontFamily: arnd(FACTION_FONTS),
                     iconFileName: `abstract-${prnd(1, 120)}.svg`,
-                    playerId: user.id,
+                    playerId: user.userId,
                 };
 
                 valid = true;

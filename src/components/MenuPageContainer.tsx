@@ -4,6 +4,8 @@ import { makeStyles, Theme, createStyles, Container, Button } from "@material-ui
 import starfieldJpeg from "../images/starfield2.jpg";
 import useCurrentUser from "../services/hooks/useCurrentUser";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { userIsAdmin } from "../utils/userUtils";
+import { useAtom } from "jokits-react";
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -200,6 +202,7 @@ const MenuPageContainer: FC<MenuPageContainerProps> = (props: MenuPageContainerP
     const classes = useStyles();
 
     const [user, send] = useCurrentUser();
+    const [viewState, setViewState] = useAtom("menuViewState", "menu");
 
     function logout() {
         send("logout");
@@ -219,6 +222,8 @@ const MenuPageContainer: FC<MenuPageContainerProps> = (props: MenuPageContainerP
                         <div className="userInfo">
                             <p>Welcome, {user.name}!</p>
                             <Button variant="contained" color="secondary" onClick={logout}><ExitToAppIcon /></Button>
+                            {userIsAdmin(user) && viewState !== "admin" && <Button color="primary" variant="contained" onClick={() => setViewState("admin")}>Admin</Button>}
+                            {userIsAdmin(user) && viewState === "admin" && <Button color="primary" variant="contained" onClick={() => setViewState("menu")}>Menu</Button>}
                         </div>
                     )}
                 </header>

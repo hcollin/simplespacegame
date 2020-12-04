@@ -28,7 +28,7 @@ const EMPTYGAME: GameModel = {
     },
     settings: {
         turnTimer: 0,
-        discordWebHookUrl: ""
+        discordWebHookUrl: "",
     },
     name: "",
     state: GameState.NONE,
@@ -107,7 +107,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
             },
             settings: {
                 turnTimer: 0,
-                discordWebHookUrl: ""
+                discordWebHookUrl: "",
             },
             name: randomGameName(),
             state: GameState.INIT,
@@ -139,7 +139,6 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
     }
 
     async function newGame(gameSetup: PreGameSetup) {
-
         game = createGameFromSetup(gameSetup);
         game = await apiNewGame(game);
         sendUpdate();
@@ -166,15 +165,19 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         if (!user) {
             return;
         }
-
+        console.log("START LOADING", gameId, user);
         const res = await apiLoadGame(gameId);
+
         if (res) {
-            if (res.state >= GameState.TURN && !res.playerIds.includes(user.id)) {
+            if (res.state >= GameState.TURN && !res.playerIds.includes(user.userId)) {
                 return;
             }
+            console.log("game laoded", res);
             game = res;
             sendUpdate();
             startListening();
+        } else {
+            console.error(`Could not load game ${gameId}`, res);
         }
     }
 
@@ -226,7 +229,7 @@ export default function createGameService(serviceId: string, api: JokiServiceApi
         }
         const user = api.api.getServiceState<User>("UserService");
         if (user) {
-            const faction = getFactionByUserId(game.factions, user.id);
+            const faction = getFactionByUserId(game.factions, user.userId);
             if (faction) {
                 _setFactionDone(faction.id);
             }
