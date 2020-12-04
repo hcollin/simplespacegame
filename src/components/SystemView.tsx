@@ -9,16 +9,7 @@ import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { SERVICEID } from "../services/services";
 import { getSystemEconomy, simulateCommandsEffectsForSystem } from "../utils/systemUtils";
-import {
-    IconCommand,
-    IconCredit,
-    IconDefense,
-    IconEconomy,
-    IconIndustry,
-    IconResearchPoint,
-    IconScore,
-    IconWelfare,
-} from "./Icons";
+import { IconCredit, IconDefense, IconEconomy, IconIndustry, IconResearchPoint, IconScore, IconWelfare } from "./Icons";
 import {
     doBuildBuilding,
     doBuildUnit,
@@ -43,6 +34,8 @@ import useUnitSelection from "../hooks/useUnitSelection";
 import FactionBanner from "./FactionBanner";
 import BuildingSlot from "./BuildingSlot";
 import { Planet, SystemModel } from "../models/StarSystem";
+import { planetStyle } from "../utils/planetUtils";
+import PlanetDiv from "./Planet";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -424,6 +417,27 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
             },
         },
+        planets: {
+            height: "8rem",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+
+            "& > div.planet-container": {
+                position: "relative",
+                margin: "0 1.5rem",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+
+                "& > label": {
+                    fontSize: "0.8rem",
+                    textAlign: "center",
+                    marginTop: "0.5rem",
+                },
+            },
+        },
     })
 );
 
@@ -562,11 +576,7 @@ const SystemView: FC = () => {
                     <Grid container>
                         <Grid item lg={12} className={classes.contentArea}>
                             <p className="description">{star.description}</p>
-                            {star.info && <div className="planets">
-                                {star.info.planets.map((p: Planet) => (
-                                    <p key={p.name}>{p.name} {p.distanceFromStar} {p.population} {p.size} {p.type}</p>
-                                ))}
-                            </div>  }
+                            <Planets star={star} />
                             {star.keywords.length > 0 && <p className="keywords">{star.keywords.join(", ")}</p>}
                         </Grid>
 
@@ -851,6 +861,37 @@ const SystemView: FC = () => {
                     </Grid>
                 </div>
             )}
+        </div>
+    );
+};
+
+interface PlanetsProps {
+    star: SystemModel;
+}
+
+const Planets: FC<PlanetsProps> = (props) => {
+    const classes = useStyles();
+    const planets = props.star.info ? [...props.star.info.planets] : [];
+    planets.sort((a: Planet, b: Planet) => {
+        return a.distanceFromStar - b.distanceFromStar;
+    });
+
+    return (
+        <div className={classes.planets}>
+            {planets.map((p: Planet) => {
+                const [style, addClasses] = planetStyle(p);
+                return (
+                    <div className="planet-container">
+                        <PlanetDiv star={props.star} planet={p} />
+
+                        <label>
+                            {p.name}
+                            <br />
+                            {p.type}
+                        </label>
+                    </div>
+                );
+            })}
         </div>
     );
 };
