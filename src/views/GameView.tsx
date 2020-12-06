@@ -11,9 +11,10 @@ import { GameModel, GameState } from "../models/Models";
 import iconMapSvg from "../images/iconMap.svg";
 import iconEconomySvg from "../images/iconEconomy.svg";
 import iconScienceSvg from "../images/iconScience.svg";
-
 import iconDiplomacySvg from "../images/iconDiplomacy.svg";
 import iconHelpSvg from "../images/iconHelp.svg";
+import iconUnitsSvg from '../images/iconUnits.svg';
+
 
 import EconomySheet from "./subviews/EconomySheet";
 import HelpView from "./subviews/HelpView";
@@ -21,6 +22,7 @@ import ScienceView from "./subviews/ScienceView";
 import DiplomacyView from "./subviews/DiplomacyView";
 import FleetView from "../components/FleetView";
 import SystemView from "../components/SystemView";
+import UnitsView from "./subviews/UnitsView";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -206,6 +208,7 @@ const GameView: FC = () => {
             {view === "science" && <ScienceView />}
             {view === "diplomacy" && <DiplomacyView />}
             {view === "help" && <HelpView />}
+            {view === "units" && <UnitsView />}
 
             <CommandList />
 
@@ -223,9 +226,9 @@ const GameView: FC = () => {
                 <div className={view === "science" ? "active" : ""} onClick={() => setView("science")}>
                     <img src={iconScienceSvg} alt="Science View" />
                 </div>
-                {/* <div className={view === "units" ? "active": ""} onClick={() => setView("units")}>
+                <div className={view === "units" ? "active": ""} onClick={() => setView("units")}>
                     <img src={iconUnitsSvg} alt="Units View" />
-                </div> */}
+                </div>
                 <div className={view === "diplomacy" ? "active" : ""} onClick={() => setView("diplomacy")}>
                     <img src={iconDiplomacySvg} alt="Diplomacy View" />
                 </div>

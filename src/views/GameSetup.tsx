@@ -162,7 +162,7 @@ const GameSetup: FC = () => {
             const sizeCounter = getDistanceMultiplier(distances);
             const starCount = getStarCount(starDensity, distances, plCount);
             console.log("StarCount", starCount);
-            const rndMap = createRandomMap(starCount, sizeCounter,specials);
+            const rndMap = createRandomMap(starCount, sizeCounter,specials, plCount);
             setExampleMap(rndMap);
         }
     }, [distances, starDensity, plCount, specials]);

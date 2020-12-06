@@ -36,6 +36,7 @@ export interface ShipWeapon {
 	cooldownTime: number;
 	type: WEAPONTYPE;
 	special: string[];
+	part: ShipPart;
 }
 
 /**
@@ -77,4 +78,20 @@ export interface ShipUnit extends ShipDesign {
 	location: Coordinates;
 	factionId: string;
 	experience: number;
+}
+
+
+export enum ShipPartSlot {
+	WEAPON = "Weapon",
+	ENGINE = "Engine",
+	SHIELD = "Shields",
+	OTHER = "Other",
+}
+
+export interface ShipPart {
+	points: number;
+	notAvaialbleInClasses: SHIPCLASS[];
+	techPreReq: TECHIDS|null;
+	slot: ShipPartSlot;
+
 }

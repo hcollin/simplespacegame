@@ -76,7 +76,7 @@ export function createNewSystem(ax = 1, ay = 1, as = 99, special = "AVERAGE"): S
     return star;
 }
 
-export function createRandomMap(starCount: number, size = 99, special = "AVERAGE"): SystemModel[] {
+export function createRandomMap(starCount: number, size = 99, special = "AVERAGE", playerCount: number): SystemModel[] {
     const stars: SystemModel[] = [];
 
     const c = Math.round(starCount / 10);
