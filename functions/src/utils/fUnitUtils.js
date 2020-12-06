@@ -11,11 +11,12 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.getDesignByName = exports.createShipFromDesign = exports.unitIsAlreadyInCommand = exports.unitIsBeingScrapped = exports.unitIsInFriendlyOrbit = exports.getRecycleProfit = exports.getWeaponFireRate = exports.getMaxDamageForWeapon = exports.shipCanBeBuiltOnSystemByFaction = exports.getFactionAdjustedUnit = exports.getFactionAdjustedWeapon = exports.getWeaponCooldownTime = exports.getWeaponAccuracy = exports.getWeaponDamage = exports.getShipAgility = exports.getShipShieldsReg = exports.getShipShieldsMax = exports.getShipArmor = exports.getShipHull = exports.getShipTroops = exports.getShipCost = exports.getShipTechReq = exports.getShipIndustry = exports.getShipSpeed = exports.getAdjustedShip = void 0;
+exports.fleetBombardmentCalculator = exports.getDesignByName = exports.createShipFromDesign = exports.unitIsAlreadyInCommand = exports.unitIsBeingScrapped = exports.unitIsInFriendlyOrbit = exports.getRecycleProfit = exports.getWeaponFireRate = exports.getMaxDamageForWeapon = exports.shipCanBeBuiltOnSystemByFaction = exports.getFactionAdjustedUnit = exports.getFactionAdjustedWeapon = exports.getWeaponCooldownTime = exports.getWeaponAccuracy = exports.getWeaponDamage = exports.getShipAgility = exports.getShipShieldsReg = exports.getShipShieldsMax = exports.getShipArmor = exports.getShipHull = exports.getShipTroops = exports.getShipCost = exports.getShipTechReq = exports.getShipIndustry = exports.getShipSpeed = exports.getAdjustedShip = void 0;
 var fDataShips_1 = require("../data/fDataShips");
 var fCommands_1 = require("../models/fCommands");
 var fUnits_1 = require("../models/fUnits");
 var fShipTech_1 = require("../tech/fShipTech");
+var fFactionUtils_1 = require("./fFactionUtils");
 var fLocationUtils_1 = require("./fLocationUtils");
 var fRandUtils_1 = require("./fRandUtils");
 // import { getFactionById } from "./factionJokiUtils";
@@ -217,6 +218,10 @@ function unitIsAlreadyInCommand(unit, commands) {
             var fleetCmd = cmd;
             return fleetCmd.unitIds.includes(unit.id);
         }
+        if (cmd.type === fCommands_1.CommandType.FleetBombard) {
+            var fleetCmd = cmd;
+            return fleetCmd.unitIds.includes(unit.id);
+        }
         return false;
     });
 }
@@ -238,3 +243,21 @@ function getDesignByName(name) {
     return sd;
 }
 exports.getDesignByName = getDesignByName;
+function fleetBombardmentCalculator(game, fleet, system) {
+    var chance = 10;
+    var maxDamage = 1;
+    fleet.forEach(function (unit) {
+        var unitFaction = fFactionUtils_1.getFactionFromArrayById(game.factions, unit.factionId);
+        unit.weapons.forEach(function (w) {
+            var weaponDmg = Math.round(getMaxDamageForWeapon(w, unitFaction || true, 0) / 10);
+            if (unit.keywords.includes("BOMBARDMENT")) {
+                // weaponDmg = weaponDmg * 3;
+                maxDamage++;
+                chance += 25;
+            }
+            chance += Math.round(weaponDmg / 3);
+        });
+    });
+    return [chance, maxDamage];
+}
+exports.fleetBombardmentCalculator = fleetBombardmentCalculator;

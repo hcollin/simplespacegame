@@ -21,6 +21,7 @@ import {
 	BuildUnitCommand,
 	BuildBuildingCommand,
 	UnitScrapCommand,
+	FleetBombardCommand,
 } from "./models/fCommands";
 import { Trade } from "./models/fCommunication";
 import { GameModel, GameState, FactionModel, FactionState, FactionTechSetting, Technology, SpaceCombat, Coordinates, Report } from "./models/fModels";
@@ -41,7 +42,7 @@ import {
 import { asyncArrayForeach, asyncArrayMap, asyncMapForeach, mapAdd } from "./utils/fGeneralUtils";
 import { inSameLocation } from "./utils/fLocationUtils";
 import { travelingBetweenCoordinates } from "./utils/fMathUtils";
-import { rnd, shuffle } from "./utils/fRandUtils";
+import { rnd, roll, shuffle } from "./utils/fRandUtils";
 import { getSystemByCoordinates, getSystemDefence, getSystemFromArrayById } from "./utils/fSystemUtils";
 import { canAffordTech, factionPaysForTech } from "./utils/fTechUtils";
 import {
@@ -52,6 +53,7 @@ import {
 	createShipFromDesign,
 	getDesignByName,
 	getRecycleProfit,
+	fleetBombardmentCalculator,
 } from "./utils/fUnitUtils";
 import { specialAntiFighter } from "./utils/fWeaponUtils";
 
@@ -77,6 +79,9 @@ export async function processTurn(origGame: GameModel, commands: Command[], fire
 		game = processResearchCommands(commands, game);
 	}
 	game = await processCombats(game, firestore);
+	if (commands) {
+		game = await processBombardmentCommands(game, commands);
+	}
 	game = await processInvasion(game, firestore);
 
 	// Process economy
@@ -91,7 +96,7 @@ export async function processTurn(origGame: GameModel, commands: Command[], fire
 	// Win Conditions
 	game = processWinConditions(game);
 
-	game = await processValidateRemainingCommands(game, commands, firestore);
+	game = await processValidateRemainingCommands(game, commands);
 
 	// Make sure building commands are still valid
 
@@ -160,10 +165,8 @@ function processWinConditions(game: GameModel): GameModel {
 	return { ...game };
 }
 
-async function processValidateRemainingCommands(oldGame: GameModel, commands: Command[], firestore: any): Promise<GameModel> {
+async function processValidateRemainingCommands(oldGame: GameModel, commands: Command[]): Promise<GameModel> {
 	let game = { ...oldGame };
-
-	const cmdsToCancel: Command[] = [];
 
 	commands.forEach((cmd: Command) => {
 		if (cmd.type === CommandType.SystemBuildUnit) {
@@ -176,9 +179,15 @@ async function processValidateRemainingCommands(oldGame: GameModel, commands: Co
 				const shipDesign = getDesignByName(bcmd.shipName);
 				faction.money += shipDesign.cost;
 				game = updateFactionInGame(game, faction);
-				cmdsToCancel.push(bcmd);
-				
-				game = addReportToSystem(game, system, DetailReportType.Generic, [bcmd.factionId] , "", `Building ${shipDesign.name} cancelled in ${system.name}`);
+				cmd.delete = true;
+				game = addReportToSystem(
+					game,
+					system,
+					DetailReportType.Generic,
+					[bcmd.factionId],
+					"",
+					`Building ${shipDesign.name} cancelled in ${system.name}`,
+				);
 			}
 		}
 
@@ -190,16 +199,10 @@ async function processValidateRemainingCommands(oldGame: GameModel, commands: Co
 				const building = getBuildingDesignByType(bcmd.buildingType);
 				faction.money += building.cost;
 				game = updateFactionInGame(game, faction);
-				cmdsToCancel.push(bcmd);
-				game = addReportToSystem(game, system, DetailReportType.Generic, [bcmd.factionId] , "", `Building ${building.name} cancelled in ${system.name}`);
+				cmd.delete = true;
+				game = addReportToSystem(game, system, DetailReportType.Generic, [bcmd.factionId], "", `Building ${building.name} cancelled in ${system.name}`);
 			}
 		}
-	});
-
-	await asyncArrayForeach(cmdsToCancel, async (cmd: Command) => {
-		cmd.delete = true;
-		// const res = await firestore.collection("Commands").doc(cmd.id).delete();
-		// console.log("Command Succesfully deleted", cmd.id, res);
 	});
 
 	return game;
@@ -401,6 +404,47 @@ async function processSystemCommands(commands: Command[], oldGame: GameModel, fi
 	return game;
 }
 
+async function processBombardmentCommands(oldGame: GameModel, commands: Command[]): Promise<GameModel> {
+	let game = { ...oldGame };
+
+	commands.forEach((cmd: Command) => {
+		if (cmd.type === CommandType.FleetBombard) {
+			const bcmd = cmd as FleetBombardCommand;
+
+			const targetSystem = getSystemFromGame(game, bcmd.targetSystem);
+			if (targetSystem.ownerFactionId !== cmd.factionId) {
+				const fleet = game.units.filter((u: ShipUnit) => {
+					return bcmd.unitIds.includes(u.id);
+				});
+				const bomb = fleetBombardmentCalculator(game, fleet, targetSystem);
+				let successfulBombardments = 0;
+
+				for (let b = 0; b < bomb[1]; b++) {
+					if (roll(bomb[0])) {
+						successfulBombardments++;
+					}
+				}
+				console.log("BOMBARDMENT", bomb, successfulBombardments);
+				targetSystem.defense -= successfulBombardments;
+				if (targetSystem.defense < 0) targetSystem.defense = 0;
+				game = updateSystemInGame(game, targetSystem);
+				game = addReportToSystem(
+					game,
+					targetSystem,
+					DetailReportType.Generic,
+					[targetSystem.ownerFactionId, fleet[0].factionId],
+					"",
+					`${targetSystem.name} was bombarded resulting ${successfulBombardments} defence points of damage`,
+				);
+			}
+
+			markCommandDone(cmd);
+		}
+	});
+
+	return game;
+}
+
 /**
  * Process Ground combat
  *
@@ -466,7 +510,14 @@ async function processInvasion(oldGame: GameModel, firestore: any): Promise<Game
 					firestore,
 				);
 
-				game = addReportToSystem(game, sm, DetailReportType.System, [sm.ownerFactionId], report.id, `Invasion in ${sm.name} by ${attackingFaction.name}`);
+				game = addReportToSystem(
+					game,
+					sm,
+					DetailReportType.System,
+					[sm.ownerFactionId],
+					report.id,
+					`Invasion in ${sm.name} by ${attackingFaction.name}`,
+				);
 			});
 		}
 		return sm;

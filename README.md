@@ -138,13 +138,3 @@ List of ideas for tech
   * Automatic research point per turn
   * More Research levels adjustment levels
   * Less destruction on invasion
-
-
-# Objectives
-
-For now: Control 5 ring worlds
-
-# Diplomacy
-
-Diplomacy provides a simple messaging/chat tool between factions. Those messages will transfer immediately
-Actual trades happen on turn processing and require a command

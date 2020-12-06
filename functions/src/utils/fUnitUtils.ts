@@ -1,7 +1,7 @@
 import DATASHIPS, { shipNameGenerator, SHIPWEAPONSPECIAL } from "../data/fDataShips";
 import { TECHIDS } from "../data/fDataTechnology";
 import { Command, UnitScrapCommand, CommandType, FleetCommand } from "../models/fCommands";
-import { FactionModel, Coordinates } from "../models/fModels";
+import { FactionModel, Coordinates, GameModel } from "../models/fModels";
 import { SystemModel } from "../models/fStarSystem";
 import { SHIPCLASS, ShipDesign, ShipUnit, ShipWeapon, WEAPONTYPE } from "../models/fUnits";
 
@@ -16,6 +16,7 @@ import {
     techTargetingComputerTwo,
     techWarpEngines,
 } from "../tech/fShipTech";
+import { getFactionFromArrayById } from "./fFactionUtils";
 import { inSameLocation } from "./fLocationUtils";
 import { rndId } from "./fRandUtils";
 // import { getFactionById } from "./factionJokiUtils";
@@ -214,6 +215,10 @@ export function unitIsAlreadyInCommand(unit: ShipUnit, commands: Command[]): Com
             const fleetCmd = cmd as FleetCommand;
             return fleetCmd.unitIds.includes(unit.id);
         }
+        if (cmd.type === CommandType.FleetBombard) {
+			const fleetCmd = cmd as FleetCommand;
+			return fleetCmd.unitIds.includes(unit.id);
+		}
         return false;
     });
 }
@@ -247,4 +252,25 @@ export function getDesignByName(name: string): ShipDesign {
         throw new Error(`Unknown ship desgin ${name}`);
     }
     return sd;
+}
+
+
+export function fleetBombardmentCalculator(game: GameModel, fleet: ShipUnit[], system: SystemModel): [number, number] {
+	let chance = 10;
+	let maxDamage = 1;
+
+	fleet.forEach((unit: ShipUnit) => {
+		const unitFaction = getFactionFromArrayById(game.factions, unit.factionId);
+		unit.weapons.forEach((w: ShipWeapon) => {
+			let weaponDmg = Math.round(getMaxDamageForWeapon(w, unitFaction || true, 0) / 10);
+			if (unit.keywords.includes("BOMBARDMENT")) {
+				// weaponDmg = weaponDmg * 3;
+                maxDamage++;
+                chance += 25;
+			}
+			chance += Math.round(weaponDmg / 3);
+		});
+	});
+
+	return [chance, maxDamage];
 }

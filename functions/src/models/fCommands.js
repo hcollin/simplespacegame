@@ -11,6 +11,7 @@ var CommandType;
     CommandType["SystemWelfare"] = "SystemWelfare";
     CommandType["SystemDefense"] = "SystemDefense";
     CommandType["FleetMove"] = "FleetMove";
+    CommandType["FleetBombard"] = "Bombard";
     CommandType["UnitScrap"] = "UnitScrap";
     CommandType["TechnologyResearch"] = "Research";
 })(CommandType = exports.CommandType || (exports.CommandType = {}));

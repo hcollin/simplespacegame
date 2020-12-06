@@ -70,6 +70,7 @@ var fFactionUtils_1 = require("./utils/fFactionUtils");
 var fGeneralUtils_1 = require("./utils/fGeneralUtils");
 var fLocationUtils_1 = require("./utils/fLocationUtils");
 var fMathUtils_1 = require("./utils/fMathUtils");
+var fRandUtils_1 = require("./utils/fRandUtils");
 var fSystemUtils_1 = require("./utils/fSystemUtils");
 var fTechUtils_1 = require("./utils/fTechUtils");
 var fUnitUtils_1 = require("./utils/fUnitUtils");
@@ -98,8 +99,13 @@ function processTurn(origGame, commands, firestore) {
                 case 2: return [4 /*yield*/, processCombats(game, firestore)];
                 case 3:
                     game = _a.sent();
-                    return [4 /*yield*/, processInvasion(game, firestore)];
+                    if (!commands) return [3 /*break*/, 5];
+                    return [4 /*yield*/, processBombardmentCommands(game, commands)];
                 case 4:
+                    game = _a.sent();
+                    _a.label = 5;
+                case 5: return [4 /*yield*/, processInvasion(game, firestore)];
+                case 6:
                     game = _a.sent();
                     // Process economy
                     game = processEconomy(game);
@@ -109,8 +115,8 @@ function processTurn(origGame, commands, firestore) {
                     game = processResearch(game);
                     // Win Conditions
                     game = processWinConditions(game);
-                    return [4 /*yield*/, processValidateRemainingCommands(game, commands, firestore)];
-                case 5:
+                    return [4 /*yield*/, processValidateRemainingCommands(game, commands)];
+                case 7:
                     game = _a.sent();
                     // Make sure building commands are still valid
                     // Turn final processing
@@ -122,10 +128,10 @@ function processTurn(origGame, commands, firestore) {
                     //     action: "nextTurn",
                     // });
                     game.state = fModels_1.GameState.TURN;
-                    if (!(game.settings.discordWebHookUrl !== null)) return [3 /*break*/, 9];
-                    _a.label = 6;
-                case 6:
-                    _a.trys.push([6, 8, , 9]);
+                    if (!(game.settings.discordWebHookUrl !== null)) return [3 /*break*/, 11];
+                    _a.label = 8;
+                case 8:
+                    _a.trys.push([8, 10, , 11]);
                     discordRequestConfig = {
                         url: game.settings.discordWebHookUrl,
                         method: "post",
@@ -137,15 +143,15 @@ function processTurn(origGame, commands, firestore) {
                         }
                     };
                     return [4 /*yield*/, axios_1["default"](discordRequestConfig)];
-                case 7:
+                case 9:
                     axlog = _a.sent();
-                    return [3 /*break*/, 9];
-                case 8:
+                    return [3 /*break*/, 11];
+                case 10:
                     e_1 = _a.sent();
                     console.error(game.name + ":" + game.id + ":Error while sending notification to discord", game.settings);
                     console.log(e_1);
-                    return [3 /*break*/, 9];
-                case 9: 
+                    return [3 /*break*/, 11];
+                case 11: 
                 // await saveGame();
                 // sendUpdate();
                 return [2 /*return*/, [__assign({}, game), __spreadArrays((commands || []))]];
@@ -177,51 +183,38 @@ function processWinConditions(game) {
     }
     return __assign({}, game);
 }
-function processValidateRemainingCommands(oldGame, commands, firestore) {
+function processValidateRemainingCommands(oldGame, commands) {
     return __awaiter(this, void 0, void 0, function () {
-        var game, cmdsToCancel;
-        var _this = this;
+        var game;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    game = __assign({}, oldGame);
-                    cmdsToCancel = [];
-                    commands.forEach(function (cmd) {
-                        if (cmd.type === fCommands_1.CommandType.SystemBuildUnit) {
-                            var bcmd = cmd;
-                            var system = fSystemUtils_1.getSystemFromArrayById(game.systems, bcmd.targetSystem);
-                            if (system && system.ownerFactionId !== bcmd.factionId) {
-                                var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, cmd.factionId);
-                                var shipDesign = fUnitUtils_1.getDesignByName(bcmd.shipName);
-                                faction.money += shipDesign.cost;
-                                game = updateFactionInGame(game, faction);
-                                cmdsToCancel.push(bcmd);
-                                game = addReportToSystem(game, system, fReport_1.DetailReportType.Generic, [bcmd.factionId], "", "Building " + shipDesign.name + " cancelled in " + system.name);
-                            }
-                        }
-                        if (cmd.type === fCommands_1.CommandType.SystemBuildingBuild) {
-                            var bcmd = cmd;
-                            var system = fSystemUtils_1.getSystemFromArrayById(game.systems, bcmd.targetSystem);
-                            if (system.ownerFactionId !== bcmd.factionId) {
-                                var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, cmd.factionId);
-                                var building = fBuildingUtils_1.getBuildingDesignByType(bcmd.buildingType);
-                                faction.money += building.cost;
-                                game = updateFactionInGame(game, faction);
-                                cmdsToCancel.push(bcmd);
-                                game = addReportToSystem(game, system, fReport_1.DetailReportType.Generic, [bcmd.factionId], "", "Building " + building.name + " cancelled in " + system.name);
-                            }
-                        }
-                    });
-                    return [4 /*yield*/, fGeneralUtils_1.asyncArrayForeach(cmdsToCancel, function (cmd) { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                cmd["delete"] = true;
-                                return [2 /*return*/];
-                            });
-                        }); })];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/, game];
-            }
+            game = __assign({}, oldGame);
+            commands.forEach(function (cmd) {
+                if (cmd.type === fCommands_1.CommandType.SystemBuildUnit) {
+                    var bcmd = cmd;
+                    var system = fSystemUtils_1.getSystemFromArrayById(game.systems, bcmd.targetSystem);
+                    if (system && system.ownerFactionId !== bcmd.factionId) {
+                        var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, cmd.factionId);
+                        var shipDesign = fUnitUtils_1.getDesignByName(bcmd.shipName);
+                        faction.money += shipDesign.cost;
+                        game = updateFactionInGame(game, faction);
+                        cmd["delete"] = true;
+                        game = addReportToSystem(game, system, fReport_1.DetailReportType.Generic, [bcmd.factionId], "", "Building " + shipDesign.name + " cancelled in " + system.name);
+                    }
+                }
+                if (cmd.type === fCommands_1.CommandType.SystemBuildingBuild) {
+                    var bcmd = cmd;
+                    var system = fSystemUtils_1.getSystemFromArrayById(game.systems, bcmd.targetSystem);
+                    if (system.ownerFactionId !== bcmd.factionId) {
+                        var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, cmd.factionId);
+                        var building = fBuildingUtils_1.getBuildingDesignByType(bcmd.buildingType);
+                        faction.money += building.cost;
+                        game = updateFactionInGame(game, faction);
+                        cmd["delete"] = true;
+                        game = addReportToSystem(game, system, fReport_1.DetailReportType.Generic, [bcmd.factionId], "", "Building " + building.name + " cancelled in " + system.name);
+                    }
+                }
+            });
+            return [2 /*return*/, game];
         });
     });
 }
@@ -403,6 +396,40 @@ function processSystemCommands(commands, oldGame, firestore) {
                     return [3 /*break*/, 1];
                 case 4: return [2 /*return*/, game];
             }
+        });
+    });
+}
+function processBombardmentCommands(oldGame, commands) {
+    return __awaiter(this, void 0, void 0, function () {
+        var game;
+        return __generator(this, function (_a) {
+            game = __assign({}, oldGame);
+            commands.forEach(function (cmd) {
+                if (cmd.type === fCommands_1.CommandType.FleetBombard) {
+                    var bcmd_1 = cmd;
+                    var targetSystem = getSystemFromGame(game, bcmd_1.targetSystem);
+                    if (targetSystem.ownerFactionId !== cmd.factionId) {
+                        var fleet = game.units.filter(function (u) {
+                            return bcmd_1.unitIds.includes(u.id);
+                        });
+                        var bomb = fUnitUtils_1.fleetBombardmentCalculator(game, fleet, targetSystem);
+                        var successfulBombardments = 0;
+                        for (var b = 0; b < bomb[1]; b++) {
+                            if (fRandUtils_1.roll(bomb[0])) {
+                                successfulBombardments++;
+                            }
+                        }
+                        console.log("BOMBARDMENT", bomb, successfulBombardments);
+                        targetSystem.defense -= successfulBombardments;
+                        if (targetSystem.defense < 0)
+                            targetSystem.defense = 0;
+                        game = updateSystemInGame(game, targetSystem);
+                        game = addReportToSystem(game, targetSystem, fReport_1.DetailReportType.Generic, [targetSystem.ownerFactionId, fleet[0].factionId], "", targetSystem.name + " was bombarded resulting " + successfulBombardments + " defence points of damage");
+                    }
+                    markCommandDone(cmd);
+                }
+            });
+            return [2 /*return*/, game];
         });
     });
 }

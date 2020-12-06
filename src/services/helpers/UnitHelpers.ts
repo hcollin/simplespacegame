@@ -1,7 +1,7 @@
 
 import { v4 } from "uuid";
 import DATASHIPS, { shipNameGenerator } from "../../data/dataShips";
-import { Command, CommandType, FleetCommand } from "../../models/Commands";
+import { Command, CommandType, FleetBombardCommand, FleetCommand, UnitScrapCommand } from "../../models/Commands";
 import { Coordinates } from "../../models/Models";
 import { ShipDesign, ShipUnit, ShipWeapon } from "../../models/Units";
 
@@ -17,6 +17,35 @@ export function unitIsMoving(commands: Command[], unit: ShipUnit): boolean {
         }
         return false;
     }) !== undefined;
+}
+
+export function unitIsBombarding(commands: Command[], unit: ShipUnit): boolean {
+    return commands.find((cmd: Command) => {
+        if (cmd.type === CommandType.FleetBombard) {
+            const fcmd = cmd as FleetBombardCommand;
+            return fcmd.unitIds.includes(unit.id);
+        }
+        return false;
+    }) !== undefined;
+}
+
+export function getUnitsActiveCommands(commands: Command[], unit: ShipUnit): Command[] {
+    return commands.filter((cmd: Command) => {
+        if(cmd.type === CommandType.FleetMove) {
+            const fcmd = cmd as FleetCommand;
+            return fcmd.unitIds.includes(unit.id);
+        }
+        if(cmd.type === CommandType.FleetBombard) {
+            const fcmd = cmd as FleetBombardCommand;
+            return fcmd.unitIds.includes(unit.id);
+        }
+        if(cmd.type === CommandType.UnitScrap) {
+            const fcmd = cmd as UnitScrapCommand;
+            return fcmd.unitId === unit.id;
+        }
+        return false;
+    });
+    
 }
 
 /**

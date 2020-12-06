@@ -4,7 +4,7 @@ import { Command, CommandType } from "../models/Commands";
 import iconBuildSvg from "../images/iconUnderConstruction.svg";
 import iconScienceSvg from "../images/iconScience.svg";
 import iconFleetSvg from "../images/iconUnits.svg";
-import { IconCommand, IconDefense, IconEconomy, IconIndustry, IconWelfare } from "./Icons";
+import { IconBombardment, IconCommand, IconDefense, IconEconomy, IconIndustry, IconWelfare } from "./Icons";
 
 interface Props {
     command: Command;
@@ -29,6 +29,8 @@ const CommandIcon: FC<Props> = (props) => {
             return <IconWelfare className={props.className || ""} />;
         case CommandType.SystemDefense:
             return <IconDefense className={props.className || ""} />;
+        case CommandType.FleetBombard:
+            return <IconBombardment className={props.className || ""} />;
         default:
             return <IconCommand className={props.className || ""} />;
     }

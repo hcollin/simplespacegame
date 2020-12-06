@@ -1,5 +1,5 @@
 import { joki } from "jokits-react";
-import { CommandType, FleetCommand, UnitScrapCommand } from "../../models/Commands";
+import { CommandType, FleetBombardCommand, FleetCommand, UnitScrapCommand } from "../../models/Commands";
 import { Coordinates } from "../../models/Models";
 import { ShipUnit } from "../../models/Units";
 
@@ -110,3 +110,27 @@ export function doRecycleUnit(unitId: string) {
     });
 }
 
+
+
+export function doBombardment(units: ShipUnit[], targetSystem: string) {
+    if (factionIsReady()) return;
+    const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.FleetBombard);
+
+    if (!rootCommand) {
+        console.log("Cannot bombard ", units, targetSystem);
+        return;
+    }
+
+    const command = {
+        ...rootCommand,
+        unitIds: units.map((um: ShipUnit) => um.id),
+        targetSystem: targetSystem,
+    } as FleetBombardCommand;
+
+    console.log("BOMBARD", command);
+    joki.trigger({
+        to: "CommandService",
+        action: "addCommand",
+        data: command,
+    });
+}

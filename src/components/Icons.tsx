@@ -38,6 +38,10 @@ import iconActionPointSvg from '../images/iconActionPoint.svg';
 import iconRecycleSvg from '../images/iconRecycle.svg';
 import iconTrashSvg from '../images/iconTrash.svg';
 
+import iconBombardmentSvg from '../images/iconBombardment.svg';
+import iconSkullSvg from '../images/iconSkull.svg';
+
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -214,6 +218,12 @@ const IconRecycle: FC<IconProps> = (props) => {
 const IconTrash: FC<IconProps> = (props) => {
     return <GeneralIcon {...props} tooltip="Trash" iconSvg={iconTrashSvg} />
 }
+const IconBombardment: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Bombardment" iconSvg={iconBombardmentSvg} />
+}
+const IconSkull: FC<IconProps> = (props) => {
+    return <GeneralIcon {...props} tooltip="Skull" iconSvg={iconSkullSvg} />
+}
 
 
 
@@ -250,6 +260,8 @@ export {
     IconActionPoint,
     IconRecycle,
     IconTrash,
+    IconBombardment,
+    IconSkull,
 };
 
 interface GeneralIcon extends IconProps {

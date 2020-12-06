@@ -5,11 +5,11 @@ import React, { FC, useEffect, useState } from "react";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import useUnitSelection from "../hooks/useUnitSelection";
 
-import { Command } from "../models/Commands";
+import { Command, CommandType } from "../models/Commands";
 import { FactionModel, GameModel } from "../models/Models";
 import { ShipUnit } from "../models/Units";
-import { moveUnits } from "../services/commands/UnitCommands";
-import { unitIsMoving } from "../services/helpers/UnitHelpers";
+import { doBombardment, moveUnits } from "../services/commands/UnitCommands";
+import { getUnitsActiveCommands, unitIsBombarding, unitIsMoving } from "../services/helpers/UnitHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { SERVICEID } from "../services/services";
 import { distanceBetweenCoordinates } from "../utils/MathUtils";
@@ -23,12 +23,15 @@ import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
 import HelpContainer from "./HelpContainer";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import FactionBanner from "./FactionBanner";
-import { getFactionAdjustedUnit,unitIsInFriendlyOrbit } from "../utils/unitUtils";
+import { fleetBombardmentCalculator, getFactionAdjustedUnit, unitIsInFriendlyOrbit } from "../utils/unitUtils";
 import useMobileMode from "../hooks/useMobileMode";
 import ModalButton from "./ModalButton";
-import MinimizeIcon from '@material-ui/icons/Minimize';
-import AllOutIcon from '@material-ui/icons/AllOut';
+import MinimizeIcon from "@material-ui/icons/Minimize";
+import AllOutIcon from "@material-ui/icons/AllOut";
 import { SystemModel } from "../models/StarSystem";
+import { IconBombardment, IconSkull } from "./Icons";
+import { doRemoveCommand } from "../services/commands/SystemCommands";
+import { CancelRounded } from "@material-ui/icons";
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
@@ -261,15 +264,19 @@ const useStyles = makeStyles((theme: Theme) =>
 			"& div.actions": {
 				height: "2rem",
 				position: "relative",
+				display: "flex",
+				flexDirection: "row",
+				alignItems: "center",
+				justifyContent: "center",
 
 				"& > button": {
-					bottom: "-1.5rem",
-					right: "-2rem",
-					width: "8rem",
+					top: "1rem",
+					// right: "-2rem",
+					width: "auto",
 					height: "4rem",
 					cursor: "pointer",
 					zIndex: "1200",
-					position: "absolute",
+					position: "relative",
 					boxShadow: "0 0 0.5rem 0.1rem #0008, inset 0 0 0.5rem 0.25rem #FFF3",
 					fontWeight: "bold",
 					borderRadius: "2rem",
@@ -278,10 +285,15 @@ const useStyles = makeStyles((theme: Theme) =>
 					fontSize: "1.4rem",
 					color: "#FFFA",
 					transition: "all 0.2s ease",
-					padding: 0,
-					margin: 0,
+					padding: "0 1rem",
+					margin: "0 0.5rem",
+					"& img": {
+						width: "30px",
+						height: "30px",
+						opacity: 0.6,
+					},
 					"& svg": {
-						marginLeft: "0.5rem",
+						fontSize: "30px",
 					},
 					"&:hover:not(.inactive)": {
 						backgroundColor: "#063C",
@@ -292,6 +304,20 @@ const useStyles = makeStyles((theme: Theme) =>
 
 						"&:hover": {},
 					},
+					"&.bombard": {
+						background: "#410C",
+						"&:hover:not(.inactive)": {
+							backgroundColor: "#930C",
+							color: "#FFFD",
+						},
+					},
+					"&.cancel": {
+						background: "#620C",
+						"&:hover:not(.inactive)": {
+							backgroundColor: "#A50C",
+							color: "#FFFD",
+						},
+					}
 				},
 			},
 			[theme.breakpoints.down("md")]: {
@@ -319,7 +345,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		maximize: {
 			position: "absolute",
-			
+
 			left: "0.25rem",
 			zIndex: 1200,
 			[theme.breakpoints.down("md")]: {
@@ -328,7 +354,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			[theme.breakpoints.up("lg")]: {
 				top: "calc(100px - 1rem)",
 			},
-		}
+		},
 	}),
 );
 
@@ -344,16 +370,30 @@ const FleetView: FC = () => {
 
 	const [minified, setMinified] = useState<boolean>(false);
 
+	const [game] = useService<GameModel>("GameService");
+
 	useEffect(() => {
 		setUnitSelection(fleet);
 	}, [fleet]);
 
-	if (!commands) return null;
+	if (!commands || !game) return null;
 
 	if (fleet.length === 0) return null;
 
 	let viewMode = "VIEW";
-	if (fleet.length > 0 && faction && fleet[0].factionId === faction.id && !unitIsMoving(commands, fleet[0])) viewMode = "MOVE";
+	let canBombard: SystemModel | null = null;
+	
+	const activeCommands = getUnitsActiveCommands(commands, fleet[0]);
+	if (fleet.length > 0 && faction && fleet[0].factionId === faction.id && !unitIsMoving(commands, fleet[0]) && !unitIsBombarding(commands, fleet[0])) viewMode = "MOVE";
+	if (game && viewMode === "MOVE") {
+		const orbiting = getSystemByCoordinates(game, fleet[0].location);
+
+		if (orbiting && orbiting.ownerFactionId !== fleet[0].factionId) {
+			console.log("CAN BOMBARD!", orbiting.name);
+			canBombard = orbiting;
+			
+		}
+	}
 
 	function close() {
 		fleetActions.clr();
@@ -364,6 +404,15 @@ const FleetView: FC = () => {
 		if (star && unitSelection.length > 0) {
 			moveUnits(unitSelection, star.location);
 			close();
+		}
+	}
+
+	function bombardSystem() {
+		if (fleet && game) {
+			const orbiting = getSystemByCoordinates(game, fleet[0].location);
+			if (orbiting && orbiting.ownerFactionId !== fleet[0].factionId) {
+				doBombardment(unitSelection, orbiting.id);
+			}
 		}
 	}
 
@@ -378,13 +427,21 @@ const FleetView: FC = () => {
 
 	const canMove = viewMode === "MOVE" && unitSelection.length > 0 && star !== null;
 
-	if(minified) {
-		return <ModalButton onClick={() => setMinified(false)} className={classes.maximize}><AllOutIcon /></ModalButton>
+	if (minified) {
+		return (
+			<ModalButton onClick={() => setMinified(false)} className={classes.maximize}>
+				<AllOutIcon />
+			</ModalButton>
+		);
 	}
 
+	const cancelButtonsVisible = activeCommands.length > 0 && fleet && faction && fleet[0].factionId === faction.id;
+	const bombs: [number, number] = canBombard !== null ? fleetBombardmentCalculator(game, fleet, canBombard) : [0,0];
 	return (
 		<div className={classes.root}>
-			<ModalButton onClick={() => setMinified(true)} className="minify"><MinimizeIcon /></ModalButton>
+			<ModalButton onClick={() => setMinified(true)} className="minify">
+				<MinimizeIcon />
+			</ModalButton>
 			<button className="close" onClick={close}>
 				X
 			</button>
@@ -395,11 +452,31 @@ const FleetView: FC = () => {
 			{viewMode === "MOVE" && (
 				<div className="actions">
 					{/* <Button variant="outlined" color="secondary" onClick={() => fleetActions.clr()}>Cancel</Button> */}
-					<Button variant="contained" color="primary" onClick={moveFleet} disabled={!canMove} className={!canMove ? "inactive" : ""}>
-						MOVE <SendIcon />
+					{canBombard && (
+						<Button className="bombard" endIcon={<IconBombardment />} onClick={bombardSystem}>
+							BOMBARD {bombs[0]}% {bombs[1]}<IconSkull />
+						</Button>
+					)}
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={moveFleet}
+						disabled={!canMove}
+						className={!canMove ? "inactive" : ""}
+						endIcon={<SendIcon />}
+					>
+						MOVE
 					</Button>
 				</div>
 			)}
+			{cancelButtonsVisible && <div className="actions">
+				
+				{activeCommands.map((cmd: Command) => {
+					const isTemp = cmd.id.slice(0, 5) === "TEMP-";
+					if(isTemp) return null;
+					return <Button key={cmd.id} className="cancel" onClick={() => doRemoveCommand(cmd.id)} endIcon={<CancelRounded />}>Cancel: {cmd.type}</Button>
+				})}
+				</div>}
 		</div>
 	);
 };
@@ -543,7 +620,15 @@ const SelectUnitToFleet: FC<ContentProps> = (props) => {
 				{shownUnits.map((unit: ShipUnit) => {
 					const isInFleet = inFleet.includes(unit);
 					const recyclable = unitIsInFriendlyOrbit(unit, game.systems);
-					return <MiniUnitInfo unit={unit} key={unit.id} className={`ship ${!isInFleet ? "isNotInFleet" : ""}`} onClick={() => toggleUnit(unit)} recyclable={recyclable} />;
+					return (
+						<MiniUnitInfo
+							unit={unit}
+							key={unit.id}
+							className={`ship ${!isInFleet ? "isNotInFleet" : ""}`}
+							onClick={() => toggleUnit(unit)}
+							recyclable={recyclable}
+						/>
+					);
 				})}
 			</div>
 

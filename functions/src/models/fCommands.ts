@@ -10,6 +10,7 @@ export enum CommandType {
     SystemWelfare = "SystemWelfare",
     SystemDefense = "SystemDefense",
     FleetMove = "FleetMove",
+    FleetBombard = "Bombard",
     UnitScrap = "UnitScrap",
     TechnologyResearch = "Research",
 }
@@ -33,6 +34,11 @@ export interface FleetCommand extends Command {
     unitIds: string[];
     target: Coordinates;
     from: Coordinates;
+}
+
+export interface FleetBombardCommand extends Command {
+    unitIds: string[];
+    targetSystem: string;
 }
 
 export interface UnitScrapCommand extends Command {
