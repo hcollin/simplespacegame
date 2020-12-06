@@ -135,6 +135,7 @@ export interface CombatEvent {
 export interface Report {
     factions: string[];
     turn: number;
+    title: string;
     type: DetailReportType;
     reportId: string;
 }

@@ -109,6 +109,23 @@ const CheatView: FC = () => {
             });
         }
     }
+
+    function moreActionPoints() {
+        if(faction && game) {
+            const ng = {...game};
+            ng.factions = ng.factions.map((f: FactionModel) => {
+                if(f.id === faction.id) {
+                    f.aps++;
+                }
+                return f;
+            });
+            joki.trigger({
+                to: SERVICEID.GameService,
+                action: "devUpdateGame",
+                data: { ...game },
+            });
+        }
+    }
     // function readyAllFactions() {
     //     console.log("Ready all factions");
     //     if(game) {
@@ -161,6 +178,11 @@ const CheatView: FC = () => {
                 <h4>Money</h4>
                 <Button onClick={moreMoney} variant="contained">
                     +10 Money
+                </Button>
+
+                <h3>Actions</h3>
+                <Button onClick={moreActionPoints} variant="contained">
+                    +1 Action Point
                 </Button>
 
                 <br />

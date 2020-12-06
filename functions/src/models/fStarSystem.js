@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.PlanetType = exports.SystemKeyword = void 0;
 var SystemKeyword;
 (function (SystemKeyword) {
     SystemKeyword["HOMEWORLD"] = "Homeworld";

@@ -1,8 +1,9 @@
 import { TECHIDS } from "../data/fDataTechnology";
 import { Trade } from "./fCommunication";
 import { CombatRoundReport, DetailReportType } from "./fReport";
+import { SystemModel } from "./fStarSystem";
 import { ShipUnit } from "./fUnits";
-import { SystemModel } from "./SystemModel";
+
 
 export interface GameObject {
 	id: string;
@@ -129,10 +130,11 @@ export interface CombatEvent {
 }
 
 export interface Report {
-	factions: string[];
-	turn: number;
-	type: DetailReportType;
-	reportId: string;
+    factions: string[];
+    turn: number;
+    title: string;
+    type: DetailReportType;
+    reportId: string;
 }
 
 export interface SpaceCombat {

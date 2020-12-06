@@ -11,12 +11,21 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
+exports.getSystemByCoordinates = exports.getSystemDefence = exports.getSystemMaxBuildingSlots = exports.getStarWelfareMax = exports.getStarDefenceMax = exports.getStarEconomyMax = exports.getStarIndustryMax = exports.getSystemEconomy = exports.getSystemFromArrayById = void 0;
 var fBuildingRules_1 = require("../buildings/fBuildingRules");
 var fStarSystem_1 = require("../models/fStarSystem");
 var fBusinessTech_1 = require("../tech/fBusinessTech");
 var fInvasionTech_1 = require("../tech/fInvasionTech");
 var fFactionUtils_1 = require("./fFactionUtils");
 var fLocationUtils_1 = require("./fLocationUtils");
+function getSystemFromArrayById(stars, systemId) {
+    var sm = stars.find(function (s) { return s.id === systemId; });
+    if (!sm) {
+        throw new Error("System id " + systemId + " was not found!");
+    }
+    return sm;
+}
+exports.getSystemFromArrayById = getSystemFromArrayById;
 function getSystemEconomy(star, game) {
     var faction = fFactionUtils_1.getFactionFromArrayById(game.factions, star.ownerFactionId);
     var eco = __assign(__assign({}, star), { income: star.economy * fBuildingRules_1.buildingSpacePort(star) + fBuildingRules_1.buildingGalacticExchange(star, game.systems) + fBuildingRules_1.buildingCoreMine(star) + fBuildingRules_1.buildingBank(star), profit: 0, expenses: 0, industryExpenses: star.industry < 3 ? 0 : Math.floor(star.industry / 2), welfareExpenses: star.welfare < 3 ? 0 : Math.floor(star.welfare / 2), defenseExpenses: star.defense, research: faction ? fFactionUtils_1.getSystemResearchPointGeneration(star, faction) : 0, industryMax: getStarIndustryMax(star, game), economyMax: getStarEconomyMax(star, game), defenseMax: getStarDefenceMax(star, game), welfareMax: getStarWelfareMax(star, game), buildingSlots: getSystemMaxBuildingSlots(star, game), buildingExpenses: star.buildings.reduce(function (tot, b) { return tot + b.maintenanceCost; }, 0), shipyards: 1 });

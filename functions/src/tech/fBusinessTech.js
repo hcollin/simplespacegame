@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.techDysonSphere = exports.techScientist = exports.techCapitalist = exports.techExpansionist = exports.techLevitationBuildings = exports.techUndergroundConstruction = exports.techSpaceDock = exports.techEfficientBureaucracy = exports.techAdaptability = exports.techGalacticSenate = exports.techHigherEducation = exports.techDecisionEngine = exports.techAlternativePros = exports.techMineralPros = exports.techMerchantGuild = exports.techInitEcoBoost = exports.techMarketing = void 0;
 var fDataTechnology_1 = require("../data/fDataTechnology");
 var fStarSystem_1 = require("../models/fStarSystem");
 var fTechTools_1 = require("./fTechTools");

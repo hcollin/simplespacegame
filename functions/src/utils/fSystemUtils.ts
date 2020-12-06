@@ -29,6 +29,14 @@ import { techDroidDefences, techAutoDefenses } from "../tech/fInvasionTech";
 import { getFactionFromArrayById, getSystemResearchPointGeneration } from "./fFactionUtils";
 import { inSameLocation } from "./fLocationUtils";
 
+export function getSystemFromArrayById(stars: SystemModel[], systemId: string): SystemModel {
+	const sm = stars.find((s: SystemModel) => s.id === systemId);
+	if(!sm) {
+		throw new Error(`System id ${systemId} was not found!`);
+	}
+	return sm;
+}
+
 export interface SystemEconomy extends SystemModel {
 	income: number;
 	expenses: number;

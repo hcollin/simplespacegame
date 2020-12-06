@@ -22,6 +22,7 @@ export interface Command extends GameObject {
     type: CommandType;
     actionPoints: number;
     save?: boolean;
+    delete?: boolean;
 }
 
 export interface SystemPlusCommand extends Command {

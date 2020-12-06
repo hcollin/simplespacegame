@@ -229,7 +229,7 @@ const MenuPageContainer: FC<MenuPageContainerProps> = (props: MenuPageContainerP
                 </header>
                 {props.children}
 
-                <p className={classes.copy}> &copy; Frost Troll Game Design Studio 2020, version 0.1.1.</p>
+                <p className={classes.copy}> &copy; Frost Troll Game Design Studio 2020, version 0.1.2.</p>
             </Container>
 
         </div>

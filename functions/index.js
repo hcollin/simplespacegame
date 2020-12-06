@@ -112,7 +112,7 @@ exports.playerReady = functions.https.onCall(function (data, context) {
     return readyPlayer(data.gameId, data.factionId);
 });
 exports.playerCancelReady = functions.https.onCall(function (data, context) {
-    console.log("playerCancelReady started", data);
+    // console.log("playerCancelReady started", data);
     function cancelPlayerReady(gameId, factionId) {
         return __awaiter(this, void 0, void 0, function () {
             var game, gameRef, e_2;
@@ -207,7 +207,6 @@ function runTurnProcessor(gameId) {
                         if (cmd.turn <= game.turn)
                             return true;
                     });
-                    console.log(turnCommands.length + " commands to be processed!");
                     _b.label = 7;
                 case 7:
                     _b.trys.push([7, 10, , 11]);
@@ -221,6 +220,11 @@ function runTurnProcessor(gameId) {
                             db.collection("Commands")
                                 .doc(cmd.id)
                                 .set(__assign({}, cmd));
+                        }
+                        if (cmd["delete"] === true) {
+                            console.log("Delete command", cmd);
+                            db.collection("Commands")
+                                .doc(cmd.id)["delete"]();
                         }
                     });
                     return [4 /*yield*/, db

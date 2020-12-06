@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.techTerminatorTroops = exports.techSpaceMarine = exports.techDroidDefences = exports.techAutoDefenses = void 0;
 var fDataTechnology_1 = require("../data/fDataTechnology");
 var fTechTools_1 = require("./fTechTools");
 function techAutoDefenses(faction) {

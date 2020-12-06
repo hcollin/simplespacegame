@@ -73,7 +73,7 @@ exports.playerReady = functions.https.onCall((data: PlayerReadyData, context: an
 });
 
 exports.playerCancelReady = functions.https.onCall((data: PlayerReadyData, context: any) => {
-	console.log("playerCancelReady started", data);
+	// console.log("playerCancelReady started", data);
 
 	async function cancelPlayerReady(gameId: string, factionId: string) {
 		let game: GameModel | null = null;
@@ -146,7 +146,7 @@ async function runTurnProcessor(gameId: string) {
 		if (cmd.completed) return false;
 		if (cmd.turn <= game.turn) return true;
 	});
-	console.log(`${turnCommands.length} commands to be processed!`);
+	// console.log(`${turnCommands.length} commands to be processed!`);
 	try {
 		const [newGame, comms] = await processTurn(game, turnCommands, db);
 
@@ -158,6 +158,12 @@ async function runTurnProcessor(gameId: string) {
 				db.collection("Commands")
 					.doc(cmd.id)
 					.set({ ...cmd });
+			}
+			if(cmd.delete === true) {
+				console.log("Delete command", cmd);
+				db.collection("Commands")
+					.doc(cmd.id)
+					.delete();
 			}
 		});
 

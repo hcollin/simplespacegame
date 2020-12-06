@@ -46,20 +46,21 @@ export interface Planet {
 }
 
 export enum PlanetType {
-    Chthonian = "Chthonian planet",
-    Carbon = "Carbon planet",
-    Coreless = "Coreless planet",
+    // Chthonian = "Chthonian planet",
+    // Carbon = "Carbon planet",
+    // Coreless = "Coreless planet",
     Desert = "Desert planet",
-    GasDwarf = "Gas Dwarf",
+    // GasDwarf = "Gas Dwarf",
     GasGiant = "Gas Giant",
-    Helium = "Helium planet",
-    IceGiant = "Ice Giant",
+    // Helium = "Helium planet",
+    // IceGiant = "Ice Giant",
     IcePlanet = "Ice planet",
-    Iron = "Iron planet",
+    // Iron = "Iron planet",
     Lava = "Lava planet",
     Ocean = "Ocean planet",
-    Proto = "Protoplanet",
-    Puffy = "Puffy planet",
-    Silicate = "Silicate planet",
-    Terrestrial = "Terrestrial planet"
+    // Proto = "Protoplanet",
+    // Puffy = "Puffy planet",
+    // Silicate = "Silicate planet",
+    Terrestrial = "Terrestrial planet",
+    Barren = "Barren",
 }

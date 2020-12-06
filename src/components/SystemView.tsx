@@ -576,7 +576,7 @@ const SystemView: FC = () => {
                     <Grid container>
                         <Grid item lg={12} className={classes.contentArea}>
                             <p className="description">{star.description}</p>
-                            <Planets star={star} />
+                            {/* <Planets star={star} /> */}
                             {star.keywords.length > 0 && <p className="keywords">{star.keywords.join(", ")}</p>}
                         </Grid>
 

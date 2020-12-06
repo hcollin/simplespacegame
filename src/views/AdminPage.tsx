@@ -111,7 +111,7 @@ const AdminGames: FC = () => {
         },
         {
             key: "turn",
-            size: 60,
+            size: 50,
             header: "Turn",
         },
         {
@@ -131,7 +131,7 @@ const AdminGames: FC = () => {
             fn: (item: GameModel) => <span>{GameState[item.state]}</span>,
         },
         {
-            key: "id",
+            key: "actions",
             size: 200,
             header: "Actions",
             fn: (item: GameModel) => (
@@ -201,13 +201,13 @@ const AdminUsers: FC = () => {
             size: 150,
         },
         {
-            key: "groups",
+            key: "isAdmin",
             header: "Admin?",
             size: 80,
             fn: (item: User) => (userIsAdmin(item) ? "YES" : "NO"),
         },
         {
-            key: "groups",
+            key: "isBlocked",
             header: "Blocked?",
             size: 80,
             fn: (item: User) => (userIsBlocked(item) ? "YES" : "NO"),

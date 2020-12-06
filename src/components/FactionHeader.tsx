@@ -476,11 +476,10 @@ const FactionHeader: FC = () => {
                             <p>{reports.length}</p>
 
                             <div className="list">
-                                {reports.map((r: Report) => {
-                                    console.log(r.type, r.reportId, r.turn);
+                                {reports.map((r: Report, index: number) => {
                                     return (
-                                        <div key={r.reportId} onClick={() => openReport(r.reportId)}>
-                                            {r.type}
+                                        <div key={`${r.reportId}-${index}`} onClick={() => openReport(r.reportId)}>
+                                            {r.title || r.type}
                                         </div>
                                     );
                                 })}
