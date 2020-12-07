@@ -120,7 +120,8 @@ export interface Technology {
 	fieldreqs: [TechnologyField, number][];
 	techprereq: TECHIDS[];
 	name: string;
-    description: string;
+	description: string;
+	flavour?: string;
     groups: string[];
     level: number;
 }
