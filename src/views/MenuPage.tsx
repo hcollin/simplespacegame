@@ -14,6 +14,8 @@ import AuthProviders from "../components/AuthProviders";
 import frostTrollLogoPng from '../images/FrostTrollLogo.png';
 import SubMenuButton from "../components/SubMenuButton";
 import { useAtom, useAtomValue } from "jokits-react";
+import TechCard from "../components/TechCard";
+import TechCircle from "../components/TechCircle";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -290,8 +292,9 @@ const MenuPage: FC = () => {
                 </>
             )}
 
-            {/* <h3>Test area</h3> */}
+            <h3>Test area</h3>
             
+            <TechCircle />
 
             {/* <div style={{display: "flex", flexWrap: "wrap"}}>{rndNames.map((n: string, i: number) => <p key={i} style={{width: "15rem", margin: "0.25rem 0", padding: 0}}>{n}</p>)}</div> */}
 

@@ -118,7 +118,7 @@ export enum TECHIDS {
 }
 
 const baseCost = 5;
-const costLevels: number[] = [1, 3, 6];
+const costLevels: number[] = [1, 4, 7];
 
 export const DATATECHNOLOGY: Technology[] = [
     {
@@ -134,9 +134,9 @@ export const DATATECHNOLOGY: Technology[] = [
         description: "",
         flavour:
             "Superconduction in room temperatures moves the barriers of information and physics to the realm of science fiction.",
-	},
+    },
 
-	{
+    {
         id: TECHIDS.LimitedAI,
         name: "Limited AI",
         level: 1,
@@ -144,14 +144,41 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.SuperConductor],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[1]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[1]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[1]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[1]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[1]],
         ],
         description: "",
-        flavour: ""
-            
-	},
-	{
+        flavour: "",
+    },
+    {
+        id: TECHIDS.AGI,
+        name: "Artificial General Intelligence",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.LimitedAI],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: "",
+    },
+    {
+        id: TECHIDS.AutomatedExploration,
+        name: "Automated Exploration",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.LimitedAI],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: "",
+    },
+    {
         id: TECHIDS.Cybernetics,
         name: "Cybernetics",
         level: 1,
@@ -159,14 +186,41 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.SuperConductor],
         fieldreqs: [
             [TechnologyField.BIOLOGY, baseCost * costLevels[1]],
-			[TechnologyField.PHYSICS, baseCost * costLevels[1]],
-			[TechnologyField.CHEMISTRY, baseCost * costLevels[1]],
+            [TechnologyField.PHYSICS, baseCost * costLevels[1]],
+            [TechnologyField.CHEMISTRY, baseCost * costLevels[1]],
         ],
         description: "",
-        flavour: ""
-            
-	},
-	{
+        flavour: "",
+    },
+    {
+        id: TECHIDS.Androids,
+        name: "Androids",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.Cybernetics],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: "",
+    },
+    {
+        id: TECHIDS.CyberImmor,
+        name: "Cyber Immortality",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.Cybernetics],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: "",
+    },
+    {
         id: TECHIDS.DimensionalTheo,
         name: "Dimensional Theory",
         level: 1,
@@ -174,14 +228,42 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.SuperConductor],
         fieldreqs: [
             [TechnologyField.MATERIAL, baseCost * costLevels[1]],
-			[TechnologyField.PHYSICS, baseCost * costLevels[1]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[1]],
+            [TechnologyField.PHYSICS, baseCost * costLevels[1]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[1]],
         ],
         description: "",
-        flavour: ""
-	},
-	
-	{
+        flavour: "",
+    },
+    {
+        id: TECHIDS.WarpGates,
+        name: "Warp Gates",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.DimensionalTheo],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: "",
+    },
+    {
+        id: TECHIDS.Teleportation,
+        name: "Teleportation",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.DimensionalTheo],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: "",
+    },
+
+    {
         id: TECHIDS.AdvancedMat,
         name: "Advanced Materials",
         level: 0,
@@ -194,9 +276,9 @@ export const DATATECHNOLOGY: Technology[] = [
         description: "",
         flavour:
             "Advancements in both traditional materials and biological materials allow us to alter our environment beyond recognition",
-	},
+    },
 
-	{
+    {
         id: TECHIDS.NanoMachines,
         name: "Nano Machines",
         level: 1,
@@ -204,14 +286,44 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.AdvancedMat],
         fieldreqs: [
             [TechnologyField.MATERIAL, baseCost * costLevels[1]],
-			[TechnologyField.PHYSICS, baseCost * costLevels[1]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[1]],
+            [TechnologyField.PHYSICS, baseCost * costLevels[1]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[1]],
         ],
         description: "",
-        flavour: ""
-	},
+        flavour: "",
+    },
 
-	{
+    {
+        id: TECHIDS.SelfReplication,
+        name: "Self Replication",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.NanoMachines],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+    {
+        id: TECHIDS.BioNanoMach,
+        name: "Biological Nano Machines",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.NanoMachines],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+    
+
+    {
         id: TECHIDS.EcoPurification,
         name: "Eco Purification",
         level: 1,
@@ -219,14 +331,42 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.AdvancedMat],
         fieldreqs: [
             [TechnologyField.BIOLOGY, baseCost * costLevels[1]],
-			[TechnologyField.CHEMISTRY, baseCost * costLevels[1]],
-			[TechnologyField.MATERIAL, baseCost * costLevels[1]],
+            [TechnologyField.CHEMISTRY, baseCost * costLevels[1]],
+            [TechnologyField.MATERIAL, baseCost * costLevels[1]],
         ],
         description: "",
-        flavour: ""
-	},
+        flavour: "",
+    },
+    {
+        id: TECHIDS.Terraforming,
+        name: "Terraforming",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.EcoPurification],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+    {
+        id: TECHIDS.GaiaInit,
+        name: "Gaia Initiative",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.EcoPurification],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
 
-	{
+    {
         id: TECHIDS.DeepSpaceMing,
         name: "Deep Space Mining",
         level: 1,
@@ -234,14 +374,43 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.AdvancedMat],
         fieldreqs: [
             [TechnologyField.MATERIAL, baseCost * costLevels[1]],
-			[TechnologyField.PHYSICS, baseCost * costLevels[1]],
-			[TechnologyField.CHEMISTRY, baseCost * costLevels[1]],
+            [TechnologyField.PHYSICS, baseCost * costLevels[1]],
+            [TechnologyField.CHEMISTRY, baseCost * costLevels[1]],
         ],
         description: "",
-        flavour: ""
-	},
-	
-	{
+        flavour: "",
+    },
+    {
+        id: TECHIDS.MacroConstruction,
+        name: "Macro Construction",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.DeepSpaceMing],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+    {
+        id: TECHIDS.ArtifialPlanet,
+        name: "Artificial Planetoids",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.DeepSpaceMing],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+    
+
+    {
         id: TECHIDS.FusionPower,
         name: "Fusion power",
         level: 0,
@@ -252,11 +421,10 @@ export const DATATECHNOLOGY: Technology[] = [
             [TechnologyField.CHEMISTRY, baseCost * costLevels[0]],
         ],
         description: "",
-        flavour:
-            "The holy grail of energy efficiency is replicating the process of stars.",
-	},
+        flavour: "The holy grail of energy efficiency is replicating the process of stars.",
+    },
 
-	{
+    {
         id: TECHIDS.Shields,
         name: "Energy Shields",
         level: 1,
@@ -264,14 +432,127 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.FusionPower],
         fieldreqs: [
             [TechnologyField.MATERIAL, baseCost * costLevels[1]],
-			[TechnologyField.PHYSICS, baseCost * costLevels[1]],
-			[TechnologyField.CHEMISTRY, baseCost * costLevels[1]],
+            [TechnologyField.PHYSICS, baseCost * costLevels[1]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[1]],
         ],
         description: "",
-        flavour: ""
-	},
-	
-	{
+        flavour: "",
+    },
+    {
+        id: TECHIDS.PersonalShields,
+        name: "Personal Shields",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.Shields],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+    {
+        id: TECHIDS.DysonSphere,
+        name: "Dyson Sphere",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.Shields],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+    {
+        id: TECHIDS.AntiMatter,
+        name: "Anti Matter",
+        level: 1,
+        groups: [],
+        techprereq: [TECHIDS.FusionPower],
+        fieldreqs: [
+            [TechnologyField.INFORMATION, baseCost * costLevels[1]],
+            [TechnologyField.PHYSICS, baseCost * costLevels[1]],
+            [TechnologyField.CHEMISTRY, baseCost * costLevels[1]],
+        ],
+        description: "",
+        flavour: "",
+    },
+    {
+        id: TECHIDS.AntimatterDrives,
+        name: "Antimatter Drives",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.AntiMatter],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+    {
+        id: TECHIDS.DarkMatterTheo,
+        name: "Dark Matter Theory",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.AntiMatter],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+
+    {
+        id: TECHIDS.FusionCell,
+        name: "Fusion Cells",
+        level: 1,
+        groups: [],
+        techprereq: [TECHIDS.FusionPower],
+        fieldreqs: [
+            [TechnologyField.MATERIAL, baseCost * costLevels[1]],
+            [TechnologyField.PHYSICS, baseCost * costLevels[1]],
+            [TechnologyField.CHEMISTRY, baseCost * costLevels[1]],
+        ],
+        description: "",
+        flavour: "",
+    },
+    {
+        id: TECHIDS.Antigravity,
+        name: "Antigravity",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.FusionCell],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+    {
+        id: TECHIDS.HyperDimComm,
+        name: "Hyperdimensional Communications",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.FusionCell],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+
+    {
         id: TECHIDS.Xenobiology,
         name: "Xenobiology",
         level: 0,
@@ -284,6 +565,131 @@ export const DATATECHNOLOGY: Technology[] = [
         description: "",
         flavour:
             "We are not alone that much is certain, but it is absolutely paramount to understand our cosmic neighbours better.",
+    },
+    {
+        id: TECHIDS.GeneManipulation,
+        name: "Gene Manipulation",
+        level: 1,
+        groups: [],
+        techprereq: [TECHIDS.Xenobiology],
+        fieldreqs: [
+            [TechnologyField.BIOLOGY, baseCost * costLevels[1]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[1]],
+            [TechnologyField.CHEMISTRY, baseCost * costLevels[1]],
+        ],
+        description: "",
+        flavour: "",
+    },
+    {
+        id: TECHIDS.Uplifting,
+        name: "Uplifting",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.GeneManipulation],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },{
+        id: TECHIDS.RapidEvolution,
+        name: "Rapid Evolution",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.GeneManipulation],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+
+
+    {
+        id: TECHIDS.PsychicManif,
+        name: "Psychic Manifestation",
+        level: 1,
+        groups: [],
+        techprereq: [TECHIDS.Xenobiology],
+        fieldreqs: [
+            [TechnologyField.BIOLOGY, baseCost * costLevels[1]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[1]],
+            [TechnologyField.PHYSICS, baseCost * costLevels[1]],
+        ],
+        description: "",
+        flavour: "",
+    },
+    {
+        id: TECHIDS.HiveMind,
+        name: "Hive Mind",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.PsychicManif],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },{
+        id: TECHIDS.Enlightenment,
+        name: "Enlightenment",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.PsychicManif],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },
+    {
+        id: TECHIDS.BioConstruction,
+        name: "Bioconstruction",
+        level: 1,
+        groups: [],
+        techprereq: [TECHIDS.Xenobiology],
+        fieldreqs: [
+            [TechnologyField.MATERIAL, baseCost * costLevels[1]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[1]],
+            [TechnologyField.PHYSICS, baseCost * costLevels[1]],
+        ],
+        description: "",
+        flavour: "",
+    },
+    {
+        id: TECHIDS.LivingMetal,
+        name: "Living Metal",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.BioConstruction],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
+    },{
+        id: TECHIDS.Biocomputer,
+        name: "Biocomputer",
+        level: 2,
+        groups: [],
+        techprereq: [TECHIDS.BioConstruction],
+        fieldreqs: [
+            [TechnologyField.PHYSICS, baseCost * costLevels[2]],
+			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
+			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+        ],
+        description: "",
+        flavour: ""        
     },
 ];
 
