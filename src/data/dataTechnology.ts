@@ -115,6 +115,8 @@ export enum TECHIDS {
     BioConstruction = "Bio Construction",
     LivingMetal = "Living Metal",
     Biocomputer = "Biocomputer",
+
+    root = "ROOT",
 }
 
 const baseCost = 5;
@@ -122,11 +124,22 @@ const costLevels: number[] = [1, 4, 7];
 
 export const DATATECHNOLOGY: Technology[] = [
     {
+        id: TECHIDS.root,
+        name: "ROOT",
+        level: 0,
+        groups: [],
+        techprereq: [],
+        fieldreqs: [],
+        description: "",
+        flavour:""
+            
+    },
+    {
         id: TECHIDS.SuperConductor,
         name: "Superconductors",
         level: 0,
         groups: [],
-        techprereq: [],
+        techprereq: [TECHIDS.root],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[0]],
             [TechnologyField.INFORMATION, baseCost * costLevels[0]],
@@ -268,7 +281,7 @@ export const DATATECHNOLOGY: Technology[] = [
         name: "Advanced Materials",
         level: 0,
         groups: [],
-        techprereq: [],
+        techprereq: [TECHIDS.root],
         fieldreqs: [
             [TechnologyField.MATERIAL, baseCost * costLevels[0]],
             [TechnologyField.BIOLOGY, baseCost * costLevels[0]],
@@ -301,11 +314,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.NanoMachines],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
     {
         id: TECHIDS.BioNanoMach,
@@ -315,13 +328,12 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.NanoMachines],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
-    
 
     {
         id: TECHIDS.EcoPurification,
@@ -345,11 +357,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.EcoPurification],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
     {
         id: TECHIDS.GaiaInit,
@@ -359,11 +371,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.EcoPurification],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
 
     {
@@ -388,11 +400,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.DeepSpaceMing],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
     {
         id: TECHIDS.ArtifialPlanet,
@@ -402,20 +414,19 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.DeepSpaceMing],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
-    
 
     {
         id: TECHIDS.FusionPower,
         name: "Fusion power",
         level: 0,
         groups: [],
-        techprereq: [],
+        techprereq: [TECHIDS.root],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[0]],
             [TechnologyField.CHEMISTRY, baseCost * costLevels[0]],
@@ -446,11 +457,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.Shields],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
     {
         id: TECHIDS.DysonSphere,
@@ -460,11 +471,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.Shields],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
     {
         id: TECHIDS.AntiMatter,
@@ -488,11 +499,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.AntiMatter],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
     {
         id: TECHIDS.DarkMatterTheo,
@@ -502,11 +513,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.AntiMatter],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
 
     {
@@ -531,11 +542,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.FusionCell],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
     {
         id: TECHIDS.HyperDimComm,
@@ -545,11 +556,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.FusionCell],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
 
     {
@@ -557,7 +568,7 @@ export const DATATECHNOLOGY: Technology[] = [
         name: "Xenobiology",
         level: 0,
         groups: [],
-        techprereq: [],
+        techprereq: [TECHIDS.root],
         fieldreqs: [
             [TechnologyField.BIOLOGY, baseCost * costLevels[0]],
             [TechnologyField.INFORMATION, baseCost * costLevels[0]],
@@ -588,12 +599,13 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.GeneManipulation],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
-    },{
+        flavour: "",
+    },
+    {
         id: TECHIDS.RapidEvolution,
         name: "Rapid Evolution",
         level: 2,
@@ -601,13 +613,12 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.GeneManipulation],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
-
 
     {
         id: TECHIDS.PsychicManif,
@@ -631,12 +642,13 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.PsychicManif],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
-    },{
+        flavour: "",
+    },
+    {
         id: TECHIDS.Enlightenment,
         name: "Enlightenment",
         level: 2,
@@ -644,11 +656,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.PsychicManif],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
     {
         id: TECHIDS.BioConstruction,
@@ -672,12 +684,13 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.BioConstruction],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
-    },{
+        flavour: "",
+    },
+    {
         id: TECHIDS.Biocomputer,
         name: "Biocomputer",
         level: 2,
@@ -685,11 +698,11 @@ export const DATATECHNOLOGY: Technology[] = [
         techprereq: [TECHIDS.BioConstruction],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[2]],
-			[TechnologyField.INFORMATION, baseCost * costLevels[2]],
-			[TechnologyField.BIOLOGY, baseCost * costLevels[2]],
+            [TechnologyField.INFORMATION, baseCost * costLevels[2]],
+            [TechnologyField.BIOLOGY, baseCost * costLevels[2]],
         ],
         description: "",
-        flavour: ""        
+        flavour: "",
     },
 ];
 
