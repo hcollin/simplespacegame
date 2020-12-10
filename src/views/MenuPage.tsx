@@ -7,17 +7,16 @@ import MenuPageContainer from "../components/MenuPageContainer";
 import { FactionModel, GameModel, GameState } from "../models/Models";
 import { doCreateDraftGame, doLoadGame } from "../services/commands/GameCommands";
 import useCurrentUser from "../services/hooks/useCurrentUser";
-import ReplayIcon from '@material-ui/icons/Replay';
+import ReplayIcon from "@material-ui/icons/Replay";
 import LoginForm from "../components/LoginForm";
 import AuthProviders from "../components/AuthProviders";
 
-import frostTrollLogoPng from '../images/FrostTrollLogo.png';
+import frostTrollLogoPng from "../images/FrostTrollLogo.png";
 import SubMenuButton from "../components/SubMenuButton";
 import { useAtom, useAtomValue } from "jokits-react";
 import TechCard from "../components/TechCard";
 import TechCircle from "../components/TechCircle";
 import ForceGraphDisplay from "../components/ForceGraphDisplay";
-
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -59,14 +58,14 @@ const useStyles = makeStyles((theme: Theme) =>
                     width: "8rem",
                     [theme.breakpoints.down("md")]: {
                         width: "25%",
-                    }
+                    },
                 },
                 "&.lg": {
                     flex: "0 0 auto",
                     width: "16rem",
                     [theme.breakpoints.down("md")]: {
                         width: "50%",
-                    }
+                    },
                 },
                 "&.center": {
                     textAlign: "center",
@@ -76,8 +75,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 },
                 "&.first": {
                     paddingLeft: "1rem",
-                }
-
+                },
             },
             "&:nth-child(odd)": {
                 backgroundColor: "#FFF1",
@@ -87,10 +85,7 @@ const useStyles = makeStyles((theme: Theme) =>
             },
             [theme.breakpoints.down("md")]: {
                 flexWrap: "wrap",
-                
-            }
-
-
+            },
         },
     })
 );
@@ -132,7 +127,7 @@ const MenuPage: FC = () => {
         loadGames();
     }, []);
 
-    if(viewState !== "menu") return null;
+    if (viewState !== "menu") return null;
 
     function loginWithGoogle() {
         if (!user) {
@@ -152,10 +147,8 @@ const MenuPage: FC = () => {
     }
 
     function loadGame(gid: string) {
-        
         doLoadGame(gid);
     }
-
 
     async function refreshList() {
         if (user) {
@@ -176,24 +169,19 @@ const MenuPage: FC = () => {
 
     // rndNames.sort();
 
-
-
     const isDev = ENV === "development";
     return (
         <MenuPageContainer title="Frost Galaxy">
-            
-
             {!user && (
                 <section className="row">
                     <LoginForm />
                     <AuthProviders />
 
-                    <div style={{flex: "1 1 auto", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                        <img src={frostTrollLogoPng} alt="Frost Troll" style={{width: "80%"}}/>
+                    <div style={{ flex: "1 1 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <img src={frostTrollLogoPng} alt="Frost Troll" style={{ width: "80%" }} />
                     </div>
                 </section>
             )}
-
 
             {user && (
                 <div className="actions">
@@ -217,7 +205,6 @@ const MenuPage: FC = () => {
                             const faction = gm.factions.find((fm: FactionModel) => fm.playerId === user.userId);
                             if (!faction) return null;
                             return (
-
                                 <div key={gm.id} className={classes.row}>
                                     <div className="lg first">
                                         <h4>{gm.name}</h4>
@@ -294,13 +281,12 @@ const MenuPage: FC = () => {
             )}
 
             <h3>Test area</h3>
-            
+
             {/* <TechCircle /> */}
 
-            <ForceGraphDisplay />
+            {/* <ForceGraphDisplay /> */}
 
             {/* <div style={{display: "flex", flexWrap: "wrap"}}>{rndNames.map((n: string, i: number) => <p key={i} style={{width: "15rem", margin: "0.25rem 0", padding: 0}}>{n}</p>)}</div> */}
-
         </MenuPageContainer>
     );
 };

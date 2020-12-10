@@ -98,10 +98,7 @@ const ForceGraphDisplay: FC = () => {
                 // nodeRelSize={10}
                 nodeLabel="name"
                 nodeCanvasObject={({ id, x, y, ...tech }, ctx: CanvasRenderingContext2D) => {
-                    
-
                     if (x && y && id && tech) {
-
                         const t = tech as Technology;
                         ctx.fillStyle = "#222222";
                         ctx.beginPath();
@@ -116,9 +113,8 @@ const ForceGraphDisplay: FC = () => {
                         ctx.fillStyle = "#FFFFFF";
                         const startY = -2.5 * (lines.length - 1);
                         lines.forEach((t: string, i: number) => {
-                            ctx.fillText(t, x, y + startY + ( 5 * i ));
-                        })
-                        
+                            ctx.fillText(t, x, y + startY + 5 * i);
+                        });
                     }
                 }}
                 nodeVisibility={(node: any) => {
@@ -154,7 +150,7 @@ const ForceGraphDisplay: FC = () => {
 
 function getLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
     const words = text.split(" ");
-    const  lines: string[] = [];
+    const lines: string[] = [];
     let currentLine = words[0];
 
     for (let i = 1; i < words.length; i++) {

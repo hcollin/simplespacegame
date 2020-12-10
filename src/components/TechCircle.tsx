@@ -1,7 +1,10 @@
 import { makeStyles, Theme, createStyles } from "@material-ui/core";
 import React, { FC } from "react";
 import { DATATECHNOLOGY } from "../data/dataTechnology";
-import { Technology } from "../models/Models";
+import { FactionModel, Technology, TechnologyField } from "../models/Models";
+import useCurrentFaction from "../services/hooks/useCurrentFaction";
+import { canAffordTech, missingResearchPoints, techPrerequisitesFulfilled } from "../utils/techUtils";
+import { TechFieldIcon } from "../views/subviews/ScienceView";
 
 const itemSize = 8;
 const itemSize1 = 7;
@@ -56,6 +59,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 left: "50%",
                 boxShadow: "inset 0 0 1rem 0.5rem #000",
                 zIndex: 10,
+                textShadow: "2px 2px 2px black, -2px 2px 2px black, 2px -2px 2px black, -2px -2px 2px black",
                 "&.level-0": {
                     fontSize: "0.8rem",
                     width: `${itemSize}rem`,
@@ -80,6 +84,32 @@ const useStyles = makeStyles((theme: Theme) =>
                     padding: `${itemSize2 / 8}rem`,
                     background: "#0004",
                 },
+                "&.canAfford": {
+                    background: "#0808",
+                    boxShadow: "inset 0 0 1rem 0.5rem #040",
+                },
+                "&.researched": {
+                    background: "#0088",
+                    boxShadow: "inset 0 0 1rem 0.5rem #004",
+                },
+                "& > .tech-req": {
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "2.25rem",
+                    height: "1.5rem",
+                    fontSize: "0.8rem",
+                    position: "absolute",
+                    padding: "0.25rem",
+                    background: "#0004",
+                    border: "solid 1px black",
+                    borderRadius: "0.25rem",
+
+                    "& > img": {
+                        position: "relative",
+                        width: "60%",
+                    },
+                },
             },
             "&:before": {
                 content: '""',
@@ -98,8 +128,18 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const TechCircle: FC = () => {
+interface Props {
+    onClick: (tech: Technology) => void;
+}
+
+const techAng = 50;
+
+const TechCircle: FC<Props> = (props) => {
     const classes = useStyles();
+
+    const faction = useCurrentFaction();
+
+    if (!faction) return null;
 
     const level0Tech = DATATECHNOLOGY.filter((t: Technology) => t.level === 0);
     const level1Tech = DATATECHNOLOGY.filter((t: Technology) => t.level === 1);
@@ -112,37 +152,103 @@ const TechCircle: FC = () => {
             <div className="ring level-2" />
             {level0Tech.map((t: Technology, i: number, arr: Technology[]) => {
                 const angle = (360 / arr.length) * i;
-                const css: React.CSSProperties = {
-                    transform: `rotate(${angle}deg) translate(${itemSize - 1}rem) rotate(-${angle}deg)`,
-                };
                 return (
-                    <div className={`tech level-0`} key={t.id} style={css}>
-                        {t.name}
-                    </div>
+                    <TechCircleItem
+                        tech={t}
+                        faction={faction}
+                        angle={angle}
+                        onClick={props.onClick}
+                        level={0}
+                        itemSize={itemSize - 1}
+                        key={t.id}
+                    />
                 );
             })}
             {level1Tech.map((t: Technology, i: number, arr: Technology[]) => {
                 const angle = (360 / arr.length) * i + (360 - 360 / arr.length);
-                const css: React.CSSProperties = {
-                    transform: `rotate(${angle}deg) translate(${itemSize * 2}rem) rotate(-${angle}deg)`,
-                };
                 return (
-                    <div className={`tech level-1`} key={t.id} style={css}>
-                        {t.name}
-                    </div>
+                    <TechCircleItem
+                        tech={t}
+                        faction={faction}
+                        angle={angle}
+                        onClick={props.onClick}
+                        level={1}
+                        itemSize={itemSize * 2.05}
+                        key={t.id}
+                    />
                 );
             })}
             {level2Tech.map((t: Technology, i: number, arr: Technology[]) => {
                 const angle = (360 / arr.length) * i + (360 - (360 / arr.length) * 2.5);
-                const css: React.CSSProperties = {
-                    transform: `rotate(${angle}deg) translate(${itemSize * 3}rem) rotate(-${angle}deg)`,
-                };
                 return (
-                    <div className={`tech level-2`} key={t.id} style={css}>
-                        {t.name}
-                    </div>
+                    <TechCircleItem
+                        tech={t}
+                        faction={faction}
+                        angle={angle}
+                        onClick={props.onClick}
+                        level={2}
+                        itemSize={itemSize * 3.1}
+                        key={t.id}
+                    />
                 );
             })}
+        </div>
+    );
+};
+
+interface TechCircleItemProps {
+    tech: Technology;
+    faction: FactionModel;
+    level: number;
+    angle: number;
+    itemSize: number;
+    onClick: (tech: Technology) => void;
+}
+
+const TechCircleItem: FC<TechCircleItemProps> = (props) => {
+    const classes = useStyles();
+    const css: React.CSSProperties = {
+        transform: `rotate(${props.angle}deg) translate(${props.itemSize}rem) rotate(-${props.angle}deg)`,
+    };
+    const researched = props.faction.technology.includes(props.tech.id);
+    const preReqFullfilled = techPrerequisitesFulfilled(props.tech, props.faction);
+    const missingRp = missingResearchPoints(props.tech, props.faction);
+    const canAfford = canAffordTech(props.tech, props.faction);
+    const statusClassName = researched
+        ? "researched"
+        : canAfford
+        ? "canAfford"
+        : preReqFullfilled
+        ? "preReqFullfilled"
+        : "";
+
+    return (
+        <div
+            className={`tech level-${props.level} ${statusClassName}`}
+            key={props.tech.id}
+            style={css}
+            onClick={() => props.onClick(props.tech)}
+        >
+            {preReqFullfilled &&
+                !researched &&
+                props.tech.fieldreqs.map(
+                    (req: [TechnologyField, number], ir: number, reqArr: [TechnologyField, number][]) => {
+                        const ang = ir * techAng + (270 - (reqArr.length - 1) * (techAng / 2));
+
+                        const reqCss: React.CSSProperties = {
+                            transform: `rotate(${ang}deg) translate(${3.5 - props.level * 0.5}rem) rotate(-${ang}deg)`,
+                            color: missingRp.has(req[0]) ? "red" : "white",
+                        };
+
+                        return (
+                            <span className={`tech-req`} style={reqCss} key={`${props.tech.id}-${req[0]}`}>
+                                <TechFieldIcon field={req[0]} />
+                                {req[1]}
+                            </span>
+                        );
+                    }
+                )}
+            {props.tech.name}
         </div>
     );
 };

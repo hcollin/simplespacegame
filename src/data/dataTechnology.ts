@@ -123,23 +123,23 @@ const baseCost = 5;
 const costLevels: number[] = [1, 4, 7];
 
 export const DATATECHNOLOGY: Technology[] = [
-    {
-        id: TECHIDS.root,
-        name: "ROOT",
-        level: 0,
-        groups: [],
-        techprereq: [],
-        fieldreqs: [],
-        description: "",
-        flavour:""
+    // {
+    //     id: TECHIDS.root,
+    //     name: "ROOT",
+    //     level: 0,
+    //     groups: [],
+    //     techprereq: [],
+    //     fieldreqs: [],
+    //     description: "",
+    //     flavour:""
             
-    },
+    // },
     {
         id: TECHIDS.SuperConductor,
         name: "Superconductors",
         level: 0,
         groups: [],
-        techprereq: [TECHIDS.root],
+        techprereq: [],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[0]],
             [TechnologyField.INFORMATION, baseCost * costLevels[0]],
@@ -281,7 +281,7 @@ export const DATATECHNOLOGY: Technology[] = [
         name: "Advanced Materials",
         level: 0,
         groups: [],
-        techprereq: [TECHIDS.root],
+        techprereq: [],
         fieldreqs: [
             [TechnologyField.MATERIAL, baseCost * costLevels[0]],
             [TechnologyField.BIOLOGY, baseCost * costLevels[0]],
@@ -426,7 +426,7 @@ export const DATATECHNOLOGY: Technology[] = [
         name: "Fusion power",
         level: 0,
         groups: [],
-        techprereq: [TECHIDS.root],
+        techprereq: [],
         fieldreqs: [
             [TechnologyField.PHYSICS, baseCost * costLevels[0]],
             [TechnologyField.CHEMISTRY, baseCost * costLevels[0]],
@@ -568,7 +568,7 @@ export const DATATECHNOLOGY: Technology[] = [
         name: "Xenobiology",
         level: 0,
         groups: [],
-        techprereq: [TECHIDS.root],
+        techprereq: [],
         fieldreqs: [
             [TechnologyField.BIOLOGY, baseCost * costLevels[0]],
             [TechnologyField.INFORMATION, baseCost * costLevels[0]],
