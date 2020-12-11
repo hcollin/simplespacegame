@@ -153,7 +153,7 @@ export function createFactionFromSetup(setup: FactionSetup): FactionModel {
 		technologyFields: [
 			{ field: TechnologyField.BIOLOGY, points: 0, priority: 0 },
 			{ field: TechnologyField.MATERIAL, points: 0, priority: 0 },
-			{ field: TechnologyField.BUSINESS, points: 0, priority: 0 },
+			// { field: TechnologyField.BUSINESS, points: 0, priority: 0 },
 			{ field: TechnologyField.INFORMATION, points: 0, priority: 0 },
 			{ field: TechnologyField.CHEMISTRY, points: 0, priority: 0 },
 			{ field: TechnologyField.PHYSICS, points: 0, priority: 0 },

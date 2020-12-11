@@ -345,11 +345,11 @@ const useStyles = makeStyles((theme: Theme) =>
                 "& > span": {
                     fontSize: "2.5rem",
                     fontWeight: "bold",
-				},
-				
-				"&.missing": {
-					background: "#4004",
-				}
+                },
+
+                "&.missing": {
+                    background: "#4004",
+                },
             },
         },
     })
@@ -639,23 +639,22 @@ interface TechonlogyDetailsProps {
 }
 
 const TechnologyDetails: FC<TechonlogyDetailsProps> = (props) => {
-	const classes = useStyles();
-	const faction = useCurrentFaction();
-	if(!faction) return null;
+    const classes = useStyles();
+    const faction = useCurrentFaction();
+    if (!faction) return null;
 
-	const researched = faction.technology.includes(props.tech.id);
+    const researched = faction.technology.includes(props.tech.id);
     const preReqFullfilled = techPrerequisitesFulfilled(props.tech, faction);
     const missingRp = missingResearchPoints(props.tech, faction);
-	const canAfford = canAffordTech(props.tech, faction);
-	
-	const canResearch = missingRp.size === 0 && preReqFullfilled && !researched;
+    const canAfford = canAffordTech(props.tech, faction);
 
-	function research() {
-		if(faction && props.tech && canAfford) {
-			doResearchTechCommand(props.tech, faction.id);
-		}
-		
-	}
+    const canResearch = missingRp.size === 0 && preReqFullfilled && !researched;
+
+    function research() {
+        if (faction && props.tech && canAfford) {
+            doResearchTechCommand(props.tech, faction.id);
+        }
+    }
 
     return (
         <div className={classes.details}>
@@ -675,9 +674,8 @@ const TechnologyDetails: FC<TechonlogyDetailsProps> = (props) => {
                 <h3>Requirements</h3>
 
                 {props.tech.fieldreqs.map((req: [TechnologyField, number], i: number) => {
-					
-					return (
-                        <div className={`req ${missingRp.has(req[0]) ? "missing": ""}`}>
+                    return (
+                        <div className={`req ${missingRp.has(req[0]) ? "missing" : ""}`}>
                             <TechFieldIcon field={req[0]} />
 
                             <label>{req[0]}</label>
@@ -688,8 +686,10 @@ const TechnologyDetails: FC<TechonlogyDetailsProps> = (props) => {
             </div>
 
             <div>
-				<Button variant="outlined" color="secondary" onClick={props.close}>Close</Button>
-                <Button variant="contained" color="primary" disabled={!canResearch} onClick={research} >
+                <Button variant="outlined" color="secondary" onClick={props.close}>
+                    Close
+                </Button>
+                <Button variant="contained" color="primary" disabled={!canResearch} onClick={research}>
                     Research
                 </Button>
             </div>
