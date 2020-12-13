@@ -115,6 +115,7 @@ function commandCountCalculator(game, factionId) {
     if (!f)
         throw new Error("Invalid factionId" + factionId);
     bonusCommands += fBusinessTech_1.techExpansionist(f, game.systems);
+    // console.log(`APs: ${f.name}: now : ${f.aps} Total Welfare: ${totalWelfare} bonusCmds: ${bonusCommands} WelfareCommands: ${getWelfareCommands(f, totalWelfare)}`)
     return getWelfareCommands(f, totalWelfare) + bonusCommands;
 }
 exports.commandCountCalculator = commandCountCalculator;
@@ -136,7 +137,7 @@ function systemExpenses(sm, faction) {
     var defExp = sm.defense;
     var buildingExpenses = sm.buildings.reduce(function (tot, b) { return tot + b.maintenanceCost; }, 0);
     var initBoost = faction ? fBusinessTech_1.techInitEcoBoost(faction) : 0;
-    return indExp + welExp + defExp + buildingExpenses + 1 + initBoost;
+    return indExp + welExp + defExp + buildingExpenses + 1 - initBoost;
 }
 exports.systemExpenses = systemExpenses;
 function researchPointGenerationCalculator(game, faction) {

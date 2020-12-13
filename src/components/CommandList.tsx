@@ -626,6 +626,8 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 
 	const factDonePerc = Math.round((game.factionsReady.length / game.factions.length) * 100);
 
+	console.log("APS", apsLeft, apsPool, apsUsed);
+
 	return (
 		<div className={`${classes.commands} ${open ? "open" : ""}`}>
 			<button className="menuopener" onClick={() => setOpen((prev: boolean) => !prev)}>
@@ -843,12 +845,10 @@ const SystemPlusCommandItem: FC<CommandProps> = (props) => {
 
 	switch (cmd.type) {
 		case CommandType.SystemDefense:
-			cmdText = "Build defences";
-
+			cmdText = "Build Defences";
 			break;
 		case CommandType.SystemEconomy:
-			cmdText = "Build ecoomy";
-
+			cmdText = "Build Economy";
 			break;
 		case CommandType.SystemIndustry:
 			cmdText = "Build Industry";

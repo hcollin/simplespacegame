@@ -4,7 +4,7 @@ import { Building } from "../models/Buildings";
 import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel } from "../models/Models";
 import { SystemModel } from "../models/StarSystem";
-import { ShipUnit } from "../models/Units";
+import { ShipDesign, ShipUnit } from "../models/Units";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import {
 	techCapitalist,
@@ -167,7 +167,7 @@ export function getActionPointGeneration(game: GameModel, factionId: string): nu
 	return BASEACTIONPOINTCOUNT + commandCountCalculator(game, factionId);
 }
 
-export function unitExpenses(um: ShipUnit): number {
+export function unitExpenses(um: ShipDesign|ShipUnit): number {
 	return um.cost >= 3 ? Math.floor(um.cost / 3) : 1;
 }
 
@@ -177,7 +177,7 @@ export function systemExpenses(sm: SystemModel, faction?: FactionModel): number 
 	const defExp = sm.defense;
 	const buildingExpenses = sm.buildings.reduce((tot: number, b: Building) => tot + b.maintenanceCost, 0);
 	const initBoost = faction ? techInitEcoBoost(faction) : 0;
-	return indExp + welExp + defExp + buildingExpenses + 1 + initBoost;
+	return indExp + welExp + defExp + buildingExpenses + 1 - initBoost;
 }
 
 export function researchPointGenerationCalculator(game: GameModel, faction: FactionModel): number {

@@ -218,6 +218,7 @@ function processStartNewTurn(game: GameModel): GameModel {
 
 	nGame.factions = nGame.factions.map((f: FactionModel) => {
 		const newAps = getActionPointGeneration(nGame, f.id);
+		console.log(`APS: ${f.name}: ${f.aps} + ${newAps}`)
 		f.aps += newAps;
 		return f;
 	});

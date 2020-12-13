@@ -19,7 +19,7 @@ exports.techMarketing = techMarketing;
 function techInitEcoBoost(faction) {
     if (!fTechTools_1.factionHasTechnology(faction, fDataTechnology_1.TECHIDS.InitEcoBoost))
         return 0;
-    return 0;
+    return 1;
 }
 exports.techInitEcoBoost = techInitEcoBoost;
 function techMerchantGuild(faction) {

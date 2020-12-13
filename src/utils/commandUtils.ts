@@ -1,7 +1,6 @@
 import { Command, CommandType, FleetCommand } from "../models/Commands";
 import { FactionModel, GameModel } from "../models/Models";
 import { ShipUnit } from "../models/Units";
-import { commandCountCalculator } from "./factionUtils";
 
 export function unitIsInFleet(commands: Command[], unit: ShipUnit): FleetCommand | null {
 	// const commands = joki.service.getState("CommandService") as Command[];
@@ -33,8 +32,6 @@ export function getActionPointCostOfCommands(game: GameModel, commands: Command[
 }
 
 export function getFactionActionPointPool(game: GameModel, faction: FactionModel): number {
-	const maxCommands = commandCountCalculator(game, faction.id);
-	
-    return maxCommands + faction.aps;
+	return faction.aps;
 }
 
