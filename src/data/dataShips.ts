@@ -1,5 +1,35 @@
-import { SHIPCLASS, ShipDesign, ShipDesignSpec, ShipEngine, ShipPartSlot, ShipWeapon, WEAPONTYPE } from "../models/Units";
+import { SHIPCLASS, ShipDesign, ShipDesignSpec, ShipEngine, ShipPartSlot, ShipSystem, ShipWeapon, WEAPONTYPE } from "../models/Units";
 import { arnd, rnd, roll } from "../utils/randUtils";
+
+export enum SHIPSYSTEMID {
+    ColonyPod = "Colonization Pod",
+    Bombardment = "Planetary Bombardment",
+};
+
+const DATASHIPSYSTEMS: ShipSystem[] = [
+    {
+        id: SHIPSYSTEMID.ColonyPod,
+        name: "Colonization Pod",
+        description: "Colonization is used to colonize foreign systems that do not have any population yet.",
+        part: {
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE],
+            points: 10,
+            slot: ShipPartSlot.OTHER,
+            techPreReq: null
+        }
+    },
+    {
+        id: SHIPSYSTEMID.Bombardment,
+        name: "Planetary Bombardment",
+        description: "Makes planetary bombardment of this unit much more efficient",
+        part: {
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE],
+            points: 8,
+            slot: ShipPartSlot.OTHER,
+            techPreReq: null
+        }
+    },
+];
 
 export enum SHIPENGINEIDS {
     NoEngine = "No FTL Engine",
@@ -1075,4 +1105,4 @@ export function shipClassNameGenerator(cls?: SHIPCLASS): string {
     return arnd(classNames);
 }
 
-export { DATANEWSHIPS, DATASHIPWEAPONS, DATASHIPENGINES };
+export { DATANEWSHIPS, DATASHIPWEAPONS, DATASHIPENGINES, DATASHIPSYSTEMS };

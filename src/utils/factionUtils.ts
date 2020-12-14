@@ -273,7 +273,7 @@ export function getFactionScore(game: GameModel, factionId: string): number {
 }
 
 export function calculateTargetScore(game: GameModel) {
-	return Math.round(game.systems.length * 1.5 + (80 - game.setup.playerCount * 10));
+	return Math.round(game.systems.length * 3 + (80 - game.setup.playerCount * 10));
 }
 
 /**

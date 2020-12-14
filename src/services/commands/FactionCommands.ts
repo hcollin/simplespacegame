@@ -1,54 +1,61 @@
 import { joki } from "jokits-react";
 import { CommandType, ResearchCommand } from "../../models/Commands";
 import { FactionTechSetting, GameModel, Technology, TechnologyField } from "../../models/Models";
+import { ShipDesign } from "../../models/Units";
 import { getFactionFromArrayById } from "../helpers/FactionHelpers";
+import { SERVICEID } from "../services";
 import { createEmptyCommandForCurrentFactionAndGame, factionIsReady } from "./SystemCommands";
 
-
-
-
 export function doAdjustTechValues(tech: TechnologyField, newValue: number, factionId: string) {
+	const game = joki.service.getState(SERVICEID.GameService) as GameModel;
 
-    const game = joki.service.getState("GameService") as GameModel;
-    
-    const faction = getFactionFromArrayById(game.factions, factionId);
-    if (faction) {
-        faction.technologyFields = faction.technologyFields.map((ftf: FactionTechSetting) => {
-            if (ftf.field === tech) {
-                ftf.priority = newValue;
-                return {...ftf};
-            }
-            return ftf;
-        })
+	const faction = getFactionFromArrayById(game.factions, factionId);
+	if (faction) {
+		faction.technologyFields = faction.technologyFields.map((ftf: FactionTechSetting) => {
+			if (ftf.field === tech) {
+				ftf.priority = newValue;
+				return { ...ftf };
+			}
+			return ftf;
+		});
 
-        joki.trigger({
-            to: "GameService",
-            action: "updateFaction",
-            data: { ...faction },
-        });
-    }
-
+		joki.trigger({
+			to: SERVICEID.GameService,
+			action: "updateFaction",
+			data: { ...faction },
+		});
+	}
 }
-
 
 export function doResearchTechCommand(tech: Technology, factionId: string) {
-    if(factionIsReady()) return;
-    const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.TechnologyResearch);
+	if (factionIsReady()) return;
+	const rootCommand = createEmptyCommandForCurrentFactionAndGame(CommandType.TechnologyResearch);
 
-    if (!rootCommand) {
-        console.error(`Cannot research ${tech.name}`);
-        return;
-    }
+	if (!rootCommand) {
+		console.error(`Cannot research ${tech.name}`);
+		return;
+	}
 
-    const command = { ...rootCommand, techId: tech.id } as ResearchCommand;
+	const command = { ...rootCommand, techId: tech.id } as ResearchCommand;
 
-    joki.trigger({
-        to: "CommandService",
-        action: "addCommand",
-        data: command,
-    });
+	joki.trigger({
+		to: SERVICEID.CommandService,
+		action: "addCommand",
+		data: command,
+	});
 }
 
+export function doAddShipDesign(design: ShipDesign, factionId: string) {
+	const game = joki.service.getState(SERVICEID.GameService) as GameModel;
 
+	const faction = getFactionFromArrayById(game.factions, factionId);
+	if (faction) {
+		faction.shipDesigns.push(design);
 
-// export function doAddShipDesign(design: Ship)
+		joki.trigger({
+			to: SERVICEID.GameService,
+			action: "updateFaction",
+			data: { ...faction },
+		});
+	}
+}
