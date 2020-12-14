@@ -48,3 +48,7 @@ export function doResearchTechCommand(tech: Technology, factionId: string) {
         data: command,
     });
 }
+
+
+
+// export function doAddShipDesign(design: Ship)

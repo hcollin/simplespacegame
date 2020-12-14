@@ -18,7 +18,6 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-exports.updateUnitInCombat = exports.damagePotential = exports.getHitChance = exports.updateCooldownTime = exports.weaponCanFire = exports.spaceCombatRoundCleanUp = exports.spaceCombatMorale = exports.spaceCombatDamageResolve = exports.spaceCombatInflictDamage = exports.spaceCombatAttackShoot = exports.spaceCombatAttackChooseTarget = exports.spaceCombatAttacks = exports.spaceCombatPostCombat = exports.spaceCombatPreCombat = exports.spaceCombatMain = void 0;
 var fDataShips_1 = require("./data/fDataShips");
 var functionConfigs_1 = require("./functionConfigs");
 var fUnits_1 = require("./models/fUnits");
@@ -73,7 +72,21 @@ exports.spaceCombatMain = spaceCombatMain;
 function spaceCombatPreCombat(game, origCombat, system) {
     var combat = __assign({}, origCombat);
     // Deploy Fighters
-    var designations = fRandUtils_1.shuffle(["Alpha", "Beta", "Gamma", "Delta", "Phi", "Tau", "Red", "Blue", "Green", "Gold", "Yellow", "Brown", "Tan"]);
+    var designations = fRandUtils_1.shuffle([
+        "Alpha",
+        "Beta",
+        "Gamma",
+        "Delta",
+        "Phi",
+        "Tau",
+        "Red",
+        "Blue",
+        "Green",
+        "Gold",
+        "Yellow",
+        "Brown",
+        "Tan",
+    ]);
     var fighters = combat.units.reduce(function (fighters, unit) {
         if (unit.fighters > 0) {
             var des = designations.pop();

@@ -3,7 +3,7 @@ import { Building } from "./Buildings";
 import { Trade } from "./Communication";
 import { CombatRoundReport, DetailReportType } from "./Report";
 import { SystemModel } from "./StarSystem";
-import { ShipUnit } from "./Units";
+import { ShipDesign, ShipUnit } from "./Units";
 
 export interface GameObject {
     id: string;
@@ -99,6 +99,7 @@ export interface FactionModel extends GameObject {
     technology: string[];
     debt: number;
     aps: number;
+    shipDesigns: ShipDesign[];
 }
 
 export interface FactionStyle {

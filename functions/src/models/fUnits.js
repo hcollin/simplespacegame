@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.SHIPKEYWORD = exports.WEAPONTYPE = exports.SHIPCLASS = void 0;
 var SHIPCLASS;
 (function (SHIPCLASS) {
     SHIPCLASS["FIGHTER"] = "Fighter";
@@ -12,7 +11,6 @@ var SHIPCLASS;
     SHIPCLASS["BATTLESHIP"] = "Battleship";
     SHIPCLASS["CARRIER"] = "Carrier";
 })(SHIPCLASS = exports.SHIPCLASS || (exports.SHIPCLASS = {}));
-;
 var WEAPONTYPE;
 (function (WEAPONTYPE) {
     WEAPONTYPE["ENERGY"] = "Energy Weapon";
@@ -21,7 +19,6 @@ var WEAPONTYPE;
     WEAPONTYPE["MISSILE"] = "Missile";
     WEAPONTYPE["ODD"] = "Strange Weapon";
 })(WEAPONTYPE = exports.WEAPONTYPE || (exports.WEAPONTYPE = {}));
-;
 var SHIPKEYWORD;
 (function (SHIPKEYWORD) {
     SHIPKEYWORD["TRASPORTED1"] = "Takes 1 Cargo Space";
@@ -29,4 +26,10 @@ var SHIPKEYWORD;
     SHIPKEYWORD["TRASPORTED3"] = "Takes 3 Cargo Space";
     SHIPKEYWORD["BIOSHIP"] = "BioShip";
 })(SHIPKEYWORD = exports.SHIPKEYWORD || (exports.SHIPKEYWORD = {}));
-;
+var ShipPartSlot;
+(function (ShipPartSlot) {
+    ShipPartSlot["WEAPON"] = "Weapon";
+    ShipPartSlot["ENGINE"] = "Engine";
+    ShipPartSlot["SHIELD"] = "Shields";
+    ShipPartSlot["OTHER"] = "Other";
+})(ShipPartSlot = exports.ShipPartSlot || (exports.ShipPartSlot = {}));

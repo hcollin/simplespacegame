@@ -1,9 +1,10 @@
-import { SHIPWEAPONSPECIAL } from "../data/dataShips";
+import { v4 } from "uuid";
+import { getDesignSpecByShipClass, SHIPWEAPONSPECIAL } from "../data/dataShips";
 import { TECHIDS } from "../data/dataTechnology";
 import { Command, CommandType, FleetCommand, UnitScrapCommand } from "../models/Commands";
 import { FactionModel, GameModel } from "../models/Models";
 import { SystemModel } from "../models/StarSystem";
-import { SHIPCLASS, ShipDesign, ShipUnit, ShipWeapon, WEAPONTYPE } from "../models/Units";
+import { SHIPCLASS, ShipCustomDesign, ShipDesign, ShipUnit, ShipWeapon, WEAPONTYPE } from "../models/Units";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import {
 	techFocusBeam,
@@ -242,4 +243,45 @@ export function fleetBombardmentCalculator(game: GameModel, fleet: ShipUnit[], s
 	});
 
 	return [chance, maxDamage];
+}
+
+
+export function convertShipDesignerSpecToShipDesign(custom: ShipCustomDesign): ShipDesign {
+
+	const currentSpec = getDesignSpecByShipClass(custom.hullType);
+
+    const currentHull = currentSpec.hull + custom.hullAdjustment * 5;
+    const currentShield = custom.shieldAdjustment * 3;
+
+    const currentAgility =
+        currentSpec.baseAgility + custom.engine.agility < 0 ? 0 : currentSpec.baseAgility + custom.engine.agility;
+
+
+	const design: ShipDesign = {
+		id: v4(),
+        typeClassName: `${custom.name} class ${custom.hullType}`,
+        sizeIndicator: currentSpec.sizeModifier,
+        type: custom.hullType,
+        name: custom.name,
+        cost: custom.cost,
+        buildTime: custom.buildTime,
+        minIndustry: Math.max(Math.floor(custom.cost/10), 1),
+        techReq: [],
+        fighters: custom.fighters,
+        fightersMax: custom.fighters,
+        troops: custom.troops,
+        speed: custom.engine.speed,
+        agility: currentAgility,
+        armor: custom.armor,
+        hull: currentHull,
+        shieldRegeneration: custom.shieldRegenAdjust,
+        shieldsMax: currentShield,
+        keywords: [],
+        weapons: custom.weapons,
+        description:
+            `${custom.name} class ${custom.hullType} is nice little boat`,
+	}
+
+	return design;
+
 }

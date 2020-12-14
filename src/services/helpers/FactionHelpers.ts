@@ -69,6 +69,7 @@ export function createNewFaction(): FactionModel {
         technology: [],
         debt: 0,
         aps: BASEACTIONPOINTCOUNT,
+        shipDesigns: [],
     }
 
 

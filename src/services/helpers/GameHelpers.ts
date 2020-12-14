@@ -169,6 +169,7 @@ export function createFactionFromSetup(setup: FactionSetup): FactionModel {
 		technology: [],
 		debt: 0,
 		aps: BASEACTIONPOINTCOUNT,
+		shipDesigns: [],
 	};
 
 	return fm;

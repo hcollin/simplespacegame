@@ -1,5 +1,95 @@
-import { SHIPCLASS, ShipDesign, ShipPartSlot, ShipWeapon, WEAPONTYPE } from "../models/Units";
+import { SHIPCLASS, ShipDesign, ShipDesignSpec, ShipEngine, ShipPartSlot, ShipWeapon, WEAPONTYPE } from "../models/Units";
 import { arnd, rnd, roll } from "../utils/randUtils";
+
+export enum SHIPENGINEIDS {
+    NoEngine = "No FTL Engine",
+    EngineIon = "Ion Engine",
+    EngineSail = "Solar Wind Sails",
+    FusionDrive = "Fusion Drive",
+    SubLightEngine = "SubLight Engine",
+    WarpEngine = "Warp Drive",
+}
+
+const DATASHIPENGINES: ShipEngine[] = [
+    {
+        id: SHIPENGINEIDS.EngineIon,
+        name: "Ion Engine",
+        range: 10,
+        speed: 5,
+        agility: 0,
+        part: {
+            notAvailableInClasses: [],
+            points: 1,
+            slot: ShipPartSlot.ENGINE,
+            techPreReq: null,
+        },
+    },
+    {
+        id: SHIPENGINEIDS.FusionDrive,
+        name: "Fusion Drive",
+        range: 20,
+        speed: 7,
+        agility: 10,
+        part: {
+            notAvailableInClasses: [],
+            points: 3,
+            slot: ShipPartSlot.ENGINE,
+            techPreReq: null,
+        },
+    },
+    {
+        id: SHIPENGINEIDS.EngineSail,
+        name: "Solar Wind Sails",
+        range: 40,
+        speed: 2,
+        agility: -20,
+        part: {
+            notAvailableInClasses: [],
+            points: 2,
+            slot: ShipPartSlot.ENGINE,
+            techPreReq: null,
+        },
+    },
+    {
+        id: SHIPENGINEIDS.WarpEngine,
+        name: "Warp Drive",
+        range: 15,
+        speed: 15,
+        agility: 0,
+        part: {
+            notAvailableInClasses: [],
+            points: 5,
+            slot: ShipPartSlot.ENGINE,
+            techPreReq: null,
+        },
+    },
+    {
+        id: SHIPENGINEIDS.SubLightEngine,
+        name: "System Engine",
+        range: 0,
+        speed: 0,
+        agility: 30,
+        part: {
+            notAvailableInClasses: [],
+            points: 1,
+            slot: ShipPartSlot.ENGINE,
+            techPreReq: null,
+        },
+    },
+    {
+        id: SHIPENGINEIDS.NoEngine,
+        name: "Stationary",
+        range: 0,
+        speed: 0,
+        agility: -100,
+        part: {
+            notAvailableInClasses: [],
+            points: 0,
+            slot: ShipPartSlot.ENGINE,
+            techPreReq: null,
+        },
+    },
+];
 
 export enum SHIPWEAPONSPECIAL {
     DOUBLESHOT = "Double Shot (x2)", // Roll for damage twice when hit
@@ -24,10 +114,10 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [SHIPWEAPONSPECIAL.ANTIFIGHTER],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE],
-            points: 1,
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE],
+            points: 5,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -40,10 +130,10 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [SHIPWEAPONSPECIAL.ANTIFIGHTER],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.CORVETTE],
-            points: 2,
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE],
+            points: 7,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -56,10 +146,10 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [SHIPWEAPONSPECIAL.DOUBLESHOT],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE, SHIPCLASS.CARRIER, SHIPCLASS.DESTROYER, SHIPCLASS.CRUISER, SHIPCLASS.BATTLESHIP],
-            points: 2,
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.CRUISER, SHIPCLASS.BATTLESHIP],
+            points: 3,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -72,10 +162,18 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [SHIPWEAPONSPECIAL.RAPIDFIRE],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE, SHIPCLASS.DESTROYER, SHIPCLASS.CRUISER, SHIPCLASS.BATTLESHIP],
-            points: 3,
+            notAvailableInClasses: [
+                SHIPCLASS.FIGHTER,
+                SHIPCLASS.PATROL,
+                SHIPCLASS.CORVETTE,
+                SHIPCLASS.FRIGATE,
+                SHIPCLASS.DESTROYER,
+                SHIPCLASS.CRUISER,
+                SHIPCLASS.BATTLESHIP,
+            ],
+            points: 5,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -88,10 +186,10 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [SHIPCLASS.PATROL, SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE, SHIPCLASS.CARRIER, SHIPCLASS.DESTROYER, SHIPCLASS.CRUISER, SHIPCLASS.BATTLESHIP],
-            points: 3,
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL],
+            points: 4,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -104,10 +202,16 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [SHIPCLASS.FRIGATE, SHIPCLASS.DESTROYER, SHIPCLASS.CRUISER, SHIPCLASS.BATTLESHIP],
-            points: 6,
+            notAvailableInClasses: [
+                SHIPCLASS.FRIGATE,
+                SHIPCLASS.PATROL,
+                SHIPCLASS.DESTROYER,
+                SHIPCLASS.CRUISER,
+                SHIPCLASS.BATTLESHIP,
+            ],
+            points: 7,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -120,10 +224,10 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [SHIPWEAPONSPECIAL.HAILOFFIRE],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [SHIPCLASS.CRUISER, SHIPCLASS.BATTLESHIP],
-            points: 9,
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE],
+            points: 14,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -131,15 +235,20 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         type: WEAPONTYPE.KINETIC,
         accuracy: 50,
         cooldown: 0,
-        cooldownTime: 0,
+        cooldownTime: 1,
         damage: [2, 5],
         special: [SHIPWEAPONSPECIAL.HAILOFFIRE],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE],
-            points: 1,
+            notAvailableInClasses: [
+                SHIPCLASS.FRIGATE,
+                SHIPCLASS.DESTROYER,
+                SHIPCLASS.CRUISER,
+                SHIPCLASS.BATTLESHIP,
+            ],
+            points: 2,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -152,10 +261,10 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [],
-            points: 1,
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL],
+            points: 7,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -169,10 +278,10 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
 
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [],
-            points: 1,
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE],
+            points: 14,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -185,10 +294,10 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [],
-            points: 1,
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE],
+            points: 20,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -201,10 +310,17 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [],
-            points: 1,
+            notAvailableInClasses: [
+                SHIPCLASS.FIGHTER,
+                SHIPCLASS.PATROL,
+                SHIPCLASS.CORVETTE,
+                SHIPCLASS.FRIGATE,
+                SHIPCLASS.DESTROYER,
+                SHIPCLASS.CARRIER,
+            ],
+            points: 30,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -217,10 +333,10 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [],
-            points: 1,
+            notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE],
+            points: 10,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -233,10 +349,16 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [],
-            points: 1,
+            notAvailableInClasses: [
+                SHIPCLASS.FIGHTER,
+                SHIPCLASS.DESTROYER,
+                SHIPCLASS.CARRIER,
+                SHIPCLASS.CRUISER,
+                SHIPCLASS.BATTLESHIP,
+            ],
+            points: 7,
             techPreReq: null,
-        }
+        },
     },
     {
         id: "",
@@ -249,11 +371,19 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvaialbleInClasses: [SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE, SHIPCLASS.CRUISER, SHIPCLASS.DESTROYER, SHIPCLASS.BATTLESHIP, SHIPCLASS.CARRIER, SHIPCLASS.PATROL],
+            notAvailableInClasses: [
+                SHIPCLASS.CORVETTE,
+                SHIPCLASS.FRIGATE,
+                SHIPCLASS.CRUISER,
+                SHIPCLASS.DESTROYER,
+                SHIPCLASS.BATTLESHIP,
+                SHIPCLASS.CARRIER,
+                SHIPCLASS.PATROL,
+            ],
             points: 1,
             techPreReq: null,
-        }
-    }
+        },
+    },
 ];
 
 // [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE, SHIPCLASS.CARRIER, SHIPCLASS.DESTROYER, SHIPCLASS.CRUISER, SHIPCLASS.BATTLESHIP]
@@ -263,6 +393,69 @@ function getWeaponByName(name: string): ShipWeapon {
     if (!w) throw new Error(`Unknown weapon ${name}`);
 
     return { ...w, id: `W-${rnd(100000, 999999)}-${Date.now()}` };
+}
+
+
+export const ShipDesignSpecs: ShipDesignSpec[] = [
+    {
+        shipClass: SHIPCLASS.PATROL,
+        points: 5,
+        hull: 40,
+        baseAgility: 70,
+        sizeModifier: 1,
+    },
+    {
+        shipClass: SHIPCLASS.CORVETTE,
+        points: 10,
+        hull: 60,
+        baseAgility: 50,
+        sizeModifier: 2,
+    },
+    {
+        shipClass: SHIPCLASS.FRIGATE,
+        points: 25,
+        hull: 110,
+        baseAgility: 40,
+        sizeModifier: 2,
+    },
+    {
+        shipClass: SHIPCLASS.DESTROYER,
+        points: 45,
+        hull: 150,
+        baseAgility: 35,
+        sizeModifier: 3,
+    },
+    {
+        shipClass: SHIPCLASS.CRUISER,
+        points: 65,
+        hull: 180,
+        baseAgility: 30,
+        sizeModifier: 4,
+    },
+    {
+        shipClass: SHIPCLASS.CARRIER,
+        points: 80,
+        hull: 160,
+        baseAgility: 25,
+        sizeModifier: 6,
+    },
+    {
+        shipClass: SHIPCLASS.BATTLESHIP,
+        points: 120,
+        hull: 220,
+        baseAgility: 10,
+        sizeModifier: 8,
+    },
+];
+
+
+
+export function getDesignSpecByShipClass(sc: SHIPCLASS): ShipDesignSpec {
+    const sp = ShipDesignSpecs.find((sd: ShipDesignSpec) => sd.shipClass === sc);
+    if (!sp) {
+        throw new Error(`Unknown ship Spec ${sc}`);
+    }
+    return sp;
 }
 
 const DATANEWSHIPS: ShipDesign[] = [
@@ -287,7 +480,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldsMax: 0,
         keywords: [],
         weapons: [getWeaponByName("Small Laser"), getWeaponByName("Fighter Missile")],
-        description: "One man fighter craft that does not have warp capability in itself. Fighters cannot be built on systems they are automatically deployed during combet and new fighters are built on friendly systems autamatically during repairs.",
+        description:
+            "One man fighter craft that does not have warp capability in itself. Fighters cannot be built on systems they are automatically deployed during combet and new fighters are built on friendly systems autamatically during repairs.",
     },
     {
         id: "",
@@ -310,7 +504,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldsMax: 0,
         keywords: [],
         weapons: [getWeaponByName("Small Laser"), getWeaponByName("Machinegun")],
-        description: "Small patrol boat used mainly used for bulking up the defenses against fighters or for really cash stripped empires.",
+        description:
+            "Small patrol boat used mainly used for bulking up the defenses against fighters or for really cash stripped empires.",
     },
     {
         id: "",
@@ -411,10 +606,9 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 5,
         shieldsMax: 25,
         keywords: ["BOMBARDMENT"],
-        weapons: [
-            getWeaponByName("Laser Turret"),
-        ],
-        description: "Destroyer sized unit specialized in invasion with ability to bombard the planet and large troop carrying capacity",
+        weapons: [getWeaponByName("Laser Turret")],
+        description:
+            "Destroyer sized unit specialized in invasion with ability to bombard the planet and large troop carrying capacity",
     },
     {
         id: "",
@@ -465,10 +659,7 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 8,
         shieldsMax: 40,
         keywords: [],
-        weapons: [
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Laser Turret"),
-        ],
+        weapons: [getWeaponByName("Laser Turret"), getWeaponByName("Laser Turret")],
         description: "",
     },
     {
@@ -821,4 +1012,67 @@ export function shipNameGenerator(): string {
     return `${arnd(wordAdjective)} ${arnd(partB)}`;
 }
 
-export { DATANEWSHIPS };
+export function shipClassNameGenerator(cls?: SHIPCLASS): string {
+    const classNames: string[] = [
+        "Argument",
+        "Annihilator",
+        "Bolero",
+        "Brigadier",
+        "Cosmos",
+        "Commander",
+        "Constitution",
+        "Elegant",
+        "Elegy",
+        "Fortress",
+        "Fantasy",
+        "Gracious",
+        "General",
+        "Hero",
+        "Humility",
+        "Invader",
+        "Intrigue",
+        "Innuendo",
+        "Imperial",
+        "Javelin",
+        "Jester",
+        "Killer",
+        "Kolibri",
+        "Lawbraker",
+        "Lenient",
+        "Lightbringer",
+        "Master",
+        "Miracle",
+        "Nova",
+        "Nebula",
+        "Orion",
+        "Oliargh",
+        "Odin",
+        "Pestilence",
+        "Pillar",
+        "Quantum",
+        "Quest",
+        "Quasar",
+        "Radiant",
+        "Ripper",
+        "Relinquish",
+        "Starship",
+        "Silhuette",
+        "Silver",
+        "Tormentor",
+        "Terminator",
+        "Tiamat",
+        "Universe",
+        "Ulysses",
+        "Victory",
+        "Vindicator",
+        "Warhammer",
+        "Wisdom",
+        "Xenophobe",
+        "Yggdrasil",
+        "Zodiac",
+    ];
+
+    return arnd(classNames);
+}
+
+export { DATANEWSHIPS, DATASHIPWEAPONS, DATASHIPENGINES };
