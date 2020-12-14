@@ -34,7 +34,6 @@ export default function useMyCommands<T extends Command>(type?: CommandType): [T
                 setApsUsed((prev: number) => prev === aps ? prev : aps);
                 setApsPool((prev: number) => prev === pool ? prev : pool);
             }
-            
         }
 
     },[user, allCommands, game]);

@@ -18,7 +18,7 @@ export function techMarketing(faction: FactionModel, game: GameModel): number {
 
 export function techInitEcoBoost(faction: FactionModel): number {
     if (!factionHasTechnology(faction, TECHIDS.InitEcoBoost)) return 0;
-    return 0;
+    return 1;
 }
 
 export function techMerchantGuild(faction: FactionModel): number {

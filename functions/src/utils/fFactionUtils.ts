@@ -157,9 +157,11 @@ export function commandCountCalculator(game: GameModel, factionId: string): numb
 		}
 	});
 	const f = getFactionFromArrayById(game.factions, factionId);
+	
 	if (!f) throw new Error(`Invalid factionId${factionId}`);
 
 	bonusCommands += techExpansionist(f, game.systems);
+	// console.log(`APs: ${f.name}: now : ${f.aps} Total Welfare: ${totalWelfare} bonusCmds: ${bonusCommands} WelfareCommands: ${getWelfareCommands(f, totalWelfare)}`)
 	return getWelfareCommands(f, totalWelfare) + bonusCommands;
 }
 
@@ -181,7 +183,7 @@ export function systemExpenses(sm: SystemModel, faction?: FactionModel): number 
 	const defExp = sm.defense;
 	const buildingExpenses = sm.buildings.reduce((tot: number, b: Building) => tot + b.maintenanceCost, 0);
 	const initBoost = faction ? techInitEcoBoost(faction) : 0;
-	return indExp + welExp + defExp + buildingExpenses + 1 + initBoost;
+	return indExp + welExp + defExp + buildingExpenses + 1 - initBoost;
 }
 
 export function researchPointGenerationCalculator(game: GameModel, faction: FactionModel): number {

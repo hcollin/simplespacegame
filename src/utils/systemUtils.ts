@@ -20,6 +20,7 @@ import {
 	techAlternativePros,
 	techEfficientBureaucracy,
 	techGalacticSenate,
+	techInitEcoBoost,
 	techLevitationBuildings,
 	techMineralPros,
 	techSpaceDock,
@@ -73,14 +74,15 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
 	};
 
 	eco.expenses = eco.industryExpenses + eco.defenseExpenses + eco.welfareExpenses + eco.buildingExpenses + 1;
-	eco.profit = eco.income - eco.expenses;
+	
 
 	if (faction) {
 		eco.welfareExpenses = techEfficientBureaucracy(faction, eco.welfareExpenses);
 		eco.buildingSlots += techUndergroundConstruction(faction) + techLevitationBuildings(faction);
 		eco.shipyards = techSpaceDock(faction, eco);
+		eco.expenses -= techInitEcoBoost(faction);
 	}
-
+	eco.profit = eco.income - eco.expenses;
 	eco.vps = getSystemVps(game, eco);
 	eco.totalDefense = getSystemDefence(game, star);
 

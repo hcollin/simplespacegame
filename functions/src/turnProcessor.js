@@ -227,6 +227,7 @@ function processStartNewTurn(game) {
     var nGame = __assign({}, game);
     nGame.factions = nGame.factions.map(function (f) {
         var newAps = fFactionUtils_1.getActionPointGeneration(nGame, f.id);
+        console.log("APS: " + f.name + ": " + f.aps + " + " + newAps);
         f.aps += newAps;
         return f;
     });

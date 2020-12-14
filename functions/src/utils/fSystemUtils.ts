@@ -14,7 +14,6 @@ import { Building } from "../models/fBuildings";
 import { Coordinates, GameModel } from "../models/fModels";
 import { SystemKeyword, SystemModel } from "../models/fStarSystem";
 
-
 import {
 	techEfficientBureaucracy,
 	techUndergroundConstruction,
@@ -24,6 +23,7 @@ import {
 	techAlternativePros,
 	techAdaptability,
 	techGalacticSenate,
+	techInitEcoBoost,
 } from "../tech/fBusinessTech";
 import { techDroidDefences, techAutoDefenses } from "../tech/fInvasionTech";
 import { getFactionFromArrayById, getSystemResearchPointGeneration } from "./fFactionUtils";
@@ -31,7 +31,7 @@ import { inSameLocation } from "./fLocationUtils";
 
 export function getSystemFromArrayById(stars: SystemModel[], systemId: string): SystemModel {
 	const sm = stars.find((s: SystemModel) => s.id === systemId);
-	if(!sm) {
+	if (!sm) {
 		throw new Error(`System id ${systemId} was not found!`);
 	}
 	return sm;
@@ -76,17 +76,17 @@ export function getSystemEconomy(star: SystemModel, game: GameModel): SystemEcon
 	};
 
 	eco.expenses = eco.industryExpenses + eco.defenseExpenses + eco.welfareExpenses + eco.buildingExpenses + 1;
-	eco.profit = eco.income - eco.expenses;
 
 	if (faction) {
 		eco.welfareExpenses = techEfficientBureaucracy(faction, eco.welfareExpenses);
 		eco.buildingSlots += techUndergroundConstruction(faction) + techLevitationBuildings(faction);
 		eco.shipyards = techSpaceDock(faction, eco);
+		eco.expenses -= techInitEcoBoost(faction);
 	}
 
+	eco.profit = eco.income - eco.expenses;
 	return buildingBioDome(buildingArcology(buildingIndustrySector(buildingFactoryAutomation(buildingRingWorld(eco)))));
 }
-
 
 export function getStarIndustryMax(star: SystemModel, game: GameModel): number {
 	const faction = getFactionFromArrayById(game.factions, star.ownerFactionId);

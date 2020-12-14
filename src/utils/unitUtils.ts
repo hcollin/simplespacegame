@@ -16,6 +16,7 @@ import {
 	techTargetingComputerTwo,
 	techWarpEngines,
 } from "../tech/shipTech";
+import { unitExpenses } from "./factionUtils";
 import { inSameLocation } from "./locationUtils";
 
 // SHIP VALUES
@@ -88,6 +89,14 @@ export function getShipShieldsReg(ship: ShipDesign, faction?: FactionModel): num
 export function getShipAgility(ship: ShipDesign, faction?: FactionModel): number {
 	if (!faction) return ship.agility;
 	return techManouveringJets(faction, ship.agility);
+}
+
+export function getShipMaintenance(ship: ShipDesign, faction?: FactionModel): number {
+	return unitExpenses(ship);
+}
+
+export function getShipBuildTime(ship: ShipDesign, faction?: FactionModel): number {
+	return ship.buildTime;
 }
 
 // WEAPON VALUES
