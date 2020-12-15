@@ -19,6 +19,8 @@ import {
 } from "../tech/shipTech";
 import { unitExpenses } from "./factionUtils";
 import { inSameLocation } from "./locationUtils";
+import { distanceBetweenCoordinates } from "./MathUtils";
+import { getSystemByCoordinates } from "./systemUtils";
 
 // SHIP VALUES
 // The functions should be used to access the provided ship design value if tech and faction specific modifiers need to be taken account
@@ -284,4 +286,57 @@ export function convertShipDesignerSpecToShipDesign(custom: ShipCustomDesign): S
 
 	return design;
 
+}
+export interface TravelInfo {
+	from: SystemModel | null;
+	fromFaction: FactionModel | null;
+	to: SystemModel | null;
+	toFaction: FactionModel | null;
+	distance: number;
+	turns: number;
+	slowestShip: ShipUnit | null;
+}
+export function getFleetInfo(game: GameModel, units: ShipUnit[], targetSystem: SystemModel|null|undefined): TravelInfo {
+	if(!targetSystem) {
+		return {
+			from: null,
+			fromFaction: null,
+			to: null,
+			toFaction: null,
+			distance: 0,
+			slowestShip: null,
+			turns: 0,
+		}
+	}
+	const toFaction = getFactionFromArrayById(game.factions, targetSystem.ownerFactionId || "");
+	const trInfo: TravelInfo = {
+		from: null,
+		fromFaction: null,
+		to: targetSystem || null,
+		toFaction: toFaction || null,
+		distance: 0,
+		slowestShip: null,
+		turns: 0,
+	};
+
+	const slowestUnit = units.reduce((slowest: ShipUnit | null, cur: ShipUnit) => {
+		if (slowest === null) return cur;
+
+		if (cur.speed < slowest.speed) return cur;
+		return slowest;
+	}, null);
+	if (slowestUnit) {
+		const origSystem = getSystemByCoordinates(game, slowestUnit.location);
+		if (origSystem) {
+			trInfo.from = origSystem;
+			const frFaction = getFactionFromArrayById(game.factions, origSystem.ownerFactionId);
+			trInfo.fromFaction = frFaction || null;
+		}
+		const unFaction = getFactionFromArrayById(game.factions, slowestUnit.factionId);
+		trInfo.slowestShip = unFaction ? getFactionAdjustedUnit(unFaction, slowestUnit) : slowestUnit;
+		trInfo.distance = Math.ceil(distanceBetweenCoordinates(slowestUnit.location, targetSystem.location));
+		trInfo.turns = Math.ceil(trInfo.distance / slowestUnit.speed);
+	}
+
+	return trInfo;
 }

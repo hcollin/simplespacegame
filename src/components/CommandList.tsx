@@ -626,7 +626,7 @@ const CommandList: FC<CommandListProps> = (props: CommandListProps) => {
 
 	const factDonePerc = Math.round((game.factionsReady.length / game.factions.length) * 100);
 
-	console.log("APS", apsLeft, apsPool, apsUsed);
+	// console.log("APS", apsLeft, apsPool, apsUsed);
 
 	return (
 		<div className={`${classes.commands} ${open ? "open" : ""}`}>

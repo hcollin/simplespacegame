@@ -22,7 +22,7 @@ import ScienceView from "./subviews/ScienceView";
 import DiplomacyView from "./subviews/DiplomacyView";
 import FleetView from "../components/FleetView";
 import SystemView from "../components/SystemView";
-import UnitsView from "./subviews/UnitsView";
+import UnitsView from "./units/UnitsView";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

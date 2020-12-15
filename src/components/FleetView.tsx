@@ -23,7 +23,7 @@ import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
 import HelpContainer from "./HelpContainer";
 import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
 import FactionBanner from "./FactionBanner";
-import { fleetBombardmentCalculator, getFactionAdjustedUnit, unitIsInFriendlyOrbit } from "../utils/unitUtils";
+import { fleetBombardmentCalculator, getFactionAdjustedUnit, getFleetInfo, unitIsInFriendlyOrbit } from "../utils/unitUtils";
 import useMobileMode from "../hooks/useMobileMode";
 import ModalButton from "./ModalButton";
 import MinimizeIcon from "@material-ui/icons/Minimize";
@@ -563,37 +563,12 @@ const SelectUnitToFleet: FC<ContentProps> = (props) => {
 		// }
 	}
 
-	const canMove = props.system !== null && inFleet.length > 0;
-	const toFaction = getFactionFromArrayById(game.factions, props.system?.ownerFactionId || "");
-	const trInfo: TravelInfo = {
-		from: null,
-		fromFaction: null,
-		to: props.system || null,
-		toFaction: toFaction || null,
-		distance: 0,
-		slowestShip: null,
-		turns: 0,
-	};
+	// const canMove = props.system !== null && inFleet.length > 0;
 
-	const slowestUnit = inFleet.reduce((slowest: ShipUnit | null, cur: ShipUnit) => {
-		if (slowest === null) return cur;
-
-		if (cur.speed < slowest.speed) return cur;
-		return slowest;
-	}, null);
-	if (slowestUnit && props.system) {
-		const origSystem = getSystemByCoordinates(game, slowestUnit.location);
-		if (origSystem) {
-			trInfo.from = origSystem;
-			const frFaction = getFactionFromArrayById(game.factions, origSystem.ownerFactionId);
-			trInfo.fromFaction = frFaction || null;
-		}
-		const unFaction = getFactionFromArrayById(game.factions, slowestUnit.factionId);
-		trInfo.slowestShip = unFaction ? getFactionAdjustedUnit(unFaction, slowestUnit) : slowestUnit;
-		trInfo.distance = Math.ceil(distanceBetweenCoordinates(slowestUnit.location, props.system.location));
-		trInfo.turns = Math.ceil(trInfo.distance / slowestUnit.speed);
-	}
-
+	
+	// const toFaction = getFactionFromArrayById(game.factions, props.system?.ownerFactionId || "");
+	const trInfo = getFleetInfo(game, inFleet, props.system);
+	
 	const shownUnits = props.units.slice(unitIndex, unitIndex + paginationLimit);
 
 	return (
@@ -632,7 +607,7 @@ const SelectUnitToFleet: FC<ContentProps> = (props) => {
 				})}
 			</div>
 
-			{props.system && slowestUnit && trInfo.to && (
+			{props.system && trInfo.slowestShip && trInfo.to && (
 				<>
 					<div className="destination">
 						<h4>Travel information</h4>
@@ -666,7 +641,7 @@ const SelectUnitToFleet: FC<ContentProps> = (props) => {
 					</div>
 				</>
 			)}
-			{!props.system && slowestUnit && (
+			{!props.system && trInfo.slowestShip && (
 				<HelpContainer>
 					<p>Select destination system from the map.</p>
 				</HelpContainer>
