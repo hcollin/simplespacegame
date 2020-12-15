@@ -5,7 +5,6 @@ const fnRoot = "./functions/src";
 const uxRoot = "./src";
 const folders = [`/buildings/`, `/data/`, `/models/`, "/tech/", "/utils/"];
 
-
 function compareLine(line1, line2) {
     const l1Type = typeof line1;
     const l2Type = typeof line2;
