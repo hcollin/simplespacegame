@@ -15,7 +15,7 @@ import {
 } from "../models/Commands";
 import { FactionModel, GameModel, GameState } from "../models/Models";
 import { doRemoveCommand } from "../services/commands/SystemCommands";
-import { getSystemById } from "../services/helpers/SystemHelpers";
+
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { getTechById } from "../utils/techUtils";
 
@@ -52,6 +52,7 @@ import { doCloseGame, doLogout } from "../services/commands/UserCommands";
 // import { getActionPointCostOfCommands, getFactionActionPointPool } from "../utils/commandUtils";
 import useMobileMode from "../hooks/useMobileMode";
 import { ShipUnit } from "../models/Units";
+import { getSystemById } from "../tools/mapgenerator/mapGenerator";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

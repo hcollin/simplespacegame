@@ -14,7 +14,7 @@ import { Building } from "../models/Buildings";
 import { BuildBuildingCommand, Command, CommandType, SystemPlusCommand } from "../models/Commands";
 import { Coordinates, GameModel } from "../models/Models";
 import { SystemModel, SystemKeyword } from "../models/StarSystem";
-import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
+
 import {
 	techAdaptability,
 	techAlternativePros,
@@ -28,7 +28,7 @@ import {
 } from "../tech/businessTech";
 import { techAutoDefenses, techDroidDefences } from "../tech/invasionTech";
 import { createBuildingFromDesign, getBuildingDesignByType } from "./buildingUtils";
-import { getSystemResearchPointGeneration } from "./factionUtils";
+import { getFactionFromArrayById, getSystemResearchPointGeneration } from "./factionUtils";
 import { inSameLocation } from "./locationUtils";
 
 export interface SystemEconomy extends SystemModel {

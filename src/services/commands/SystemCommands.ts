@@ -7,7 +7,8 @@ import { SystemModel } from "../../models/StarSystem";
 import { ShipDesign } from "../../models/Units";
 import { User } from "../../models/User";
 import { getBuildingTime } from "../../utils/buildingUtils";
-import { factionCanDoMoreCommands, factionHasEnoughActionPoints, getFactionByUserId } from "../helpers/FactionHelpers";
+import { factionHasEnoughActionPoints, getFactionByUserId } from "../../utils/factionUtils";
+
 import { SERVICEID } from "../services";
 
 export function plusEconomy(targetSystem: SystemModel, apCost=1) {

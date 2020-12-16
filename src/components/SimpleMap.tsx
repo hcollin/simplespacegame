@@ -1,12 +1,13 @@
 import React, { FC } from "react";
 import { FactionModel } from "../models/Models";
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
-import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
+
 // import { inSameLocation } from "../utils/locationUtils";
 import useSelectedSystem from "../hooks/useSelectedSystem";
-import AirplanemodeActiveIcon from '@material-ui/icons/AirplanemodeActive';
+import AirplanemodeActiveIcon from "@material-ui/icons/AirplanemodeActive";
 import { ShipUnit } from "../models/Units";
 import { SystemModel } from "../models/StarSystem";
+import { getFactionFromArrayById } from "../utils/factionUtils";
 
 const size = window.innerHeight - 200;
 
@@ -59,10 +60,9 @@ const useStyles = makeStyles((theme: Theme) =>
                     flexDirection: "column",
                     "& > button": {
                         margin: "0.5rem",
-                        padding: "0.25rem 0.5rem"
-                    }
-                }
-
+                        padding: "0.25rem 0.5rem",
+                    },
+                },
             },
         },
         unit: {
@@ -72,8 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
             color: "white",
             marginTop: "-0.75rem",
             padding: 0,
-
-        }
+        },
     })
 );
 
@@ -91,7 +90,7 @@ const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
     const [selectedSystem, setSelectedSystem] = useSelectedSystem();
 
     function select(star: SystemModel) {
-        setSelectedSystem(star.id)
+        setSelectedSystem(star.id);
     }
     function deselect() {
         setSelectedSystem(null);
@@ -99,7 +98,6 @@ const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
 
     return (
         <div className={classes.root}>
-
             {props.units.map((um: ShipUnit) => {
                 const style = {
                     top: `${um.location.y}%`,
@@ -112,8 +110,7 @@ const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
                     <div className={`${classes.unit}`} style={style} key={um.id}>
                         <AirplanemodeActiveIcon />
                     </div>
-                )
-
+                );
             })}
 
             {props.systems.map((star: SystemModel) => {
@@ -132,16 +129,11 @@ const SimpleMap: FC<SimpleMapProps> = (props: SimpleMapProps) => {
                     <div
                         className={`star${isSelected ? " selected" : ""}`}
                         style={style}
-                        onClick={() => isSelected ? deselect() : select(star)}
+                        onClick={() => (isSelected ? deselect() : select(star))}
                         key={star.id}
-                    >
-                    </div>
+                    ></div>
                 );
             })}
-
-
-
-
         </div>
     );
 };

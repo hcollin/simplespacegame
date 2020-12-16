@@ -1,10 +1,19 @@
-import { SHIPCLASS, ShipDesign, ShipDesignSpec, ShipEngine, ShipPartSlot, ShipSystem, ShipWeapon, WEAPONTYPE } from "../models/Units";
+import {
+    SHIPCLASS,
+    ShipDesign,
+    ShipDesignSpec,
+    ShipEngine,
+    ShipPartSlot,
+    ShipSystem,
+    ShipWeapon,
+    WEAPONTYPE,
+} from "../models/Units";
 import { arnd, rnd, roll } from "../utils/randUtils";
 
 export enum SHIPSYSTEMID {
     ColonyPod = "Colonization Pod",
     Bombardment = "Planetary Bombardment",
-};
+}
 
 const DATASHIPSYSTEMS: ShipSystem[] = [
     {
@@ -15,8 +24,8 @@ const DATASHIPSYSTEMS: ShipSystem[] = [
             notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE],
             points: 10,
             slot: ShipPartSlot.OTHER,
-            techPreReq: null
-        }
+            techPreReq: null,
+        },
     },
     {
         id: SHIPSYSTEMID.Bombardment,
@@ -26,8 +35,8 @@ const DATASHIPSYSTEMS: ShipSystem[] = [
             notAvailableInClasses: [SHIPCLASS.FIGHTER, SHIPCLASS.PATROL, SHIPCLASS.CORVETTE, SHIPCLASS.FRIGATE],
             points: 8,
             slot: ShipPartSlot.OTHER,
-            techPreReq: null
-        }
+            techPreReq: null,
+        },
     },
 ];
 
@@ -270,12 +279,7 @@ const DATASHIPWEAPONS: ShipWeapon[] = [
         special: [SHIPWEAPONSPECIAL.HAILOFFIRE],
         part: {
             slot: ShipPartSlot.WEAPON,
-            notAvailableInClasses: [
-                SHIPCLASS.FRIGATE,
-                SHIPCLASS.DESTROYER,
-                SHIPCLASS.CRUISER,
-                SHIPCLASS.BATTLESHIP,
-            ],
+            notAvailableInClasses: [SHIPCLASS.FRIGATE, SHIPCLASS.DESTROYER, SHIPCLASS.CRUISER, SHIPCLASS.BATTLESHIP],
             points: 2,
             techPreReq: null,
         },
@@ -425,7 +429,6 @@ function getWeaponByName(name: string): ShipWeapon {
     return { ...w, id: `W-${rnd(100000, 999999)}-${Date.now()}` };
 }
 
-
 export const ShipDesignSpecs: ShipDesignSpec[] = [
     {
         shipClass: SHIPCLASS.PATROL,
@@ -478,8 +481,6 @@ export const ShipDesignSpecs: ShipDesignSpec[] = [
     },
 ];
 
-
-
 export function getDesignSpecByShipClass(sc: SHIPCLASS): ShipDesignSpec {
     const sp = ShipDesignSpecs.find((sd: ShipDesignSpec) => sd.shipClass === sc);
     if (!sp) {
@@ -488,6 +489,9 @@ export function getDesignSpecByShipClass(sc: SHIPCLASS): ShipDesignSpec {
     return sp;
 }
 
+/**
+ * These designs are used to create Fighters and as default designs when the faction starts playing
+ */
 const DATANEWSHIPS: ShipDesign[] = [
     {
         id: "",
@@ -510,36 +514,10 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldsMax: 0,
         keywords: [],
         engineId: SHIPENGINEIDS.EngineIon,
-        systemIds:[],
+        systemIds: [],
         weapons: [getWeaponByName("Small Laser"), getWeaponByName("Fighter Missile")],
         description:
             "One man fighter craft that does not have warp capability in itself. Fighters cannot be built on systems they are automatically deployed during combet and new fighters are built on friendly systems autamatically during repairs.",
-    },
-    {
-        id: "",
-        typeClassName: "Patrol Boat",
-        sizeIndicator: 1,
-        type: SHIPCLASS.PATROL,
-        name: "Patrol Boat",
-        cost: 2,
-        buildTime: 1,
-        minIndustry: 1,
-        techReq: [],
-        fighters: 0,
-        fightersMax: 0,
-        troops: 0,
-        speed: 5,
-        agility: 70,
-        armor: 0,
-        hull: 40,
-        shieldRegeneration: 0,
-        shieldsMax: 0,
-        keywords: [],
-        engineId: SHIPENGINEIDS.EngineIon,
-        systemIds:[],
-        weapons: [getWeaponByName("Small Laser"), getWeaponByName("Machinegun")],
-        description:
-            "Small patrol boat used mainly used for bulking up the defenses against fighters or for really cash stripped empires.",
     },
     {
         id: "",
@@ -562,216 +540,13 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldsMax: 0,
         keywords: [],
         engineId: SHIPENGINEIDS.EngineIon,
-        systemIds:[],
+        systemIds: [],
         weapons: [
             getWeaponByName("Laser Turret"),
             // getWeaponByName("Homing Missile")
         ],
         description:
             "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires.",
-    },
-    {
-        id: "",
-        typeClassName: "Frigate",
-        sizeIndicator: 4,
-        type: SHIPCLASS.FRIGATE,
-        name: "Frigate",
-        cost: 6,
-        buildTime: 4,
-        minIndustry: 2,
-        techReq: [],
-        fighters: 0,
-        fightersMax: 0,
-        troops: 1,
-        speed: 5,
-        agility: 40,
-        armor: 3,
-        hull: 110,
-        shieldRegeneration: 3,
-        shieldsMax: 10,
-        keywords: [],
-        engineId: SHIPENGINEIDS.EngineIon,
-        systemIds:[],
-        weapons: [getWeaponByName("Rapid Laser"), getWeaponByName("Rapid Laser"), getWeaponByName("Small Railgun")],
-        description: "",
-    },
-    {
-        id: "",
-        typeClassName: "Destroyer",
-        sizeIndicator: 4,
-        type: SHIPCLASS.DESTROYER,
-        name: "Destroyer",
-        cost: 12,
-        buildTime: 4,
-        minIndustry: 3,
-        techReq: [],
-        fighters: 0,
-        fightersMax: 0,
-        troops: 1,
-        speed: 5,
-        agility: 35,
-        armor: 4,
-        hull: 130,
-        shieldRegeneration: 5,
-        shieldsMax: 20,
-        keywords: [],
-        engineId: SHIPENGINEIDS.EngineIon,
-        systemIds:[],
-        weapons: [
-            getWeaponByName("Anti-Fighter Laser"),
-            getWeaponByName("Anti-Fighter Laser"),
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Large Railgun"),
-        ],
-        description: "",
-    },
-    {
-        id: "",
-        typeClassName: "Invasion Destroyer",
-        sizeIndicator: 4,
-        type: SHIPCLASS.DESTROYER,
-        name: "Invader",
-        cost: 16,
-        buildTime: 3,
-        minIndustry: 3,
-        techReq: [],
-        fighters: 0,
-        fightersMax: 0,
-        troops: 3,
-        speed: 5,
-        agility: 30,
-        armor: 3,
-        hull: 140,
-        shieldRegeneration: 5,
-        shieldsMax: 25,
-        keywords: ["BOMBARDMENT"],
-        engineId: SHIPENGINEIDS.EngineIon,
-        systemIds:[SHIPSYSTEMID.Bombardment],
-        weapons: [getWeaponByName("Laser Turret")],
-        description:
-            "Destroyer sized unit specialized in invasion with ability to bombard the planet and large troop carrying capacity",
-    },
-    {
-        id: "",
-        typeClassName: "Light Cruiser",
-        sizeIndicator: 5,
-        type: SHIPCLASS.CRUISER,
-        name: "Light Cruiser",
-        cost: 20,
-        buildTime: 5,
-        minIndustry: 3,
-        techReq: [],
-        fighters: 0,
-        fightersMax: 0,
-        troops: 2,
-        speed: 5,
-        agility: 40,
-        armor: 3,
-        hull: 160,
-        shieldRegeneration: 8,
-        shieldsMax: 40,
-        keywords: [],
-        engineId: SHIPENGINEIDS.EngineIon,
-        systemIds:[],
-        weapons: [
-            getWeaponByName("Point Defense Gun"),
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Mass Cannon"),
-            getWeaponByName("Homing Missile"),
-        ],
-        description: "",
-    },
-    {
-        id: "",
-        typeClassName: "Small Carrier",
-        sizeIndicator: 5,
-        type: SHIPCLASS.CARRIER,
-        name: "Small Carrier",
-        cost: 24,
-        buildTime: 5,
-        minIndustry: 2,
-        techReq: [],
-        fighters: 4,
-        fightersMax: 4,
-        troops: 0,
-        speed: 5,
-        agility: 30,
-        armor: 2,
-        hull: 180,
-        shieldRegeneration: 8,
-        shieldsMax: 40,
-        keywords: [],
-        engineId: SHIPENGINEIDS.EngineIon,
-        systemIds:[],
-        weapons: [getWeaponByName("Laser Turret"), getWeaponByName("Laser Turret")],
-        description: "",
-    },
-    {
-        id: "",
-        typeClassName: "Heavy Cruiser",
-        sizeIndicator: 5,
-        type: SHIPCLASS.CRUISER,
-        name: "Heavy Cruiser",
-        cost: 28,
-        buildTime: 5,
-        minIndustry: 3,
-        techReq: [],
-        fighters: 0,
-        fightersMax: 0,
-        troops: 3,
-        speed: 5,
-        agility: 40,
-        armor: 5,
-        hull: 190,
-        shieldRegeneration: 8,
-        shieldsMax: 45,
-        keywords: [],
-        engineId: SHIPENGINEIDS.EngineIon,
-        systemIds:[],
-        weapons: [
-            getWeaponByName("Point Defense Gun"),
-            getWeaponByName("Large Laser"),
-            getWeaponByName("Large Laser"),
-            getWeaponByName("Small Railgun"),
-            getWeaponByName("Homing Missile"),
-            getWeaponByName("Homing Missile"),
-        ],
-        description: "",
-    },
-    {
-        id: "",
-        typeClassName: "Battle Cruiser",
-        sizeIndicator: 6,
-        type: SHIPCLASS.CRUISER,
-        name: "Battle Cruiser",
-        cost: 35,
-        buildTime: 6,
-        minIndustry: 5,
-        techReq: [],
-        fighters: 2,
-        fightersMax: 2,
-        troops: 3,
-        speed: 5,
-        agility: 35,
-        armor: 8,
-        hull: 230,
-        shieldRegeneration: 10,
-        shieldsMax: 60,
-        keywords: [],
-        engineId: SHIPENGINEIDS.EngineIon,
-        systemIds:[],
-        weapons: [
-            getWeaponByName("Point Defense Gun"),
-            getWeaponByName("Point Defense Gun"),
-            getWeaponByName("Point Defense Gun"),
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Laser Turret"),
-            getWeaponByName("Homing Missile"),
-            getWeaponByName("Mega Cannon"),
-        ],
-        description: "",
     },
 ];
 

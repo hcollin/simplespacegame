@@ -19,11 +19,12 @@ import { SERVICEID } from "../services/services";
 
 import starfieldJpeg from "../images/starfield2.jpg";
 import MenuPageContainer from "../components/MenuPageContainer";
-import { getDistanceMultiplier, getStarCount } from "../services/helpers/GameHelpers";
-import { createRandomMap } from "../services/helpers/SystemHelpers";
+
+
 import MiniMap from "../components/MiniMap";
 import { PLAYERCOUNTS } from "../configs";
 import { SystemModel } from "../models/StarSystem";
+import { getDistanceMultiplier, getStarCount, createRandomMap } from "../tools/mapgenerator/mapGenerator";
 
 
 const useStyles = makeStyles((theme: Theme) =>

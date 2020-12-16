@@ -11,9 +11,11 @@ import {
     DetailReport,
 } from "../models/Report";
 import { ShipUnit, ShipWeapon } from "../models/Units";
-import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
-import { getSystemById } from "../services/helpers/SystemHelpers";
+
+
 import { SERVICEID } from "../services/services";
+import { getSystemById } from "../tools/mapgenerator/mapGenerator";
+import { getFactionFromArrayById } from "../utils/factionUtils";
 import Dots from "./Dots";
 import { IconHull, IconShields } from "./Icons";
 
@@ -617,7 +619,7 @@ const CombatViewer: FC<Props> = (props) => {
                     {factions.map((fm: FactionModel) => {
                         return (
                             <div className="faction" key={fm.id} style={{ background: fm.color }}>
-                                <img src={require(`../images/symbols/${fm.iconFileName}`)} />
+                                <img src={require(`../images/symbols/${fm.iconFileName}`)} alt={`${fm.name} icon`} />
                                 <div className="versus">vs.</div>
                             </div>
                         );
@@ -647,7 +649,7 @@ const CombatViewer: FC<Props> = (props) => {
                                 <div key={fm.id} className="faction">
                                     <header>
                                         <div className="logo" style={{ background: fm.color }}>
-                                            <img src={require(`../images/symbols/${fm.iconFileName}`)} />
+                                            <img src={require(`../images/symbols/${fm.iconFileName}`)}  alt={`${fm.name} icon`} />
                                         </div>
                                         <h2 style={{ fontFamily: fm.style.fontFamily || "Arial" }}>{fm.name}</h2>
                                         <div className="fleetSize">{totalFleetSize}</div>

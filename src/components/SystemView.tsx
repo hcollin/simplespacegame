@@ -5,7 +5,7 @@ import { useService } from "jokits-react";
 import useMyCommands from "../hooks/useMyCommands";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import { GameModel } from "../models/Models";
-import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
+
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { SERVICEID } from "../services/services";
 import { getSystemEconomy, simulateCommandsEffectsForSystem } from "../utils/systemUtils";
@@ -18,16 +18,16 @@ import { DATABUILDINGS } from "../data/dataBuildings";
 import { buildingCanBeBuiltOnSystem, getBuildingUnderConstruction } from "../utils/buildingUtils";
 
 import SpaceStationJpeg from "../images/art/SpaceStation.jpg";
-import DATASHIPS, { DATANEWSHIPS } from "../data/dataShips";
+import DATASHIPS from "../data/dataShips";
 import { ShipDesign, ShipUnderConstruction } from "../models/Units";
 import ShipInfo from "./ShipInfo";
 import { shipCanBeBuiltOnSystemByFaction } from "../utils/unitUtils";
 import useUnitSelection from "../hooks/useUnitSelection";
 import FactionBanner from "./FactionBanner";
-import BuildingSlot from "./BuildingSlot";
 import { Planet, SystemModel } from "../models/StarSystem";
 import { planetStyle } from "../utils/planetUtils";
 import PlanetDiv from "./Planet";
+import { getFactionFromArrayById } from "../utils/factionUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -696,7 +696,7 @@ const SystemView: FC = () => {
 							<h2>Ship Dock</h2>
 
 							{mySystem &&
-								shipsUnderConstruction.map((ship: ShipUnderConstruction, ind: number) => {
+								shipsUnderConstruction.map((ship: ShipUnderConstruction) => {
 									if (ship.cancellable === false) {
 										return (
 											<div className={`${classes.shipDockSlot} building`}>
@@ -817,7 +817,7 @@ const SystemView: FC = () => {
 
 									return (
 										<div key={ship.typeClassName}>
-											<ShipInfo ship={ship} onClick={(s: ShipDesign) => buildUnit(ship, star)} />
+											<ShipInfo ship={ship} onClick={() => buildUnit(ship, star)} />
 										</div>
 									);
 								})}
@@ -850,7 +850,7 @@ const Planets: FC<PlanetsProps> = (props) => {
 	return (
 		<div className={classes.planets}>
 			{planets.map((p: Planet) => {
-				const [style, addClasses] = planetStyle(p);
+				const [] = planetStyle(p);
 				return (
 					<div className="planet-container">
 						<PlanetDiv star={props.star} planet={p} />

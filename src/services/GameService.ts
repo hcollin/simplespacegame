@@ -7,10 +7,15 @@ import { Command } from "../models/Commands";
 import { GameModel, FactionModel, GameState, PreGameSetup, FactionSetup } from "../models/Models";
 
 import { User } from "../models/User";
+import { createFactionFromSetup } from "../tools/factionsetup/createFaction";
+import { createGameFromSetup } from "../tools/gamesetup/createGame";
+import { randomGameName } from "../tools/gamesetup/gameNameGenerator";
+import { startGame } from "../tools/gamesetup/startGame";
+import { getFactionByUserId } from "../utils/factionUtils";
 // import { techMarketing } from "../tech/businessTech";
 // import { rnd } from "../utils/randUtils";
-import { getFactionByUserId } from "./helpers/FactionHelpers";
-import { createFactionFromSetup, createGameFromSetup, randomGameName, startGame } from "./helpers/GameHelpers";
+
+
 import { SERVICEID } from "./services";
 
 export interface NewGameOptions {

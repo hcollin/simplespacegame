@@ -5,14 +5,13 @@ import React, { FC, useEffect, useState } from "react";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import useUnitSelection from "../hooks/useUnitSelection";
 
-import { Command, CommandType } from "../models/Commands";
-import { FactionModel, GameModel } from "../models/Models";
+import { Command } from "../models/Commands";
+import { GameModel } from "../models/Models";
 import { ShipUnit } from "../models/Units";
 import { doBombardment, moveUnits } from "../services/commands/UnitCommands";
 import { getUnitsActiveCommands, unitIsBombarding, unitIsMoving } from "../services/helpers/UnitHelpers";
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { SERVICEID } from "../services/services";
-import { distanceBetweenCoordinates } from "../utils/MathUtils";
 import { getSystemByCoordinates } from "../utils/systemUtils";
 import MiniUnitInfo from "./MiniUnitInfo";
 
@@ -21,9 +20,9 @@ import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
 
 import HelpContainer from "./HelpContainer";
-import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
+
 import FactionBanner from "./FactionBanner";
-import { fleetBombardmentCalculator, getFactionAdjustedUnit, getFleetInfo, unitIsInFriendlyOrbit } from "../utils/unitUtils";
+import { fleetBombardmentCalculator, getFleetInfo, unitIsInFriendlyOrbit } from "../utils/unitUtils";
 import useMobileMode from "../hooks/useMobileMode";
 import ModalButton from "./ModalButton";
 import MinimizeIcon from "@material-ui/icons/Minimize";
@@ -436,7 +435,7 @@ const FleetView: FC = () => {
 	}
 
 	const cancelButtonsVisible = activeCommands.length > 0 && fleet && faction && fleet[0].factionId === faction.id;
-	const bombs: [number, number] = canBombard !== null ? fleetBombardmentCalculator(game, fleet, canBombard) : [0,0];
+	const bombs: [number, number] = canBombard !== null ? fleetBombardmentCalculator(game, fleet) : [0,0];
 	return (
 		<div className={classes.root}>
 			<ModalButton onClick={() => setMinified(true)} className="minify">
@@ -507,15 +506,6 @@ const ViewFleetContent: FC<ContentProps> = (props) => {
 	);
 };
 
-interface TravelInfo {
-	from: SystemModel | null;
-	fromFaction: FactionModel | null;
-	to: SystemModel | null;
-	toFaction: FactionModel | null;
-	distance: number;
-	turns: number;
-	slowestShip: ShipUnit | null;
-}
 
 const SelectUnitToFleet: FC<ContentProps> = (props) => {
 	const [inFleet, setInFleet] = useState<ShipUnit[]>(props.units);
@@ -557,11 +547,6 @@ const SelectUnitToFleet: FC<ContentProps> = (props) => {
 		}
 	}
 
-	function moveFleet() {
-		// if(props.moveFleet) {
-		//     props.moveFleet(inFleet);
-		// }
-	}
 
 	// const canMove = props.system !== null && inFleet.length > 0;
 

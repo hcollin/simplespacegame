@@ -6,11 +6,12 @@ import {
 } from "../buildings/buildingRules";
 import { BASEACTIONPOINTCOUNT } from "../configs";
 import { Building } from "../models/Buildings";
+import { Command } from "../models/Commands";
 import { Trade } from "../models/Communication";
 import { FactionModel, FactionTechSetting, GameModel } from "../models/Models";
 import { SystemModel } from "../models/StarSystem";
 import { ShipDesign, ShipUnit } from "../models/Units";
-import { getFactionFromArrayById } from "../services/helpers/FactionHelpers";
+
 import {
     techCapitalist,
     techDecisionEngine,
@@ -21,6 +22,7 @@ import {
     techMerchantGuild,
     techScientist,
 } from "../tech/businessTech";
+import { getFactionActionPointPool, getActionPointCostOfCommands } from "./commandUtils";
 
 interface FactionValues {
     maxCommands: number;
@@ -344,4 +346,32 @@ export function calcalateNextDebtPayback(game: GameModel, faction: FactionModel)
     }
 
     return payback;
+}
+
+export function factionHasEnoughActionPoints(
+    game: GameModel,
+    faction: FactionModel,
+    commands: Command[],
+    command: Command
+) {
+    const cmds = commands.filter((cmd: Command) => cmd.factionId === faction.id && cmd.turn === game.turn);
+    const pool = getFactionActionPointPool(game, faction);
+    const aps = getActionPointCostOfCommands(game, cmds);
+
+    return aps + command.actionPoints <= pool;
+}
+
+export function factionCanDoMoreCommands(game: GameModel, commands: Command[], faction: FactionModel): boolean {
+    const values = factionValues(game, faction.id);
+    const myCurrentCommands = commands.filter((cm: Command) => cm.factionId === faction.id && cm.completed === false);
+    if (game.factionsReady.includes(faction.id)) return false;
+    return myCurrentCommands.length < values.maxCommands;
+}
+
+export function getFactionByUserId(factions: FactionModel[], userId: string): FactionModel | undefined {
+    return factions.find((fm: FactionModel) => fm.playerId === userId);
+}
+
+export function getFactionFromArrayById(factions: FactionModel[], factionId: string): FactionModel | undefined {
+    return factions.find((fm: FactionModel) => fm.id === factionId);
 }

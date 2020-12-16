@@ -3,10 +3,11 @@ import InputLabel from "@material-ui/core/InputLabel/InputLabel";
 import React, { FC, useEffect, useState } from "react";
 import { FACTION_COLORS, FACTION_FONTS, FACTION_NAMES } from "../configs";
 import { FactionModel, FactionSetup } from "../models/Models";
-import { randomFactionName } from "../services/helpers/FactionHelpers";
+
 import { arnd, prnd, rnd } from "../utils/randUtils";
 import RandomizeButton from "./RandomizeButton";
 import useCurrentUser from "../services/hooks/useCurrentUser";
+import { randomFactionName } from "../tools/factionsetup/factionNameGenerator";
 
 const ICONSPERPAGE = 16;
 

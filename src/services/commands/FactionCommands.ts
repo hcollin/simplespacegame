@@ -2,7 +2,8 @@ import { joki } from "jokits-react";
 import { CommandType, ResearchCommand } from "../../models/Commands";
 import { FactionTechSetting, GameModel, Technology, TechnologyField } from "../../models/Models";
 import { ShipDesign } from "../../models/Units";
-import { getFactionFromArrayById } from "../helpers/FactionHelpers";
+import { getFactionFromArrayById } from "../../utils/factionUtils";
+
 import { SERVICEID } from "../services";
 import { createEmptyCommandForCurrentFactionAndGame, factionIsReady } from "./SystemCommands";
 
