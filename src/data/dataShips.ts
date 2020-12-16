@@ -509,6 +509,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 0,
         shieldsMax: 0,
         keywords: [],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds:[],
         weapons: [getWeaponByName("Small Laser"), getWeaponByName("Fighter Missile")],
         description:
             "One man fighter craft that does not have warp capability in itself. Fighters cannot be built on systems they are automatically deployed during combet and new fighters are built on friendly systems autamatically during repairs.",
@@ -533,6 +535,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 0,
         shieldsMax: 0,
         keywords: [],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds:[],
         weapons: [getWeaponByName("Small Laser"), getWeaponByName("Machinegun")],
         description:
             "Small patrol boat used mainly used for bulking up the defenses against fighters or for really cash stripped empires.",
@@ -557,6 +561,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 0,
         shieldsMax: 0,
         keywords: [],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds:[],
         weapons: [
             getWeaponByName("Laser Turret"),
             // getWeaponByName("Homing Missile")
@@ -584,6 +590,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 3,
         shieldsMax: 10,
         keywords: [],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds:[],
         weapons: [getWeaponByName("Rapid Laser"), getWeaponByName("Rapid Laser"), getWeaponByName("Small Railgun")],
         description: "",
     },
@@ -607,6 +615,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 5,
         shieldsMax: 20,
         keywords: [],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds:[],
         weapons: [
             getWeaponByName("Anti-Fighter Laser"),
             getWeaponByName("Anti-Fighter Laser"),
@@ -636,6 +646,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 5,
         shieldsMax: 25,
         keywords: ["BOMBARDMENT"],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds:[SHIPSYSTEMID.Bombardment],
         weapons: [getWeaponByName("Laser Turret")],
         description:
             "Destroyer sized unit specialized in invasion with ability to bombard the planet and large troop carrying capacity",
@@ -660,6 +672,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 8,
         shieldsMax: 40,
         keywords: [],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds:[],
         weapons: [
             getWeaponByName("Point Defense Gun"),
             getWeaponByName("Laser Turret"),
@@ -689,6 +703,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 8,
         shieldsMax: 40,
         keywords: [],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds:[],
         weapons: [getWeaponByName("Laser Turret"), getWeaponByName("Laser Turret")],
         description: "",
     },
@@ -712,6 +728,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 8,
         shieldsMax: 45,
         keywords: [],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds:[],
         weapons: [
             getWeaponByName("Point Defense Gun"),
             getWeaponByName("Large Laser"),
@@ -742,6 +760,8 @@ const DATANEWSHIPS: ShipDesign[] = [
         shieldRegeneration: 10,
         shieldsMax: 60,
         keywords: [],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds:[],
         weapons: [
             getWeaponByName("Point Defense Gun"),
             getWeaponByName("Point Defense Gun"),

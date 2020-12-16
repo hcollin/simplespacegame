@@ -1,3 +1,4 @@
+import { SHIPENGINEIDS, SHIPSYSTEMID } from "../data/dataShips";
 import { TECHIDS } from "../data/dataTechnology";
 import { Coordinates, GameObject } from "./Models";
 
@@ -40,7 +41,12 @@ export interface ShipWeapon {
 }
 
 /**
- * HARD CODED SHIP DESIGN DATA
+ * Ship Designs that are stored per faction. A few of these are automatically created when the game starts.
+ * 
+ * New ShipDesigns are created from ShipCustomDesign interface and functions for this conversion are located in unitUtils.
+ * 
+ *  - convertShipDesignToDesignerModel() 
+ *  - convertShipCustomDesignToShipDesign()
  */
 export interface ShipDesign extends GameObject {
 	name: string;
@@ -63,14 +69,22 @@ export interface ShipDesign extends GameObject {
 	weapons: ShipWeapon[];
 	description: string;
 	buildTime: number;
+	engineId: SHIPENGINEIDS;
+	systemIds: SHIPSYSTEMID[];
 }
 
+/**
+ * The interface used to store a ship that is under construction. This value is stored into the command itself.
+ */
 export interface ShipUnderConstruction extends ShipDesign {
 	cmdId: string;
 	timeLeft: number;
 	cancellable: boolean;
 }
 
+/**
+ * This is the main interface for Ships in the game. It extends the ShipDesign with information that makes it a specific unit.
+ */
 export interface ShipUnit extends ShipDesign {
 	damage: number;
 	shields: number;
@@ -95,7 +109,7 @@ export interface ShipPart {
 }
 
 export interface ShipEngine {
-	id: string;
+	id: SHIPENGINEIDS;
 	name: string;
 	speed: number;
 	range: number;
@@ -112,12 +126,15 @@ export interface ShipShield {
 }
 
 export interface ShipSystem {
-	id: string;
+	id: SHIPSYSTEMID;
 	name: string;
 	description: string;
 	part: ShipPart;
 }
 
+/**
+ * ShipCustomDesign is used while the ship is being designed. It is a temporary data storage and is not stored.
+ */
 export interface ShipCustomDesign {
 	name: string;
 	pointsMax: number;
@@ -136,6 +153,9 @@ export interface ShipCustomDesign {
     systems: ShipSystem[];
 }
 
+/**
+ * More detailed information for each SHIPCLASS that is used in the designer
+ */
 export interface ShipDesignSpec {
 	shipClass: SHIPCLASS;
 	points: number;

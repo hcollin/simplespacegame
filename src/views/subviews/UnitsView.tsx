@@ -21,7 +21,7 @@ import spaceStationJpg from "../../images/art/SpaceStation.jpg";
 import { SHIPCLASS, ShipCustomDesign, ShipDesign, ShipDesignSpec, ShipEngine, ShipSystem, ShipWeapon } from "../../models/Units";
 import { doAddShipDesign } from "../../services/commands/FactionCommands";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
-import { convertShipDesignerSpecToShipDesign } from "../../utils/unitUtils";
+import { convertShipCustomDesignToShipDesign } from "../../utils/unitUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -454,7 +454,7 @@ const ShipDesigner: FC = () => {
 
 	function saveDesign() {
 		if (faction && valid) {
-			const design = convertShipDesignerSpecToShipDesign(ship);
+			const design = convertShipCustomDesignToShipDesign(ship);
 			doAddShipDesign(design, faction.id);
 		}
 	}

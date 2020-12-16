@@ -27,7 +27,7 @@ import {
 import { SHIPCLASS, ShipSystem, ShipWeapon, ShipEngine, ShipCustomDesign } from "../../models/Units";
 import { doAddShipDesign } from "../../services/commands/FactionCommands";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
-import { convertShipDesignerSpecToShipDesign } from "../../utils/unitUtils";
+import { shipDesignCalculator, convertShipCustomDesignToShipDesign, validateShipDesign } from "../../utils/unitUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -170,43 +170,6 @@ interface ShipDesignerState {
     valid: boolean;
 }
 
-function validateDesign(design: ShipCustomDesign): boolean {
-    if (design.pointsUsed > design.pointsMax) return false;
-    if (design.shieldAdjustment < 0) return false;
-    if (design.shieldAdjustment === 0 && design.shieldRegenAdjust > 0) return false;
-    const nSpec = getDesignSpecByShipClass(design.hullType);
-    if (nSpec.hull + design.hullAdjustment * 5 < 0) return false;
-
-    return true;
-}
-
-function calculatePointsUsed(design: ShipCustomDesign): ShipCustomDesign {
-    const ship = { ...design };
-    const nSpec = getDesignSpecByShipClass(ship.hullType);
-
-    ship.pointsMax = nSpec.points;
-    ship.pointsUsed = ship.weapons.reduce((p: number, w: ShipWeapon) => {
-        return p + w.part.points;
-    }, 0);
-
-    ship.pointsUsed += ship.systems.reduce((p: number, s: ShipSystem) => {
-        return p + s.part.points;
-    }, 0);
-    ship.pointsUsed += ship.hullAdjustment;
-    ship.pointsUsed += ship.shieldAdjustment * 2;
-    ship.pointsUsed += ship.shieldRegenAdjust * nSpec.sizeModifier;
-    ship.pointsUsed += ship.armor * nSpec.sizeModifier;
-    ship.pointsUsed += ship.troops * 8;
-    ship.pointsUsed += ship.fighters * 12;
-
-    ship.pointsUsed += ship.engine.part.points * nSpec.sizeModifier;
-
-    ship.cost = 3 * nSpec.sizeModifier + Math.round(ship.pointsUsed / 10);
-    ship.buildTime = Math.max(1, Math.round(nSpec.sizeModifier / 2));
-
-    return ship;
-}
-
 const shipDesignerReducer: Reducer<ShipDesignerState, ShipDesignerReducerAction> = (
     state: ShipDesignerState,
     action: ShipDesignerReducerAction
@@ -215,90 +178,90 @@ const shipDesignerReducer: Reducer<ShipDesignerState, ShipDesignerReducerAction>
     switch (action.type) {
         case "ChangeName":
             draft.name = action.data;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "RandomName":
             draft.name = shipClassNameGenerator();
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "ChangeHull":
             draft.hullType = action.data;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "AddWeapon":
             draft.weapons.push({ ...action.data, id: v4() });
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "RemoveWeapon":
             draft.weapons = draft.weapons.filter((w: ShipWeapon) => w.id !== action.data.id);
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "ChangeEngine":
             draft.engine = action.data;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "HullMinus":
             draft.hullAdjustment--;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "HullPlus":
             draft.hullAdjustment++;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "ArmorMinus":
             draft.armor--;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "ArmorPlus":
             draft.armor++;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "ShieldsMinus":
             draft.shieldAdjustment--;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "ShieldsPlus":
             draft.shieldAdjustment++;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "ShieldsRegenMinus":
             draft.shieldRegenAdjust--;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "ShieldsRegenPlus":
             draft.shieldRegenAdjust++;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "TroopsMinus":
             draft.troops--;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "TroopsPlus":
             draft.troops++;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "FightersMinus":
             draft.fighters--;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "FightersPlus":
             draft.fighters++;
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "AddSystem":
             draft.systems.push(action.data);
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         case "RemoveSystem":
             draft.systems = draft.systems.filter((s: ShipSystem) => s.id !== action.data.id);
-            draft = calculatePointsUsed(draft);
-            return { ship: { ...draft }, valid: validateDesign(draft) };
+            draft = shipDesignCalculator(draft);
+            return { ship: { ...draft }, valid: validateShipDesign(draft) };
         default:
             return state;
     }
 };
 
-const initialDesign = calculatePointsUsed({
+const initialDesign = shipDesignCalculator({
     name: shipClassNameGenerator(),
     cost: 0,
     buildTime: 0,
@@ -333,7 +296,7 @@ const ShipDesigner: FC = () => {
 
     function saveDesign() {
         if (faction && valid) {
-            const design = convertShipDesignerSpecToShipDesign(ship);
+            const design = convertShipCustomDesignToShipDesign(ship);
             doAddShipDesign(design, faction.id);
         }
     }

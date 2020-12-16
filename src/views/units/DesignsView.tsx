@@ -35,7 +35,7 @@ const DesignsView: FC = () => {
     const classes = useStyles();
     const setUnitview = useSetAtom<string>("UnitViewDisplay");
     const faction = useCurrentFaction();
-
+    
     if (!faction) return null;
 
     return (
