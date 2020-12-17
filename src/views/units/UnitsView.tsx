@@ -13,6 +13,7 @@ import { ShipUnit } from "../../models/Units";
 
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
 import { getShipMaintenance } from "../../utils/unitUtils";
+import CombatSimulator from "./CombatSimulator";
 import DesignsView from "./DesignsView";
 import ShipDesigner from "./ShipDesigner";
 import ShipsView from "./ShipsView";
@@ -106,12 +107,20 @@ const UnitsView: FC = () => {
                     >
                         Parts
                     </Button>
+                    <Button
+                        variant="contained"
+                        color={unitView === "combatsim" ? "primary" : "default"}
+                        onClick={() => setUnitview("combatsim")}
+                    >
+                        Combat Simulator
+                    </Button>
                 </nav>
 
                 {unitView === "ships" && <ShipsView />}
                 {unitView === "designs" && <DesignsView />}
                 {unitView === "designer" && <ShipDesigner />}
                 {unitView === "parts" && <PartsView />}
+                {unitView === "combatsim" && <CombatSimulator />}
             </PageContainer>
         </div>
     );

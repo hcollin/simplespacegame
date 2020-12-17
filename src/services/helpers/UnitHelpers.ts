@@ -48,34 +48,6 @@ export function getUnitsActiveCommands(commands: Command[], unit: ShipUnit): Com
     
 }
 
-/**
- * Create a ShipUnit from ShipDesign
- * 
- * @param design 
- * @param factionId 
- * @param location 
- */
-export function createShipFromDesign(design: ShipDesign, factionId: string, location: Coordinates): ShipUnit {
-    const ship: ShipUnit = {
-        ...design,
-        id: v4(),
-        damage: 0,
-        morale: 100,
-        shields: design.shieldsMax,
-        location: location,
-        factionId: factionId,
-        experience: 0,
-        name: shipNameGenerator(),
-    };
-    
-    ship.weapons = ship.weapons.map((w: ShipWeapon, ind: number) => {
-        w.id = `W-${ship.id}-${ind}`;
-        return {...w};
-    });
-
-    return ship;
-}
-
 
 export function getDesignByName(name: string): ShipDesign {
     const sd = DATASHIPS.find((s: ShipDesign) => s.name === name);

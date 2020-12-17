@@ -6,10 +6,11 @@ import { DATATECHNOLOGY } from "../data/dataTechnology";
 import useSelectedSystem from "../hooks/useSelectedSystem";
 import { FactionModel, FactionTechSetting, GameModel, Technology, TechnologyField } from "../models/Models";
 import { ShipDesign } from "../models/Units";
-import { createShipFromDesign } from "../services/helpers/UnitHelpers";
+
 import useCurrentFaction from "../services/hooks/useCurrentFaction";
 import { SERVICEID } from "../services/services";
 import { getTechById } from "../utils/techUtils";
+import { createShipFromDesign } from "../utils/unitUtils";
 // import useCurrentFaction from "../services/hooks/useCurrentFaction";
 // import FactionInfo from "./FactionInfo";
 

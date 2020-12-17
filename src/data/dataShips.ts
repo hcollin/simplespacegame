@@ -1,5 +1,6 @@
 import {
     SHIPCLASS,
+    ShipCustomDesign,
     ShipDesign,
     ShipDesignSpec,
     ShipEngine,
@@ -550,6 +551,38 @@ const DATANEWSHIPS: ShipDesign[] = [
     },
 ];
 
+const startingDesigns: ShipDesign[] = [
+    {
+        id: "",
+        typeClassName: "Corvette",
+        sizeIndicator: 3,
+        type: SHIPCLASS.CORVETTE,
+        name: "Corvette",
+        cost: 3,
+        buildTime: 2,
+        minIndustry: 1,
+        techReq: [],
+        fighters: 0,
+        fightersMax: 0,
+        troops: 1,
+        speed: 6,
+        agility: 50,
+        armor: 1,
+        hull: 75,
+        shieldRegeneration: 0,
+        shieldsMax: 0,
+        keywords: [],
+        engineId: SHIPENGINEIDS.EngineIon,
+        systemIds: [],
+        weapons: [
+            getWeaponByName("Laser Turret"),
+            // getWeaponByName("Homing Missile")
+        ],
+        description:
+            "Small, cheap and cheerful ship. Mainly used to bulk up the numbers in fleets and for reconnaissance in lesser empires.",
+    }
+]
+
 const DATASHIPS = DATANEWSHIPS;
 
 export default DATASHIPS;
@@ -900,4 +933,4 @@ export function shipClassNameGenerator(cls?: SHIPCLASS): string {
     return arnd(classNames);
 }
 
-export { DATANEWSHIPS, DATASHIPWEAPONS, DATASHIPENGINES, DATASHIPSYSTEMS };
+export { DATANEWSHIPS, DATASHIPWEAPONS, DATASHIPENGINES, DATASHIPSYSTEMS, startingDesigns as DATASTARTINGUNITS };

@@ -4,11 +4,12 @@ import {
     DATASHIPSYSTEMS,
     getDesignSpecByShipClass,
     shipClassNameGenerator,
+    shipNameGenerator,
     SHIPWEAPONSPECIAL,
 } from "../data/dataShips";
 import { TECHIDS } from "../data/dataTechnology";
 import { Command, CommandType, FleetCommand, UnitScrapCommand } from "../models/Commands";
-import { FactionModel, GameModel } from "../models/Models";
+import { FactionModel, GameModel, Coordinates } from "../models/Models";
 import { SystemModel } from "../models/StarSystem";
 import {
     SHIPCLASS,
@@ -325,4 +326,34 @@ export function getFleetInfo(
     }
 
     return trInfo;
+}
+
+
+
+/**
+ * Create a ShipUnit from ShipDesign
+ * 
+ * @param design 
+ * @param factionId 
+ * @param location 
+ */
+export function createShipFromDesign(design: ShipDesign, factionId: string, location: Coordinates): ShipUnit {
+    const ship: ShipUnit = {
+        ...design,
+        id: v4(),
+        damage: 0,
+        morale: 100,
+        shields: design.shieldsMax,
+        location: location,
+        factionId: factionId,
+        experience: 0,
+        name: shipNameGenerator(),
+    };
+    
+    ship.weapons = ship.weapons.map((w: ShipWeapon, ind: number) => {
+        w.id = `W-${ship.id}-${ind}`;
+        return {...w};
+    });
+
+    return ship;
 }

@@ -1,6 +1,8 @@
 import { v4 } from "uuid";
 import { BASEACTIONPOINTCOUNT } from "../../configs";
+import { DATASTARTINGUNITS } from "../../data/dataShips";
 import { FactionSetup, FactionModel, TechnologyField, FactionState } from "../../models/Models";
+import { ShipDesign } from "../../models/Units";
 
 
 export function createFactionFromSetup(setup: FactionSetup): FactionModel {
@@ -27,6 +29,10 @@ export function createFactionFromSetup(setup: FactionSetup): FactionModel {
 		aps: BASEACTIONPOINTCOUNT,
 		shipDesigns: [],
 	};
+
+	fm.shipDesigns = DATASTARTINGUNITS.map((sd: ShipDesign) => {
+		return {...sd, id: v4()};
+	});
 
 	return fm;
 }
