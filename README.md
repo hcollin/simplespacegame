@@ -2,6 +2,72 @@
 
 This should become an simple turn based space strategy game, where players will conquer star systems, fight with each other and maybe even make alliances
 
+## Installing dev environment
+
+Here is a quick guide on how to install development environment for Frost Galaxy. 
+
+### Preparations
+
+Make sure you have installed the `firebase-tools` with
+
+    npm i -g firebase-tools
+
+The TypeScript compiler must be installed too
+
+   npm i -g typescript
+
+Then you need to make a firebase project where the is connected from firebase console. Remember that this environment is also your production environment if deploy is executed.
+
+    https://console.firebase.google.com/
+
+
+### Cloning repository and setting it up
+
+Clone the repository first:
+
+    git clone https://github.com/hcollin/simplespacegame.git
+
+Then install all dependencies for the front end from the command prompt of the project root
+
+    npm i 
+
+
+Then install all dependencies in functions in the directory `(project-root)/functions/`
+
+    npm i
+
+The firebase configurations are are store in the directory `(project-root)/src/api/fireConfig.ts.` This file does not exists so it must be created.
+After creating this file you need to setup the configs for this project by either creating a new app in the firebase console or by using the configs of an existing app. Go to `Project Settings` and scroll down in the `General` tab until you reach the `Your apps` subheader. Select your app and change the Firebase SDK snippet to config. Copy paste code underneath into the `fireConfig.ts` file and export the `fireConfig` constant. When done your file should look something like this:
+
+```javascript
+export const fireConfig = {
+  apiKey: "(something)",
+  // also keys authDomain, databaseUrl, projectId, storageBucket, messagingSenderId are here
+  appId: "(something)",
+};
+
+```
+
+### Starting the development
+
+We need to compile the functions first before starting anything else. Go to the `(project-root)/functions/` directory in terminal and type:
+
+    tsc index.ts
+
+This compiler must be executed everytime when we change the code in functions. To watch for changes, you can run
+
+    tsc -w index.ts
+
+
+Next we need to start the firebase emulator that will simulate both FireStore database and functions. In the `(project-root)/` run command
+
+   npm run firebaseemulators
+
+Then start the react project
+
+   npm run start
+
+Now you should be up and running! Happy Coding!
 
 ## Winning the game
 
