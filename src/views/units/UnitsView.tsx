@@ -61,6 +61,7 @@ const UnitsView: FC = () => {
     const game = useCurrentGame();
 
     const [unitView, setUnitview] = useAtom<string>("UnitViewDisplay", "ships");
+    
 
     if (!faction || !game) return null;
 

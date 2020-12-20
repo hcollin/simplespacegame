@@ -1,0 +1,21 @@
+
+TODO for HC:
+
+Ship Designer
+
+- Change turnProcessor so that it searches design from faction.
+    - When unit is being built the copy of the unit is immediately created, so that if the design is removed before the command is completed it does not crash.
+- Megaton of ship part balancing, currently completely out of whack
+- Make the designer look even remotely adequate, currently looks like a bad engineer version
+
+New Tech Tree
+
+- Design what all techs do
+- Code the technologies into the code.
+
+
+
+Combat Simulator & Combat
+
+- Appearance tuning for both
+- Make sure it works

@@ -61,6 +61,26 @@ export function doAddShipDesign(design: ShipDesign, factionId: string) {
     }
 }
 
+export function doUpdateShipDesign(design: ShipDesign, factionId: string) {
+    const game = joki.service.getState(SERVICEID.GameService) as GameModel;
+
+    const faction = getFactionFromArrayById(game.factions, factionId);
+    if (faction) {
+        faction.shipDesigns = faction.shipDesigns.map((sd: ShipDesign) => {
+            if(sd.id === design.id) {
+                return design;
+            }
+            return sd;
+        });
+
+        joki.trigger({
+            to: SERVICEID.GameService,
+            action: "updateFaction",
+            data: { ...faction },
+        });
+    }
+}
+
 export function doRemoveShipDesign(design: ShipDesign, factionId: string) {
     const game = joki.service.getState(SERVICEID.GameService) as GameModel;
 
