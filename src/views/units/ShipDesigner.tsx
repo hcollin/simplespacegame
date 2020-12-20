@@ -27,8 +27,11 @@ import {
 import { SHIPCLASS, ShipSystem, ShipWeapon, ShipEngine, ShipCustomDesign } from "../../models/Units";
 import { doAddShipDesign } from "../../services/commands/FactionCommands";
 import useCurrentFaction from "../../services/hooks/useCurrentFaction";
-import { shipDesignCalculator, validateShipDesign, convertShipCustomDesignToShipDesign } from "../../tools/shipDesigner/shipDesignUtils";
-
+import {
+    shipDesignCalculator,
+    validateShipDesign,
+    convertShipCustomDesignToShipDesign,
+} from "../../tools/shipDesigner/shipDesignUtils";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
