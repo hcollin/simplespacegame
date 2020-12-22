@@ -67,7 +67,7 @@ export function doUpdateShipDesign(design: ShipDesign, factionId: string) {
     const faction = getFactionFromArrayById(game.factions, factionId);
     if (faction) {
         faction.shipDesigns = faction.shipDesigns.map((sd: ShipDesign) => {
-            if(sd.id === design.id) {
+            if (sd.id === design.id) {
                 return design;
             }
             return sd;

@@ -1,10 +1,11 @@
 import { MAPDensities, MAPSizes, SYSTEMBONUS } from "../../configs";
 import { greekAlphabet, romanNumbers, starName } from "../../data/dataWords";
 import { GameModel } from "../../models/Models";
-import { SystemModel, SystemKeyword, SystemInfo, Planet, PlanetType } from "../../models/StarSystem";
+import { SystemModel, SystemKeyword, SystemInfo, Planet, PlanetType, PlanetKeyword } from "../../models/StarSystem";
 
 import { getRandomEnum } from "../../utils/generalUtils";
 import { rnd, arnd, roll, arnds } from "../../utils/randUtils";
+import { getPlanetInfoByType, getRandomPlanetType } from "./planetUtils";
 
 const starColors: string[] = ["#FFFD", "#FDAD", "#FF8D"];
 
@@ -183,7 +184,7 @@ export function systemDescriptionGenerator(star: SystemModel): string {
 }
 
 export function systemInfoGenerator(star: SystemModel): SystemInfo {
-    const planets = arnds([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], rnd(1, 6), true).map((d: number) => {
+    const planets = arnds([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], rnd(1, 5), true).map((d: number) => {
         return planetGenerator(star, d);
     });
 
@@ -194,14 +195,55 @@ export function systemInfoGenerator(star: SystemModel): SystemInfo {
 }
 
 export function planetGenerator(star: SystemModel, distance: number): Planet {
-    return {
+    const ptype = getRandomPlanetType(distance);
+
+    const ptypeinfo = getPlanetInfoByType(ptype);
+
+    const size = rnd(ptypeinfo.sizeRange[0], ptypeinfo.sizeRange[1]);
+    const planet: Planet = {
         population: 0,
-        type: getRandomEnum(PlanetType),
+        type: ptype,
         distanceFromStar: distance,
         name: `${star.name} ${distance}`,
-        size: rnd(1, 8),
+        size: size,
+        foodSupply: 0,
+        foodProduction: 0,
+        morale: 0,
+        keywords: generatePlanetKeywords(ptype),
+        maxPopulation: ptypeinfo.maxPop * size,
     };
+    if (planet.keywords.includes(PlanetKeyword.EDIBLEFAUNA)) {
+        planet.foodProduction += planet.size * 50;
+    }
+    if (planet.keywords.includes(PlanetKeyword.TIDALLOCK)) {
+        planet.maxPopulation = Math.round(planet.maxPopulation * 0.75);
+    }
+    return planet;
 }
+
+function generatePlanetKeywords(planetType: PlanetType): PlanetKeyword[] {
+    let chance = 75;
+    let amount = 0;
+    while (roll(chance)) {
+        amount++;
+        chance -= 20;
+    }
+
+    const ptypeinfo = getPlanetInfoByType(planetType);
+    const keys = arnds(ptypeinfo.possibleKeywords, amount, true);
+
+    return keys.reduce((pks: PlanetKeyword[], p: PlanetKeyword | PlanetKeyword[]) => {
+        if (Array.isArray(p)) {
+            pks.push(arnd(p));
+        } else {
+            pks.push(p);
+        }
+        return pks;
+    }, []);
+}
+
+
+
 
 export const homeSystemPositionsByPlayerCount: [number, number][][] = [
     [],

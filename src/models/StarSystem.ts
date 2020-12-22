@@ -38,11 +38,16 @@ export interface SystemInfo {
 }
 
 export interface Planet {
-    type: string;
+    type: PlanetType;
     distanceFromStar: number;
     size: number;
     name: string;
     population: number;
+    maxPopulation: number;
+    foodProduction: number;
+    foodSupply: number;
+    morale: number;
+    keywords: PlanetKeyword[];
 }
 
 export enum PlanetType {
@@ -62,5 +67,27 @@ export enum PlanetType {
     // Puffy = "Puffy planet",
     // Silicate = "Silicate planet",
     Terrestrial = "Terrestrial planet",
+    Gaia = "Gaia planet",
     Barren = "Barren",
 }
+
+export enum PlanetKeyword {
+    LOWNATIVES = "Primitive Natives",
+    HIGHNATIVES = "Industrial Natives",
+    PREDATORS = "Predators",
+    ARTIFACTS = "Artifacts",
+    REMNANTS = "Remnants of older Civilization",
+    HOSTILEFAUNA = "Hostile Fauna",
+    EDIBLEFAUNA = "Edible Fauna",
+
+    VULCANIC = "Active Vulcanos",
+    SEISMIC = "Seismic Activity",
+    CRYSTALS = "Rare Crystals",
+    
+    RAREMINERALS = "Rare Minerals",
+    RICHMINERALS = "Mineral Rich",
+    POORMINERALS = "Mineral Poor",
+
+    TIDALLOCK = "Tidal Locked",
+    
+};

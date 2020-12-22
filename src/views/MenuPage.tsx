@@ -12,11 +12,8 @@ import LoginForm from "../components/LoginForm";
 import AuthProviders from "../components/AuthProviders";
 
 import frostTrollLogoPng from "../images/FrostTrollLogo.png";
-import SubMenuButton from "../components/SubMenuButton";
-import { useAtom, useAtomValue } from "jokits-react";
-import TechCard from "../components/TechCard";
-import TechCircle from "../components/TechCircle";
-import ForceGraphDisplay from "../components/ForceGraphDisplay";
+import { useAtomValue } from "jokits-react";
+import TestView from "./TestView";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -129,18 +126,6 @@ const MenuPage: FC = () => {
 
     if (viewState !== "menu") return null;
 
-    function loginWithGoogle() {
-        if (!user) {
-            send("loginWithGoogle");
-        }
-    }
-
-    function loginInDev(ind: number) {
-        if (!user) {
-            send("loginAsDev", ind);
-        }
-    }
-
     function clickNewGame() {
         // doCreateNewGame(playerCount);
         doCreateDraftGame();
@@ -169,7 +154,6 @@ const MenuPage: FC = () => {
 
     // rndNames.sort();
 
-    const isDev = ENV === "development";
     return (
         <MenuPageContainer title="Frost Galaxy">
             {!user && (
@@ -280,13 +264,7 @@ const MenuPage: FC = () => {
                 </>
             )}
 
-            <h3>Test area</h3>
-
-            {/* <TechCircle /> */}
-
-            {/* <ForceGraphDisplay /> */}
-
-            {/* <div style={{display: "flex", flexWrap: "wrap"}}>{rndNames.map((n: string, i: number) => <p key={i} style={{width: "15rem", margin: "0.25rem 0", padding: 0}}>{n}</p>)}</div> */}
+            <TestView />
         </MenuPageContainer>
     );
 };

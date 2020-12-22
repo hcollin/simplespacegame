@@ -29,12 +29,22 @@ export function planetStyle(planet: Planet): [React.CSSProperties, string] {
             additionalClasses = "cracked";
             break;
         case PlanetType.GasGiant:
-                style.background = `radial-gradient(brown, black)`;
-                additionalClasses = "gas";
-                break;
-        
+            style.background = `radial-gradient(brown, black)`;
+            additionalClasses = "gas";
+            break;
+        case PlanetType.Barren:
+            style.background = `radial-gradient(gray, black)`;
+            additionalClasses = "ridges";
+            break;
+        case PlanetType.Terrestrial:
+            style.background = `radial-gradient(green 30%, blue 60%, black)`;
+            additionalClasses = "ridges";
+            break;
+        case PlanetType.Gaia:
+            style.background = `radial-gradient(green 10%, blue 30%, green 60%, black)`;
+            additionalClasses = "ridges";
+            break;
 
-        
         default:
             break;
     }

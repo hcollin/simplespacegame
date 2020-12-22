@@ -14,6 +14,17 @@ New Tech Tree
 - Code the technologies into the code.
 
 
+Star System 1.5
+
+- Introduce population
+  - Base infra maximums on population
+  - System type caps the population and may give other advantages/disadvantages
+- Introduce food
+  - Without excess food population cannot grow
+  - 
+
+
+
 
 Combat Simulator & Combat
 

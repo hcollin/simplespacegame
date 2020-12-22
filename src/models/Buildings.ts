@@ -1,9 +1,8 @@
 import { BUILDINGTYPE } from "../data/dataBuildings";
 import { TECHIDS } from "../data/dataTechnology";
 
-
 export interface BuildingDesign {
-    type: BUILDINGTYPE;    
+    type: BUILDINGTYPE;
     name: string;
     description: string;
     image?: string;
@@ -16,6 +15,7 @@ export interface BuildingDesign {
     keywords: string[];
     maintenanceCost: number;
     score: number;
+    limit: "NONE" | "1PERSYSTEM" | "1PERFACTION" | "1PERGAME";
 }
 
 export interface Building extends BuildingDesign {

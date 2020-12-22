@@ -850,15 +850,15 @@ const Planets: FC<PlanetsProps> = (props) => {
 	return (
 		<div className={classes.planets}>
 			{planets.map((p: Planet) => {
-				const [] = planetStyle(p);
+				// const [] = planetStyle(p);
 				return (
 					<div className="planet-container">
 						<PlanetDiv star={props.star} planet={p} />
 
 						<label>
-							{p.name}
+							{p.name} ({p.type})
 							<br />
-							{p.type}
+							Pop: {p.population} / {p.maxPopulation} Food: {p.foodSupply} ({p.foodProduction}/turn)
 						</label>
 					</div>
 				);
